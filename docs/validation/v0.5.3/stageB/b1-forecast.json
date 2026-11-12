@@ -1,0 +1,132 @@
+{
+ "composition": {
+  "composition": {
+   "e1": true,
+   "e2": true,
+   "e3": true,
+   "e4": true
+  },
+  "source": "b1-recal.json (B1.3), frozen before B1.4"
+ },
+ "d2_d4": {
+  "batteries": {
+   "v04": {
+    "D2": "NOT DECIDED: the part did not complete",
+    "D4": "NOT DECIDED: the part did not complete",
+    "d2_minimum": 0.8691358024691358,
+    "d4_inconclusive": 1,
+    "diagnostic_d4_wilson": [
+     0.001577854703292133,
+     0.048848468308884896
+    ],
+    "diagnostic_kept_wilson": [
+     0.9297919442305332,
+     0.9867460618921736
+    ],
+    "kept": 157,
+    "refuted": 4,
+    "refuted_wilson_upper": 0.06175935050535045
+   },
+   "v4": {
+    "D2": "NOT DECIDED: the part did not complete",
+    "D4": "NOT DECIDED: the part did not complete",
+    "d2_minimum": 0.8691358024691358,
+    "d4_inconclusive": 6,
+    "diagnostic_d4_wilson": [
+     0.024780939016041954,
+     0.11197026372230082
+    ],
+    "diagnostic_kept_wilson": [
+     0.7411982788749567,
+     0.8617872514689295
+    ],
+    "kept": 131,
+    "refuted": 2,
+    "refuted_wilson_upper": 0.04389067656817636
+   },
+   "v5": {
+    "D2": "NOT DECIDED: the part did not complete",
+    "D4": "NOT DECIDED: the part did not complete",
+    "d2_minimum": 0.8691358024691358,
+    "d4_inconclusive": 6,
+    "diagnostic_d4_wilson": [
+     0.024780939016041954,
+     0.11197026372230082
+    ],
+    "diagnostic_kept_wilson": [
+     0.7344647106403248,
+     0.8564611090966836
+    ],
+    "kept": 130,
+    "refuted": 3,
+    "refuted_wilson_upper": 0.05302494281805918
+   }
+  },
+  "curves": 181,
+  "d4_subset": 112,
+  "eligible": 162,
+  "errors": 0,
+  "floor": 20,
+  "generation_failures": 0,
+  "part_state": "stopped (stage_b/b1_forecast_d2d4: refused under a stop or a failed gate); 181 of 200 records read, the rest unknown",
+  "smoke_index_disclosed": [
+   3000
+  ],
+  "v5_blockers": {
+   "centroid_shift: INCONCLUSIVE": 17,
+   "duration_excess: FAIL": 1,
+   "duration_excess: INCONCLUSIVE": 27,
+   "event_consistency: INCONCLUSIVE": 31,
+   "odd_even: FAIL": 1,
+   "odd_even: INCONCLUSIVE": 23,
+   "period_alias: FAIL": 2,
+   "period_alias: INCONCLUSIVE": 1,
+   "sinusoid: INCONCLUSIVE": 21,
+   "systematics: FAIL": 1
+  }
+ },
+ "label": "B1.4 development forecast with the candidate version 5 (decides nothing)",
+ "method_status": "not_validated",
+ "t2a": {
+  "answer_without_certification_above_20": "no",
+  "certification_above_20_cannot_rescue": true,
+  "configurations": {
+   "v5A": {
+    "blockers": {},
+    "kept_2_to_20": 162,
+    "kept_above_20": 0,
+    "lower_615": 162,
+    "unknown_2_to_20": 0,
+    "unknown_above_20": 0,
+    "upper_615": 162
+   },
+   "v5B": {
+    "blockers": {},
+    "kept_2_to_20": 331,
+    "kept_above_20": 0,
+    "lower_615": 331,
+    "unknown_2_to_20": 0,
+    "unknown_above_20": 0,
+    "upper_615": 331
+   },
+   "v5C": {
+    "blockers": {},
+    "kept_2_to_20": 331,
+    "kept_above_20": 42,
+    "lower_615": 373,
+    "unknown_2_to_20": 0,
+    "unknown_above_20": 0,
+    "upper_615": 373
+   }
+  },
+  "minimum": 0.8967479674796748,
+  "minimum_count": 551.5,
+  "part_states": {
+   "2_to_4": "complete",
+   "5_to_20": "complete",
+   "above_20": "complete"
+  },
+  "population": 615,
+  "v04_kept_population": 613
+ }
+}

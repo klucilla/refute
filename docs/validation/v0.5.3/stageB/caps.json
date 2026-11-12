@@ -945,6 +945,126 @@
     "agent_days": 0.2,
     "review_tokens": 0
    }
+  },
+  {
+   "utc": "2026-11-11T23:14:41Z",
+   "step": "b1 forecast d2d4",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-b14": 156297,
+     "b1-code": 196718,
+     "b1-design": 286112,
+     "b1-recal": 186431,
+     "b1-screen": 161066
+    },
+    "b0": 489509,
+    "stage_b": 1476133
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 1.04,
+   "agent_days_active": 0.63,
+   "cpu_hours": {
+    "stage_b": 11.225,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.3,
+    "review_tokens": 0
+   }
+  },
+  {
+   "utc": "2026-11-12T00:14:43Z",
+   "step": "b1 forecast 2_to_4",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-b14": 156297,
+     "b1-code": 196718,
+     "b1-design": 286112,
+     "b1-recal": 186431,
+     "b1-screen": 161066
+    },
+    "b0": 489509,
+    "stage_b": 1476133
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 1.04,
+   "agent_days_active": 0.63,
+   "cpu_hours": {
+    "stage_b": 18.318,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.3,
+    "review_tokens": 0
+   }
+  },
+  {
+   "utc": "2026-11-12T00:54:32Z",
+   "step": "b1 forecast 5_to_20",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-b14": 156297,
+     "b1-code": 196718,
+     "b1-design": 286112,
+     "b1-recal": 186431,
+     "b1-screen": 161066
+    },
+    "b0": 489509,
+    "stage_b": 1476133
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 1.04,
+   "agent_days_active": 0.63,
+   "cpu_hours": {
+    "stage_b": 23.692,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.3,
+    "review_tokens": 0
+   }
+  },
+  {
+   "utc": "2026-11-12T04:06:19Z",
+   "step": "b1 forecast above_20",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-b14": 156297,
+     "b1-code": 196718,
+     "b1-design": 286112,
+     "b1-recal": 186431,
+     "b1-screen": 161066
+    },
+    "b0": 489509,
+    "stage_b": 1476133
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 1.04,
+   "agent_days_active": 0.63,
+   "cpu_hours": {
+    "stage_b": 44.23,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.3,
+    "review_tokens": 0
+   }
   }
  ]
 }

@@ -46,6 +46,14 @@
     "b0_reserve": {
      "allocation_hours": 21.9
     },
+    "b1_forecast_d2d4": {
+     "allocation_hours": 14.0,
+     "checkpoint_shards": 10,
+     "identity": "fcd7d2c3c2290c4e",
+     "projection_hours": 4.670486111111111,
+     "spent_hours": 7.092717013888889,
+     "unresolved_stop": "stopped: the cap is reached"
+    },
     "b1_recal_c1": {
      "allocation_hours": 8.5,
      "checkpoint_shards": 23,
@@ -96,8 +104,29 @@
      "projection_hours": 0.07043836805555556,
      "spent_hours": 0.07043836805555556
     },
+    "b1_t2a_2to4": {
+     "allocation_hours": 18.0,
+     "checkpoint_shards": 16,
+     "identity": "2b684f1d39ea993a",
+     "projection_hours": 5.2065999348958325,
+     "spent_hours": 5.3747352430555555
+    },
+    "b1_t2a_5to20": {
+     "allocation_hours": 24.0,
+     "checkpoint_shards": 13,
+     "identity": "279633946041532e",
+     "projection_hours": 23.77292901976496,
+     "spent_hours": 20.537530381944446
+    },
+    "b1_t2a_above20": {
+     "allocation_hours": 12.0,
+     "checkpoint_shards": 3,
+     "identity": "1e8a66598a4718b2",
+     "projection_hours": 7.048935185185186,
+     "spent_hours": 8.336184895833334
+    },
     "b1_unallocated": {
-     "allocation_hours": 101.0
+     "allocation_hours": 33.0
     }
    }
   }
@@ -158,6 +187,34 @@
    "reason": "B1.3's recalibration screen (#217)",
    "to": "b1_recal_e4",
    "utc": "2026-11-11T23:07:11Z"
+  },
+  {
+   "from": "b1_unallocated",
+   "hours": 14.0,
+   "reason": "B1.4's forecast, d2d4 (#217)",
+   "to": "b1_forecast_d2d4",
+   "utc": "2026-11-11T23:14:42Z"
+  },
+  {
+   "from": "b1_unallocated",
+   "hours": 18.0,
+   "reason": "B1.4's forecast, 2_to_4 (#217)",
+   "to": "b1_t2a_2to4",
+   "utc": "2026-11-12T00:14:43Z"
+  },
+  {
+   "from": "b1_unallocated",
+   "hours": 24.0,
+   "reason": "B1.4's forecast, 5_to_20 (#217)",
+   "to": "b1_t2a_5to20",
+   "utc": "2026-11-12T00:54:33Z"
+  },
+  {
+   "from": "b1_unallocated",
+   "hours": 12.0,
+   "reason": "B1.4's forecast, above_20 (#217)",
+   "to": "b1_t2a_above20",
+   "utc": "2026-11-12T04:06:19Z"
   }
  ]
 }

@@ -1,0 +1,331 @@
+{
+ "configurations": {
+  "v5A": {
+   "2_to_4": {
+    "blockers": {
+     "duration_excess: INCONCLUSIVE": 130,
+     "event_consistency: FAIL": 3,
+     "event_consistency: INCONCLUSIVE": 115,
+     "nearby_contamination: FAIL": 35,
+     "odd_even: FAIL": 3,
+     "odd_even: INCONCLUSIVE": 57,
+     "period_alias: FAIL": 4,
+     "period_alias: INCONCLUSIVE": 11,
+     "single_event: FAIL": 1,
+     "single_event: INCONCLUSIVE": 30,
+     "sinusoid: INCONCLUSIVE": 67,
+     "systematics: FAIL": 1,
+     "systematics: INCONCLUSIVE": 106
+    },
+    "inconclusive_classes": {
+     "duration_excess: insufficient_sensitivity": 130,
+     "event_consistency: insufficient_sensitivity": 85,
+     "event_consistency: outside_domain": 30,
+     "odd_even: insufficient_sensitivity": 27,
+     "odd_even: outside_domain": 30,
+     "period_alias: insufficient_sensitivity": 11,
+     "single_event: outside_domain": 30,
+     "sinusoid: insufficient_sensitivity": 67,
+     "systematics: insufficient_sensitivity": 66,
+     "systematics: not_enough_data": 10,
+     "systematics: outside_domain": 30
+    },
+    "injections": 302,
+    "kept": 162,
+    "lost": 140,
+    "lost_v04_kept": 138,
+    "missing": 0,
+    "not_ok": 0,
+    "selection_refusals": {
+     "outside the grid": 30
+    },
+    "sole_blocker": {
+     "systematics: INCONCLUSIVE": 5
+    },
+    "verdicts": {
+     "INCONCLUSIVE": 136,
+     "REFUTED": 4,
+     "SURVIVED": 138,
+     "WEAKENED": 24
+    }
+   },
+   "5_to_20": {
+    "blockers": {
+     "duration_excess: INCONCLUSIVE": 239,
+     "event_consistency: INCONCLUSIVE": 257,
+     "nearby_contamination: FAIL": 63,
+     "odd_even: INCONCLUSIVE": 257,
+     "period_alias: FAIL": 5,
+     "period_alias: INCONCLUSIVE": 5,
+     "secondary_eclipse: FAIL": 1,
+     "single_event: INCONCLUSIVE": 257,
+     "sinusoid: INCONCLUSIVE": 29,
+     "systematics: INCONCLUSIVE": 257
+    },
+    "inconclusive_classes": {
+     "duration_excess: insufficient_sensitivity": 239,
+     "event_consistency: outside_domain": 257,
+     "odd_even: outside_domain": 257,
+     "period_alias: insufficient_sensitivity": 5,
+     "single_event: outside_domain": 257,
+     "sinusoid: insufficient_sensitivity": 29,
+     "systematics: outside_domain": 257
+    },
+    "injections": 257,
+    "kept": 0,
+    "lost": 257,
+    "lost_v04_kept": 257,
+    "missing": 0,
+    "not_ok": 0,
+    "selection_refusals": {
+     "the sector selection is not certified": 257
+    },
+    "sole_blocker": {},
+    "verdicts": {
+     "INCONCLUSIVE": 257
+    }
+   }
+  },
+  "v5B": {
+   "2_to_4": {
+    "blockers": {
+     "duration_excess: INCONCLUSIVE": 130,
+     "event_consistency: FAIL": 3,
+     "event_consistency: INCONCLUSIVE": 115,
+     "nearby_contamination: FAIL": 35,
+     "odd_even: FAIL": 3,
+     "odd_even: INCONCLUSIVE": 57,
+     "period_alias: FAIL": 4,
+     "period_alias: INCONCLUSIVE": 11,
+     "single_event: FAIL": 1,
+     "single_event: INCONCLUSIVE": 30,
+     "sinusoid: INCONCLUSIVE": 67,
+     "systematics: FAIL": 1,
+     "systematics: INCONCLUSIVE": 106
+    },
+    "inconclusive_classes": {
+     "duration_excess: insufficient_sensitivity": 130,
+     "event_consistency: insufficient_sensitivity": 85,
+     "event_consistency: outside_domain": 30,
+     "odd_even: insufficient_sensitivity": 27,
+     "odd_even: outside_domain": 30,
+     "period_alias: insufficient_sensitivity": 11,
+     "single_event: outside_domain": 30,
+     "sinusoid: insufficient_sensitivity": 67,
+     "systematics: insufficient_sensitivity": 66,
+     "systematics: not_enough_data": 10,
+     "systematics: outside_domain": 30
+    },
+    "injections": 302,
+    "kept": 162,
+    "lost": 140,
+    "lost_v04_kept": 138,
+    "missing": 0,
+    "not_ok": 0,
+    "selection_refusals": {
+     "outside the grid": 30
+    },
+    "sole_blocker": {
+     "systematics: INCONCLUSIVE": 5
+    },
+    "verdicts": {
+     "INCONCLUSIVE": 136,
+     "REFUTED": 4,
+     "SURVIVED": 138,
+     "WEAKENED": 24
+    }
+   },
+   "5_to_20": {
+    "blockers": {
+     "duration_excess: INCONCLUSIVE": 87,
+     "event_consistency: FAIL": 2,
+     "event_consistency: INCONCLUSIVE": 73,
+     "nearby_contamination: FAIL": 33,
+     "odd_even: FAIL": 1,
+     "odd_even: INCONCLUSIVE": 29,
+     "period_alias: FAIL": 1,
+     "period_alias: INCONCLUSIVE": 5,
+     "single_event: INCONCLUSIVE": 12,
+     "sinusoid: INCONCLUSIVE": 29,
+     "systematics: FAIL": 2,
+     "systematics: INCONCLUSIVE": 65
+    },
+    "inconclusive_classes": {
+     "duration_excess: insufficient_sensitivity": 87,
+     "event_consistency: insufficient_sensitivity": 61,
+     "event_consistency: outside_domain": 12,
+     "odd_even: insufficient_sensitivity": 17,
+     "odd_even: outside_domain": 12,
+     "period_alias: insufficient_sensitivity": 5,
+     "single_event: outside_domain": 12,
+     "sinusoid: insufficient_sensitivity": 29,
+     "systematics: insufficient_sensitivity": 43,
+     "systematics: not_enough_data": 10,
+     "systematics: outside_domain": 12
+    },
+    "injections": 257,
+    "kept": 169,
+    "lost": 88,
+    "lost_v04_kept": 88,
+    "missing": 0,
+    "not_ok": 0,
+    "selection_refusals": {
+     "outside the grid": 12
+    },
+    "sole_blocker": {},
+    "verdicts": {
+     "INCONCLUSIVE": 87,
+     "REFUTED": 1,
+     "SURVIVED": 136,
+     "WEAKENED": 33
+    }
+   }
+  },
+  "v5C": {
+   "2_to_4": {
+    "blockers": {
+     "duration_excess: INCONCLUSIVE": 130,
+     "event_consistency: FAIL": 3,
+     "event_consistency: INCONCLUSIVE": 115,
+     "nearby_contamination: FAIL": 35,
+     "odd_even: FAIL": 3,
+     "odd_even: INCONCLUSIVE": 57,
+     "period_alias: FAIL": 4,
+     "period_alias: INCONCLUSIVE": 11,
+     "single_event: FAIL": 1,
+     "single_event: INCONCLUSIVE": 30,
+     "sinusoid: INCONCLUSIVE": 67,
+     "systematics: FAIL": 1,
+     "systematics: INCONCLUSIVE": 106
+    },
+    "inconclusive_classes": {
+     "duration_excess: insufficient_sensitivity": 130,
+     "event_consistency: insufficient_sensitivity": 85,
+     "event_consistency: outside_domain": 30,
+     "odd_even: insufficient_sensitivity": 27,
+     "odd_even: outside_domain": 30,
+     "period_alias: insufficient_sensitivity": 11,
+     "single_event: outside_domain": 30,
+     "sinusoid: insufficient_sensitivity": 67,
+     "systematics: insufficient_sensitivity": 66,
+     "systematics: not_enough_data": 10,
+     "systematics: outside_domain": 30
+    },
+    "injections": 302,
+    "kept": 162,
+    "lost": 140,
+    "lost_v04_kept": 138,
+    "missing": 0,
+    "not_ok": 0,
+    "selection_refusals": {
+     "outside the grid": 30
+    },
+    "sole_blocker": {
+     "systematics: INCONCLUSIVE": 5
+    },
+    "verdicts": {
+     "INCONCLUSIVE": 136,
+     "REFUTED": 4,
+     "SURVIVED": 138,
+     "WEAKENED": 24
+    }
+   },
+   "5_to_20": {
+    "blockers": {
+     "duration_excess: INCONCLUSIVE": 87,
+     "event_consistency: FAIL": 2,
+     "event_consistency: INCONCLUSIVE": 73,
+     "nearby_contamination: FAIL": 33,
+     "odd_even: FAIL": 1,
+     "odd_even: INCONCLUSIVE": 29,
+     "period_alias: FAIL": 1,
+     "period_alias: INCONCLUSIVE": 5,
+     "single_event: INCONCLUSIVE": 12,
+     "sinusoid: INCONCLUSIVE": 29,
+     "systematics: FAIL": 2,
+     "systematics: INCONCLUSIVE": 65
+    },
+    "inconclusive_classes": {
+     "duration_excess: insufficient_sensitivity": 87,
+     "event_consistency: insufficient_sensitivity": 61,
+     "event_consistency: outside_domain": 12,
+     "odd_even: insufficient_sensitivity": 17,
+     "odd_even: outside_domain": 12,
+     "period_alias: insufficient_sensitivity": 5,
+     "single_event: outside_domain": 12,
+     "sinusoid: insufficient_sensitivity": 29,
+     "systematics: insufficient_sensitivity": 43,
+     "systematics: not_enough_data": 10,
+     "systematics: outside_domain": 12
+    },
+    "injections": 257,
+    "kept": 169,
+    "lost": 88,
+    "lost_v04_kept": 88,
+    "missing": 0,
+    "not_ok": 0,
+    "selection_refusals": {
+     "outside the grid": 12
+    },
+    "sole_blocker": {},
+    "verdicts": {
+     "INCONCLUSIVE": 87,
+     "REFUTED": 1,
+     "SURVIVED": 136,
+     "WEAKENED": 33
+    }
+   },
+   "above_20": {
+    "blockers": {
+     "duration_excess: INCONCLUSIVE": 12,
+     "event_consistency: INCONCLUSIVE": 12,
+     "nearby_contamination: FAIL": 1,
+     "odd_even: INCONCLUSIVE": 8,
+     "systematics: INCONCLUSIVE": 9
+    },
+    "inconclusive_classes": {
+     "duration_excess: insufficient_sensitivity": 12,
+     "event_consistency: insufficient_sensitivity": 12,
+     "odd_even: insufficient_sensitivity": 8,
+     "systematics: insufficient_sensitivity": 9
+    },
+    "injections": 56,
+    "kept": 42,
+    "lost": 14,
+    "lost_v04_kept": 14,
+    "missing": 0,
+    "not_ok": 0,
+    "selection_refusals": {},
+    "sole_blocker": {},
+    "verdicts": {
+     "INCONCLUSIVE": 14,
+     "SURVIVED": 35,
+     "WEAKENED": 7
+    }
+   }
+  }
+ },
+ "label": "B1.4 T2a census: blockers by stratum and configuration (diagnostic; decides nothing)",
+ "method_status": "not_validated",
+ "part_states": {
+  "2_to_4": "complete",
+  "5_to_20": "complete",
+  "above_20": "complete"
+ },
+ "population": 615,
+ "v04_by_stratum": {
+  "2_to_4": {
+   "REFUTED": 2,
+   "SURVIVED": 240,
+   "WEAKENED": 60
+  },
+  "5_to_20": {
+   "SURVIVED": 191,
+   "WEAKENED": 66
+  },
+  "above_20": {
+   "SURVIVED": 48,
+   "WEAKENED": 8
+  }
+ }
+}
