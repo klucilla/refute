@@ -40,12 +40,28 @@ how later work is done.
 
 ## Current phase
 
-**v0.5.3 Battery corrections, round 3: to be scoped (not started)**
+**v0.5.4 Information checks (change of approach after round 3)**
 
-- **Why.** v0.5.2, correction round 2 of at most 3, closed as not approved; every failed target of
-  v0.5 stays outstanding. By the advance rule (above), the next phase is the last correction phase on
-  the same line. Its section: "v0.5.3 Battery corrections, round 3" below.
-- **State.** Not started: its scope is proposed to the maintainer before any work.
+- **Why.** v0.5.3, the third and last correction round of the advance rule, closed as not approved.
+  The maintainer chose to change the approach (the decision of 2026-11-12, #217). Every failed target
+  of v0.5 stays outstanding. Its section: "v0.5.4 Information checks" below.
+- **Limits.** It is not a fourth correction round. There is no new battery, no acceptance, no draw,
+  no change to `src/`, and no target or test rule changes. Development data only.
+- **State.** The first half (I1, then I4; I2's and I3's designs on paper) is approved to run.
+
+### Previous phase record: v0.5.3 Battery corrections, round 3
+
+**v0.5.3 Battery corrections, round 3: closed on 2026-11-12 as not approved, by item 2 of its
+criterion** (the maintainer's decision of 2026-11-12, #217;
+[closing record](docs/validation/v0.5.3/closing-record.md),
+[independent review](docs/validation/v0.5.3/closing-review.md)).
+
+- **T2a and D2 fail their frozen rules** in the development forecasts. T2a's `K_B` is 331 against
+  552 needed. D2 keeps 141 of 178 against 156 needed.
+- **D1 has no route.** D4 passes only in a forecast, and T3b was not executed.
+- **No target has a basis for an infeasibility record.** No acceptance ran, no confirmation data was
+  used, and no drand round was drawn. No exit criterion is ticked.
+- **Method status.** v0.5.3 did not deliver a validated method (`method_status: not_validated`).
 
 ### Previous phase record: v0.5.2 Battery corrections, round 2
 
@@ -727,7 +743,14 @@ false-positive pool is scarce.
 
 ## v0.5.3 Battery corrections, round 3
 
-To be scoped (not started). Its scope is proposed to the maintainer before any work.
+Tracking: #217. Stage A (bounds, audits and diagnoses) and stage B (B0 and B0b on D1, and B1's
+candidate battery version 5 with its development forecasts) ran under the maintainer's decisions of
+2026-11-11 and 2026-11-12.
+
+**Closed on 2026-11-12 as not approved, by item 2 of its criterion** (the maintainer's decision;
+[closing record](docs/validation/v0.5.3/closing-record.md),
+[independent review](docs/validation/v0.5.3/closing-review.md)). No target passed or was declared
+infeasible, and none has a basis for an infeasibility record.
 
 **Why.** v0.5.2 closed as not approved, with every failed target of v0.5 outstanding (D1 for EB1 and
 EB2, D2, D4, T2a). This is correction round 3, the last of the advance rule. **If round 3 also ends
@@ -741,6 +764,57 @@ maintainer; an estimator's calibrated domain is a coverage limit, to be sized ag
 population; check each power requirement against the target population's noise before building the
 test; size on the code that will run; an information bound is not attainability; review a design
 before its run; hosts of many sectors outlast the 30-minute batch.
+
+---
+
+## v0.5.4 Information checks (change of approach after round 3)
+
+Tracking: #217. Design: [docs/plans/v0.5.3-after-round3-decision.md](docs/plans/v0.5.3-after-round3-decision.md).
+
+**Why.** Round 3 closed as not approved, and the maintainer chose to change the approach (the
+decision of 2026-11-12). The cheap information checks come before any new estimator, each with a
+pre-registered rule frozen before its data are read.
+
+**Limits.** It is not a fourth correction round. There is no new battery, no acceptance, no draw, no
+change to `src/`, and no target or test rule changes. Development data only.
+
+**The checks and their possible outcomes:**
+- **I1, the diagnosis** of which `systematics` sub-check holds T2a's losses and of D2's missing
+  classes: route or unresolved, never a draft.
+- **I2, the per-host bound on T2a's background error:** route or unresolved, never a draft until
+  controls on `systematics`' FAILs survive review.
+- **I3, D1's joint test with the planet side and the severities:** route or unresolved until its
+  planet side is designed. At most a fatal-class finding, never a general D1 draft.
+- **I4, `odd_even`'s bound with the transit shape as a nuisance:** route, draft infeasibility of D2,
+  or unresolved.
+
+A draft infeasibility is a draft only. Recording it is the maintainer's stop, with Codex's and an
+independent review.
+
+**The first half:** I1, then I4, run; I2's and I3's designs are written on paper and frozen only
+after I1's result. It stops at its end, or earlier on a code defect, a rerun that does not reproduce
+its verdict, or a draft infeasibility.
+
+**Caps:**
+
+| Cap | The first half | The whole phase |
+|---|---|---|
+| CPU-h | 25 | 50 |
+| Review tokens | 2.0 M | 3.5 M, plus one independent review of up to 0.35 M |
+| Agent-days | 4 | 10 |
+| Disk | | 5 GB |
+
+The phase stops at 80 % of any cap.
+
+**Lessons of v0.5.3** ([closing record](docs/validation/v0.5.3/closing-record.md)):
+- **Count blockers from what the verdict aggregates.** Two blocker lists of B1 counted diagnostic
+  tests and warning FAILs as blockers. The corrected record changed which tests block (`systematics`
+  and `sinusoid`, not `duration_excess`), though not T2a's answer.
+- **Run information checks before building estimators.** Version 5's estimators fell back on most
+  curves (E3) or ran without changing the outcome (E4, E2), and D2 did not move. A bound or
+  diagnosis on the blocking sub-check would have shown where an estimator could help.
+- A part's checkpoint can underestimate its cost (by 1.68 in B1.4). A cap stop on development work
+  is recorded, and resolved only by an approved, recorded completion.
 
 ---
 
