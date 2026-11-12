@@ -1,0 +1,15 @@
+As correções técnicas conferem com os registros. Resta **um erro de formatação na tabela de consumo**, sem efeito sobre as conclusões.
+
+- **D2/D4:** a explicação do trabalho em voo, os 0,75 CPU-h extrapolados e os dez minutos estimados estão corretos. O pior caso de D4 é 25/131 = **0,19084**. Completar pode decidir D2, sem mudar T2a ou fornecer rota para D1. [Relatório:27](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1-stop-report.md:27)
+
+- **Preços e subtotais:** conferem **2.987 − 163 = 2.824** e **3.609 − 163 = 3.446**. A exclusão da referência que falhou, o caráter herdado de A0, os 206 CPU-h meramente ilustrativos, E3 como problema de disponibilidade e E4 sem preço estão corretamente explicitados. Os subtotais **3.068–3.690**, seus acumulados **3.231–3.853**, e os adicionais de 380 também conferem, preservada a ressalva de componentes não dimensionados. [Relatório:166](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1-stop-report.md:166), [budget:89](C:/Projetos/refute/docs/validation/v0.5.2/stage2/budget.md:89)
+
+- **Confirmação:** a extrapolação por estrato dá **27,403 CPU-h para T2a** e aproximadamente **5,225 para D2/D4**, somando 32,627 antes dos componentes ausentes. “At least about 33; not priced in full” está adequado. A distinção entre as 615 recuperações e o workload completo também está correta. [Relatório:169](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1-stop-report.md:169)
+
+- **Calendário:** conferem os **1.565,4 CPU-h** anteriores à pausa. Para os novos subtotais, os términos calculados são 01/12 às 23:45, 04/12 às 20:32 e, com certificação adicional, 03/12 às 18:34 até 06/12 às 05:52. As datas aproximadas e os dias apresentados são consistentes, inclusive “02/12” por arredondamento próximo à meia-noite. A liberação permanece hipotética. [Relatório:177](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1-stop-report.md:177)
+
+- **E3, T3b e encerramento:** 1,045 arredonda corretamente 1,044785. A recomendação de A agora distingue preferência de planejamento de preservação demonstrada e incorpora as salvaguardas anteriores aos resultados. D1 continua C/N, pendente e sem rota; não aparece relaxamento ou mudança retrospectiva de regra. [Relatório:135](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1-stop-report.md:135), [T3b:201](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1-stop-report.md:201), [D1:244](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1-stop-report.md:244)
+
+- **Consumo:** conferem CPU, tokens, alocações, projeções e estados das partes. Os timestamps de 05:46 UTC reproduzem **1,8532 dias de parede e 0,7082 ativos**, compatíveis com 1,85 e 0,71. **Remover as linhas 253–254**, que deixaram o cabeçalho antigo de três colunas antes do novo de quatro; isso pode ocultar a última coluna na renderização Markdown. [Relatório:253](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1-stop-report.md:253)
+
+**WEAKENED, corrigir apenas o cabeçalho duplicado da tabela de consumo nas linhas 253–254.**

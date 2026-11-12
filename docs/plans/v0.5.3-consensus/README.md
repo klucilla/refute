@@ -469,3 +469,21 @@ The corrections were these:
   - an incomplete D2/D4 part is never decided;
   - integrity refusals stand.
 - **Round 3:** the partial read decided by the persisted ledger state, with a failed gate always propagated. Round 3 was the last round, and its conservative option was adopted.
+
+## The end-of-B1 review (the stop report, `b1-stop-report.md`)
+
+Codex's one review at B1's end (the maintainer's rule: one review at the end of each step), of the stop report and its records (`67a2107`): every number against its record, the claims' limits, the pricing, T3b, D1 and round 3's closing reading. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [b1-end-round-1-answer.md](b1-end-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (pricing, confirmation, calendar and cap coverage) | `e5e4e038165cd3fa17d97c920cf6df10decc472b8a6bd536539be7d16a9bb62d` |
+| 2 | [b1-end-round-2-answer.md](b1-end-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` (one duplicated table header) | `fa213c8e64c61520777cb3993a714f768f34e69cbe4e722dacae80f9c9fa10da` |
+
+The tokens are cumulative over the conversation `b1-end`:
+
+- round 1: 2,375,126 input (2,239,744 cached) and 17,601 output;
+- round 2: 3,088,811 input (2,932,352 cached) and 21,712 output;
+
+The conversation now counts **178,171** against stage B's cap.
+
+Applied as Codex wrote them. Round 1 reproduced the forecast, the census, the blockers and the consumption in memory, checked the shards against their sidecars, and confirmed that the D2/D4 stop's reading and the new blocker diagnostic are faithful (`K_B`, `U_B` and the answer do not depend on the defective counter). Its corrections: the A0 line called a provisional inherited reference, and version 3's failed schedule (2,956) left out of the low end; the estimators' 1,000 contrasts an illustration, not a sizing, with E3's 15 % availability a design problem; the confirmation re-extrapolated per stratum and called not priced in full; the totals called provisional subtotals, with the cumulative total against 3,100; the calendar conditioned (no acceptance authorized, the release a hypothesis); E3's lower end 1.045; T3b a planning preference with the union's safeguards before any result; the consumption completed with sub-caps, a per-part table and the first smoke's cap stop. Round 2 confirmed every correction against the records and asked only to remove a duplicated table header, which was removed as written; no third round was needed, since no point remained in divergence.

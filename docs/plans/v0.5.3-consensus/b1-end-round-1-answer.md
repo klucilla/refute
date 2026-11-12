@@ -1,0 +1,45 @@
+O encerramento sem aceitação está sustentado. A precificação e a apresentação de alguns limites precisam de correções. Reproduzi os resumos em memória e conferi os shards por fingerprint, argumentos e SHA-256, sem executar as baterias ou alterar arquivos.
+
+1. **Forecast, censo e blockers: conferem.** D2/D4 têm 181 curvas, 162 elegíveis e 112 no subconjunto D4. Conferem os kept 157/131/130, REFUTED 4/2/3, intervalos e blockers. T2a tem 302/257/56 injeções por estrato: A mantém 162, B mantém 331 e C mantém 373. Portanto, **K_B = 331, U_B = 0, resposta “não”**, e a certificação acima de 20 não resgata este forecast. Conferem também as 228 perdas, 226 mantidas por v0.4, todos os blockers, as 42 recusas e os cinco casos com um único blocker. Referências: [forecast:11](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1-forecast.json:11), [censo:90](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1-forecast.json:90), [blockers:89](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1-t2a-blockers.json:89).
+
+2. **Os dois eventos especiais foram interpretados corretamente.**
+
+   O cap efetivo de D2/D4 foi **7,005729 CPU-h**, e o consumo contabilizado foi **7,092717**. Os shards completos somam 7,028312 CPU-h; a diferença é contabilização além do trabalho registrado nos resultados. O driver interrompe novos despachos no cap e deixa terminar trabalho em voo. Isso explica o pequeno excesso sem erro científico. A regra anterior ao resultado mantém D2/D4 **NOT DECIDED**. Referências: [ledger:49](C:/Projetos/refute/docs/validation/v0.5.3/stageB/ledger.json:49), [budgeted.py:253](C:/Projetos/refute/docs/validation/v0.5.2/stage2/budgeted.py:253), [driver.py:507](C:/Projetos/refute/docs/validation/v0.5.2/stage2/driver.py:507), [procedimento anterior:34](C:/Projetos/refute/.cache/v053/stageB/issue-217-b13-b14.md:34).
+
+   Os **0,75 CPU-h** restantes são uma extrapolação razoável; os dez minutos são estimativa. Completar pode decidir D2, cujo resgate ainda é aritmeticamente possível. D4 permaneceria abaixo de 0,30 mesmo no pior caso restante: 25/131 = 0,191. Isso não muda o resultado de T2a nem fornece rota para D1.
+
+   O diagnóstico novo é fiel aos registros atuais. Ele consulta `d['status']`, exclui os testes efetivamente registrados como diferidos e reproduz integralmente seu JSON. **K_B, U_B e a resposta não dependem do contador defeituoso.** Referências: [contador original:372](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1_b14.py:372), [diagnóstico:40](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1_t2a_blockers.py:40).
+
+3. **A precificação precisa destas correções.**
+
+   **A0:** os 140 contra 145 CPU-s por curva comparam workloads completos, em curvas diferentes. Não isolam o incremento de versão 5 nem medem custo e disponibilidade por célula da família A0. Manter 1.482–1.932 como **referência provisória herdada** é defensável; afirmar “adds no measurable cost” e tratar isso como repricing suficiente, não. Além disso, **2.956 é explicitamente uma referência que falha no adequacy check, não uma opção de aceitação**. Ela não deve sustentar o limite inferior do orçamento executável. Referências: [relatório:157](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1-stop-report.md:157), [budget:87](C:/Projetos/refute/docs/validation/v0.5.2/stage2/budget.md:87), [exigência de repricing:514](C:/Projetos/refute/docs/plans/v0.5.3-stageB1-design.md:514).
+
+   **Estimadores:** aproximadamente 206 CPU-h reproduz a extrapolação dos rendimentos observados. Entretanto, **1.000 contrastes “chosen for scale” não dimensionam uma aceitação pelas regras da família**. Falta declarar família, sizing e critério de entrega. E3 entrega apenas 51/339 = 15,0% na população elegível; aumentar o número de curvas, mantendo esse rendimento, não supera a exigência de disponibilidade de 80% do screen. E4 continua sem preço. Referências: [relatório:158](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1-stop-report.md:158), [disponibilidade:127](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1-recal.json:127), [regra:501](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1_recal.py:501).
+
+   **Selector:** 135 CPU-h corresponde à estimativa antiga e já está incluído na primeira linha do orçamento. Os aproximadamente 380 CPU-h adicionais seguem a razão indicada, com a hipótese explícita de família do mesmo tamanho. Os rótulos de estimativa estão adequados. Apenas substituir “one battery costs” por **custo total normalizado pelo número de baterias**, pois não houve cronometragem isolada por bateria. Referências: [relatório:139](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1-stop-report.md:139), [budget:18](C:/Projetos/refute/docs/validation/v0.5.2/stage2/budget.md:18).
+
+   **Confirmação:** 25,5 CPU-h subestima a própria extrapolação por estrato. Em 2–4 setores já foram executadas somente duas baterias, com C reutilizando A. Aplicando o desconto apenas ao estrato de 5–20, resulta **aproximadamente 27,4 CPU-h**, ainda uma escala aproximada. Além disso, 615 é o denominador selecionado após recuperação, não o workload completo de C2'. D1 e C3 continuam sem medição. Assim, **30–60 CPU-h não constitui um orçamento completo demonstrado**. Referências: [relatório:160](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1-stop-report.md:160), [reutilização:155](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1_b14.py:155), [denominador:94](C:/Projetos/refute/docs/validation/v0.5.2/stage2/forecast_t2a.py:94).
+
+   **Totais:** 3.030–3.720 e 3.410–4.100 somam aproximadamente as parcelas apresentadas, mas devem ser chamados **subtotais provisórios, mais E4 e os componentes ainda não dimensionados**, sem limite superior estabelecido. Também é preciso comparar o teto antigo com o consumo acumulado, incluindo os 163 CPU-h anteriores, pois 3.030 isoladamente não excede 3.100. Referência: [relatório:161](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1-stop-report.md:161).
+
+4. **Calendário: a aritmética básica confere, condicionada aos subtotais.** Antes da pausa são 111 horas fora do expediente e 50 dentro: **1.565,4 CPU-h**. Partindo hipoteticamente de 19/11 às 00:00, com as taxas declaradas:
+
+   | CPU-h | Término aproximado | Dias |
+   |---:|---|---:|
+   | 3.030 | 01/12, 20:25 | 12,85 |
+   | 3.720 | 04/12, 23:09 | 15,96 |
+   | 3.410–4.100 | 03/12, 12:44 a 06/12, 08:29 | 14,53–17,35 |
+
+   São cenários de computação contínua, sem desenvolvimento e sem E4 adicional. A liberação em 19/11 não é automática. “None of the acceptance” deve significar **nenhuma aceitação autorizada neste estado**, não impossibilidade física de executar qualquer parcela antes da pausa. Referência: [relatório:164](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1-stop-report.md:164).
+
+5. **Estimadores, T3b e D1 preservam os limites da evidência.** Conferem os 7/316/51/1 contrastes, os 288 fallbacks e os 81/112 de B1.2. “Exploratory veto, not a calibration” está correto. Pequena correção numérica: o limite inferior do intervalo de E3 é **1,044785**, preferencialmente 1,045, em vez de 1,05. Referência: [recal:99](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1-recal.json:99).
+
+   **A é uma recomendação condicional defensável**, acrescentada ao frame aprovado. Os números 165/39, 64%/68%/81% e 23/35/36 conferem. Eles justificam uma preferência de planejamento, sem demonstrar maior preservação de membros verdadeiros ou menor contaminação. Explicitar que a qualificação ocorre **antes dos resultados de Refute** e incorpora as salvaguardas da união, inclusive proxy nunca usado como exclusão. Referência: [t3b-status:56](C:/Projetos/refute/docs/validation/v0.5.2/stage2/t3b-status.md:56).
+
+   D1 está corretamente descrito: **B0 C, B0b N, probabilidades 0,452 e 0,102, sem rota e sem declaração de inviabilidade**. O encerramento sem aceitação segue o critério existente; não encontrei relaxamento de alvo ou alteração retrospectiva das regras de decisão. Referências: [B0b:3](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b0b-record.md:3), [encerramento:182](C:/Projetos/refute/docs/validation/v0.5.3/stageA/README.md:182).
+
+6. **Consumo: totais corretos, apresentação incompleta.** Conferem **52,566 CPU-h**, sendo B0 4,923 e B1 47,643; 1.476.133 tokens anteriores à revisão; zero sessões independentes; aproximadamente 1,456 GB. Os agent-days são compatíveis com os timestamps, mas falta registrar o instante da medição, pois `caps.json` termina antes desses valores finais.
+
+   Acrescentar B1 **47,643/120 CPU-h**, B0 **489.509/1,5 M tokens**, os sub-caps aplicáveis e o consumo/cap efetivo de cada parte. Corrigir “one part’s own cap”: **o smoke original também atingiu seu cap**, embora seu tratamento já tivesse sido autorizado. Referências: [caps:3](C:/Projetos/refute/docs/validation/v0.5.3/stageB/caps.json:3), [smoke:78](C:/Projetos/refute/docs/validation/v0.5.3/stageB/ledger.json:78), [exigência:531](C:/Projetos/refute/docs/plans/v0.5.3-stageB1-design.md:531).
+
+**WEAKENED, com as correções de precificação, confirmação, calendário condicionado e cobertura dos caps acima.**
