@@ -1097,6 +1097,74 @@
     "agent_days": 0.1,
     "review_tokens": 0
    }
+  },
+  {
+   "utc": "2026-11-12T14:47:33Z",
+   "step": "independent review of the closing",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-b14": 156297,
+     "b1-blockers": 152803,
+     "b1-closing": 136938,
+     "b1-code": 196718,
+     "b1-design": 286112,
+     "b1-end": 178171,
+     "b1-recal": 186431,
+     "b1-rest": 114130,
+     "b1-screen": 161066
+    },
+    "b0": 489509,
+    "stage_b": 2058175
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 2.98,
+   "agent_days_active": 0.88,
+   "cpu_hours": {
+    "stage_b": 53.273,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.3,
+    "review_tokens": 350000
+   }
+  },
+  {
+   "utc": "2026-11-12T14:47:46Z",
+   "step": "independent review of the closing (stage B scope)",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-b14": 156297,
+     "b1-blockers": 152803,
+     "b1-closing": 136938,
+     "b1-code": 196718,
+     "b1-design": 286112,
+     "b1-end": 178171,
+     "b1-recal": 186431,
+     "b1-rest": 114130,
+     "b1-screen": 161066
+    },
+    "b0": 489509,
+    "stage_b": 2058175
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 2.98,
+   "agent_days_active": 0.88,
+   "cpu_hours": {
+    "stage_b": 53.273,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.3,
+    "review_tokens": 350000
+   }
   }
  ]
 }

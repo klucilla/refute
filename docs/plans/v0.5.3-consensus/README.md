@@ -525,3 +525,21 @@ The tokens are cumulative over the conversation `b1-blockers`:
 The conversation now counts **152,803** against stage B's cap.
 
 Applied as Codex wrote them. Round 1 recomputed the T2a and D2 sections through the verifying readers and found them equal to the JSON, independently re-aggregated T2a, and confirmed K_B 331, U_B 0, C 373, the corrected lists, the what-ifs (72/124/211/228 and 9/8/33/34), D2 FAIL and D4 PASS on the 200 curves, and that only B1's two lists counted diagnostics. Its corrections: E4 without a measurement is "called, no measurement completed", not a fallback to version 4 (the script rerun, read only); the addendum no longer attributes `systematics`' INCONCLUSIVE to the background sub-check's power; on D2, 21 INCONCLUSIVE and 1 FAIL where E2 operated; `forecast-paths.md` added to item 2(c); "single blocker" defined against `aggregate`'s branch. Round 2 confirmed every correction and reproduced the updated JSON exactly.
+
+## Round 3's closing record (`docs/validation/v0.5.3/closing-record.md`)
+
+Codex's review of the closing record of round 3 (the maintainer's decision of 2026-11-12, item 3), before the independent review of item 4. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [b1-closing-round-1-answer.md](b1-closing-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (D2's overlap, E2, prices, D1's argument, traceability, the pending review, a title) | `0582a209908644a79de308bb086912978208516a61c9fdc5e34628bfc5672845` |
+| 2 | [b1-closing-round-2-answer.md](b1-closing-round-2-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `3629a815082037914ba3c0a3726368030f36abb0633da50223790bc7da1a4ec5` |
+
+The tokens are cumulative over the conversation `b1-closing`:
+
+- round 1: 996,219 input (883,200 cached) and 8,708 output;
+- round 2: 1,419,072 input (1,292,800 cached) and 10,666 output;
+
+The conversation now counts **136,938** against stage B's cap.
+
+Applied as Codex wrote them. Round 1 found the closing "not approved" supported (item 2 by T2a, with D2 FAIL on the completed part; item 3 by the cap reached, kept as a fact), the remaining numbers, blockers, intervals and consumption right, the three options concrete and no target relaxed. Its corrections: 17 D2 losses carry both `odd_even` and `sinusoid`; version 5 did not improve retention (142 to 141); only E2's SD criterion passed, and the current E2's insufficiency does not generalize; the 80 % availability is B1.3's; the subtotal excludes the 380 above 20 and contains the 135, with the 163 named as v0.5.2's budget base against its 179.5 CPU-h; for D1, a binary the oracle does not reject is not a SURVIVED; measured numbers distinguished from estimates, stage A's smoke exception named, B1's first smoke left an unresolved stop; the independent review marked pending; LEO-Vetter's full title. Round 2 confirmed every correction; the `{TOKENS}` and `{DAYS}` placeholders are filled after the reviews they count.
