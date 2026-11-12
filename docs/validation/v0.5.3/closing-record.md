@@ -253,8 +253,8 @@ bounded (v0.5.2's closing record).
 | Cap | Stage A | Stage B | Note |
 |---|---|---|---|
 | CPU-h | **7.78** of 50 | **53.273** of 150: B0 4.923 of its 30; B1 48.350 of its 120, of which the D2/D4 completion took 0.707 | `stageA/ledger.json`, `stageB/ledger.json`. Two parts reached their own caps: B1's first smoke, which the maintainer's split replaced, and D2/D4, completed afterwards. No stage cap was reached |
-| Review tokens | 0 of 0.5 M (Codex's tokens did not count in stage A) | {TOKENS} | stage B counts Codex's uncached input plus output, from the last turn of each conversation, plus the independent review |
-| Agent-days | 0.74 wall-clock bound, 0.21 active, of 4 | {DAYS} of 8 | Claude's transcripts. Codex's and the reviewer's time is not counted |
+| Review tokens | 0 of 0.5 M (Codex's tokens did not count in stage A) | **2,278,749** of 4.5 M (the stop is at 3.6 M): Codex 2,058,175 over 13 conversations (B0 489,509), and the independent review 220,574, by the session tool's count | stage B counts Codex's uncached input plus output, from the last turn of each conversation, plus the independent review |
+| Agent-days | 0.74 wall-clock bound, 0.21 active, of 4 | **3.0** wall-clock bound, **0.91** active, of 8 (`stageB/caps.json`, the check after the independent review) | Claude's transcripts. Codex's and the reviewer's time is not counted |
 | Disk | | 1.46 GB under `.cache/v053/stageB/`, of 5 GB | the T2a cache is 1.27 GB of it |
 
 ## Preserved, unchanged
@@ -283,8 +283,25 @@ Nothing under `src/` or `calibration/` changed. v0.5.0's release files are untou
   - the approach (change, infeasibility or pause);
   - T3b: whether to qualify A, and with whose adjudication.
 - **The ROADMAP** changes only after the maintainer approves this record.
-- **The independent review** of this record (the maintainer's item 4) is pending. It will be
-  [`closing-review.md`](closing-review.md), written after Codex's review and kept unchanged.
+- **The independent review** of this record (the maintainer's item 4) is
+  [`closing-review.md`](closing-review.md), kept unchanged. It ran on commit `40aa485`, after Codex's
+  review.
+  - **Its verdict: WEAKENED.** It agrees that the round closes not approved and that no target has
+    a basis for an infeasibility record now.
+  - **It lists nine points** where this record overstates or omits (its section 5). Among them:
+    - the certification above 20 sectors "buys nothing" holds only for version 5's forecast; for a
+      change of approach it is T2a's margin lever;
+    - T2a's stage-A "bound" is a recoverability count, not an information bound;
+    - the T2a what-if also recovers the 5 REFUTED losses;
+    - E2's error stays about 1.1 to 2.1 times the Fisher bound;
+    - 24 of 26 `odd_even` and 17 of 25 `sinusoid` D2 losses have no INCONCLUSIVE class recorded;
+    - T3b is missing from the infeasibility table;
+    - D1's planet side and severity are missing.
+  - **It proposes another order** for a change of approach. First, record what the records cannot
+    tell. Then a per-host bound on the background rise, a joint D1 test with the planet side, and
+    `odd_even`'s bound with the transit shape as a nuisance. Estimators come after.
+  - **None of its points is applied to this record.** They are left to the maintainer's decision,
+    which follows this review.
 - #59 and the open issues are as triaged in v0.5.2.
 
 ## Sources (read on 2026-11-12; they inform the options only, no number comes from them)

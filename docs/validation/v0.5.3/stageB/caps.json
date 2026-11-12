@@ -17,7 +17,7 @@
  },
  "review_tokens_method": "the maintainer's rule of 2026-11-11 (#217, comment 6799266241), for stage B only, replacing there the decision of 2026-11-09: each Codex conversation's uncached input plus output (its last turn's cumulative input_tokens - cached_input_tokens + output_tokens; #217, comment 6799452280), plus every independent review session; a stop at 80 % of a cap; no Codex review cut or shortened to fit",
  "agent_days_method": "Claude's session transcripts since 2026-11-11T14:45:00Z (.cache/v052/tools/agent_time.py): wall clock over 8-hour days (an upper bound) and active time with gaps capped at 10 minutes; Codex's time not counted",
- "independent_review_tokens": 0,
+ "independent_review_tokens": 220574,
  "entries": [
   {
    "utc": "2026-11-11T15:32:08Z",
@@ -1165,6 +1165,48 @@
     "agent_days": 0.3,
     "review_tokens": 350000
    }
+  },
+  {
+   "utc": "2026-11-12T15:00:18Z",
+   "step": "after the independent review of the closing (stage B scope)",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-b14": 156297,
+     "b1-blockers": 152803,
+     "b1-closing": 136938,
+     "b1-code": 196718,
+     "b1-design": 286112,
+     "b1-end": 178171,
+     "b1-recal": 186431,
+     "b1-rest": 114130,
+     "b1-screen": 161066
+    },
+    "b0": 489509,
+    "stage_b": 2058175
+   },
+   "independent_review_tokens": 220574,
+   "agent_days_wall": 3.0,
+   "agent_days_active": 0.91,
+   "cpu_hours": {
+    "stage_b": 53.273,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.0,
+    "review_tokens": 0
+   }
+  }
+ ],
+ "independent_reviews": [
+  {
+   "name": "round 3's closing record (closing-review.md)",
+   "tokens": 220574,
+   "basis": "the session tool's count (subagent_tokens); 41 tool calls; 639 s; the reviewer's own estimate about 130,000",
+   "decision": "the maintainer's decision of 2026-11-12, item 4 (#217)"
   }
  ]
 }
