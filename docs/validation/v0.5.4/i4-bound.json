@@ -1,0 +1,293 @@
+{
+ "completion": {
+  "L_threshold_note": "L is counted over the 177 eligible fresh planets other than 3129; the threshold stays 23 (at most 155 kept against 156 needed)",
+  "cpu_hours": {
+   "h1_i4": 5.0827,
+   "h1_i4_rest": 0.3628,
+   "h1_i4_rest2": 5.3263
+  },
+  "crash_charge_hours": 5.0827,
+  "crash_charge_note": "h1_i4's consumption is the driver's crash charge of the interrupted batch; its measured CPU (its 10 shards' sidecars) is reported apart",
+  "decisions": "the maintainer's decisions of 2026-11-12, 15:46 and 18:05 (#217)",
+  "excluded_from_L": {
+   "index": 3129,
+   "record": [
+    {
+     "alternative": 0.0013432035027191008,
+     "cpu_seconds": 35.171875,
+     "final_depth": 0.0013432035027191008,
+     "index": 3129,
+     "mismatch": [],
+     "nuisance": {
+      "columns": 8,
+      "condition_scaled": 13.510138051823194,
+      "convergence": {
+       "duration": 1.8991922773115643e-11,
+       "ingress_fraction": 6.858893273408756e-11,
+       "period": 7.291854992376541e-08,
+       "t0": 1.1621159759278729e-07
+      },
+      "invalid": [],
+      "sigma": 0.00011399541648651763,
+      "variance": 1.2994954979934615e-08
+     },
+     "odd_even_battery": {
+      "metrics": {
+       "depth_even_err_ppm": 101.22468396827992,
+       "depth_odd_err_ppm": 101.22468396827992,
+       "difference_sigma": 3.0164418257970875,
+       "gls_difference_err_ppm": 154.87791038602467,
+       "v4_difference_sigma": 2.9912838061162534
+      },
+      "status": "FAIL"
+     },
+     "power_known_template": 1.0,
+     "power_nuisance": 1.0,
+     "sectors": 2,
+     "set": "fresh",
+     "sigma_known_template": 0.00011398135511049805,
+     "sinusoid_small_at_bound": 0.9999999999968057,
+     "status": "OK",
+     "verdict": "REFUTED"
+    }
+   ],
+   "why": "unresolved in I1: a raw and enforced odd_even FAIL, not a sensitivity case; excluded from L and from I2's population by the maintainer's decision of 15:46 (item 2), taken before any I4 result was read"
+  },
+  "first_half_sub_cap": 25.0,
+  "measured_cpu_hours_of_the_interrupted_part": 0.1858,
+  "records_per_part": {
+   "h1_i4": 10,
+   "h1_i4_rest": 14,
+   "h1_i4_rest2": 266
+  }
+ },
+ "cpu_hours": 5.0827,
+ "decision": "the maintainer's decision of 2026-11-12, 14:00, item 3 (#217)",
+ "fingerprint": "161851db746b905b",
+ "label": "v0.5.4 I4: odd_even's bound with the transit shape as a nuisance (a bound under the generator's model; decides nothing by itself)",
+ "method_status": "not_validated",
+ "not_reproduced": [],
+ "outcome": "route",
+ "sets": {
+  "fresh": {
+   "E": 15,
+   "E_reasons": [
+    {
+     "index": 3019,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 3023,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 3032,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 3054,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 3063,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 3093,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 3113,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 3117,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 3122,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 3134,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 3143,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 3162,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 3169,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 3193,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 3195,
+     "why": [
+      "the convergence check failed"
+     ]
+    }
+   ],
+   "L": 2,
+   "L_planets": [
+    3041,
+    3182
+   ],
+   "below_at_known_template": 2,
+   "planets": 177,
+   "sigma_nuisance_over_known_template": {
+    "max": 1.0021309132644167,
+    "median": 1.000035887932896,
+    "min": 1.0000000407134129
+   },
+   "sinusoid_below_at_oracle (apart, never in L)": 6,
+   "valid": 162
+  },
+  "v052": {
+   "E": 15,
+   "E_reasons": [
+    {
+     "index": 1000,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 1013,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 1017,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 1019,
+     "why": [
+      "F is ill-conditioned (3.55e+14)"
+     ]
+    },
+    {
+     "index": 1026,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 1034,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 1047,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 1065,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 1082,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 1083,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 1088,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 1097,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 1105,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 1111,
+     "why": [
+      "the convergence check failed"
+     ]
+    },
+    {
+     "index": 1112,
+     "why": [
+      "the convergence check failed"
+     ]
+    }
+   ],
+   "L": 2,
+   "L_planets": [
+    1046,
+    1075
+   ],
+   "below_at_known_template": 2,
+   "planets": 112,
+   "sigma_nuisance_over_known_template": {
+    "max": 1.0008557069461677,
+    "median": 1.0000389903277496,
+    "min": 1.000000010327479
+   },
+   "sinusoid_below_at_oracle (apart, never in L)": 5,
+   "valid": 97
+  }
+ },
+ "skipped_after_a_stop": 0,
+ "stop": []
+}

@@ -1,4 +1,13 @@
 {
+ "allocation_closures": [
+  {
+   "consumed": 0.36277777777777775,
+   "part": "h1_i4_rest",
+   "projection_at_stop": 7.255555555555555,
+   "reason": "a stopped part closed after its reconciliation (i4_rest2.py)",
+   "utc": "2026-11-12T21:38:50Z"
+  }
+ ],
  "sections": {
   "v054": {
    "parts": {
@@ -21,15 +30,28 @@
      "spent_hours": 5.082673611111111
     },
     "h1_i4_rest": {
-     "allocation_hours": 6.0,
+     "allocation_hours": 0.40000000000000036,
      "checkpoint_shards": 14,
      "identity": "a89ad9b0666dd1fb",
-     "projection_hours": 7.255555555555555,
-     "spent_hours": 0.36277777777777775,
-     "unresolved_stop": "stopped: the projection 7.3 CPU-h passes the part's hard cap, 7.1"
+     "projection_at_stop": 7.255555555555555,
+     "projection_hours": 0.36277777777777775,
+     "reconciled": [
+      {
+       "reason": "The maintainer's decision of 2026-11-12, 18:05, item 1 (#217): h1_i4_rest stopped at its checkpoint (projection 7.3 CPU-h against the part's hard cap 7.1, the first half's room after a 12-worker in-flight reserve); the stop is a fact; the 266 remaining planets run as h1_i4_rest2 with the same code, fingerprint and rows and 6 workers (i4_rest2.py).",
+       "stop": "stopped: the projection 7.3 CPU-h passes the part's hard cap, 7.1"
+      }
+     ],
+     "spent_hours": 0.36277777777777775
+    },
+    "h1_i4_rest2": {
+     "allocation_hours": 7.0,
+     "checkpoint_shards": 14,
+     "identity": "df7b0c962c8208dd",
+     "projection_hours": 5.072356770833333,
+     "spent_hours": 5.326263020833333
     },
     "h1_reserve": {
-     "allocation_hours": 2.9000000000000004
+     "allocation_hours": 1.5000000000000004
     },
     "h2_unallocated": {
      "allocation_hours": 25.0
@@ -44,6 +66,20 @@
    "reason": "Interrupted at about 15:40 on 2026-11-12, when the desktop app restarted, at 10 of 290 planets; no worker survived (each recorded PID checked). The maintainer's decision of 2026-11-12, 15:46, item 1 (#217): the open batch is closed by the driver's crash charge and recorded as a fact; the 280 remaining planets run as part h1_i4_rest with the same code, fingerprint and rows (i4_rest.py).",
    "to": "h1_i4_rest",
    "utc": "2026-11-12T19:02:15Z"
+  },
+  {
+   "from": "h1_i4_rest",
+   "hours": 5.6,
+   "reason": "The maintainer's decision of 2026-11-12, 18:05, item 1 (#217): h1_i4_rest stopped at its checkpoint (projection 7.3 CPU-h against the part's hard cap 7.1, the first half's room after a 12-worker in-flight reserve); the stop is a fact; the 266 remaining planets run as h1_i4_rest2 with the same code, fingerprint and rows and 6 workers (i4_rest2.py).",
+   "to": "h1_i4_rest2",
+   "utc": "2026-11-12T21:38:50Z"
+  },
+  {
+   "from": "h1_reserve",
+   "hours": 1.4,
+   "reason": "The maintainer's decision of 2026-11-12, 18:05, item 1 (#217): h1_i4_rest stopped at its checkpoint (projection 7.3 CPU-h against the part's hard cap 7.1, the first half's room after a 12-worker in-flight reserve); the stop is a fact; the 266 remaining planets run as h1_i4_rest2 with the same code, fingerprint and rows and 6 workers (i4_rest2.py).",
+   "to": "h1_i4_rest2",
+   "utc": "2026-11-12T21:38:50Z"
   }
  ]
 }
