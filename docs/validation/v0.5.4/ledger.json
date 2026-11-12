@@ -1,0 +1,24 @@
+{
+ "sections": {
+  "v054": {
+   "parts": {
+    "h1_i1": {
+     "allocation_hours": 8.0,
+     "checkpoint_shards": 11,
+     "identity": "2abe426a3c370d2b",
+     "projection_hours": 5.600462436868686,
+     "spent_hours": 6.398289930555555
+    },
+    "h1_i4": {
+     "allocation_hours": 8.0
+    },
+    "h1_reserve": {
+     "allocation_hours": 8.9
+    },
+    "h2_unallocated": {
+     "allocation_hours": 25.0
+    }
+   }
+  }
+ }
+}

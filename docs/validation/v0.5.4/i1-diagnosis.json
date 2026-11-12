@@ -1,0 +1,306 @@
+{
+ "class_i_probabilities": {
+  "d2 odd_even.main": {
+   "below_0.95": 25,
+   "max": 0.9454777319872683,
+   "median": 0.8510744813637481,
+   "min": 0.625290262845711,
+   "n": 25
+  },
+  "d2 sinusoid.2P": {
+   "below_0.95": 18,
+   "max": 0.9469151170904508,
+   "median": 0.8577927498207963,
+   "min": 0.010483729951281884,
+   "n": 18
+  },
+  "d2 sinusoid.P": {
+   "below_0.95": 18,
+   "max": 0.9469151170904508,
+   "median": 0.8487927498207963,
+   "min": 0.0,
+   "n": 18
+  },
+  "d2 sinusoid.P/2": {
+   "below_0.95": 18,
+   "max": 0.9469151170904508,
+   "median": 0.8577927498207963,
+   "min": 0.0,
+   "n": 18
+  },
+  "t2a systematics.background": {
+   "below_0.95": 102,
+   "max": 0.9575,
+   "median": 0.371,
+   "min": 0.0015,
+   "n": 103
+  },
+  "t2a systematics.sap": {
+   "below_0.95": 1,
+   "max": 1.0,
+   "median": 1.0,
+   "min": 0.8845,
+   "n": 103
+  }
+ },
+ "class_table": {
+  "d2": {
+   "odd_even": {
+    "i": 25,
+    "ii": 1,
+    "unresolved": 1
+   },
+   "sinusoid": {
+    "i": 18,
+    "ii": 8
+   }
+  },
+  "t2a": {
+   "2_to_4": {
+    "i": 63,
+    "ii": 41
+   },
+   "5_to_20": {
+    "i": 40,
+    "ii": 25
+   }
+  }
+ },
+ "cpu_hours": 6.3983,
+ "d2_reasons": {
+  "odd_even": {
+   "i: insufficient sensitivity: odd/even depth difference 1001.75 ppm not detectable (0.804 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 1080.42 ppm not detectable (0.918 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 1162.61 ppm not detectable (0.826 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 140.846 ppm not detectable (0.900 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 145.803 ppm not detectable (0.705 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 1701.66 ppm not detectable (0.718 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 173.889 ppm not detectable (0.911 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 227.468 ppm not detectable (0.945 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 250.717 ppm not detectable (0.882 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 267.097 ppm not detectable (0.834 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 345.719 ppm not detectable (0.909 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 380.194 ppm not detectable (0.772 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 384.707 ppm not detectable (0.788 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 408.026 ppm not detectable (0.903 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 413.869 ppm not detectable (0.695 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 442.449 ppm not detectable (0.868 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 449.921 ppm not detectable (0.682 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 468.414 ppm not detectable (0.858 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 517.523 ppm not detectable (0.686 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 556.955 ppm not detectable (0.936 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 692.494 ppm not detectable (0.767 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 971.789 ppm not detectable (0.926 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 973.918 ppm not detectable (0.625 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 99.3708 ppm not detectable (0.895 < 0.95)": 1,
+   "i: insufficient sensitivity: odd/even depth difference 996.506 ppm not detectable (0.851 < 0.95)": 1,
+   "ii: raw INCONCLUSIVE: not enough measured transits: 4 even, 1 odd": 1,
+   "unresolved: raw FAIL, enforced FAIL": 1
+  },
+  "sinusoid": {
+   "i: insufficient sensitivity: sinusoid explaining the dip at P/2 1001.75 ppm not detectable (0.838 < 0.95)": 1,
+   "i: insufficient sensitivity: sinusoid explaining the dip at P/2 1080.42 ppm not detectable (0.946 < 0.95)": 1,
+   "i: insufficient sensitivity: sinusoid explaining the dip at P/2 1162.61 ppm not detectable (0.895 < 0.95)": 1,
+   "i: insufficient sensitivity: sinusoid explaining the dip at P/2 140.846 ppm not detectable (0.000 < 0.95)": 1,
+   "i: insufficient sensitivity: sinusoid explaining the dip at P/2 143.901 ppm not detectable (0.745 < 0.95)": 1,
+   "i: insufficient sensitivity: sinusoid explaining the dip at P/2 145.803 ppm not detectable (0.759 < 0.95)": 1,
+   "i: insufficient sensitivity: sinusoid explaining the dip at P/2 1628 ppm not detectable (0.947 < 0.95)": 1,
+   "i: insufficient sensitivity: sinusoid explaining the dip at P/2 173.889 ppm not detectable (0.877 < 0.95)": 1,
+   "i: insufficient sensitivity: sinusoid explaining the dip at P/2 250.717 ppm not detectable (0.918 < 0.95)": 1,
+   "i: insufficient sensitivity: sinusoid explaining the dip at P/2 267.097 ppm not detectable (0.747 < 0.95)": 1,
+   "i: insufficient sensitivity: sinusoid explaining the dip at P/2 345.719 ppm not detectable (0.929 < 0.95)": 1,
+   "i: insufficient sensitivity: sinusoid explaining the dip at P/2 347.362 ppm not detectable (0.880 < 0.95)": 1,
+   "i: insufficient sensitivity: sinusoid explaining the dip at P/2 380.194 ppm not detectable (0.786 < 0.95)": 1,
+   "i: insufficient sensitivity: sinusoid explaining the dip at P/2 384.707 ppm not detectable (0.373 < 0.95)": 1,
+   "i: insufficient sensitivity: sinusoid explaining the dip at P/2 442.449 ppm not detectable (0.620 < 0.95)": 1,
+   "i: insufficient sensitivity: sinusoid explaining the dip at P/2 692.494 ppm not detectable (0.923 < 0.95)": 1,
+   "i: insufficient sensitivity: sinusoid explaining the dip at P/2 971.789 ppm not detectable (0.887 < 0.95)": 1,
+   "i: insufficient sensitivity: sinusoid explaining the dip at P/2 99.3708 ppm not detectable (0.123 < 0.95)": 1,
+   "ii: raw INCONCLUSIVE: significant sinusoid at 2P: it does not establish the dip's cause": 5,
+   "ii: raw INCONCLUSIVE: significant sinusoid at P/2: it does not establish the dip's cause": 1,
+   "ii: raw INCONCLUSIVE: significant sinusoid at P: it does not establish the dip's cause": 2
+  }
+ },
+ "decision": "the maintainer's decision of 2026-11-12, 14:00, item 3 (#217)",
+ "errors": [],
+ "estimators": {
+  "d2 odd_even class i: E2": {
+   "called, no completion": 3,
+   "operated": 22
+  },
+  "d2 odd_even class i: E4": {
+   "called, no completion": 1,
+   "operated": 24
+  },
+  "d2 odd_even class ii: E2": {
+   "called, no completion": 1
+  },
+  "d2 odd_even class ii: E4": {
+   "operated": 1
+  },
+  "d2 odd_even class unresolved: E2": {
+   "operated": 1
+  },
+  "d2 odd_even class unresolved: E4": {
+   "operated": 1
+  },
+  "d2 sinusoid class i: E2": {
+   "called, no completion": 2,
+   "operated": 16
+  },
+  "d2 sinusoid class i: E4": {
+   "called, no completion": 1,
+   "operated": 17
+  },
+  "d2 sinusoid class ii: E2": {
+   "operated": 8
+  },
+  "d2 sinusoid class ii: E4": {
+   "operated": 8
+  },
+  "t2a systematics class i: E2": {
+   "called, no completion": 8,
+   "operated": 95
+  },
+  "t2a systematics class i: E4": {
+   "operated": 103
+  },
+  "t2a systematics class ii: E2": {
+   "called, no completion": 14,
+   "not reached": 42,
+   "operated": 10
+  },
+  "t2a systematics class ii: E4": {
+   "called, no completion": 17,
+   "not reached": 42,
+   "operated": 7
+  }
+ },
+ "fingerprint": "1ed6060da408e6a4",
+ "i2_population": [
+  "TIC-120900130/2",
+  "TIC-122616851/8",
+  "TIC-122616851/9",
+  "TIC-138651299/2",
+  "TIC-140867523/1",
+  "TIC-142727252/2",
+  "TIC-142727252/3",
+  "TIC-14802455/2",
+  "TIC-149968737/2",
+  "TIC-149968737/8",
+  "TIC-154257406/0",
+  "TIC-154257406/8",
+  "TIC-158461758/2",
+  "TIC-158461758/4",
+  "TIC-166087356/0",
+  "TIC-166087356/1",
+  "TIC-166087356/6",
+  "TIC-166151416/0",
+  "TIC-166151416/3",
+  "TIC-166761808/3",
+  "TIC-167755099/2",
+  "TIC-167755099/5",
+  "TIC-198407396/0",
+  "TIC-198407396/4",
+  "TIC-202295593/3",
+  "TIC-202295593/5",
+  "TIC-202295593/9",
+  "TIC-210464356/8",
+  "TIC-232966887/5",
+  "TIC-233231885/3",
+  "TIC-233231885/6",
+  "TIC-233231885/9",
+  "TIC-23708215/6",
+  "TIC-240171830/0",
+  "TIC-240171830/1",
+  "TIC-24607925/0",
+  "TIC-24607925/2",
+  "TIC-248356317/3",
+  "TIC-248356317/7",
+  "TIC-25155713/1",
+  "TIC-255927008/1",
+  "TIC-255927008/3",
+  "TIC-255927008/4",
+  "TIC-255927008/5",
+  "TIC-255927008/6",
+  "TIC-255927008/7",
+  "TIC-255927008/9",
+  "TIC-258827696/4",
+  "TIC-258827696/5",
+  "TIC-258827696/7",
+  "TIC-267039954/3",
+  "TIC-269533563/1",
+  "TIC-281574170/1",
+  "TIC-28289264/3",
+  "TIC-28289264/5",
+  "TIC-28289264/6",
+  "TIC-29267852/3",
+  "TIC-29267852/4",
+  "TIC-29267852/6",
+  "TIC-298001089/1",
+  "TIC-298001089/3",
+  "TIC-326209514/0",
+  "TIC-326209514/2",
+  "TIC-326209514/4",
+  "TIC-334900819/1",
+  "TIC-334900819/2",
+  "TIC-334900819/3",
+  "TIC-334900819/6",
+  "TIC-336265633/0",
+  "TIC-336265633/8",
+  "TIC-349577085/5",
+  "TIC-349682621/1",
+  "TIC-354822931/3",
+  "TIC-354822931/7",
+  "TIC-356683052/1",
+  "TIC-356683052/7",
+  "TIC-364129259/0",
+  "TIC-380039482/2",
+  "TIC-381981543/4",
+  "TIC-381981543/6",
+  "TIC-387512509/1",
+  "TIC-388198210/1",
+  "TIC-394103866/0",
+  "TIC-394103866/3",
+  "TIC-394103866/5",
+  "TIC-397000139/3",
+  "TIC-416715793/1",
+  "TIC-421801900/1",
+  "TIC-421801900/3",
+  "TIC-421801900/8",
+  "TIC-441633615/9",
+  "TIC-441803025/5",
+  "TIC-456894260/1",
+  "TIC-456894260/4",
+  "TIC-456894260/5",
+  "TIC-456894260/6",
+  "TIC-456894260/7",
+  "TIC-62815027/4",
+  "TIC-75628092/0",
+  "TIC-75628092/1",
+  "TIC-79569472/1",
+  "TIC-95860790/7"
+ ],
+ "label": "v0.5.4 I1: what the records cannot tell (a diagnostic; decides nothing)",
+ "method_status": "not_validated",
+ "not_reproduced": [],
+ "records": 206,
+ "skipped_after_a_stop": 0,
+ "stop": [],
+ "t2a_class_i_non_detectable_sets": {
+  "background": 102,
+  "sap": 1
+ },
+ "t2a_class_ii_reasons": {
+  "raw INCONCLUSIVE: sub-check(s) could not run (background: no transit measured in the background or SAP flux)": 14,
+  "raw INCONCLUSIVE: sub-check(s) could not run (sap_vs_pdcsap: A0's errors are not available: 0 sector(s) contribute measured events: outside the grid; background": 29,
+  "raw INCONCLUSIVE: sub-check(s) could not run (sap_vs_pdcsap: A0's errors are not available: 1 sector(s) contribute measured events: outside the grid; background": 13,
+  "raw INCONCLUSIVE: sub-check(s) could not run (sap_vs_pdcsap: error not measurable)": 4,
+  "raw INCONCLUSIVE: sub-check(s) could not run (sap_vs_pdcsap: error not measurable; background: no transit measured in the background or SAP flux)": 4,
+  "raw INCONCLUSIVE: sub-check(s) could not run (sap_vs_pdcsap: no transit measured in both the PDCSAP and SAP series; background: no transit measured in the backg": 1,
+  "raw INCONCLUSIVE: sub-check(s) could not run (sap_vs_pdcsap: no transit measured in the PDCSAP flux; background: no transit measured in the background or SAP fl": 1
+ },
+ "unresolved": [
+  "3129/odd_even"
+ ]
+}
