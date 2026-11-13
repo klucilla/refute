@@ -141,3 +141,23 @@ The tokens are cumulative over the conversation `h2-t3b`:
 The conversation now counts **126,983** against v0.5.4's caps.
 
 Applied as Codex wrote them. Round 1: it is metadata only, reads nothing new from ExoFOP, and is a count, not a selection of real targets; the triage is v0.5's, so k is comparable at that step, while 11 + k joins two query dates. Corrected: `with_retries` (5 attempts, 120 s), provenance bound to v0.5's freeze and selection commits with the frame checked at {63, 41, 11} and 22 left, per-query records, the price (up to 330 calls and 2h56 of backoff), the ExoFOP wording; record 2 is not a defect, record 3 prescribes no fix (analytic derivatives already exist), record 4 names the extrapolation from B0b. Round 2: each search is now logged on its own through `sel.transient`, with its hash or error, and `inputs.json` is compared with its bytes at the freeze commit before it is read. Round 3 (the last): by the tie-break, the conservative option was applied: every triage attempt is accumulated with its number, time and result or error, and persisted in any outcome. The question whether the TOI table's disposition column is ExoFOP user data stays not confirmed.
+
+## Step 1: D2's joint floor and T2a's losses no procedure fixes (`docs/plans/v0.5.4-h2-step1-floor.md`, `docs/validation/v0.5.4/step1_floor.py`)
+
+Codex's review of step 1's frozen design and script before any per-case overlap was read (the maintainer's decision of 2026-11-12, night, item 4a); Codex was told not to open the per-case records, and did not. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [h2-step1-round-1-answer.md](h2-step1-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (disclosures of predictable outcomes; one category per test; F_upper's meaning; a missing import, wrong fields, the T2a refusal, hidden tests, the REFUTED scenario, integrity) | `707011b35254c0319b8e535af53f2224089a807c333a16ed846b913e549b8d64` |
+| 2 | [h2-step1-round-2-answer.md](h2-step1-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` (T2a's class field; INFO independent of I1's class; the 24 non-grid cases) | `b88ffef8ac962d617c8377b09457c91429cd79bdc73037a4ed8a313e8b921d41` |
+| 3 | [h2-step1-round-3-answer.md](h2-step1-round-3-answer.md) | gpt-6.1-sol, high | `WEAKENED` (invalid probabilities in `_below_bound`) | `43f9e91aa0e11fe3ebfde43116b39b8c61e8d0d5c024c9c072cad015d36da211` |
+
+The tokens are cumulative over the conversation `h2-step1`:
+
+- round 1: 1,189,793 input (1,090,176 cached) and 8,310 output;
+- round 2: 1,878,523 input (1,748,096 cached) and 13,029 output;
+- round 3: 2,366,464 input (2,219,904 cached) and 15,507 output;
+
+The conversation now counts **162,067** against v0.5.4's caps.
+
+Applied as Codex wrote them. Round 1: the design discloses that T2a under B is exhausted under DATA by its 20 not-enough-data blockers alone and that D2 cannot reach F_strict > 22 from the marginals; each test gets the set of its categories; F_upper is not a demonstrated bound, so a margin read from it assumes every REC and PROC loss recovered; the script reads I1 and I4 through their own reviewed readers, compares the reproduced blockers with the published ones, counts unknown T2a records as UNK losses, compares only the floors outside the REFUTED with 2, and runs with `python -B`. Round 2: T2a's `inconclusive_class`; INFO from an INCONCLUSIVE test and a valid bound whatever I1's class, REC only for class (i); the non-grid class-(ii) tally checked at exactly 24. Round 3 (the last): by the tie-break, the conservative option: an absent, non-finite or out-of-range probability is no bound, so class (i) stays UNK.
