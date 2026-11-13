@@ -322,3 +322,23 @@ Applied as Codex wrote them:
 - T2a's trigger asks for 82 valid cases.
 - D1 carries step 3's assumptions, D4 says there was no new acceptance, and T3b's 13/63 is qualified.
 - The agent-days are 1.39 (0.82 active), from caps.json.
+
+## The end-of-stage review of the 2026-11-13 decision (step 4's result `ddd8dc7` and the ROADMAP update)
+
+Codex's one review at the end of the stage, before the ROADMAP commit (the maintainer's decision of 2026-11-13, item 4). Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [h2-final-round-1-answer.md](h2-final-round-1-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `52c56e22855724753ac99f7908f7a632c8a52e76d692a6725dd1caf2a501ece6` |
+
+The tokens are cumulative over the conversation `h2-final`:
+
+- round 1: 583,205 input (522,624 cached) and 5,248 output;
+
+The conversation now counts **65,829** against v0.5.4's caps.
+
+Codex confirmed:
+- 77 unique shards over three parts (62 + 1 + 14), 754 unique records, no error, and the 5 % check agreeing on 20 cases;
+- the completion's 0.108763 CPU-h, within its fixed cap;
+- the recomputed expectations at α 0.0027;
+- that the ROADMAP diff does exactly item 4: v0.5.4 closed, the v0.5 line paused with the pause record's link, no box changed, and the advance rule and every other phase's text unchanged.

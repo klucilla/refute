@@ -40,14 +40,33 @@ how later work is done.
 
 ## Current phase
 
-**v0.5.4 Information checks (change of approach after round 3)**
+**None open: the v0.5 line is paused** (the maintainer's decision of 2026-11-13, #217;
+[pause record](docs/validation/v0.5.4/pause-record.md)).
 
-- **Why.** v0.5.3, the third and last correction round of the advance rule, closed as not approved.
-  The maintainer chose to change the approach (the decision of 2026-11-12, #217). Every failed target
-  of v0.5 stays outstanding. Its section: "v0.5.4 Information checks" below.
-- **Limits.** It is not a fourth correction round. There is no new battery, no acceptance, no draw,
-  no change to `src/`, and no target or test rule changes. Development data only.
-- **State.** The first half (I1, then I4; I2's and I3's designs on paper) is approved to run.
+- **What the pause means.** No target is relaxed, none is declared infeasible, and no verdict
+  changes. v0.5 stays `WEAKENED`, and every failed target of v0.5 stays outstanding (D1 for EB1 and
+  EB2, D2, D4, T2a). No exit criterion of any v0.5 correction phase is ticked.
+- **Per target,** the pause record gives what is known, what was not shown, and the evidence that
+  would warrant reconsidering it.
+- **Resuming** is the maintainer's decision only, after the publication of 2026-11-19.
+
+### Previous phase record: v0.5.4 Information checks
+
+**v0.5.4 Information checks: closed on 2026-11-13** (the maintainer's decision of 2026-11-13, #217;
+[first-half report](docs/validation/v0.5.4/h1-stop-report.md),
+[second-half report](docs/validation/v0.5.4/h2-stop-report.md),
+[pause record](docs/validation/v0.5.4/pause-record.md)). It was not a correction round, and it
+neither passed nor failed a target.
+- **First half.** I1 placed 103 of T2a's 169 `systematics` losses in class (i). I4 returned
+  `route`.
+- **Second half.** It followed the independent audit's plan, steps 1 to 7.
+  - Step 1 read the D2 and T2a floors from the records.
+  - Steps 2 and 3 (I3's population version), steps 5 and 6 (I2's first stage) and step 7 were
+    `INCONCLUSIVE`.
+  - Step 4 found that no stellar precision of 1, 2 or 3 % is shown to be enough for D1 under B0's
+    oracle.
+  - T3b's count showed a shortage of 9.
+- **Method status.** v0.5.4 did not deliver a validated method (`method_status: not_validated`).
 
 ### Previous phase record: v0.5.3 Battery corrections, round 3
 
@@ -770,6 +789,10 @@ before its run; hosts of many sectors outlast the 30-minute batch.
 ## v0.5.4 Information checks (change of approach after round 3)
 
 Tracking: #217. Design: [docs/plans/v0.5.3-after-round3-decision.md](docs/plans/v0.5.3-after-round3-decision.md).
+
+**Closed on 2026-11-13. The v0.5 line is paused by the maintainer's decision of that day**
+([pause record](docs/validation/v0.5.4/pause-record.md)). The pause relaxes no target, declares
+none infeasible and changes no verdict.
 
 **Why.** Round 3 closed as not approved, and the maintainer chose to change the approach (the
 decision of 2026-11-12). The cheap information checks come before any new estimator, each with a
