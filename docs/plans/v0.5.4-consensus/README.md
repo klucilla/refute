@@ -161,3 +161,23 @@ The tokens are cumulative over the conversation `h2-step1`:
 The conversation now counts **162,067** against v0.5.4's caps.
 
 Applied as Codex wrote them. Round 1: the design discloses that T2a under B is exhausted under DATA by its 20 not-enough-data blockers alone and that D2 cannot reach F_strict > 22 from the marginals; each test gets the set of its categories; F_upper is not a demonstrated bound, so a margin read from it assumes every REC and PROC loss recovered; the script reads I1 and I4 through their own reviewed readers, compares the reproduced blockers with the published ones, counts unknown T2a records as UNK losses, compares only the floors outside the REFUTED with 2, and runs with `python -B`. Round 2: T2a's `inconclusive_class`; INFO from an INCONCLUSIVE test and a valid bound whatever I1's class, REC only for class (i); the non-grid class-(ii) tally checked at exactly 24. Round 3 (the last): by the tie-break, the conservative option: an absent, non-finite or out-of-range probability is no bound, so class (i) stays UNK.
+
+## The end-of-step review of step 1 and T3b, and steps 7 and 5 before their runs (`v0.5.4-h2-step7-sinusoid.md`, `step7_sinusoid.py`, `v0.5.4-h2-step5-gap.md`, `step5_gap.py`)
+
+Codex's end-of-step review of step 1's floors and T3b's count, and its review of steps 7 (`sinusoid`'s joint limit) and 5 (E2's gap decomposition) before their runs (the maintainer's decisions of 2026-11-12, night, items 4a, 4d, 4f and 6). Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [h2-step7-round-1-answer.md](h2-step7-round-1-answer.md) | gpt-6.1-sol, high | A: `SURVIVED` (step 1 and T3b follow their designs; no stop). Step 7: `WEAKENED` (not a universal impossibility; sensitivity apart from retention; Monte Carlo precision and validity; explicit stops; caps for the phase) | `8be49e5fcfbc55622f4c74237cf7673d614e1d9a2c789afde2cd44d688abde76` |
+| 2 | [h2-step7-round-2-answer.md](h2-step7-round-2-answer.md) | gpt-6.1-sol, high | Step 7: `WEAKENED` (the residual Gram matrix; stops against the outcome). Step 5: `WEAKENED` (the multiplicative trend; a common amplitude with E2; approximations; unknowns and denominators; V0 and divergence) | `6c3f01385d4a8da9489745a1ddfce525fe4ad4b95987541c6cdb103529dfdcf9` |
+| 3 | [h2-step7-round-3-answer.md](h2-step7-round-3-answer.md) | gpt-6.1-sol, high | Step 7: `SURVIVED`. Step 5: `WEAKENED` (E2's effective response not shown; collinearity; V0's completeness) | `336066e327c83191f29b11a500d16939f666556ca1f149ff543a854cea4e7fae` |
+
+The tokens are cumulative over the conversation `h2-step7`:
+
+- round 1: 1,469,996 input (1,359,232 cached) and 10,532 output;
+- round 2: 2,543,312 input (2,398,464 cached) and 18,424 output;
+- round 3: 3,280,734 input (3,116,416 cached) and 23,355 output;
+
+The conversation now counts **187,673** against v0.5.4's caps.
+
+Applied as Codex wrote them. In round 2 Codex agreed that corrections found in a review before any run are not the stop list's 'defect', which concerns defects found in runs or records. Step 7 survived after round 3; its last documentary cleanups were applied. Step 5: by the tie-break after round 3, the conservative option was applied: E2's effective response is unknown, so no comparison with E2's error, no explained share and no decision from them are drawn; the gap's outcome is INCONCLUSIVE by design, and the step reports the Fisher inflations of its variants (and, for the trapezoid variants only, the crossings of D2's odd_even REC losses); V_all is a partial combination; V0 must be compared on every planet.
