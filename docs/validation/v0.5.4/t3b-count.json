@@ -1,0 +1,41 @@
+{
+ "accepted_by_the_domain": 2,
+ "counted_utc": "2026-11-13T00:49:44Z",
+ "decision": "the maintainer's decision of 2026-11-12 (night), item 6 (#217)",
+ "domain": "v0.4 D-1 to D-9 (pilot.triage), unchanged",
+ "frame": {
+  "accepted_by_v05": 11,
+  "members": 63,
+  "walked": 41
+ },
+ "frame_domain_eligible_in_all": 13,
+ "in_all_note": "11 from v0.5's queries of 2026-11 and k from today's queries: not one simultaneous recount of the 63",
+ "label": "v0.5.4 T3b: the eligibility count of the approved frame's remaining stars (counts only; it selects nothing)",
+ "method_status": "not_validated",
+ "needed_for_a_new_confirmation_sample": 11,
+ "note": "a shortage is a counted fact, not an infeasibility record",
+ "per_star_log": "kept in .cache/v054/t3b-count/ (TESS-EB is under a restricted licence)",
+ "per_star_log_sha256": "6feccdf5cabce6a9f2b0c70c66d512f1e713163a3ff72d68f4009d136731044a",
+ "provenance": {
+  "files": {
+   "calibration/targets.yaml": "1d0fdcd006f3bea2b1608e1ea5f7dc847704194cbfba92e67bf2c4ff31dc6883",
+   "calibration/v0.2/targets.yaml": "5db2b04761310817d2c47a1dcb699ad237a1a8dec3f5ad782024c8bb5ba349a2",
+   "calibration/v0.4/selection/targets.yaml": "d213bd1e37d8b8d7bddc21f9a91e3b1f631e0239c8dfb511cd72d11122f6c75f",
+   "calibration/v0.5/inputs.json": "8404740f73a2974862c9fba8040f7171ccb1b62e92543853274d2268f0f64f96",
+   "calibration/v0.5/selection/selection.json": "65805d9b5ef02298607827bec48a0aff6a52bff96eab8fbf88d829c05064146e",
+   "docs/validation/v0.2.1/reopen/stage-1/real-controls/result.json": "12e4fd35d239663f507d6b90e1577e843ce521216075a3ed16d6c226b7f0da92"
+  },
+  "selection_commit": "3e44e42968d93578ff735598fd09b4ae7a7e9a53",
+  "v05_freeze_commit": "5f987db383e2d12beaa8583437953b4002799ef7"
+ },
+ "rejected_by_clause": {
+  "D-1": 6,
+  "D-4": 8,
+  "D-6": 3,
+  "D-7": 3
+ },
+ "s_max": 107,
+ "shortage": 9,
+ "stars_with_a_retried_query": 0,
+ "triaged": 22
+}

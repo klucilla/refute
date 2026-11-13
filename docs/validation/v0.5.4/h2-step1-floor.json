@@ -1,0 +1,128 @@
+{
+ "categories": {
+  "rule": [
+   "DATA",
+   "INFO",
+   "MSG",
+   "RULE"
+  ],
+  "strict": [
+   "DATA",
+   "INFO"
+  ],
+  "upper": [
+   "DATA",
+   "FATAL",
+   "INFO",
+   "MSG",
+   "RULE",
+   "UNK"
+  ]
+ },
+ "d2": {
+  "F_rule": 16,
+  "F_strict": 8,
+  "F_upper": 21,
+  "allowed": 22,
+  "blockers_by_category_set": {
+   "DATA": 2,
+   "FATAL": 3,
+   "INFO": 8,
+   "REC": 33,
+   "RULE": 8,
+   "UNK": 3
+  },
+  "eligible": 178,
+  "losses": 37,
+  "losses_by_category_union": {
+   "DATA": 1,
+   "DATA+REC": 1,
+   "FATAL": 2,
+   "FATAL+REC": 1,
+   "INFO": 2,
+   "INFO+REC": 3,
+   "INFO+UNK": 1,
+   "REC": 16,
+   "REC+RULE": 3,
+   "REC+UNK": 1,
+   "RULE": 5,
+   "UNK": 1
+  },
+  "margins": {
+   "F_rule": 6,
+   "F_strict": 14,
+   "F_upper": 1
+  },
+  "outcome": "a margin is left, if every REC and PROC loss is recovered (assumed)",
+  "outside_refuted": {
+   "F_rule": 16,
+   "F_strict": 8,
+   "F_upper": 18
+  },
+  "refuted_losses": 3
+ },
+ "decision": "the maintainer's decision of 2026-11-12 (night), item 4a (#217)",
+ "design": "docs/plans/v0.5.4-h2-step1-floor.md",
+ "disclosure": "the marginal counts were known before this reading; only the per-case overlaps are new (see the design's disclosure)",
+ "i1_records": 206,
+ "i4_fresh_records": 178,
+ "label": "v0.5.4 step 1: D2's joint floor and T2a's losses no procedure fixes (a reading of existing records under stated assumptions; never a draft)",
+ "method_status": "not_validated",
+ "per_case_detail_sha256": "5a686c1c3a3eafa7b934fe3f6c58d9fb6d855e037a4b5f61f524a71a03431fdb",
+ "t2a": {
+  "F_rule": 20,
+  "F_strict": 20,
+  "F_upper": 201,
+  "allowed": 7,
+  "allowed_if_the_5_refuted_stay": 2,
+  "allowed_in_c_conditional": 49,
+  "blockers_by_category_set": {
+   "DATA+MSG": 16,
+   "DATA+MSG+PROC": 4,
+   "FATAL": 5,
+   "PROC": 88,
+   "UNK": 257
+  },
+  "injections": 559,
+  "losses": 228,
+  "losses_by_category_union": {
+   "DATA+MSG": 10,
+   "DATA+MSG+PROC": 3,
+   "DATA+MSG+PROC+UNK": 1,
+   "DATA+MSG+UNK": 6,
+   "FATAL": 5,
+   "PROC": 27,
+   "PROC+UNK": 19,
+   "UNK": 157
+  },
+  "margins": {
+   "B": {
+    "F_rule": -13,
+    "F_strict": -13,
+    "F_upper": -194
+   },
+   "B_refuted_stay": {
+    "F_rule": -18,
+    "F_strict": -18,
+    "F_upper": -194
+   },
+   "C_conditional": {
+    "F_rule": 29,
+    "F_strict": 29,
+    "F_upper": -152
+   }
+  },
+  "outcome": "exhausted under the stated assumptions (no draft): F_strict (data limits); F_rule (with the messages taken at face value)",
+  "outside_refuted": {
+   "F_rule": 20,
+   "F_strict": 20,
+   "F_upper": 196
+  },
+  "refuted_losses": 5,
+  "systematics_class_ii_non_grid_by_categories": {
+   "DATA+MSG": 16,
+   "DATA+MSG+PROC": 4,
+   "PROC": 4
+  }
+ }
+}
