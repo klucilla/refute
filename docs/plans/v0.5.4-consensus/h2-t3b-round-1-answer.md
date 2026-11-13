@@ -1,0 +1,29 @@
+**Revisão local de HEAD `9742a96`, sem rede, alterações ou execução da contagem.**
+
+### T3b: escopo e comparabilidade
+
+- **É metadados apenas.** O caminho consulta TIC e listagens, sem baixar curvas ou pixels. Do ExoFOP, lê somente a TOI congelada. Corrigir “No ExoFOP data are accessed” para “nenhum novo acesso remoto ao ExoFOP”. A política registrada deixa **não confirmada** a cobertura da coluna de disposição; reutilizar bytes congelados não resolve essa dúvida, embora não haja uso novo de notas ou uploads. [pilot.py:683](/C:/Projetos/refute/src/refute/packs/tess/discover/pilot.py:683), [plano:62](/C:/Projetos/refute/docs/plans/v0.5.4-t3b-eligibility-count.md:62), [política:39](/C:/Projetos/refute/docs/plans/sources/v0.5.4-exofop-data-use-policy-2026-11-12.md:39).
+- **Julgo contagem, não seleção de alvos reais.** Percorre todas as 22, sem sorteio, prioridade ou escolha para execução. Ordenar por TIC organiza o percurso; não define uma amostra. [t3b_count.py:81](/C:/Projetos/refute/docs/validation/v0.5.4/t3b_count.py:81), [t3b_count.py:107](/C:/Projetos/refute/docs/validation/v0.5.4/t3b_count.py:107).
+- **A triagem é a mesma:** `pilot.triage`, `DOMAIN`, S_max=107. Os 11/41 representam essa aceitação de domínio, incluindo oito escolhidos e três reservas. Portanto, **k é comparável nesse passo**. Porém, `11+k` mistura consultas históricas e atuais; não é uma recontagem simultânea dos 63. [c3select.py:244](/C:/Projetos/refute/src/refute/packs/tess/calib05/c3select.py:244), [selection.json:2326](/C:/Projetos/refute/calibration/v0.5/selection/selection.json:2326), [t3b_count.py:99](/C:/Projetos/refute/docs/validation/v0.5.4/t3b_count.py:99).
+
+### T3b: correções antes de executar
+
+1. **Retries ausentes.** `sel.transient` converte exceções, não repete consultas. A chamada direta aborta no primeiro erro transitório, contrariando cinco tentativas/120 s. Usar `with_retries`, registrar tentativas e a parada, sem converter falha em rejeição. [t3b_count.py:108](/C:/Projetos/refute/docs/validation/v0.5.4/t3b_count.py:108), [selection.py:509](/C:/Projetos/refute/src/refute/packs/tess/discover/selection.py:509), [walk.py:101](/C:/Projetos/refute/src/refute/selection/walk.py:101).
+
+2. **Proveniência prometida excede a implementada.** Três catálogos têm SHA verificado; o ledger e os arquivos usados por `known_targets` não. Tampouco se chama `c3select.read_pools`. Vincular esses insumos e conferir explicitamente `{63,41,11}`, além dos 22 restantes. [plano:27](/C:/Projetos/refute/docs/plans/v0.5.4-t3b-eligibility-count.md:27), [t3b_count.py:48](/C:/Projetos/refute/docs/validation/v0.5.4/t3b_count.py:48), [t3b_count.py:76](/C:/Projetos/refute/docs/validation/v0.5.4/t3b_count.py:76).
+
+3. **O hash é da evidência reduzida por estrela**, não da resposta de cada consulta. Há serviços genéricos e um horário final, sem os três registros de consulta/resposta prometidos. Implementar esse registro ou restringir expressamente a promessa. A separação das linhas individuais em `.cache` e do agregado no repositório está correta para a restrição documentada de TESS-EB. [plano:44](/C:/Projetos/refute/docs/plans/v0.5.4-t3b-eligibility-count.md:44), [t3b_count.py:109](/C:/Projetos/refute/docs/validation/v0.5.4/t3b_count.py:109).
+
+4. **Preço:** 66 chamadas lógicas é o caminho sem falhas, não um limite de requisições HTTP. Restauradas as cinco tentativas por triagem, podem ser até **330 chamadas lógicas e 2h56 de backoff**, além da latência. CPU <0,05 h, disco <1 MB, tokens e tempo de agente permanecem estimativas não medidas. [plano:76](/C:/Projetos/refute/docs/plans/v0.5.4-t3b-eligibility-count.md:76).
+
+### Os quatro registros
+
+1. **Rótulo do sinusoid: fiel.** O ramo causal ambíguo recebe `insufficient_sensitivity`; I1 distingue os oito casos dos 18 de sensibilidade. A ressalva sobre T2a está corretamente marcada como não verificada. [battery_v52.py:420](/C:/Projetos/refute/src/refute/packs/tess/battery_v52.py:420), [i1-diagnosis.json:53](/C:/Projetos/refute/docs/validation/v0.5.4/i1-diagnosis.json:53).
+
+2. **27/26 versus 26/25: explicação fiel; “silêncio sobre a unidade” é falso.** O adendo já define bloqueadores decisivos e a precedência fatal. Precisar também que I1 classifica aqui `odd_even`/`sinusoid`, não indiscriminadamente todo teste. [record-defects.md:39](/C:/Projetos/refute/docs/validation/v0.5.4/record-defects.md:39), [adendo:73](/C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1-stop-report-addendum.md:73), [i1_diagnose.py:367](/C:/Projetos/refute/docs/validation/v0.5.4/i1_diagnose.py:367).
+
+3. **I4: números corretos, diagnóstico excessivo.** São 15 falhas de convergência frescas; no antigo, 14 mais um mau condicionamento. `L+E=17<23` confere. A causa nas quinas continua hipótese; não sustenta prescrever uma correção específica como comprovada. **Derivadas analíticas já existem**; diferenças centrais são a verificação. [record-defects.md:48](/C:/Projetos/refute/docs/validation/v0.5.4/record-defects.md:48), [i4_bound.py:119](/C:/Projetos/refute/docs/validation/v0.5.4/i4_bound.py:119).
+
+4. **Preços divergentes e desenhos não executados: fiel.** Corrigir a afirmação de ausência de vínculo com medição: I3 cita explicitamente B0b, 2,45 CPU-h. O defeito é a extrapolação inadequada ao desenho posterior. [record-defects.md:73](/C:/Projetos/refute/docs/validation/v0.5.4/record-defects.md:73), [decisão:135](/C:/Projetos/refute/docs/plans/v0.5.3-after-round3-decision.md:135), [desenhos:255](/C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:255).
+
+WEAKENED (corrigir retries, proveniência, registro das respostas, preço e excessos dos registros 2 a 4; conformidade da disposição ExoFOP permanece não confirmada).

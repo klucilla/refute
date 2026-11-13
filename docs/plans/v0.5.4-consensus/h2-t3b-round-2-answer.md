@@ -1,0 +1,16 @@
+**A maior parte da rodada 1 foi resolvida. Restam duas correções no script.** Revisão e simulações somente locais, sem executar a contagem.
+
+### Pontos resolvidos
+
+- **Retries:** agora há cinco tentativas, backoff de 120 s e parada com registro das tentativas esgotadas, sem rejeitar a estrela por erro. [t3b_count.py:160](/C:/Projetos/refute/docs/validation/v0.5.4/t3b_count.py:160).
+- **Proveniência:** confirmei `provenance()` e `remaining()`: freeze `5f987db`, seleção `3e44e42`, quadro `{63,41,11}`, 22 restantes. Os catálogos, os quatro arquivos de alvos anteriores e o ledger recebem as verificações descritas. [t3b_count.py:69](/C:/Projetos/refute/docs/validation/v0.5.4/t3b_count.py:69).
+- **Wrappers entre estrelas:** não se acumulam nem escrevem no log da estrela anterior. Sempre partem das funções originais e retornam o mesmo objeto recebido. A simulação confirmou resultado idêntico e isolamento dos logs. Permanecem instalados ao terminar `main`; restaurá-los em `finally` encerraria esse efeito no módulo. [t3b_count.py:114](/C:/Projetos/refute/docs/validation/v0.5.4/t3b_count.py:114), [t3b_count.py:161](/C:/Projetos/refute/docs/validation/v0.5.4/t3b_count.py:161).
+- **Documentação:** preço, combinação histórica de `11+k` e ressalva ExoFOP corrigidos. Continua sendo contagem de metadados, sem escolha para execução. Os registros 2, 3 e 4 agora incorporam corretamente as ressalvas anteriores. [plano:56](/C:/Projetos/refute/docs/plans/v0.5.4-t3b-eligibility-count.md:56), [record-defects.md:33](/C:/Projetos/refute/docs/validation/v0.5.4/record-defects.md:33).
+
+### Correções restantes
+
+1. **O log parcial de `listing` ainda perde respostas.** O wrapper registra somente depois que ambas as buscas terminam. Se curvas retornam e pixels falham, a resposta de curvas não recebe registro/hash. Na simulação com uma falha e recuperação, ocorreram quatro buscas, mas apenas um registro combinado de listagem. Com cinco falhas de pixels, ficaram cinco registros TIC e nenhum de listagem. O parcial TIC é preservado; o parcial interno de `listing` não. **Registrar as buscas individualmente, identificando tentativa e erro.** Erros não transitórios também precisam persistir o parcial antes de propagar a parada. [t3b_count.py:127](/C:/Projetos/refute/docs/validation/v0.5.4/t3b_count.py:127), [pilot.py:719](/C:/Projetos/refute/src/refute/packs/tess/discover/pilot.py:719), [t3b_count.py:170](/C:/Projetos/refute/docs/validation/v0.5.4/t3b_count.py:170).
+
+2. **O próprio `inputs.json` continua sem vínculo de bytes ao freeze.** Ele fornece os hashes dos catálogos e S_max, mas `provenance()` não o compara com o commit congelado. `freeze_commit()` identifica o commit de adição, sem verificar o conteúdo atual. Alterar somente S_max preservaria `{63,41,11}` e passaria essas verificações. **Comparar o manifesto com seus bytes no freeze antes de lê-lo e registrar seu SHA-256.** [t3b_count.py:75](/C:/Projetos/refute/docs/validation/v0.5.4/t3b_count.py:75), [t3b_count.py:98](/C:/Projetos/refute/docs/validation/v0.5.4/t3b_count.py:98), [t3b_count.py:152](/C:/Projetos/refute/docs/validation/v0.5.4/t3b_count.py:152).
+
+WEAKENED (completar o registro das consultas parciais e vincular inputs.json ao freeze).

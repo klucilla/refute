@@ -105,3 +105,39 @@ The tokens are cumulative over the conversation `h1-driverv3`:
 The conversation now counts **149,133** against v0.5.4's caps.
 
 Applied as Codex wrote them. Round 1: `budgeted_v3.execute` refuses a driver `stop.json` before it reconciles anything, in the driver's own order; the tests were rewritten (a real interruption of the real driver with a real pool, a deterministic batch comparing v0.5.2 and v3 to the last digit, the crash charge against the caller's hard cap and the total, the three kinds of batch, the refusals, no live worker left); the launcher starts its child suspended and resumes it only after its PID and creation time are written atomically, ending it by its own handle on any failure, with complete ctypes prototypes. In the same round the measure became the larger of the charges less the crash charges and the shards' sidecar CPU (never below round 1's). Round 2: a larger projection also raises the part's own cap after the checkpoint (1.5 times the projection), so that is documented in the module and tested with Codex's example and the exact caps each driver run was given; the launcher reserves its log's prefix with `O_EXCL` before anything is opened or started, and its start sequence is tested offline with a fake process (the record before the resume, each failure ending the child, a refused breakaway, a reused log, two concurrent launchers). Round 3 (the last) found the driver's and the launcher's points resolved, and asked, as the conservative options, that the restart check test a process's life by its termination state (a zero-timeout wait on its handle, any query failure 'unknown'), and that the restart test's decision require: criteria and the watched processes persisted before the launch and alive at the first beat, the probe's two processes alive before and after the restart with the same identities, the app's exit and its new instance inside the observed window, the planned duration and cadence with positive intervals of at most 30 s on both clocks, the final line and both processes ended. These were applied to the probe and its check (under `.cache`, not committed), and the docstring's comparison was made exact. `scripts/launch_affinity.ps1` stays the launcher of record until the maintainer approves the restart test's result; neither module was used by I4.
+
+## The check of Fable 5.2's audit (`docs/plans/v0.5.4-fable-audit.md`): its 18 points and its section-5 plan
+
+Codex's check of each of the audit's 18 points and of its section-5 plan, steps 1 to 7 with the maintainer's adjustments, against the files at `9742a96` (the maintainer's decision of 2026-11-12, night, item 3). The short record is [`v0.5.4-audit-check.md`](../v0.5.4-audit-check.md). Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [h2-audit-round-1-answer.md](h2-audit-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (3 points accepted, 14 accepted with a reservation, 1 rejected; steps 1 to 7 all accepted, six with a reservation; the frozen rules each step must fix; the budget; corrections to sections 2, 3 and 6) | `4b6296683faa27da6777295e2a62be729f86f2db04832f90a1342ba48b841b21` |
+
+The tokens are cumulative over the conversation `h2-audit`:
+
+- round 1: 1,597,330 input (1,460,992 cached) and 12,320 output;
+
+The conversation now counts **148,658** against v0.5.4's caps.
+
+One round. Claude agreed with every row, so no second round was needed; the check is the record, and its corrections are carried into the second half's step designs. Point 14 is rejected and stays recorded with its reason.
+
+## T3b's eligibility count (`docs/plans/v0.5.4-t3b-eligibility-count.md`, `docs/validation/v0.5.4/t3b_count.py`) and the record defects (`docs/validation/v0.5.4/record-defects.md`)
+
+Codex's review of the design and script of T3b's eligibility count of the approved frame's 22 remaining stars (the maintainer's decision of 2026-11-12, night, item 6) and of the four record defects (item 7d), before the count runs. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [h2-t3b-round-1-answer.md](h2-t3b-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (metadata only and a count, not a selection; retries, provenance, per-query records, the price; records 2 to 4 overstated) | `2dc0acffafa0703d8eb6253687850a0018e3e2f31c91b6ba0cac755cfea67bec` |
+| 2 | [h2-t3b-round-2-answer.md](h2-t3b-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` (a listing's partial searches lost; `inputs.json` not bound to the freeze commit) | `451e496b2a56b785ba5ed1436243cace3e845871f14696e04546fbc29005e673` |
+| 3 | [h2-t3b-round-3-answer.md](h2-t3b-round-3-answer.md) | gpt-6.1-sol, high | `WEAKENED` (the attempt history lost when a permanent failure follows a transient one) | `005f33298b8068391a03c0caa663b60df0714280f937b6b0e42c6259b7b231a7` |
+
+The tokens are cumulative over the conversation `h2-t3b`:
+
+- round 1: 841,391 input (757,248 cached) and 6,863 output;
+- round 2: 1,453,568 input (1,352,704 cached) and 11,781 output;
+- round 3: 2,012,376 input (1,901,312 cached) and 15,919 output;
+
+The conversation now counts **126,983** against v0.5.4's caps.
+
+Applied as Codex wrote them. Round 1: it is metadata only, reads nothing new from ExoFOP, and is a count, not a selection of real targets; the triage is v0.5's, so k is comparable at that step, while 11 + k joins two query dates. Corrected: `with_retries` (5 attempts, 120 s), provenance bound to v0.5's freeze and selection commits with the frame checked at {63, 41, 11} and 22 left, per-query records, the price (up to 330 calls and 2h56 of backoff), the ExoFOP wording; record 2 is not a defect, record 3 prescribes no fix (analytic derivatives already exist), record 4 names the extrapolation from B0b. Round 2: each search is now logged on its own through `sel.transient`, with its hash or error, and `inputs.json` is compared with its bytes at the freeze commit before it is read. Round 3 (the last): by the tie-break, the conservative option was applied: every triage attempt is accumulated with its number, time and result or error, and persisted in any outcome. The question whether the TOI table's disposition column is ExoFOP user data stays not confirmed.
