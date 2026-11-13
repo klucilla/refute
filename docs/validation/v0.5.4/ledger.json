@@ -6,6 +6,20 @@
    "projection_at_stop": 7.255555555555555,
    "reason": "a stopped part closed after its reconciliation (i4_rest2.py)",
    "utc": "2026-11-12T21:38:50Z"
+  },
+  {
+   "consumed": 1.3082942708333334,
+   "part": "h2_step4",
+   "projection_at_stop": 0.7951288082437277,
+   "reason": "a stopped part closed after its reconciliation (step4_rest.py)",
+   "utc": "2026-11-13T01:28:56Z"
+  }
+ ],
+ "charges": [
+  {
+   "basis": "the summary's own CPU, outside the driver",
+   "hours": 0.00022135416666666666,
+   "name": "h2_step6_summarize_20261113T021447Z-cf513410397a"
   }
  ],
  "sections": {
@@ -53,8 +67,61 @@
     "h1_reserve": {
      "allocation_hours": 1.5000000000000004
     },
+    "h2_step4": {
+     "allocation_hours": 1.308295,
+     "checkpoint_shards": 4,
+     "driver": "v3",
+     "identity": "fe05b92ecff6ea62",
+     "projection_at_stop": 0.7951288082437277,
+     "projection_basis": "measured CPU of the checkpoint (budgeted_v3)",
+     "projection_hours": 1.3082942708333334,
+     "reconciled": [
+      {
+       "reason": "the maintainer's decision of 2026-11-12 (night), item 7c (#217): h2_step4 stopped by the driver's mechanics (its checkpoint's projection, 0.795 CPU-h, set the part's cap at 1.193; 62 of 77 shards done); the stop is a fact, the part is closed, and the rows not done run as h2_step4_rest with the same code and rows",
+       "stop": "stopped: the cap is reached"
+      }
+     ],
+     "spent_hours": 1.3082942708333334
+    },
+    "h2_step4_rest": {
+     "allocation_hours": 1.691705,
+     "checkpoint_shards": 1,
+     "driver": "v3",
+     "identity": "71431bee36fc57b8",
+     "projection_basis": "measured CPU of the checkpoint (budgeted_v3)",
+     "projection_hours": 0.06020399305555555,
+     "spent_hours": 0.1008029513888889,
+     "unresolved_stop": "over the cap: the workers were ended"
+    },
+    "h2_step5": {
+     "allocation_hours": 0.5,
+     "checkpoint_shards": 9,
+     "driver": "v3",
+     "identity": "094380e88dafaa2a",
+     "projection_basis": "measured CPU of the checkpoint (budgeted_v3)",
+     "projection_hours": 0.11116415895061729,
+     "spent_hours": 0.06425347222222222
+    },
+    "h2_step6": {
+     "allocation_hours": 6.0,
+     "checkpoint_shards": 6,
+     "driver": "v3",
+     "identity": "2e8a22b89ee8e63e",
+     "projection_basis": "measured CPU of the checkpoint (budgeted_v3)",
+     "projection_hours": 3.8063324652777775,
+     "spent_hours": 3.782482638888889
+    },
+    "h2_step7": {
+     "allocation_hours": 0.5,
+     "checkpoint_shards": 9,
+     "driver": "v3",
+     "identity": "fc9925182afdbb96",
+     "projection_basis": "measured CPU of the checkpoint (budgeted_v3)",
+     "projection_hours": 0.1272164351851852,
+     "spent_hours": 0.058745659722222225
+    },
     "h2_unallocated": {
-     "allocation_hours": 25.0
+     "allocation_hours": 15.0
     }
    }
   }
@@ -80,6 +147,41 @@
    "reason": "The maintainer's decision of 2026-11-12, 18:05, item 1 (#217): h1_i4_rest stopped at its checkpoint (projection 7.3 CPU-h against the part's hard cap 7.1, the first half's room after a 12-worker in-flight reserve); the stop is a fact; the 266 remaining planets run as h1_i4_rest2 with the same code, fingerprint and rows and 6 workers (i4_rest2.py).",
    "to": "h1_i4_rest2",
    "utc": "2026-11-12T21:38:50Z"
+  },
+  {
+   "from": "h2_unallocated",
+   "hours": 0.5,
+   "reason": "the maintainer's decision of 2026-11-12 (night), item 4f (#217): step 7, sinusoid's joint limit in D2 (h2_step7, budgeted_v3)",
+   "to": "h2_step7",
+   "utc": "2026-11-13T01:08:54Z"
+  },
+  {
+   "from": "h2_unallocated",
+   "hours": 0.5,
+   "reason": "the maintainer's decision of 2026-11-12 (night), item 4d (#217): step 5, E2's gap decomposition (h2_step5, budgeted_v3)",
+   "to": "h2_step5",
+   "utc": "2026-11-13T01:10:45Z"
+  },
+  {
+   "from": "h2_unallocated",
+   "hours": 3.0,
+   "reason": "the maintainer's decision of 2026-11-12 (night), item 4c (#217): step 4, B0's oracle at 1, 2 and 3 % (h2_step4, budgeted_v3)",
+   "to": "h2_step4",
+   "utc": "2026-11-13T01:12:41Z"
+  },
+  {
+   "from": "h2_step4",
+   "hours": 1.691705,
+   "reason": "the maintainer's decision of 2026-11-12 (night), item 7c (#217): h2_step4 stopped by the driver's mechanics (its checkpoint's projection, 0.795 CPU-h, set the part's cap at 1.193; 62 of 77 shards done); the stop is a fact, the part is closed, and the rows not done run as h2_step4_rest with the same code and rows",
+   "to": "h2_step4_rest",
+   "utc": "2026-11-13T01:28:56Z"
+  },
+  {
+   "from": "h2_unallocated",
+   "hours": 6.0,
+   "reason": "the maintainer's decision of 2026-11-12 (night), item 4e (#217): step 6, I2 in stages on the 102 class-(i) injections (h2_step6, budgeted_v3)",
+   "to": "h2_step6",
+   "utc": "2026-11-13T01:46:10Z"
   }
  ]
 }

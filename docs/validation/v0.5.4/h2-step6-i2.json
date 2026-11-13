@@ -1,0 +1,753 @@
+{
+ "cpu_hours": 3.7825,
+ "decision": "the maintainer's decision of 2026-11-12 (night), item 4e (#217)",
+ "design": "docs/plans/v0.5.4-h2-step6-i2-staged.md",
+ "fingerprint": "e710df7e16e42d27",
+ "freed_e4op": 0,
+ "freed_full": 0,
+ "injections": 102,
+ "label": "v0.5.4 step 6: I2's first stage on the 102 class-(i) injections (a bound under a fitted noise model; never a draft)",
+ "margins": {
+  "B (7)": -221,
+  "B, the 5 REFUTED staying (2)": -221,
+  "C conditional (49)": -179
+ },
+ "method_status": "not_validated",
+ "not_reproduced_or_error": [],
+ "outcome": "INCONCLUSIVE (too many unknown)",
+ "per_injection": [
+  {
+   "freed": false,
+   "injection": "TIC-120900130/2",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-122616851/8",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-122616851/9",
+   "other_blocking_tests": [
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-138651299/2",
+   "other_blocking_tests": [
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-140867523/1",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-142727252/2",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-142727252/3",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-14802455/2",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-149968737/2",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-149968737/8",
+   "other_blocking_tests": [
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-154257406/0",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-154257406/8",
+   "other_blocking_tests": [
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-158461758/2",
+   "other_blocking_tests": [
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-158461758/4",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-166087356/0",
+   "other_blocking_tests": [
+    "odd_even"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-166087356/1",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-166087356/6",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-166151416/0",
+   "other_blocking_tests": [
+    "odd_even"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-166151416/3",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-166761808/3",
+   "other_blocking_tests": [
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-167755099/2",
+   "other_blocking_tests": [
+    "odd_even"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-167755099/5",
+   "other_blocking_tests": [
+    "odd_even"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-198407396/0",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-198407396/4",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-202295593/3",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-202295593/5",
+   "other_blocking_tests": [
+    "odd_even",
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-202295593/9",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-210464356/8",
+   "other_blocking_tests": [
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-232966887/5",
+   "other_blocking_tests": [
+    "odd_even"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-233231885/3",
+   "other_blocking_tests": [
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-233231885/6",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-233231885/9",
+   "other_blocking_tests": [
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-23708215/6",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-240171830/0",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-240171830/1",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-24607925/0",
+   "other_blocking_tests": [
+    "odd_even",
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-24607925/2",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-248356317/3",
+   "other_blocking_tests": [
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-248356317/7",
+   "other_blocking_tests": [
+    "odd_even",
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-25155713/1",
+   "other_blocking_tests": [
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-255927008/1",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-255927008/3",
+   "other_blocking_tests": [
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-255927008/4",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-255927008/5",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-255927008/6",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-255927008/7",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-255927008/9",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-258827696/4",
+   "other_blocking_tests": [
+    "period_alias"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-258827696/5",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-258827696/7",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-267039954/3",
+   "other_blocking_tests": [
+    "odd_even",
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-269533563/1",
+   "other_blocking_tests": [
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-281574170/1",
+   "other_blocking_tests": [
+    "odd_even",
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-28289264/3",
+   "other_blocking_tests": [
+    "odd_even",
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-28289264/5",
+   "other_blocking_tests": [
+    "odd_even",
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-28289264/6",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-29267852/3",
+   "other_blocking_tests": [
+    "odd_even",
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-29267852/4",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-29267852/6",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-298001089/1",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-298001089/3",
+   "other_blocking_tests": [
+    "odd_even"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-326209514/0",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-326209514/2",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-326209514/4",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-334900819/1",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-334900819/2",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-334900819/3",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-334900819/6",
+   "other_blocking_tests": [
+    "period_alias"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-336265633/0",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-336265633/8",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-349577085/5",
+   "other_blocking_tests": [
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-349682621/1",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-354822931/3",
+   "other_blocking_tests": [
+    "odd_even",
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-354822931/7",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-356683052/1",
+   "other_blocking_tests": [
+    "odd_even"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-356683052/7",
+   "other_blocking_tests": [
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-364129259/0",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-380039482/2",
+   "other_blocking_tests": [
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-381981543/4",
+   "other_blocking_tests": [
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-381981543/6",
+   "other_blocking_tests": [
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-387512509/1",
+   "other_blocking_tests": [
+    "odd_even"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-388198210/1",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-394103866/0",
+   "other_blocking_tests": [
+    "odd_even",
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-394103866/3",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-394103866/5",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-397000139/3",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-416715793/1",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-421801900/1",
+   "other_blocking_tests": [
+    "odd_even",
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-421801900/3",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-421801900/8",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-441633615/9",
+   "other_blocking_tests": [
+    "odd_even"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-441803025/5",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-456894260/1",
+   "other_blocking_tests": [
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-456894260/4",
+   "other_blocking_tests": [
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-456894260/5",
+   "other_blocking_tests": [
+    "odd_even",
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-456894260/6",
+   "other_blocking_tests": [
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-456894260/7",
+   "other_blocking_tests": [
+    "sinusoid"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-62815027/4",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-75628092/0",
+   "other_blocking_tests": [
+    "odd_even"
+   ],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-75628092/1",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-79569472/1",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  },
+  {
+   "freed": false,
+   "injection": "TIC-95860790/7",
+   "other_blocking_tests": [],
+   "status": "UNK"
+  }
+ ],
+ "recorded_error_over_sigma_full_quartiles": null,
+ "scope": "a GLS estimator of a common in-event step with E4's windows and baselines, under each host's fitted covariance, its uncertainty not propagated; no conclusion on the 615 injections and no draft",
+ "stops": [],
+ "t2a_losses_left": 228,
+ "t2a_losses_recoverable_if_the_freed_are": 0,
+ "tau_days_quartiles": null,
+ "unknown": 102,
+ "unknown_reasons": [
+  "inadequate at the transit's scale",
+  "tau 0.07975 d below three bins: the binned approximation is not accepted",
+  "tau 0.08933 d below three bins: the binned approximation is not accepted",
+  "tau 0.1062 d below three bins: the binned approximation is not accepted",
+  "tau 0.1308 d below three bins: the binned approximation is not accepted",
+  "tau 0.1566 d below three bins: the binned approximation is not accepted",
+  "tau 0.1658 d below three bins: the binned approximation is not accepted"
+ ],
+ "valid": 0
+}
