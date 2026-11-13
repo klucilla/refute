@@ -1,0 +1,21 @@
+**O teto total de 1,0 CPU-h não está garantido.** A reutilização científica e o resumo passam, mas há um bloqueador no orçamento. Revisão estática, sem executar o script, alterar arquivos ou acessar a rede. `step4_rest.py` está idêntico ao de `d5cfbee`.
+
+1. **Mesmo código, linhas e fingerprint: sim.** Reutiliza `_schedule()`, `_check_fp()` e `s4.shard`; seleciona somente as linhas ausentes nas duas partes e exige exatamente 14. O fingerprint continua sendo o do passo 4, `4e080d7b0c162001`. [step4_rest2.py:95](C:/Projetos/refute/docs/validation/v0.5.4/step4_rest2.py:95), [step4_rest2.py:112](C:/Projetos/refute/docs/validation/v0.5.4/step4_rest2.py:112), [step4_rest2.py:133](C:/Projetos/refute/docs/validation/v0.5.4/step4_rest2.py:133).
+
+2. **Reconciliação, fechamento e transferência: corretos para o estado atual.** A ordem é ledger, stop do driver, fechamento, transferência. O débito de 1,0 deixa **0,691705 CPU-h**, acima dos **0,100803** gastos. Débito, crédito e histórico são salvos atomicamente, sem `declare()` arquivar a identidade anterior. Resultados e histórico são preservados; `driver.reconcile()` copia o stop para `stop-reconciled-*` antes de remover `stop.json`. [step4_rest2.py:65](C:/Projetos/refute/docs/validation/v0.5.4/step4_rest2.py:65), [step4_rest2.py:121](C:/Projetos/refute/docs/validation/v0.5.4/step4_rest2.py:121), [driver.py:436](C:/Projetos/refute/docs/validation/v0.5.2/stage2/driver.py:436).
+   
+   **Correção:** a linha 105 aceita stop do driver ausente (`None`), embora este watchdog sempre o grave. Exigir `EXPECTED_STOP` também no driver para cumprir a checagem anunciada.
+
+3. **Teto fixo: falha bloqueadora.**
+   
+   - **Sem checkpoint funciona:** a projeção predefinida pula o bloco de checkpoint. No ledger atual, `hard_cap()` resulta em aproximadamente **1,364**, portanto o mínimo continua **0,909091**. `cap()` fica nesse valor, inclusive com crash. [step4_rest2.py:76](C:/Projetos/refute/docs/validation/v0.5.4/step4_rest2.py:76), [budgeted_v3.py:135](C:/Projetos/refute/docs/validation/v0.5.4/budgeted_v3.py:135).
+   - **O watchdog reage depois de ultrapassar o limite:** consulta a cada 0,5 segundo e mata quando `used > cap × 1,10`. Logo, dividir por 1,10 coloca o gatilho em 1,0, sem reservar a latência. O próprio REST anterior demonstra isso: gastou **0,100803**, acima do gatilho **0,099337**. [driver.py:485](C:/Projetos/refute/docs/validation/v0.5.2/stage2/driver.py:485).
+   - **Um crash sozinho cobra 4,066667 CPU-h:** `12 × (1200 + 20) / 3600`, além do consumo registrado. `ledger_i.hard_cap()` reserva margem na fase, não dentro desse teto de 1,0 por parte. [driver.py:375](C:/Projetos/refute/docs/validation/v0.5.2/stage2/driver.py:375), [ledger_i.py:230](C:/Projetos/refute/docs/validation/v0.5.4/ledger_i.py:230).
+
+   **Correção necessária:** reservar crash e margem de encerramento dentro de 1,0. Com 12 workers e limite de 1200 segundos, isso é inviável. Predefinir `projection_hours` não provoca arquivamento nem quebra `_rows`, `part_consumption` ou `refuse_new_identity` nesta parte nova; porém **não resolve essa garantia**. Se o teto efetivo diminuir, a projeção predefinida também precisa acompanhá-lo, ou a checagem de `budgeted_v3:163` recusará antes do trabalho.
+
+4. **Resumo das três partes: correto.** Verifica os sidecars por `_done()`, rejeita duplicatas e faltas, concatena na ordem original e chama `s4.summarize()` inalterado. Soma o consumo das três partes, incluindo tentativas, e restaura os leitores em `finally`. A CPU do resumo continua cobrada separadamente. [step4_rest2.py:150](C:/Projetos/refute/docs/validation/v0.5.4/step4_rest2.py:150), [step4_rest2.py:179](C:/Projetos/refute/docs/validation/v0.5.4/step4_rest2.py:179). Ainda não existe resultado para escolher 1, 2 ou 3%.
+
+5. **Nova parada: sim para estados retornados pelo driver.** Fica registrada por `_ended`, bloqueia o resumo e não dispara outro complemento. **Crash ou exceção propagada não têm essa mesma garantia automática de registro final no ledger**, exigindo reconciliação explícita. [budgeted_v3.py:171](C:/Projetos/refute/docs/validation/v0.5.4/budgeted_v3.py:171), [step4_rest2.py:137](C:/Projetos/refute/docs/validation/v0.5.4/step4_rest2.py:137).
+
+REFUTED

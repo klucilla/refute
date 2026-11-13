@@ -275,3 +275,23 @@ The tokens are cumulative over the conversation `h2-close`:
 The conversation now counts **101,257** against v0.5.4's caps.
 
 Codex recomputed τ* (124.7995835), the step 3 counts and binomial ends, and step 6's 102 UNK (96 Box-Pierce, 6 τ below three bins), and confirmed 29.0383 CPU-h charged. The stop report follows its precision on the recommendation. T2a's 20 was foreseeable from the known marginals and is no new demonstration of infeasibility. D1 has no route by this density test only. D2 is met only at the upper counts. The report claims no three demonstrated criteria, universal impossibility, formal infeasibility, confirmation or battery validation, and it uses the section 6 figures as judgments, not measurements.
+
+## Step 4's second completion under a fixed cap (`step4_rest2.py`)
+
+Codex's review of the diff against `step4_rest.py` before the run (the maintainer's decision of 2026-11-13, item 2). Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [h2-step4rest2-round-1-answer.md](h2-step4rest2-round-1-answer.md) | gpt-6.1-sol, high | `REFUTED` (the fixed 1.0 CPU-h was not guaranteed: a crash charge of 4.07 CPU-h with 12 workers, and the watchdog's latency) | `3f125f51cd6aac7b907f75ad077aac054c9b0ef7dc187b86a3a46f3612b5385d` |
+| 2 | [h2-step4rest2-round-2-answer.md](h2-step4rest2-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` (the charge on an exception; the final check against 1.0; the latency premise; the hard-cap refusal before the transition) | `3fe84576cdecd3ec17dc3229b5808343df9ae45e2bd7c8bd8d666c2b8a767a6d` |
+| 3 | [h2-step4rest2-round-3-answer.md](h2-step4rest2-round-3-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `8f048051a5790106ca3d633d91b2afcf547b52e10dc58fd01ea45ea0eb2cddd6` |
+
+The tokens are cumulative over the conversation `h2-step4rest2`:
+
+- round 1: 366,701 input (300,544 cached) and 4,635 output;
+- round 2: 652,510 input (563,968 cached) and 8,036 output;
+- round 3: 878,401 input (781,824 cached) and 9,521 output;
+
+The conversation now counts **106,098** against v0.5.4's caps.
+
+Round 1's first attempt ended after its turn started, with no answer and no tokens past the start (a Codex CLI execution failure). Its events are kept as `.cache/v054/codex/h2-step4rest2-r1-attempt1-events.jsonl`; round 1 was run again unchanged. Corrections, as Codex wrote them. The fixed cap is the part's total charge. The run uses one worker, so one crash charge is 0.339 CPU-h, with step 4's per-shard limit of 1200 s kept. The driver's cap is (1.0 - 0.339) / 1.2 = 0.551 CPU-h, set as the frozen projection so that no checkpoint runs. The driver's stop is required exactly. An exception records the stop and the driver's own charge. The final charge is checked against 1.0 after the run and before the summary. The latency premise is stated as an operational margin of 198 CPU-s, not a proof. The phase's room is checked before the transition.
