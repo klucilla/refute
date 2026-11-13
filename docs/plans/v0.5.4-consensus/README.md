@@ -201,3 +201,21 @@ The tokens are cumulative over the conversation `h2-step4`:
 The conversation now counts **130,100** against v0.5.4's caps.
 
 Applied as Codex wrote them. Round 1 confirmed that the script reproduces B0's oracle and reading at the new errors and that reading B0's shards by the fingerprint its committed record states is sound (recomputing it hashes today's code). Corrections: stops before any record against stops in the record, no aggregate under a stop, the 5 % check requiring finite positive distances, the summary's own CPU charged. Round 2: the charges' room checked for the summary's reserve before reading, the record written only after the charge succeeds, a unique name per invocation, every distance checked before any aggregate. Round 3 (the last): by the tie-break, the conservative option: a UUID added to the charge's name.
+
+## Step 4's completion part after a stop by the driver's mechanics (`docs/validation/v0.5.4/step4_rest.py`), reviewed as a diff
+
+Codex's review, as a diff against `i4_rest2.py` and step 4's frozen script, of the one completion part decision 7c pre-approves, after `h2_step4` stopped at its own cap (its checkpoint projected 0.795 CPU-h; 62 of 77 shards done). Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [h2-step4rest-round-1-answer.md](h2-step4rest-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (the transfer through `declare` archived the closed part; the summary refused B0's reread; the fingerprint and both parts' stops and gates) | `e98064de0effc3fcf9cf45fd209aa5bde7c0ff746ae9e46aa13582e5b9a632f6` |
+| 2 | [h2-step4rest-round-2-answer.md](h2-step4rest-round-2-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `08020b1ed00c43d1889b44e4adc154c84b1b690a8baf1fca0d1fe2f32a519e32` |
+
+The tokens are cumulative over the conversation `h2-step4rest`:
+
+- round 1: 540,569 input (495,616 cached) and 6,313 output;
+- round 2: 947,957 input (893,184 cached) and 10,725 output;
+
+The conversation now counts **65,498** against v0.5.4's caps.
+
+Applied as Codex wrote them: an atomic transfer as i4_rest2's, never through `declare`; the summary's patch serves only step 4's own read and forwards B0's; the fingerprint bound to h2_step4's run and the stops and gates of both parts refused in the summary.
