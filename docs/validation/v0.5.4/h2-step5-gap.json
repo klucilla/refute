@@ -1,0 +1,84 @@
+{
+ "box_note": "a box's \u03c3 is divided by its response to the true shape: an equivalence assumption, not the trapezoid's bound",
+ "cpu_hours": 0.0643,
+ "decision": "the maintainer's decision of 2026-11-12 (night), item 4d (#217)",
+ "design": "docs/plans/v0.5.4-h2-step5-gap.md",
+ "errors": [],
+ "fingerprint": "a5e8af5c7d0f570a",
+ "label": "v0.5.4 step 5: E2's distance to the information bound, decomposed (a diagnostic under the generator's model; decides nothing)",
+ "method_status": "not_validated",
+ "odd_even_rec_losses": 21,
+ "outcome": "INCONCLUSIVE (E2's effective response is unknown: only the Fisher inflations)",
+ "planets": 178,
+ "stops": [],
+ "v0_compared": 178,
+ "v0_not_reproducing_i4": 0,
+ "variants": {
+  "V0": {
+   "crossings_denominator": 21,
+   "inflation_denominator": 178,
+   "inflation_quartiles": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "odd_even_rec_losses_crossing_below_0.95": 0,
+   "unknown": 0
+  },
+  "V_all": {
+   "crossings_denominator": null,
+   "inflation_denominator": 178,
+   "inflation_quartiles": [
+    1.1614251954865062,
+    1.1709014285511345,
+    1.1888949332789378
+   ],
+   "odd_even_rec_losses_crossing_below_0.95": null,
+   "unknown": 0
+  },
+  "V_box": {
+   "crossings_denominator": null,
+   "inflation_denominator": 178,
+   "inflation_quartiles": [
+    1.0084302856649923,
+    1.0223649961088495,
+    1.0928375976856373
+   ],
+   "odd_even_rec_losses_crossing_below_0.95": null,
+   "unknown": 0
+  },
+  "V_trend": {
+   "crossings_denominator": 21,
+   "inflation_denominator": 178,
+   "inflation_quartiles": [
+    1.0003367486240644,
+    1.0008539327633519,
+    1.0019215599912603
+   ],
+   "odd_even_rec_losses_crossing_below_0.95": 0,
+   "unknown": 0
+  },
+  "V_win": {
+   "crossings_denominator": 21,
+   "inflation_denominator": 178,
+   "inflation_quartiles": [
+    1.0539358985321394,
+    1.1474516479065724,
+    1.153178838455775
+   ],
+   "odd_even_rec_losses_crossing_below_0.95": 3,
+   "unknown": 0
+  },
+  "V_win+box": {
+   "crossings_denominator": null,
+   "inflation_denominator": 178,
+   "inflation_quartiles": [
+    1.1588842914143802,
+    1.1681102225941093,
+    1.1800426203627037
+   ],
+   "odd_even_rec_losses_crossing_below_0.95": null,
+   "unknown": 0
+  }
+ }
+}

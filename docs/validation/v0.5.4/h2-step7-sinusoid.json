@@ -1,0 +1,64 @@
+{
+ "cpu_hours": 0.0587,
+ "d2": {
+  "allowed": 22,
+  "certificate_fails": 9,
+  "certificate_fails_planets": [
+   3041,
+   3083,
+   3086,
+   3113,
+   3158,
+   3162,
+   3164,
+   3175,
+   3182
+  ],
+  "certificate_fails_with_a_recorded_warning_fail": 0,
+  "data_losses (step 1)": 2,
+  "floor": 11,
+  "floor_upper": 27,
+  "i4_invalid (E)": 15,
+  "margin_under_the_floor": 11,
+  "min_block_quantiles": [
+   0.2578033339105912,
+   0.9917944554720836,
+   0.9999999999924349,
+   1.0,
+   1.0
+  ],
+  "odd_even_limited (I4)": 2,
+  "outcome": "INCONCLUSIVE",
+  "outside_domain": [],
+  "overlap_with_the_recorded_status": {
+   "certificate fails / recorded INCONCLUSIVE": 8,
+   "certificate fails / recorded PASS": 1,
+   "certificate holds / recorded INCONCLUSIVE": 15,
+   "certificate holds / recorded PASS": 151,
+   "uncertain / recorded INCONCLUSIVE": 3
+  },
+  "p_small_vs_i4": {
+   "compared": 178,
+   "differ_by_more_than_0.05": 9
+  },
+  "planets": 178,
+  "uncertain_within_the_band": [
+   3004,
+   3112,
+   3114
+  ],
+  "unknown": []
+ },
+ "decision": "the maintainer's decision of 2026-11-12 (night), item 4f (#217)",
+ "design": "docs/plans/v0.5.4-h2-step7-sinusoid.md",
+ "fingerprint": "82479013a6b08c0b",
+ "label": "v0.5.4 step 7: sinusoid's Fr\u00e9chet certificate at the information bound (the battery's own rule under the generator's model; not a universal impossibility; decides nothing by itself)",
+ "method_status": "not_validated",
+ "stops": [],
+ "t2a": {
+  "outcome": "INCONCLUSIVE (by design: no true covariance for real hosts)",
+  "sinusoid_blockers_by_category_set (step 1)": {
+   "UNK": 95
+  }
+ }
+}

@@ -181,3 +181,23 @@ The tokens are cumulative over the conversation `h2-step7`:
 The conversation now counts **187,673** against v0.5.4's caps.
 
 Applied as Codex wrote them. In round 2 Codex agreed that corrections found in a review before any run are not the stop list's 'defect', which concerns defects found in runs or records. Step 7 survived after round 3; its last documentary cleanups were applied. Step 5: by the tie-break after round 3, the conservative option was applied: E2's effective response is unknown, so no comparison with E2's error, no explained share and no decision from them are drawn; the gap's outcome is INCONCLUSIVE by design, and the step reports the Fisher inflations of its variants (and, for the trapezoid variants only, the crossings of D2's odd_even REC losses); V_all is a partial combination; V0 must be compared on every planet.
+
+## Step 4: B0's oracle at stellar errors of 1, 2 and 3 % (`v0.5.4-h2-step4-b0-errors.md`, `step4_b0_errors.py`)
+
+Codex's review of step 4 before its run (the maintainer's decision of 2026-11-12, night, item 4c). Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [h2-step4-round-1-answer.md](h2-step4-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (stops' coverage; NaN in the 5 % check; the summary's CPU) | `8bc3ddc54f0107748bbc6f30669a2e3b0dc6366eedd8c3d712c3f13226a8417c` |
+| 2 | [h2-step4-round-2-answer.md](h2-step4-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` (reserve the charge and charge before publishing; a unique charge name; stops' wording) | `781a6b15546d8ec0d11f1cf529527787e0b6d4e655172e959ceb1c2dba06f356` |
+| 3 | [h2-step4-round-3-answer.md](h2-step4-round-3-answer.md) | gpt-6.1-sol, high | `WEAKENED` (a UUID in the charge's name) | `13b568335f3529883ac3a3c5fb16100ad05197d4a1ddfb9e614b620e56312454` |
+
+The tokens are cumulative over the conversation `h2-step4`:
+
+- round 1: 767,001 input (682,880 cached) and 5,327 output;
+- round 2: 1,111,666 input (1,006,208 cached) and 7,627 output;
+- round 3: 1,512,568 input (1,392,256 cached) and 9,788 output;
+
+The conversation now counts **130,100** against v0.5.4's caps.
+
+Applied as Codex wrote them. Round 1 confirmed that the script reproduces B0's oracle and reading at the new errors and that reading B0's shards by the fingerprint its committed record states is sound (recomputing it hashes today's code). Corrections: stops before any record against stops in the record, no aggregate under a stop, the 5 % check requiring finite positive distances, the summary's own CPU charged. Round 2: the charges' room checked for the summary's reserve before reading, the record written only after the charge succeeds, a unique name per invocation, every distance checked before any aggregate. Round 3 (the last): by the tie-break, the conservative option: a UUID added to the charge's name.
