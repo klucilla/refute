@@ -20,6 +20,11 @@
    "basis": "the summary's own CPU, outside the driver",
    "hours": 0.00022135416666666666,
    "name": "h2_step6_summarize_20261113T021447Z-cf513410397a"
+  },
+  {
+   "basis": "the summary's own CPU, outside the driver",
+   "hours": 0.0007204861111111111,
+   "name": "h2_step3_summarize_20261113T030252Z-8b723af05413"
   }
  ],
  "sections": {
@@ -66,6 +71,24 @@
     },
     "h1_reserve": {
      "allocation_hours": 1.5000000000000004
+    },
+    "h2_step3_binaries": {
+     "allocation_hours": 5.0,
+     "checkpoint_shards": 38,
+     "driver": "v3",
+     "identity": "f6073952830166f7",
+     "projection_basis": "measured CPU of the checkpoint (budgeted_v3)",
+     "projection_hours": 3.145800438596491,
+     "spent_hours": 2.7656510416666666
+    },
+    "h2_step3_planets": {
+     "allocation_hours": 7.7,
+     "checkpoint_shards": 60,
+     "driver": "v3",
+     "identity": "387481de12385fb8",
+     "projection_basis": "measured CPU of the checkpoint (budgeted_v3)",
+     "projection_hours": 3.8374999999999995,
+     "spent_hours": 3.787126736111111
     },
     "h2_step4": {
      "allocation_hours": 1.308295,
@@ -121,7 +144,7 @@
      "spent_hours": 0.058745659722222225
     },
     "h2_unallocated": {
-     "allocation_hours": 15.0
+     "allocation_hours": 2.3
     }
    }
   }
@@ -182,6 +205,20 @@
    "reason": "the maintainer's decision of 2026-11-12 (night), item 4e (#217): step 6, I2 in stages on the 102 class-(i) injections (h2_step6, budgeted_v3)",
    "to": "h2_step6",
    "utc": "2026-11-13T01:46:10Z"
+  },
+  {
+   "from": "h2_unallocated",
+   "hours": 7.7,
+   "reason": "the maintainer's decision of 2026-11-12 (night), item 4b (#217): step 3, the population version of I3 (budgeted_v3)",
+   "to": "h2_step3_planets",
+   "utc": "2026-11-13T02:15:17Z"
+  },
+  {
+   "from": "h2_unallocated",
+   "hours": 5.0,
+   "reason": "the maintainer's decision of 2026-11-12 (night), item 4b (#217): step 3, the population version of I3 (budgeted_v3)",
+   "to": "h2_step3_binaries",
+   "utc": "2026-11-13T02:44:36Z"
   }
  ]
 }

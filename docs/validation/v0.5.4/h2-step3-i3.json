@@ -1,0 +1,171 @@
+{
+ "band": "one-sided Clopper-Pearson at 1 - 0.05/8 per limit (8 limits)",
+ "binaries": {
+  "EB1": {
+   "allowance": 10,
+   "eligible": 381,
+   "meets_d1_alone": false,
+   "not_rejected": 275,
+   "pass_probability_at_upper": 3.586121168899166e-103,
+   "projection": 190,
+   "upper": 0.7775053406628543
+  },
+  "EB2": {
+   "allowance": 10,
+   "eligible": 373,
+   "meets_d1_alone": false,
+   "not_rejected": 332,
+   "pass_probability_at_upper": 5.1227123817138945e-185,
+   "projection": 186,
+   "upper": 0.9269390729700733
+  }
+ },
+ "binaries_not_reproducing_b0 (counted as not rejected)": 0,
+ "calibration_rates": {
+  "P": {
+   "fail": 2,
+   "inconclusive": 0,
+   "inconclusive15": 0,
+   "n": 141,
+   "n15": 90
+  },
+  "PA": {
+   "fail": 3,
+   "inconclusive": 0,
+   "inconclusive15": 0,
+   "n": 147,
+   "n15": 111
+  },
+  "PG": {
+   "fail": 7,
+   "inconclusive": 6,
+   "inconclusive15": 6,
+   "n": 141,
+   "n15": 106
+  },
+  "PV": {
+   "fail": 5,
+   "inconclusive": 2,
+   "inconclusive15": 2,
+   "n": 146,
+   "n15": 106
+  }
+ },
+ "cpu_hours": {
+  "binaries": 2.7657,
+  "planets": 3.7871
+ },
+ "d1_joint_pass_probability_lower_bound": -1.0,
+ "decision": "the maintainer's decision of 2026-11-12 (night), item 4b (#217)",
+ "designs": [
+  "docs/plans/v0.5.4-h2-step3-i3-population.md",
+  "docs/plans/v0.5.4-h2-step2-i3-increment.md"
+ ],
+ "evaluation_rates": {
+  "P": {
+   "fail": 4,
+   "inconclusive": 0,
+   "inconclusive15": 0,
+   "n": 141,
+   "n15": 100
+  },
+  "PA": {
+   "fail": 2,
+   "inconclusive": 0,
+   "inconclusive15": 0,
+   "n": 147,
+   "n15": 111
+  },
+  "PG": {
+   "fail": 2,
+   "inconclusive": 5,
+   "inconclusive15": 5,
+   "n": 140,
+   "n15": 112
+  },
+  "PV": {
+   "fail": 5,
+   "inconclusive": 0,
+   "inconclusive15": 0,
+   "n": 141,
+   "n15": 106
+  }
+ },
+ "label": "v0.5.4 step 3: the population version of I3 (a new fatal density test's separation under step 2's rule; never a negative result or a draft)",
+ "method_status": "not_validated",
+ "outcome": "INCONCLUSIVE",
+ "planet_budgets_hold_at_upper_ends": false,
+ "scope": "PASS means non-rejection: the new test has no sensitivity block, so its INCONCLUSIVE is understated and a route stays conditional on that; the binary side assumes the other tests reject nothing; never a negative result or a draft",
+ "separation": [
+  {
+   "EB1_rejected": 1.0,
+   "EB2_rejected": 1.0,
+   "P_rejected": 1.0,
+   "tau": -10.735727065177343
+  },
+  {
+   "EB1_rejected": 0.9606299212598425,
+   "EB2_rejected": 0.9705093833780161,
+   "P_rejected": 0.900709219858156,
+   "tau": 0.1393969493719851
+  },
+  {
+   "EB1_rejected": 0.937007874015748,
+   "EB2_rejected": 0.9410187667560321,
+   "P_rejected": 0.8297872340425532,
+   "tau": 1.1374456295689015
+  },
+  {
+   "EB1_rejected": 0.8976377952755905,
+   "EB2_rejected": 0.903485254691689,
+   "P_rejected": 0.75177304964539,
+   "tau": 2.4499524050048422
+  },
+  {
+   "EB1_rejected": 0.863517060367454,
+   "EB2_rejected": 0.8525469168900804,
+   "P_rejected": 0.6453900709219859,
+   "tau": 4.081797106471822
+  },
+  {
+   "EB1_rejected": 0.821522309711286,
+   "EB2_rejected": 0.8123324396782842,
+   "P_rejected": 0.5673758865248227,
+   "tau": 6.113290306811905
+  },
+  {
+   "EB1_rejected": 0.7532808398950132,
+   "EB2_rejected": 0.7050938337801609,
+   "P_rejected": 0.45390070921985815,
+   "tau": 9.489554404576303
+  },
+  {
+   "EB1_rejected": 0.6587926509186351,
+   "EB2_rejected": 0.546916890080429,
+   "P_rejected": 0.3333333333333333,
+   "tau": 16.894348085650755
+  },
+  {
+   "EB1_rejected": 0.5590551181102362,
+   "EB2_rejected": 0.4262734584450402,
+   "P_rejected": 0.23404255319148937,
+   "tau": 29.082940242284714
+  },
+  {
+   "EB1_rejected": 0.4409448818897638,
+   "EB2_rejected": 0.2707774798927614,
+   "P_rejected": 0.0851063829787234,
+   "tau": 59.770192293304746
+  },
+  {
+   "EB1_rejected": 0.1994750656167979,
+   "EB2_rejected": 0.0160857908847185,
+   "P_rejected": 0.0,
+   "tau": 244.60700533720956
+  }
+ ],
+ "stops": [],
+ "tau_star": 124.79958353445545,
+ "warning_class_note": "\u039b > \u03c4* as a warning (WEAKENED) is for the maintainer's step 8",
+ "whole_allowance_budgets_hold_at_upper_ends": true
+}
