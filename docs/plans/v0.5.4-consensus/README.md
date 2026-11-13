@@ -295,3 +295,30 @@ The tokens are cumulative over the conversation `h2-step4rest2`:
 The conversation now counts **106,098** against v0.5.4's caps.
 
 Round 1's first attempt ended after its turn started, with no answer and no tokens past the start (a Codex CLI execution failure). Its events are kept as `.cache/v054/codex/h2-step4rest2-r1-attempt1-events.jsonl`; round 1 was run again unchanged. Corrections, as Codex wrote them. The fixed cap is the part's total charge. The run uses one worker, so one crash charge is 0.339 CPU-h, with step 4's per-shard limit of 1200 s kept. The driver's cap is (1.0 - 0.339) / 1.2 = 0.551 CPU-h, set as the frozen projection so that no checkpoint runs. The driver's stop is required exactly. An exception records the stop and the driver's own charge. The final charge is checked against 1.0 after the run and before the summary. The latency premise is stated as an operational margin of 198 CPU-s, not a proof. The phase's room is checked before the transition.
+
+## The pause record of the v0.5 line (`docs/validation/v0.5.4/pause-record.md`)
+
+Codex's review of the pause record before its commit (the maintainer's decision of 2026-11-13, item 3: up to 3 rounds). Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [h2-pause-round-1-answer.md](h2-pause-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (step 3's sizes and the band's scope; the τ* trigger; incomplete or unworkable triggers; missing caveats in D1, D4 and T3b; agent-days and derived figures) | `4ecd5e94de5772f929d9de11ad298704c334086ecbcf4c54f7aff0c4a4be893c` |
+| 2 | [h2-pause-round-2-answer.md](h2-pause-round-2-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `e2d0843bbd8e4db83b8774b0e49a68295f185b06185bd125b4b6eb83a6f89a1f` |
+
+The tokens are cumulative over the conversation `h2-pause`:
+
+- round 1: 965,948 input (862,336 cached) and 8,542 output;
+- round 2: 1,357,789 input (1,242,112 cached) and 10,426 output;
+
+The conversation now counts **126,103** against v0.5.4's caps.
+
+Applied as Codex wrote them:
+- The calibration and evaluation sizes are given apart, and the Clopper-Pearson examples are marked as derived.
+- The strict budget is limited to I3's design.
+- τ* is kept as a diagnostic, with no cause established, and its trigger was removed.
+- The triggers are renamed "what would warrant reconsidering" and are evidence only; designs, runs, rule changes, amendments and step 8 stay the maintainer's.
+- D1's trigger 1 carries "no more SURVIVED than v0.4". D1's trigger 2 asks for information beyond the star's density, since under B0's model even the known star leaves expectations above 10.
+- The recounts use step 1's method in a new frozen script.
+- T2a's trigger asks for 82 valid cases.
+- D1 carries step 3's assumptions, D4 says there was no new acceptance, and T3b's 13/63 is qualified.
+- The agent-days are 1.39 (0.82 active), from caps.json.
