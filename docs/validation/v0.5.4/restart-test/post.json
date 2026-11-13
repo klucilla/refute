@@ -1,0 +1,28 @@
+{
+ "affinity_ok": true,
+ "beats": 343,
+ "checked_utc": "2026-11-13T00:15:32+00:00",
+ "criteria_before_launch": true,
+ "final_line": false,
+ "first_utc": "2026-11-12T23:18:25.874+00:00",
+ "interpreter": "alive",
+ "interpreter_parent_is_launcher": true,
+ "intervals_ok": true,
+ "label": "post",
+ "largest_interval_mono_s": 10.009,
+ "largest_interval_utc_s": 10.009,
+ "last_utc": "2026-11-13T00:15:26.200+00:00",
+ "launcher": "alive",
+ "priority_ok": true,
+ "sequence_without_gap": true,
+ "stderr_bytes": 0,
+ "watched_alive_at_first_beat": true,
+ "watched_gone_first_seen_utc": {
+  "23476": "2026-11-13T00:13:06.188+00:00",
+  "30948": "2026-11-13T00:13:06.188+00:00"
+ },
+ "watched_states_seen": [
+  "alive",
+  "ended"
+ ]
+}

@@ -1,0 +1,24 @@
+{
+ "affinity_ok": true,
+ "beats": 1,
+ "checked_utc": "2026-11-12T23:18:27+00:00",
+ "criteria_before_launch": true,
+ "final_line": false,
+ "first_utc": "2026-11-12T23:18:25.874+00:00",
+ "interpreter": "alive",
+ "interpreter_parent_is_launcher": true,
+ "intervals_ok": false,
+ "label": "pre",
+ "largest_interval_mono_s": null,
+ "largest_interval_utc_s": null,
+ "last_utc": "2026-11-12T23:18:25.874+00:00",
+ "launcher": "alive",
+ "priority_ok": true,
+ "sequence_without_gap": true,
+ "stderr_bytes": 0,
+ "watched_alive_at_first_beat": true,
+ "watched_gone_first_seen_utc": {},
+ "watched_states_seen": [
+  "alive"
+ ]
+}

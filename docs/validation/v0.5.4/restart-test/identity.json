@@ -1,0 +1,1 @@
+{"affinity_mask": "0xffffff00", "created": 134389991054548645, "every_seconds": 10.0, "minutes": 60.0, "parent_created": 134389991053852718, "pid": 5328, "ppid": 41208, "priority_class": "0x4000", "python": "3.13.16", "started_utc": "2026-11-12T23:18:25.873+00:00"}

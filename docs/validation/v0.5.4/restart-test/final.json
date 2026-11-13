@@ -1,0 +1,52 @@
+{
+ "affinity_ok": true,
+ "beats": 361,
+ "checked_utc": "2026-11-13T00:18:38+00:00",
+ "checks": {
+  "affinity_ok": true,
+  "app_exit_seen_in_window": true,
+  "both_ended_now": true,
+  "criteria_before_launch": true,
+  "duration_ok": true,
+  "final_line": true,
+  "interpreter_parent_is_launcher": true,
+  "intervals_ok": true,
+  "new_app_created_in_window": true,
+  "no_unknown_state": true,
+  "post_both_alive": true,
+  "pre_before_exit_and_post_after_reopen": true,
+  "pre_both_alive": true,
+  "priority_ok": true,
+  "sequence_without_gap": true,
+  "watched_alive_at_first_beat": true
+ },
+ "criteria_before_launch": true,
+ "duration_s": 3600.3,
+ "final_line": true,
+ "first_utc": "2026-11-12T23:18:25.874+00:00",
+ "interpreter": "ended",
+ "interpreter_parent_is_launcher": true,
+ "intervals_ok": true,
+ "label": "final",
+ "largest_interval_mono_s": 10.009,
+ "largest_interval_utc_s": 10.009,
+ "last_utc": "2026-11-13T00:18:26.216+00:00",
+ "launcher": "ended",
+ "new_app_created_utc": [
+  "2026-11-13T00:13:28+00:00",
+  "2026-11-13T00:13:08+00:00"
+ ],
+ "priority_ok": true,
+ "sequence_without_gap": true,
+ "stderr_bytes": 0,
+ "survived_the_restart": true,
+ "watched_alive_at_first_beat": true,
+ "watched_gone_first_seen_utc": {
+  "23476": "2026-11-13T00:13:06.188+00:00",
+  "30948": "2026-11-13T00:13:06.188+00:00"
+ },
+ "watched_states_seen": [
+  "alive",
+  "ended"
+ ]
+}
