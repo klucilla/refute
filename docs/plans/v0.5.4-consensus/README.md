@@ -259,3 +259,19 @@ The tokens are cumulative over the conversation `h2-step3`:
 The conversation now counts **158,032** against v0.5.4's caps.
 
 Applied as Codex wrote them. Round 1: a Bonferroni split over the eight limits, separate calibration, conservative error counting, frozen binary populations, the planets' allocation of 7.7 CPU-h. Round 2's answer came in Italian except for its last line, and is stored unchanged. Its corrections were: D1 by the conservative joint bound `1 - Σ(1 - p_f) >= 0.95`, with the per-family checks kept as information only; a declared part keeps its reserve; `_whole` checks the point criteria as well as the upper limits; `_separation` keeps the conservative denominators and reports EB1 and EB2 apart; a binary that does not reproduce B0 is counted as not rejected instead of stopping the summary; and two textual leftovers. Round 3 (the last) was resolved by the tie-break, applying the conservative option. One interrupted batch's charge (12 workers × (300 s + 20 s), 1.07 CPU-h) and the charges' room left are reserved under the 40 CPU-h barrier. The barrier is read under the run's lock, and the part's hard cap is bounded by that margin. Each shard's limit went from 1500 s to 300 s, since one curve per shard takes about 17 CPU-s in the pilot.
+
+## The end-of-round review of the second half (commits 1afdf39 to 7f9be4a; the stop report's recommendation)
+
+Codex's one review at the end of the round, before the second half's stop report (the maintainer's decision of 2026-11-12, night, items 3 and 8). Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [h2-close-round-1-answer.md](h2-close-round-1-answer.md) | gpt-6.1-sol, high | `SURVIVED` (the results follow their frozen designs; the pause recommendation is supported as a strategic judgment, with its limits) | `7e5c9205cf8d745b2cdf65f558daca09357596aff0a7703828b9a28e029e1b3a` |
+
+The tokens are cumulative over the conversation `h2-close`:
+
+- round 1: 827,151 input (735,104 cached) and 9,210 output;
+
+The conversation now counts **101,257** against v0.5.4's caps.
+
+Codex recomputed τ* (124.7995835), the step 3 counts and binomial ends, and step 6's 102 UNK (96 Box-Pierce, 6 τ below three bins), and confirmed 29.0383 CPU-h charged. The stop report follows its precision on the recommendation. T2a's 20 was foreseeable from the known marginals and is no new demonstration of infeasibility. D1 has no route by this density test only. D2 is met only at the upper counts. The report claims no three demonstrated criteria, universal impossibility, formal infeasibility, confirmation or battery validation, and it uses the section 6 figures as judgments, not measurements.
