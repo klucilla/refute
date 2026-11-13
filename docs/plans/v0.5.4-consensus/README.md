@@ -239,3 +239,23 @@ The tokens are cumulative over the conversation `h2-step6`:
 The conversation now counts **179,911** against v0.5.4's caps.
 
 Applied as Codex wrote them. Round 1 confirmed the capture and E4's series and windows; it computed from step 1's detail that only 56 of the 102 losses have `systematics` as their only blocker, so even freeing all 102 would leave 172 of 228 T2a losses (margins -165 in B, -123 in C). Corrections: one window missing is UNK; a unit response through E4's transformation; E4's constant fallback; shared white noise; a banded OU precision for σ_full; stops raised in the shard; per-injection blockers; the reading restricted to a GLS estimator of a common step with E4's windows and baselines under the fitted covariance. Round 2: each sector's constant profiled out by GLS; the response tested as T(b + a s) − T(b) on the real background, with the best combination and the baselines nulled; a Box-Pierce with at least 30 pairs per lag; a stop persisted in the ledger and the driver's folder before the failure propagates. Round 3 (the last): by the tie-break, the conservative options were applied: any two windows sharing cadences make the injection UNK, and every failure carries the injection's identity. Three pilot statuses (all UNK, inadequate at the transit's scale) were disclosed before the freeze.
+
+## Steps 2 and 3: I3 corrected, on the increment, in a population version (`v0.5.4-h2-step2-i3-increment.md`, `v0.5.4-h2-step3-i3-population.md`, `step3_i3.py`)
+
+Codex's review of steps 2 and 3 before their run (the maintainer's decision of 2026-11-12, night, item 4b). Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [h2-step3-round-1-answer.md](h2-step3-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (the joint band; D1's scope; unknowns and denominators; numeric and documentary coherence; the CPU reserve) | `99e8795d20f29f111fd350f3aec6899c525b701af7cf55fc0d462e547ece035a` |
+| 2 | [h2-step3-round-2-answer.md](h2-step3-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` (D1's joint probability; reserves and the CPU barrier; auxiliary reports; coherence of the stops) | `7c727adc8d26de47637df0a6b149157e21ff00111ececb30c45eb127f3ec2520` |
+| 3 | [h2-step3-round-3-answer.md](h2-step3-round-3-answer.md) | gpt-6.1-sol, high | `WEAKENED` (reserve the interruption charge and the external charges under the 40 CPU-h barrier too) | `a72a2155cf7dd617ed74f225ec242bf1c26c74732097805172dc935c0bee2820` |
+
+The tokens are cumulative over the conversation `h2-step3`:
+
+- round 1: 922,407 input (835,584 cached) and 8,308 output;
+- round 2: 1,565,500 input (1,448,576 cached) and 13,040 output;
+- round 3: 2,186,868 input (2,046,208 cached) and 17,372 output;
+
+The conversation now counts **158,032** against v0.5.4's caps.
+
+Applied as Codex wrote them. Round 1: a Bonferroni split over the eight limits, separate calibration, conservative error counting, frozen binary populations, the planets' allocation of 7.7 CPU-h. Round 2's answer came in Italian except for its last line, and is stored unchanged. Its corrections were: D1 by the conservative joint bound `1 - Σ(1 - p_f) >= 0.95`, with the per-family checks kept as information only; a declared part keeps its reserve; `_whole` checks the point criteria as well as the upper limits; `_separation` keeps the conservative denominators and reports EB1 and EB2 apart; a binary that does not reproduce B0 is counted as not rejected instead of stopping the summary; and two textual leftovers. Round 3 (the last) was resolved by the tie-break, applying the conservative option. One interrupted batch's charge (12 workers × (300 s + 20 s), 1.07 CPU-h) and the charges' room left are reserved under the 40 CPU-h barrier. The barrier is read under the run's lock, and the part's hard cap is bounded by that margin. Each shard's limit went from 1500 s to 300 s, since one curve per shard takes about 17 CPU-s in the pilot.
