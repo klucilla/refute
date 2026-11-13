@@ -13,6 +13,13 @@
    "projection_at_stop": 0.7951288082437277,
    "reason": "a stopped part closed after its reconciliation (step4_rest.py)",
    "utc": "2026-11-13T01:28:56Z"
+  },
+  {
+   "consumed": 0.1008029513888889,
+   "part": "h2_step4_rest",
+   "projection_at_stop": 0.06020399305555555,
+   "reason": "a stopped part closed after its reconciliation (step4_rest.py)",
+   "utc": "2026-11-13T04:04:04Z"
   }
  ],
  "charges": [
@@ -25,6 +32,11 @@
    "basis": "the summary's own CPU, outside the driver",
    "hours": 0.0007204861111111111,
    "name": "h2_step3_summarize_20261113T030252Z-8b723af05413"
+  },
+  {
+   "basis": "the summary's own CPU, outside the driver",
+   "hours": 0.007790798611111111,
+   "name": "h2_step4_summarize_20261113T041122Z-abea29e4e8e1"
   }
  ],
  "sections": {
@@ -107,14 +119,28 @@
      "spent_hours": 1.3082942708333334
     },
     "h2_step4_rest": {
-     "allocation_hours": 1.691705,
+     "allocation_hours": 0.691705,
      "checkpoint_shards": 1,
      "driver": "v3",
      "identity": "71431bee36fc57b8",
+     "projection_at_stop": 0.06020399305555555,
      "projection_basis": "measured CPU of the checkpoint (budgeted_v3)",
-     "projection_hours": 0.06020399305555555,
-     "spent_hours": 0.1008029513888889,
-     "unresolved_stop": "over the cap: the workers were ended"
+     "projection_hours": 0.1008029513888889,
+     "reconciled": [
+      {
+       "reason": "the maintainer's decision of 2026-11-13, item 2 (#217): h2_step4_rest stopped by the driver's mechanics (its one-shard checkpoint projected 0.060 CPU-h; the watchdog ended the workers at 0.101); the stop is a fact, the part is closed, and the 14 rows not done run as h2_step4_rest2 with the same code, rows and fingerprint, under a fixed cap of 1.0 CPU-h",
+       "stop": "over the cap: the workers were ended"
+      }
+     ],
+     "spent_hours": 0.1008029513888889
+    },
+    "h2_step4_rest2": {
+     "allocation_hours": 1.0,
+     "driver": "v3",
+     "identity": "56b8ecdefd99e456",
+     "projection_basis": "a fixed cap set by the maintainer (2026-11-13, item 2): 1.0 CPU-h less one worker's crash reserve, over a margin of 1.2; no checkpoint ran",
+     "projection_hours": 0.5509259259259259,
+     "spent_hours": 0.10876302083333333
     },
     "h2_step5": {
      "allocation_hours": 0.5,
@@ -219,6 +245,13 @@
    "reason": "the maintainer's decision of 2026-11-12 (night), item 4b (#217): step 3, the population version of I3 (budgeted_v3)",
    "to": "h2_step3_binaries",
    "utc": "2026-11-13T02:44:36Z"
+  },
+  {
+   "from": "h2_step4_rest",
+   "hours": 1.0,
+   "reason": "the maintainer's decision of 2026-11-13, item 2 (#217): h2_step4_rest stopped by the driver's mechanics (its one-shard checkpoint projected 0.060 CPU-h; the watchdog ended the workers at 0.101); the stop is a fact, the part is closed, and the 14 rows not done run as h2_step4_rest2 with the same code, rows and fingerprint, under a fixed cap of 1.0 CPU-h",
+   "to": "h2_step4_rest2",
+   "utc": "2026-11-13T04:04:04Z"
   }
  ]
 }
