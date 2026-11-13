@@ -219,3 +219,23 @@ The tokens are cumulative over the conversation `h2-step4rest`:
 The conversation now counts **65,498** against v0.5.4's caps.
 
 Applied as Codex wrote them: an atomic transfer as i4_rest2's, never through `declare`; the summary's patch serves only step 4's own read and forwards B0's; the fingerprint bound to h2_step4's run and the stops and gates of both parts refused in the summary.
+
+## Step 6: I2's first stage on the 102 class-(i) injections (`v0.5.4-h2-step6-i2-staged.md`, `step6_i2.py`)
+
+Codex's review of step 6 before its run (the maintainer's decision of 2026-11-12, night, item 4e). Codex was asked not to open the step-6 or I1 shard files. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [h2-step6-round-1-answer.md](h2-step6-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (the binned fit and its covariance; adequacy across gaps; amplitude equivalence; overlaps; stops; scope) | `2faee765d446466207b064f451b19857f3d6f1791897049f570e843e4f582de9` |
+| 2 | [h2-step6-round-2-answer.md](h2-step6-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` (the finite 'diffuse' prior; the transformation test; pairs per lag; a persistent stop) | `8da97982df9600caabd54fdbcbfc0340c6b796186e6dce6fd70db365ec622832` |
+| 3 | [h2-step6-round-3-answer.md](h2-step6-round-3-answer.md) | gpt-6.1-sol, high | `WEAKENED` (overlapping windows; the shard's identity on every failure; wording) | `708d1b94cbfbc13e1fe1268a865e00d431cdfb541f22216850af2d74bc38f89d` |
+
+The tokens are cumulative over the conversation `h2-step6`:
+
+- round 1: 652,038 input (555,776 cached) and 9,479 output;
+- round 2: 1,148,220 input (1,024,640 cached) and 17,449 output;
+- round 3: 1,968,485 input (1,812,480 cached) and 23,906 output;
+
+The conversation now counts **179,911** against v0.5.4's caps.
+
+Applied as Codex wrote them. Round 1 confirmed the capture and E4's series and windows; it computed from step 1's detail that only 56 of the 102 losses have `systematics` as their only blocker, so even freeing all 102 would leave 172 of 228 T2a losses (margins -165 in B, -123 in C). Corrections: one window missing is UNK; a unit response through E4's transformation; E4's constant fallback; shared white noise; a banded OU precision for σ_full; stops raised in the shard; per-injection blockers; the reading restricted to a GLS estimator of a common step with E4's windows and baselines under the fitted covariance. Round 2: each sector's constant profiled out by GLS; the response tested as T(b + a s) − T(b) on the real background, with the best combination and the baselines nulled; a Box-Pierce with at least 30 pairs per lag; a stop persisted in the ledger and the driver's folder before the failure propagates. Round 3 (the last): by the tie-break, the conservative options were applied: any two windows sharing cadences make the injection UNK, and every failure carries the injection's identity. Three pilot statuses (all UNK, inadequate at the transit's scale) were disclosed before the freeze.
