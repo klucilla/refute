@@ -161,3 +161,25 @@ Read on 2026-11-16 (UTC 23:22 to 23:39). The local copies are in `.cache/pub1119
   - any coverage of the target in sectors 122 to 134;
   - the delay between a segment's end and its images' release;
   - the time scale of the tables' BJD (assumed TDB).
+
+## The maintainer's decision (2026-11-16, 21:40): item 3 closed
+
+Recorded on #217 (comment 6933976261). Quoted in Portuguese:
+
+> TOI-7930: não registro exceção de fase. O último segmento do setor 110 não conta como "setor
+> futuro com dados utilizáveis" para este caso. Registre o item 3 como encerrado, com o motivo
+> (prazo no mesmo dia da publicação; previsão a partir de uma efeméride pública). As issues #24 e
+> #25 seguem future-phase.
+
+**Item 3 is closed.**
+- **No exception to the phase rule is recorded.**
+- **Sector 110's last segment does not count** as "a future sector with usable data" for this
+  case. Two reasons are given:
+  - a lock would have been due on the day of the publication of 2026-11-19 (the segment starts
+    on 2026-11-20 at 01:45 UTC, which is 2026-11-19 at 22:45 in Brasília);
+  - the prediction would rest on a public ephemeris, the TESS project's, not on a Refute result.
+- **The scope of item 3b is not written.**
+- #24 and #25 stay `future-phase`, and nothing was locked, drawn, deposited or published for the
+  target.
+
+The questions of section 4 are answered by this decision; the text above them is unchanged.

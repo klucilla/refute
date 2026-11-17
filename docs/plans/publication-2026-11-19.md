@@ -196,12 +196,27 @@ decision.
 
 ## Part 2. Release 0.5.0
 
-**2.1 [M] Read and approve the drafts** in `.cache/v05/release/`: `README.draft.md`,
+**2.1 [A] A final Codex review of the final drafts, before anything is applied** (the
+maintainer's decision of 2026-11-16, 21:40, item 1c). One round, read only, through the affinity
+wrapper, on every draft of `.cache/v05/release/` as it stands on the day. Its answer goes,
+unchanged, to `docs/plans/publication-2026-11-19-consensus/`.
+
+```
+git diff --no-index README.md .cache/v05/release/README.draft.md > .cache/v05/release/README.diff
+powershell -NoProfile -ExecutionPolicy Bypass -File .cache/v04/tools/codex_affinity.ps1 -Prompt .cache/pub1119/codex/pub-final-r1-prompt.md -Answer .cache/pub1119/codex/pub-final-r1-answer.md -Events .cache/pub1119/codex/pub-final-r1-events.jsonl
+```
+
+Check: the answer ends with `SURVIVED`. With `WEAKENED` or `REFUTED`, the corrections are applied
+to the drafts and reviewed again (up to 3 rounds), and nothing of part 2 is applied before a
+`SURVIVED` or the maintainer's decision. The prompt is written on the day; it names the drafts,
+`metadata-changes.md` and the decisions of 2026-11-16.
+
+**2.2 [M] Read and approve the drafts** in `.cache/v05/release/`: `README.draft.md`,
 `release-notes-v0.5.0.en.md` (the Portuguese copy is for reading only), `CITATION.draft.cff`,
 `zenodo.draft.json`, and `metadata-changes.md`, which lists every change and each legal
 statement's `sources/` record.
 
-**2.2 [A] Check that the README draft still sits on `main`'s README.**
+**2.2b [A] Check that the README draft still sits on `main`'s README.**
 
 ```
 git log -1 --format=%H -- README.md

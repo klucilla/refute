@@ -99,3 +99,26 @@ Every correction was applied as written:
 - The site's part registers the release before the fetch, commits before the acceptance, and asks for the launch gate's READY before the deploy.
 
 Round 3 was the last. Its one correction was applied: the approval record's `approved.site_commit` is updated and checked. No divergence remained.
+
+## Items 1a and 1b of the decision of 2026-11-16, 21:40 (the 4-of-100 count; the README's closing sentence)
+
+Codex's review of the two corrections to the release drafts asked by the maintainer's decision of 2026-11-16, 21:40 (#217), item 5: one round, up to three if not SURVIVED. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [pub-fix-round-1-answer.md](pub-fix-round-1-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `a289f00ac2c5de57d829020975d6c61f48aa754f4dcbe90a9ead6ba3ff118dba` |
+
+The tokens are cumulative over the conversation `pub-fix`:
+
+- round 1: 266,485 input (220,544 cached) and 2,926 output;
+
+The conversation counts **48,867** review tokens (the last round's uncached input plus output).
+
+The first attempt ended after its turn started, with no answer (a Codex CLI execution failure). Its events are kept as `.cache/pub1119/codex/pub-fix-r1-attempt1-events.jsonl`, and the round was run again unchanged.
+
+Codex confirmed:
+- The "4 to 0 among all 100" has a registered source: `calibration/v0.5/runs/c2/report.json`, `originals_all`, identical to the file committed in `a9ec11a`. It counts SURVIVED only, on the original curves, with the same stage verdicts as T2c's "2 to 0 among the 97". The parenthesis stays, as a descriptive count, not a target.
+- The README draft's sentence is now the text of `README.md` on main, unchanged.
+- The paragraph of `metadata-changes.md` is accurate.
+
+No correction was needed.
