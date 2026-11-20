@@ -142,3 +142,26 @@ Codex compared the drafts with its rounds of 2026-11-16. The only changes were t
 - the maintainer's requirements are met.
 
 The drafts were then applied to main in commit f3a36e6.
+
+## The site's e2e status test, updated to the status approved on 2026-11-20 (refute-site PR 7)
+
+Codex's review of the change to `tests/e2e/pages.spec.ts` in the private site repository (the maintainer's decision of 2026-11-20, 11:40; up to 3 rounds). Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [pub-e2e-round-1-answer.md](pub-e2e-round-1-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `3249f5912748210c31586311b5cf2208af78c4fa8588c6b06d7e98a5d0a44570` |
+
+The tokens are cumulative over the conversation `pub-e2e`:
+
+- round 1: 272,238 input (221,568 cached) and 3,638 output;
+
+The conversation counts **54,308** review tokens (the last round's uncached input plus output).
+
+Codex confirmed:
+- the 14 phases, their states and the ended dates match `status.yaml` and the strings;
+- v0.3 has no `results_after`;
+- every guarantee of the old test is kept or made stronger (the approval line now checked as approved);
+- there are no strict-mode pitfalls;
+- the change touches only the test.
+
+The change was committed as refute-site `4a4faf8` on the PR's branch.
