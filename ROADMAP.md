@@ -40,15 +40,19 @@ how later work is done.
 
 ## Current phase
 
-**None open: the v0.5 line is paused** (the maintainer's decision of 2026-11-13, #217;
-[pause record](docs/validation/v0.5.4/pause-record.md)).
+**v0.5.5 Core resolution** (opened on 2026-11-20 by the maintainer's decision of that day,
+15:40, #218; see [the section below](#v055-core-resolution-change-of-approach-after-the-pause)).
+The maintainer resumed the v0.5 line through a new change of approach, **without amending the
+advance rule and without advancing a phase**. Its scope up to the gate G1 is R0 (the charter), R1
+(designs for four checks; T3b's execution deferred by the decision-value test) and G1.
 
-- **What the pause means.** No target is relaxed, none is declared infeasible, and no verdict
-  changes. v0.5 stays `WEAKENED`, and every failed target of v0.5 stays outstanding (D1 for EB1 and
-  EB2, D2, D4, T2a). No exit criterion of any v0.5 correction phase is ticked.
-- **Per target,** the pause record gives what is known, what was not shown, and the evidence that
-  would warrant reconsidering it.
-- **Resuming** is the maintainer's decision only, after the publication of 2026-11-19.
+- **What stays.** No target is relaxed, none is declared infeasible, and no verdict changes. v0.5
+  stays `WEAKENED`, and every failed target of v0.5 stays outstanding (D1 for EB1 and EB2, D2, D4,
+  T2a). No exit criterion of any v0.5 correction phase is ticked.
+- **The pause of 2026-11-13 ends;** its record
+  ([pause record](docs/validation/v0.5.4/pause-record.md)) remains historical, subject to the
+  linked corrections
+  ([pause-record corrections](docs/validation/v0.5.4/pause-record-corrections.md)).
 
 ### Previous phase record: v0.5.4 Information checks
 
@@ -64,7 +68,7 @@ neither passed nor failed a target.
   - Steps 2 and 3 (I3's population version), steps 5 and 6 (I2's first stage) and step 7 were
     `INCONCLUSIVE`.
   - Step 4 found that no stellar precision of 1, 2 or 3 % is shown to be enough for D1 under B0's
-    oracle.
+    oracle. *(See [pause-record corrections](docs/validation/v0.5.4/pause-record-corrections.md).)*
   - T3b's count showed a shortage of 9.
 - **Method status.** v0.5.4 did not deliver a validated method (`method_status: not_validated`).
 
@@ -838,6 +842,52 @@ The phase stops at 80 % of any cap.
   diagnosis on the blocking sub-check would have shown where an estimator could help.
 - A part's checkpoint can underestimate its cost (by 1.68 in B1.4). A cap stop on development work
   is recorded, and resolved only by an approved, recorded completion.
+
+---
+
+## v0.5.5 Core resolution (change of approach after the pause)
+
+Tracking: #218. Plan (an agent's proposal, stored unchanged; it decides nothing):
+[docs/plans/v0.5.5-fable-core-plan.md](docs/plans/v0.5.5-fable-core-plan.md). Charter:
+[docs/plans/v0.5.5-charter.md](docs/plans/v0.5.5-charter.md). Designs of the checks:
+[docs/plans/v0.5.5-r1-designs.md](docs/plans/v0.5.5-r1-designs.md).
+
+**Opened on 2026-11-20** by the maintainer's decision of that day (15:40, #218), which resumed
+the v0.5 line through a new change of approach. **The advance rule is not amended, and no phase
+advances.** It is not a correction round: there is no new battery, no acceptance and no draw.
+
+**Why.** The pause left every failed target outstanding, and two conventions that decide whether
+D1 can PASS or be shown infeasible were never fixed: the price on the planet side of denying
+SURVIVED, and how a test may use the catalog star. The cheap checks that say whether the core has
+any route come before any build.
+
+**The scope up to the gate G1:**
+- **R0, the charter.** The planet-side price per exit; the catalog star used with its declared
+  uncertainty (and a generator version that draws the true star within it, for new draws); the
+  standard of proof for an infeasibility record; the prospective route open, with its safeguards;
+  the process changes. It changes no target, rule or verdict, and decides no design question.
+- **R1, designs for four checks**, each frozen in a commit before any data is read: D2-F (D2's
+  rule counts at the oracle, three variants), D1-P (D1's price curve per exit, an oracle
+  surrogate), T2a-E (a model-free error census of T2a's background cases) and T3b's recount,
+  whose execution the decision-value test defers to G1. **R1 runs only on the maintainer's
+  release**, after an independent review of the charter and of the designs.
+- **G1, the gate**: going on to R2 (the prospective version, on paper), proposing a record, or a
+  pause. The maintainer's.
+
+**Limits.** No infeasibility record, no R2 and no decision on the design questions, no lock or
+drand round, no selection of real targets, no acceptance and no confirmation without the
+maintainer's stop. Development data only.
+
+**Caps up to G1:**
+
+| Cap | Up to G1 |
+|---|---|
+| CPU-h | 80 |
+| Review tokens | 3.0 M (Codex; the independent review counts apart) |
+| Agent-days | 9 |
+| Disk | 5 GB |
+
+The phase stops at 80 % of any cap.
 
 ---
 

@@ -1,0 +1,13 @@
+{
+ "label": "v0.5.5 Core resolution, up to G1: review tokens, agent-days, CPU and disk (the maintainer's decision of 2026-11-20, 15:40, part 2; #218)",
+ "caps": {
+  "cpu_hours": 80,
+  "review_tokens": 3000000,
+  "agent_days": 9,
+  "disk_bytes": 5000000000,
+  "stop_at": 0.8
+ },
+ "review_tokens_method": "each Codex conversation's last turn input_tokens - cached_input_tokens + output_tokens (events under .cache/v055/codex/); the independent review counts apart",
+ "agent_days_method": "Claude's session transcripts since 2026-11-20T18:40:00Z (15:40 local), wall clock over 8-hour days as an upper bound, active time with gaps capped at 10 minutes",
+ "entries": []
+}
