@@ -1,0 +1,37 @@
+Dear authors,
+
+We are writing about your paper "Deep Out-of-Distribution Uncertainty Quantification via Weight Entropy Maximization" (arXiv:2309.15704, version 2). We tried to reproduce three of its claims with Refute, an open-source tool that re-runs published results with a procedure fixed before the run, and our run stopped before any training. We think the cause may be a small issue in the argument parsing of run.py, and we would like to report it to you and hear your view before we record any analysis of it.
+
+Code tested: https://github.com/antoinedemathelin/maxwent-expe at commit c67aa620a64e139d8599613e24cc57b34af5b67f (the latest commit when we checked, 2026-10-19).
+
+Claims (Table 2, block "Interpolation"):
+- energy, Ensemble AN: AUROC 98.7
+- wine, Bayesian Ensemble BN: AUROC 33.9
+- naval, Bayesian Ensemble BN: AUROC 46.9
+
+What we ran. Following the README ("python run.py --config configs/1d_reg_all.yml", for the *_all configs), the command was:
+
+    python run.py --config configs/uci_all.yml
+
+with Python 3.11 and requirements.txt, the UCI and OpenML files read from local copies (the only change: the download URLs in uci_datasets.py point to those copies). Each run ended at once with:
+
+    File "/work/run.py", line 152, in <module>
+      run = dataset + "_" + method
+    TypeError: unsupported operand type(s) for +: 'NoneType' and 'str'
+
+What we see in run.py (our reading; please correct us). read_args accepts the long option --config (the getopt list, line 59), but it keeps an option only when its name without the dashes is a key of args_dict_default (line 95), and that key is "configfile". The short option -c is mapped to "configfile" through abbrv_dict (lines 44-45 and 92-93); the long option is not. So with --config the file is not read, "dataset" and "method" keep their default None, and line 152 fails. With the short form, as in the README's single-experiment example ("python run.py -c configs/uci.yml -d yacht_interpol -m MCDropout ..."), the file is read:
+
+    python run.py -c configs/uci_all.yml
+
+We have not run the full grid with the short form.
+
+Our verdict for the three claims is INCONCLUSIVE: our run could not decide. Our engine does not yet attribute a failure of this kind to either side, so the verdict says nothing about the claims themselves, and it is about the claims as we ran them, never about the people who made them.
+
+The full record of the run (the locked claims, the logs and the verdicts) is in a dossier published at
+https://github.com/klucilla/refute/tree/main/calibration/v0.3/main/dossiers/2309.15704
+Its manifest (MANIFEST.sha256) has the SHA-256 3215fb9316d211717e672c731bfe3a655c9f3f7c719a43d831df8ada2e30fb4e, and its experimental core is sealed (SEAL.json in the dossier) with the SHA-256 314ec1920c6fb593c4ecdb6b8582b891e0436d5fb522af265f7845b2541e7d3f.
+
+We would be glad to hear from you within 30 days of this message (by 18 November 2026). Our analysis of the cause will be recorded only after that, together with your reply if you give one; if you reply, we offer to publish it next to the verdict, as you write it. If something in our run does not match your procedure, we would like to know.
+
+Kind regards,
+Klauber Lucilla, maintainer of Refute

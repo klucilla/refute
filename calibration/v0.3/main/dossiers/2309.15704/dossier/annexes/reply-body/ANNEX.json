@@ -1,0 +1,11 @@
+{
+  "annex_version": 1,
+  "core_sha256": "314ec1920c6fb593c4ecdb6b8582b891e0436d5fb522af265f7845b2541e7d3f",
+  "files": [
+    {
+      "path": "notice-body.txt",
+      "sha256": "750c99c91cde29f5419ef2e924c2925fa10a84805fa38e409111295cee7c995c"
+    }
+  ],
+  "name": "reply-body"
+}

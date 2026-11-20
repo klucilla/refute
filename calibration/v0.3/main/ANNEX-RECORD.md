@@ -76,3 +76,16 @@ and `verification.json`. Added with `refute annex <dossier> verification <folder
 | 2309.15704 | `annexes/verification/` | `94f1612f96ffb79dd3c7d4aa50a609a231967c9219554aea2759e32c22b064e5` | VERIFIED |
 | 2407.11735 | `annexes/verification/` | `2723f095ac8ab85dba66b6f6c20a54d1192b4d888e41f1f702a3b2a17ea88470` | VERIFIED |
 | 2502.16782 | `annexes/verification/` | `242def66e64b5d106aada5da610de7325a73d4a88829a527071fadddb1896ee3` | VERIFIED |
+
+## Annexes of 2309.15704 attached after its reply period (2026-11-20)
+
+The reply period of 2309.15704 ended on 2026-11-18 (#158), so the files held above are attached
+unchanged, with the bytes whose SHA-256 this record already gave. Added with
+`refute annex <dossier> <name> <folder>` on 2026-11-20 (#162). The analysis of the cause is a new
+record, [dossiers/2309.15704/cause-analysis.md](dossiers/2309.15704/cause-analysis.md).
+
+| Paper | Annex | `ANNEX.json` SHA-256 | Content |
+|---|---|---|---|
+| 2309.15704 | `annexes/review-opus/` | `2907eb8bf4c15eb0da7acdf7a5c354d3c394f51bfd8405e56d4816238e45f188` | the primary reviewer's report, `review-opus.md` (`e2e16a804a59ccd601f0027ab03617743a0c88558bc25ba6ead72a19d079e2f4`): OBJECTIONS (2 important, 4 minor) |
+| 2309.15704 | `annexes/review-codex/` | `dc24eda1ba372c6789f09afd6ee3d5f6ec00603c6261d5d28639bd565844f3ba` | the second reviewer's report, `review-codex.md` (`c34c8724ab14255814be8813b26b805a8a9a189b347a6ce7f6c18f9aba5c2fd0`): OBJECTIONS (4 important) |
+| 2309.15704 | `annexes/reply-body/` | `8848cab6120e9f0a77b308e94061c574e21a0760b5acb0ce2d6a4b1da9f5e111` | the body of the notice sent on 2026-10-20, `notice-body.txt` (`750c99c91cde29f5419ef2e924c2925fa10a84805fa38e409111295cee7c995c`); no address and no message identifier |
