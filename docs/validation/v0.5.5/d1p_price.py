@@ -1,13 +1,16 @@
 """v0.5.5, R1, check D1-P: D1's SURVIVED-denial price curve for EB1 and EB2 (#218; the frozen
-design is ``docs/plans/v0.5.5-r1-designs.md``, section D1-P). ``method_status: not_validated``.
-**It decides nothing by itself: no D1 draft, no infeasibility record, no test is built.**
+design is ``docs/plans/v0.5.5-r1-designs.md``, section D1-P, **as revised by**
+``docs/plans/v0.5.5-r1-designs-revision-1.md``, section 3, and amendment 1 to the charter).
+``method_status: not_validated``. **It decides nothing by itself: no D1 draft, no infeasibility
+record, no test is built.**
 
-Per binary of two new, disjoint seed sets (A and B; 200 attempted per family per set):
+Per binary of two new, disjoint seed sets (A and B; 200 attempted per family per set), and of the
+bridge (set A's first 100 seeds per family drawn again with C1 version 1; a comparison only):
 - the curve from C1 **version 2** (``generator_v2``: the true star drawn within the catalog's
-  declared 5 %), the locked v0.5 battery's chain (``paired_chain``: v0.4's gate and v0.5's
-  verdict, exactly as C1's runs);
-- for each binary the battery leaves **SURVIVED** (the others are already denied it), B0's oracle
-  distance to the nearest planet at the found period, under three readings of the catalog star:
+  declared 5 %; version 1 for the bridge), the locked v0.5 battery's chain (``paired_chain``:
+  v0.4's gate and v0.5's verdict, exactly as C1's runs);
+- for **every eligible binary** (the revision: not only those the battery leaves SURVIVED), B0's
+  oracle distance to the nearest planet at the found period, under three readings of the star:
   - ``prior`` (**primary**, the charter's (b)): the planet's effective radius free with a
     Gaussian penalty ``((rho - rho_B) / sigma_rho)^2``, ``rho_B`` the binary's true effective
     radius and ``sigma_rho`` the catalog's (0.0527, a first-order approximation); the distance
@@ -16,9 +19,11 @@ Per binary of two new, disjoint seed sets (A and B; 200 attempted per family per
     toward "route";
   - ``box`` (a reference reading): B0's ±3σ box on the effective radius around the catalog's centre;
   - ``known`` (a reference reading): the effective radius fixed at the binary's true one.
-- the reading per family, exit price and set: the expected SURVIVED count at C1's projection and
-  the bootstrap pass probability (B0's method), then the frozen reading per exit
-  (``r1_common.d1p_set_reading`` / ``d1p_exit_outcome``).
+- the reading per family, price, set and **view** (the battery's survivors, a binary it denies
+  counting 0; and every eligible binary): the expected SURVIVED count at C1's projection and the
+  bootstrap pass probability (B0's method), then the frozen reading per exit, "route" or
+  "unresolved" (``r1_common.d1p_set_reading`` / ``d1p_exit_outcome``); a view with no survivor
+  reads "INCONCLUSIVE (no survivor)", never "route".
 
 **What the primary reading is, and is not** (Codex, r0r1 round 1): an oracle surrogate under an
 explicitly specified catalog experiment (the catalog taken as a measurement of the true star, with
@@ -29,7 +34,8 @@ themselves.
 
 Usage (from the project root, through ``launch_detached.py``):
 ``.venv/Scripts/python.exe -B docs/validation/v0.5.5/d1p_price.py run A`` then ``summarize A``;
-``run B`` is refused if set A's futility rule holds; then ``summarize B``.
+``run B`` is refused if set A's futility rule holds; then ``summarize B``; ``run bridge`` (after
+set A's record) and ``summarize bridge``.
 """
 
 from __future__ import annotations
@@ -64,33 +70,37 @@ import budgeted  # noqa: E402
 
 DESIGN = ROOT / "docs/plans/v0.5.5-r1-designs.md"
 CHARTER = ROOT / "docs/plans/v0.5.5-charter.md"
+AMENDMENT = ROOT / "docs/plans/v0.5.5-charter-amendment-1.md"
+REVISION = ROOT / "docs/plans/v0.5.5-r1-designs-revision-1.md"
 OUT = ROOT / ".cache/v055/d1p"
 FAMILIES = ("EB1", "EB2")
-SETS = ("A", "B")
-SIZE = 200  # attempted per family per set (the design's sizing and price; C1' is 200 too)
+SETS = ("A", "B", "bridge")
+SIZE = {"A": 200, "B": 200, "bridge": 100}  # attempted per family (the designs' sizing and price)
 PER_SHARD = 5
 C1_PRIME_PER_FAMILY = 200
-MIN_ELIGIBLE = 150  # below this, per family and set, the reading is INCONCLUSIVE
+MIN_ELIGIBLE = {"A": 150, "B": 150, "bridge": 75}  # below this, the family's reading stops
 BOOTSTRAP = 2000
-BOOTSTRAP_SEED = {"A": 20261120, "B": 20261121}
+BOOTSTRAP_SEED = {"A": 20261120, "B": 20261121, "bridge": 20261122}
 SIGMA_RHO = g2.effective_sigma()
 BOX = d1_routes.effective_bounds(0.05, 0.05)  # B0's ±3σ box around the catalog's centre
-# The exit prices (the charter's (a)). The decisive readings for G1: the warning exit at the
-# tolerance unit, and the INCONCLUSIVE exit at step 2's increment, conditional on D2 and D4 met in
-# full (it has no room while D2 fails its rule).
+# The exit prices, after the charter's amendment 1 (docs/plans/v0.5.5-charter-amendment-1.md):
+# the decisive readings for G1 are the warning exit at step 2's per-test unit (0.05 of each
+# family's true planets per new test), and the INCONCLUSIVE exit at step 2's increment,
+# conditional on D2 and D4 met in full (it has no room while D2 fails its rule).
 EXITS = {
-    "weakened": 0.10,
+    "weakened": 0.05,
     "inconclusive_if_d2_d4_met": 0.05,
 }
-# The fatal exit is reported as scenarios only (Codex, r0r1 round 1): its room must be measured
-# on the battery and population the new test would join, which D1-P does not draw. 0.05 - 3/178
-# uses version 5's REFUTED fraction on round 3's D2 population (3 of 178, published in
-# docs/validation/v0.5.4/pause-record.md): a historical reference scenario, not measured room
-# for this battery on C1 version 2; 0.05 is the frozen budget's whole, with nothing used.
-FATAL_SCENARIOS = {
-    "fatal_reference_scenario": 0.05 - 3 / 178,
-    "fatal_whole_budget_scenario": 0.05,
+# Published scenarios, never outcomes: the warning exit at the battery-wide unit 0.10 (the
+# charter's first value, before the amendment), and the fatal exit, whose room D1-P does not
+# measure (it draws no planets), at step 2's strict budget (r_P at most 0.025) whole and less
+# version 5's historical REFUTED fraction (3 of 178, round 3's D2 population).
+SCENARIOS = {
+    "weakened_battery_unit_scenario": 0.10,
+    "fatal_strict_budget_scenario": 0.025,
+    "fatal_strict_budget_less_reference_scenario": 0.025 - 3 / 178,
 }
+VIEWS = ("survivors", "all_eligible")
 GRID = (0.0027, 0.01, 0.03, 0.05, 0.10, 0.15, 0.20, 0.30)
 READINGS = ("prior", "box", "known")
 PRIMARY = "prior"
@@ -193,6 +203,22 @@ def distances(family: str, s: int, data, truth, found: dict) -> dict:
     return out
 
 
+def generate(set_name: str, family: str, i: int):
+    """Sets A and B: C1 version 2, on their own seeds. The bridge: C1 version 1 on set A's seeds
+    (the same curves but for the true star, which v1 puts at the catalog's centre)."""
+    from refute.packs.tess.calib05 import c1
+
+    if set_name == "bridge":
+        s = rc.seed("d1p", "A", family, i)
+        data, truth = c1.generate(family, s)
+        truth["true_star"] = {"radius_rsun": 1.0, "mass_msun": 1.0, "effective_radius": 1.0,
+                              "generator": "c1 v1 (the catalog's centre)"}  # fmt: skip
+        return s, data, truth
+    s = rc.seed("d1p", set_name, family, i)
+    data, truth = g2.generate(family, s)
+    return s, data, truth
+
+
 def one(family: str, set_name: str, i: int) -> dict:
     from refute.packs.tess.calib05 import c1
     from refute.packs.tess.calib05.plans import pair
@@ -200,10 +226,9 @@ def one(family: str, set_name: str, i: int) -> dict:
     from refute.packs.tess.discover.paired import paired_chain
 
     started = time.process_time()
-    s = rc.seed("d1p", set_name, family, i)
-    rec: dict = {"family": family, "set": set_name, "index": i, "seed": str(s)}
+    rec: dict = {"family": family, "set": set_name, "index": i}
     try:
-        data, truth = g2.generate(family, s)
+        s, data, truth = generate(set_name, family, i)
     except c1.GenerationFailedError as exc:
         return {
             **rec,
@@ -211,6 +236,7 @@ def one(family: str, set_name: str, i: int) -> dict:
             "reason": str(exc),
             "cpu_seconds": time.process_time() - started,
         }
+    rec["seed"] = str(s)
     p04, p05 = pair(v04_test_plan(ROOT))
     chain = paired_chain(data, p04, p05, stage=2)
     v05 = chain["v05"]
@@ -225,7 +251,9 @@ def one(family: str, set_name: str, i: int) -> dict:
         search_candidate=chain["search_candidate"],
         chain=chain,  # the whole chain kept per case, as C1's records (the charter, change 9)
     )
-    if rec["eligible"] and v05["verdict"] == "SURVIVED" and chain["search_candidate"]:
+    # distances for EVERY eligible binary (the maintainer's decision of 2026-11-20, night, 4a),
+    # so that the reading holds both on the battery's survivors and on all eligible binaries
+    if rec["eligible"] and chain["search_candidate"]:
         found = {
             "period_days": chain["search_candidate"]["period_days"],
             "t0_btjd": chain["search_candidate"]["t0_btjd"],
@@ -243,7 +271,7 @@ def schedule(set_name: str) -> list:
     """Shards of ``PER_SHARD`` indices, the families alternating, so that the driver's
     checkpoint holds both."""
     rows = []
-    for k in range(0, SIZE, PER_SHARD):
+    for k in range(0, SIZE[set_name], PER_SHARD):
         for f in FAMILIES:
             rows.append(
                 (
@@ -278,6 +306,8 @@ FROZEN = (
     HERE / "ledger_v055.py",
     DESIGN,
     CHARTER,
+    AMENDMENT,
+    REVISION,
     FEAS / "d1_routes.py",
     FEAS / "forecast.py",
     STAGE_B / "d1_bound.py",
@@ -293,6 +323,7 @@ def code_identity() -> dict:
     """``src/``'s code hash and every frozen file outside it (the charter, process change 4)."""
     from refute.core.codehash import compute_code_hash
 
+    rc.require_frozen(ROOT, FROZEN)  # the list is complete (4c)
     ident = {"src_code_hash": compute_code_hash().sha256, **rc.identity(ROOT, FROZEN)}
     ident["digest"] = rc.digest(ident)
     return ident
@@ -322,6 +353,8 @@ def run(set_name: str) -> None:
     lv.assert_bound()
     if set_name == "B" and _first_set().get("futile_after_A") is not False:
         raise SystemExit("set A's futility rule holds: set B refused")
+    if set_name == "bridge":
+        _first_set()  # the bridge compares with set A's records: set A must be written first
     rows = schedule(set_name)
     fp = fingerprint(rows)
     workers = rc.workers_now(dt.datetime.now(rc.BRT))
@@ -362,7 +395,28 @@ def run(set_name: str) -> None:
 # --- the reading ------------------------------------------------------------------------------
 
 
-def _family(recs: list, family: str, rng) -> dict:
+def _view(p_elig: np.ndarray, n_proj: int, k: int, rng) -> dict:
+    """One view's reading at one price: the expected SURVIVED count at C1's projection and the
+    bootstrap pass probability (B0's method), then the frozen reading rule."""
+    probs = [
+        forecast.poisson_binomial_cdf(rng.choice(p_elig, size=n_proj, replace=True), k)
+        for _ in range(BOOTSTRAP)
+    ]
+    expected = float(p_elig.mean() * n_proj)
+    p05 = float(np.percentile(probs, 5))
+    return {
+        "expected_survived_at_projection": expected,
+        "pass_probability_p05": p05,
+        "pass_probability_median": float(np.median(probs)),
+        "pass_probability_p95": float(np.percentile(probs, 95)),
+        "reading": rc.d1p_set_reading(expected, k, p05),
+    }
+
+
+def _family(recs: list, family: str, rng, min_eligible: int) -> dict:
+    """Two views, both read: the battery's survivors (a binary it already denies SURVIVED counts
+    0), and every eligible binary (as if the battery denied none: the side of a battery that keeps
+    more binaries). A view with no binary to read is INCONCLUSIVE, never "route"."""
     rows = [r for r in recs if r["family"] == family]
     ok = [r for r in rows if r.get("status") == "OK"]
     elig = [r for r in ok if r["eligible"]]
@@ -372,36 +426,29 @@ def _family(recs: list, family: str, rng) -> dict:
         "generation_failures": sum(r.get("status") == "GENERATION_FAILURE" for r in rows),
         "eligible": len(elig),
         "survived_by_the_battery": len(surv),
-        "survived_without_a_distance": sum("distances" not in r for r in surv),
+        "eligible_without_a_distance": sum("distances" not in r for r in elig),
+        "zero_survivors": len(surv) == 0,
     }
-    out["valid"] = len(elig) >= MIN_ELIGIBLE and out["survived_without_a_distance"] == 0
+    out["valid"] = len(elig) >= min_eligible and out["eligible_without_a_distance"] == 0
     if not out["valid"]:
         return out
     n_proj = round(C1_PRIME_PER_FAMILY * len(elig) / len(rows))
     k = forecast.max_count(n_proj)
     out.update(c1_prime_projection=n_proj, d1_allowance=k)
-    levels = sorted(set(GRID) | set(EXITS.values()) | set(FATAL_SCENARIOS.values()))
+    levels = sorted(set(GRID) | set(EXITS.values()) | set(SCENARIOS.values()))
+    survived = np.array([r["v05_verdict"] == "SURVIVED" for r in elig])
     out["readings"] = {}
     for reading in READINGS:
-        d = np.array([r["distances"][reading]["distance"] for r in surv])
-        block = {}
+        d = np.array([r["distances"][reading]["distance"] for r in elig])
+        block: dict = {}
         for x in levels:
-            p_surv = np.array([rc.non_rejection(v, x) for v in d])
-            p = np.concatenate([p_surv, np.zeros(len(elig) - len(surv))])  # denied already
-            probs = [
-                forecast.poisson_binomial_cdf(rng.choice(p, size=n_proj, replace=True), k)
-                for _ in range(BOOTSTRAP)
-            ]
-            expected = float(p.mean() * n_proj)
-            block[f"{x:.6g}"] = {
-                "expected_survived_at_projection": expected,
-                "pass_probability_p05": float(np.percentile(probs, 5)),
-                "pass_probability_median": float(np.median(probs)),
-                "pass_probability_p95": float(np.percentile(probs, 95)),
-                "reading": rc.d1p_set_reading(
-                    expected, k, float(np.percentile(probs, 5)), float(np.percentile(probs, 95))
-                ),
-            }
+            p_all = np.array([rc.non_rejection(v, x) for v in d])
+            views = {"all_eligible": _view(p_all, n_proj, k, rng)}
+            if out["zero_survivors"]:
+                views["survivors"] = {"reading": "INCONCLUSIVE (no survivor)"}
+            else:
+                views["survivors"] = _view(np.where(survived, p_all, 0.0), n_proj, k, rng)
+            block[f"{x:.6g}"] = views
         out["readings"][reading] = block
     return out
 
@@ -424,7 +471,7 @@ def summarize(set_name: str) -> None:
         )
 
 
-def _summarize(set_name: str) -> None:
+def _read(set_name: str) -> list:
     rows = schedule(set_name)
     fp = fingerprint(rows)
     data = budgeted.assembled(
@@ -438,73 +485,144 @@ def _summarize(set_name: str) -> None:
         pin=rc.pin()[: rc.WORKERS_WORKING],
         max_shard_seconds=rc.MAX_SHARD_SECONDS,
     )
-    recs = [json.loads(x) for x in data.decode().splitlines() if x.strip()]
+    return [json.loads(x) for x in data.decode().splitlines() if x.strip()]
+
+
+def _readings(fams: dict, prices: dict, stopped: bool) -> dict:
+    """Per price name, per view, per family: the primary reading's verdict."""
+    return {
+        name: {
+            view: {
+                f: (
+                    "unresolved"
+                    if stopped
+                    else fams[f]["readings"][PRIMARY][f"{x:.6g}"][view]["reading"]
+                )
+                for f in FAMILIES
+            }
+            for view in VIEWS
+        }
+        for name, x in prices.items()
+    }
+
+
+def _bridge(v1_recs: list) -> dict:
+    """Version 1 (the bridge's records) and version 2 (set A's records of the same indices, 0 to
+    ``SIZE["bridge"] - 1`` per family), side by side: each family's two readings in both views at
+    every price, and per index the eligibility and v0.5's verdict under each version. The
+    comparison is not restricted to the binaries eligible under both."""
+    idx = set(range(SIZE["bridge"]))
+    v2_recs = [r for r in _read("A") if r["index"] in idx]
+    side: dict = {"v1": {}, "v2_same_indices": {}}
+    for label, recs in (("v1", v1_recs), ("v2_same_indices", v2_recs)):
+        rng = np.random.default_rng(BOOTSTRAP_SEED["bridge"])
+        fams = {f: _family(recs, f, rng, MIN_ELIGIBLE["bridge"]) for f in FAMILIES}
+        stopped = not all(f["valid"] for f in fams.values())
+        side[label] = {
+            "families": fams,
+            "per_exit_primary": _readings(fams, EXITS, stopped),
+            "scenarios_primary": _readings(fams, SCENARIOS, stopped),
+            "valid": not stopped,
+        }
+
+    def key(r):
+        return r["family"], r["index"]
+
+    one = {key(r): r for r in v1_recs}
+    two = {key(r): r for r in v2_recs}
+    per_index = []
+    for k in sorted(set(one) | set(two)):
+        a, b = one.get(k, {}), two.get(k, {})
+        per_index.append(
+            {
+                "family": k[0],
+                "index": k[1],
+                "v1_status": a.get("status"),
+                "v2_status": b.get("status"),
+                "v1_eligible": a.get("eligible"),
+                "v2_eligible": b.get("eligible"),
+                "v1_v05_verdict": a.get("v05_verdict"),
+                "v2_v05_verdict": b.get("v05_verdict"),
+            }
+        )
+    side["per_index"] = per_index
+    side["eligibility_differences"] = sum(r["v1_eligible"] != r["v2_eligible"] for r in per_index)
+    side["verdict_differences"] = sum(r["v1_v05_verdict"] != r["v2_v05_verdict"] for r in per_index)
+    return side
+
+
+def _summarize(set_name: str) -> None:
+    recs = _read(set_name)
     rng = np.random.default_rng(BOOTSTRAP_SEED[set_name])
-    fams = {f: _family(recs, f, rng) for f in FAMILIES}
+    fams = {f: _family(recs, f, rng, MIN_ELIGIBLE[set_name]) for f in FAMILIES}
     errors = sorted(f"{r['family']}/{r['index']}" for r in recs if r.get("status") == "ERROR")
     stops = []
     if errors:
         stops.append(f"{len(errors)} binaries raised an error")
     if not all(f["valid"] for f in fams.values()):
-        stops.append("a family has fewer than 150 eligible binaries, or a survivor has no distance")
-
-    def reading_at(x: float) -> dict:
-        return {
-            f: (fams[f]["readings"][PRIMARY][f"{x:.6g}"]["reading"] if not stops else "unresolved")
-            for f in FAMILIES
-        }
-
-    per_exit = {e: reading_at(x) for e, x in EXITS.items()}
-    scenarios = {e: reading_at(x) for e, x in FATAL_SCENARIOS.items()}
+        stops.append("a family has too few eligible binaries, or an eligible one has no distance")
+    per_exit = _readings(fams, EXITS, bool(stops))
+    scenarios = _readings(fams, SCENARIOS, bool(stops))
     doc = {
-        "label": "v0.5.5 R1, D1-P: D1's SURVIVED-denial price curve (development, C1 version 2; "
-        "an oracle surrogate; decides nothing by itself; never a draft)",
+        "label": "v0.5.5 R1, D1-P: D1's SURVIVED-denial price curve (development; an oracle "
+        "surrogate with a nominal score; decides nothing by itself; never a draft)",
         "method_status": "not_validated",
-        "fingerprint": fp,
+        "fingerprint": fingerprint(schedule(set_name)),
         "code_identity": code_identity(),
         "set": set_name,
+        "generator": "c1 v1 on set A's seeds" if set_name == "bridge" else g2.VERSION,
         "design": "docs/plans/v0.5.5-r1-designs.md (D1-P)",
         "exit_prices": EXITS,
-        "fatal_scenarios": FATAL_SCENARIOS,
+        "scenarios": SCENARIOS,
         "primary_reading": PRIMARY,
         "families": fams,
         "per_exit_primary": per_exit,
-        "fatal_scenarios_primary": scenarios,
+        "scenarios_primary": scenarios,
         "errors": errors,
         "stops": stops,
         "cpu_hours": round(lv.part_consumption(part(set_name)), 4),
     }
     if set_name == "A":
         doc["futile_after_A"] = bool(stops) or rc.d1p_futile_after_first(per_exit)
+        if doc["futile_after_A"]:  # set B does not run: the outcome is read now
+            doc["outcome_per_exit"] = {e: "unresolved" for e in EXITS}
+    elif set_name == "B":
+        first = _first_set()
+        doc["set_A_record_sha256"] = first["_sha256"]
+        doc["outcome_per_exit"] = {
+            e: rc.d1p_exit_outcome(
+                {
+                    view: {"A": first["per_exit_primary"][e][view], "B": per_exit[e][view]}
+                    for view in VIEWS
+                }
+            )
+            for e in EXITS
+        }
+        doc["outcome_note"] = (
+            "route or unresolved per exit at its price, under the primary reading (an oracle "
+            "surrogate with a nominal score), on both sets and in both views (the battery's "
+            "survivors, and every eligible binary); 'closed' is practically unreachable and is "
+            "not an outcome; 'inconclusive_if_d2_d4_met' is conditional; the scenarios are "
+            "published, never outcomes"
+        )
     else:
         first = _first_set()
         doc["set_A_record_sha256"] = first["_sha256"]
-        both = {e: {"A": first["per_exit_primary"][e], "B": per_exit[e]} for e in EXITS}
-        doc["outcome_per_exit"] = {e: rc.d1p_exit_outcome(both[e]) for e in EXITS}
-        doc["outcome_note"] = (
-            "route / closed / unresolved per exit at its price, under the primary reading (an "
-            "oracle surrogate) on both sets; 'inconclusive_if_d2_d4_met' is conditional: that "
-            "exit has no room while D2 fails its rule; the fatal exit is reported as scenarios "
-            "only, its room not measured here"
+        doc["bridge"] = _bridge(recs)
+        doc["bridge_note"] = (
+            "The bridge compares the same 100 attempted indices per family under C1 version 1 "
+            "and version 2 (set A's seeds); differences of eligibility are published. It gives "
+            "no outcome (the amendment's (c); Codex, night round 1)"
         )
     out = HERE / f"d1p-{set_name}.json"
     if out.exists():
         raise SystemExit(f"{out.name} exists: the record is written once")
     out.write_text(json.dumps(doc, indent=1, sort_keys=True) + "\n", "utf-8", newline="\n")
-    print(
-        json.dumps(
-            {
-                "per_exit_primary": per_exit,
-                "stops": stops,
-                **(
-                    {"futile_after_A": doc["futile_after_A"]}
-                    if set_name == "A"
-                    else {"outcome_per_exit": doc["outcome_per_exit"]}
-                ),
-            },
-            indent=1,
-        )
-    )
+    shown = {"per_exit_primary": per_exit, "stops": stops}
+    for key in ("futile_after_A", "outcome_per_exit"):
+        if key in doc:
+            shown[key] = doc[key]
+    print(json.dumps(shown, indent=1))
     if stops:
         raise SystemExit("STOP for the maintainer: " + "; ".join(stops))
 

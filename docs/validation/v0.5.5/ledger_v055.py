@@ -41,15 +41,28 @@ LINE_HOURS = STOP_FRACTION * CAP_HOURS  # 64 CPU-h: the line budgeted may spend
 CHARGES_ROOM = 0.5  # kept inside the line for the charges (summaries)
 # Declared before any dispatch (docs/plans/v0.5.5-r1-designs.md, "The prices"). They sum, with
 # the charges' room, to the 64 CPU-h line.
+# The projections (CPU-h) from the timed pilot of 2026-11-20 (pilot_costs.py; 4 binaries): the
+# paired chain took 14 to 70 CPU-s per curve (mean 41.5) and the three oracle fits 1 to 20 CPU-s
+# (mean 5.9). The projection uses the pilot's MAXIMA as unit costs (70 s and 20 s), the
+# conservative side. T2a-E's uses step 6's measured 3.78 CPU-h for the 102 replays, plus 24
+# placebo calls of E4 per injection.
+PROJECTIONS = {
+    "r1_d1p_a": (400 * 70 + 380 * 20) / 3600,  # 9.9: 400 curves; distances for ~380 eligible
+    "r1_d1p_b": (400 * 70 + 380 * 20) / 3600,
+    "r1_d1p_bridge": (200 * 70 + 190 * 20) / 3600,  # 4.9: set A's first 100 per family, C1 v1
+    "r1_t2ae_1": 2.1,
+    "r1_t2ae_2": 2.1,
+}
+CAP_MARGIN = 1.3  # the maintainer: each part's cap at least 1.3 times its projection
+OVERSHOOT_FACTOR = 1.10  # the driver's tolerance; the part's cap is its allocation over it
 ALLOCATIONS = {
-    "r1_d1p_a": 16.0,
-    "r1_d1p_b": 16.0,
-    "r1_d2f_a": 11.0,
-    "r1_d2f_b": 11.0,
-    "r1_t2ae_1": 2.5,
-    "r1_t2ae_2": 2.5,
-    "r1_reserve": 4.5,  # never dispatched; a transfer from it needs the maintainer
-}  # T3b's recount has no part: the decision-value test defers it to G1 (the designs, T3b)
+    **{k: round(CAP_MARGIN * v * OVERSHOOT_FACTOR + 0.05, 1) for k, v in PROJECTIONS.items()},
+    "r1_d2f_a": 0.0,  # D2-F does not run before its redesign is checked (a stop not delegated)
+    "r1_d2f_b": 0.0,
+}
+# what the line leaves, kept for D2-F's redesign and the reserve; a transfer needs the maintainer
+ALLOCATIONS["r1_reserve"] = round(LINE_HOURS - CHARGES_ROOM - sum(ALLOCATIONS.values()), 2)
+# T3b's recount has no part: the decision-value test defers it to G1 (the designs, T3b)
 CAPS = HERE / "caps.json"
 CODEX_EVENTS = ROOT / ".cache/v055/codex"
 AGENT_TIME = ROOT / ".cache/v052/tools/agent_time.py"
@@ -60,6 +73,17 @@ TOKEN_CAP = 3_000_000
 DAY_CAP = 9.0
 DISK_QUOTA = 5 * 10**9
 DISK_ROOT = ROOT / ".cache/v055"
+
+
+def bind() -> None:
+    """Point ``budgeted`` at v0.5.5's ledger (done on import; call it again after importing an
+    earlier stage's module, which rebinds ``budgeted`` to its own ledger on import)."""
+    budgeted.LEDGER = HERE / "ledger.json"
+    budgeted.LINES = {SECTION: LINE_HOURS - CHARGES_ROOM}
+    budgeted.HARD_MAXIMUM = LINE_HOURS
+    budgeted.SPENT_BEFORE = 0.0
+    budgeted.save = _atomic_save
+
 
 budgeted.LEDGER = HERE / "ledger.json"
 budgeted.LINES = {SECTION: LINE_HOURS - CHARGES_ROOM}
@@ -94,11 +118,81 @@ def assert_bound() -> None:
 LOCK = ROOT / ".cache/v055/ledger.lock"
 CAPS_LOCK = ROOT / ".cache/v055/caps.lock"
 _held: dict[Path, int] = {}
+_lines: dict[Path, bytes] = {}
+_BINARY = getattr(os, "O_BINARY", 0)  # no newline translation on Windows
+GUARD_TRIES = 20  # about 10 s of retries for the short guard; then a STOP
+
+
+class _Guard:
+    """Mutual exclusion of every acquisition, release and recovery of one lock (Codex, night
+    round 1): an operating-system lock on ``<lock>.guard`` (a byte-range lock on Windows, flock
+    elsewhere), held only for the few file operations, and released by the system if the process
+    dies. The guard file is never removed."""
+
+    def __init__(self, path: Path) -> None:
+        self.path = path.with_name(path.name + ".guard")
+        self.fd: int | None = None
+
+    def __enter__(self) -> _Guard:
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        fd = os.open(self.path, os.O_CREAT | os.O_RDWR | _BINARY)
+        for _ in range(GUARD_TRIES):
+            if _try_lock(fd):
+                self.fd = fd
+                return self
+            time.sleep(0.5)
+        os.close(fd)
+        raise SystemExit(f"{self.path.name} could not be taken: refused")
+
+    def __exit__(self, *exc) -> None:
+        assert self.fd is not None
+        _unlock(self.fd)
+        os.close(self.fd)
+        self.fd = None
+
+
+def _try_lock(fd: int) -> bool:
+    if sys.platform == "win32":
+        import msvcrt
+
+        os.lseek(fd, 0, os.SEEK_SET)
+        try:
+            msvcrt.locking(fd, msvcrt.LK_NBLCK, 1)
+        except OSError:
+            return False
+        return True
+    import fcntl
+
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        return False
+    return True
+
+
+def _unlock(fd: int) -> None:
+    if sys.platform == "win32":
+        import msvcrt
+
+        os.lseek(fd, 0, os.SEEK_SET)
+        msvcrt.locking(fd, msvcrt.LK_UNLCK, 1)
+    else:
+        import fcntl
+
+        fcntl.flock(fd, fcntl.LOCK_UN)
+
+
+def _identity(path: Path) -> tuple[int, int, int, bytes]:
+    """The lock file's instance: its file id, size, modification time and bytes."""
+    st = os.stat(path)
+    return st.st_ino, st.st_size, st.st_mtime_ns, path.read_bytes()
 
 
 class Exclusive:
     """The ledger's writers are serialized for their whole run: a second process refuses (a
-    STOP); it never waits or removes a lock it does not hold. Re-entrant in one process."""
+    STOP); it never waits for the run's lock. Re-entrant in one process. Creating, releasing and
+    recovering the lock all happen under its guard (``_Guard``), so no two of them interleave; a
+    lock left by a dead process is recovered only by ``release_stale``."""
 
     def __init__(self, step: str, path: Path | None = None) -> None:
         # the module's LOCK read at call time, so that a test's temporary lock is honoured
@@ -107,21 +201,103 @@ class Exclusive:
     def __enter__(self) -> Exclusive:
         if _held.get(self.path, 0) == 0:
             self.path.parent.mkdir(parents=True, exist_ok=True)
-            try:
-                fd = os.open(self.path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-            except FileExistsError:
-                held = self.path.read_text("utf-8", errors="replace").strip()
-                raise SystemExit(f"{self.path.name} is held ({held}): refused") from None
-            stamp = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-            os.write(fd, f"pid {os.getpid()}; {self.step}; {stamp}\n".encode())
-            os.close(fd)
+            with _Guard(self.path):
+                if self.path.exists() and not release_stale(self.path, guarded=True):
+                    held = self.path.read_text("utf-8", errors="replace").strip()
+                    raise SystemExit(f"{self.path.name} is held ({held}): refused")
+                fd = os.open(self.path, os.O_CREAT | os.O_EXCL | os.O_WRONLY | _BINARY)
+                stamp = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+                line = f"pid {os.getpid()}; {self.step}; {stamp}\n".encode()
+                os.write(fd, line)
+                os.close(fd)
+            _lines[self.path] = line
         _held[self.path] = _held.get(self.path, 0) + 1
         return self
 
     def __exit__(self, *exc) -> None:
         _held[self.path] -= 1
         if _held[self.path] == 0:
-            self.path.unlink()
+            with _Guard(self.path):
+                # only this process's own instance is removed
+                if self.path.read_bytes() != _lines.pop(self.path):
+                    raise SystemExit(f"{self.path.name} is not this process's lock: kept; STOP")
+                self.path.unlink()
+
+
+STALE_LOG = ROOT / ".cache/v055/stale-locks.jsonl"
+
+
+def _process_started_before(pid: int, stamp: str) -> bool | None:
+    """Whether a process with ``pid`` exists and started no later than ``stamp`` (the lock's
+    time): True, False (no such process, or one started after the lock, so a reused PID), or
+    None if it cannot be told (then the lock is kept)."""
+    import ctypes
+    import datetime as _dt
+    from ctypes import wintypes
+
+    if sys.platform != "win32":
+        return None
+    k32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    k32.OpenProcess.restype = wintypes.HANDLE
+    k32.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+    pft = ctypes.POINTER(wintypes.FILETIME)
+    k32.GetProcessTimes.restype = wintypes.BOOL
+    k32.GetProcessTimes.argtypes = [wintypes.HANDLE, pft, pft, pft, pft]
+    k32.GetExitCodeProcess.restype = wintypes.BOOL
+    k32.GetExitCodeProcess.argtypes = [wintypes.HANDLE, ctypes.POINTER(wintypes.DWORD)]
+    k32.CloseHandle.restype = wintypes.BOOL
+    k32.CloseHandle.argtypes = [wintypes.HANDLE]
+    handle = k32.OpenProcess(0x1000, False, pid)  # PROCESS_QUERY_LIMITED_INFORMATION
+    if not handle:
+        return False if ctypes.get_last_error() == 87 else None  # 87: no such process
+    try:
+        times = [wintypes.FILETIME() for _ in range(4)]
+        if not k32.GetProcessTimes(handle, *[ctypes.byref(t) for t in times]):
+            return None
+        code = wintypes.DWORD()
+        if not k32.GetExitCodeProcess(handle, ctypes.byref(code)):
+            return None
+        if code.value != 259:
+            return False  # it has exited (259 is STILL_ACTIVE)
+        ticks = (times[0].dwHighDateTime << 32) | times[0].dwLowDateTime
+        created = _dt.datetime(1601, 1, 1, tzinfo=_dt.UTC) + _dt.timedelta(microseconds=ticks / 10)
+        locked = _dt.datetime.strptime(stamp, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=_dt.UTC)
+        return created <= locked + _dt.timedelta(seconds=1)
+    finally:
+        k32.CloseHandle(handle)
+
+
+def release_stale(path: Path, guarded: bool = False) -> bool:
+    """A lock left by a crash (the maintainer's decision of 2026-11-20, night, 4c). **The
+    recovery removes only the instance of the lock whose identity was checked, under the mutual
+    exclusion that creation and release also respect; any doubt keeps the lock** (Codex, night
+    round 1). Under the guard, the lock's identity (file id, size, time, bytes) is read; the lock
+    is removed only if the process recorded in it does not exist (or the PID now belongs to a
+    process started after the lock) and its identity is unchanged just before the removal; the
+    removal is recorded in ``STALE_LOG`` after it happened. Returns whether it was removed."""
+    if not guarded:
+        with _Guard(path):
+            return release_stale(path, guarded=True)
+    try:
+        before = _identity(path)
+    except FileNotFoundError:
+        return False
+    text = before[3].decode("utf-8", errors="replace").strip()
+    m = re.fullmatch(r"pid (\d+); (.*); (\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ)", text)
+    if not m or _process_started_before(int(m.group(1)), m.group(3)) is not False:
+        return False
+    try:
+        if _identity(path) != before:
+            return False
+    except FileNotFoundError:
+        return False
+    path.unlink()
+    STALE_LOG.parent.mkdir(parents=True, exist_ok=True)
+    entry = {"utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "lock": path.name,
+             "held": text, "by": os.getpid(), "removed": True}  # fmt: skip
+    with STALE_LOG.open("a", encoding="utf-8", newline="\n") as fh:
+        fh.write(json.dumps(entry, sort_keys=True) + "\n")
+    return True
 
 
 def _rows() -> dict:

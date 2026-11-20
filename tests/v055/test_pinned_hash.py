@@ -42,3 +42,9 @@ def test_pinned_restores_the_function_also_on_an_error():
         assert codehash.compute_code_hash() is marker
         raise RuntimeError("inside")
     assert codehash.compute_code_hash is original
+
+
+def test_ls_tree_paths_keep_spaces_and_unicode():
+    out = "src/a b.py\0src/\u00e7.py\0src/c.py\0".encode()
+    assert ph.ls_tree_paths(out) == ["src/a b.py", "src/\u00e7.py", "src/c.py"]
+    assert ph.ls_tree_paths(b"") == []

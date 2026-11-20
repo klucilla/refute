@@ -58,13 +58,20 @@ def check_manifest(
     return None
 
 
+def ls_tree_paths(out: bytes) -> list[str]:
+    """``git ls-tree -z --name-only`` output: NUL-separated and unquoted, so a path with a space
+    (or any byte git would quote) stays one path (the maintainer's decision of 2026-11-20,
+    night, 4c)."""
+    return [p.decode("utf-8") for p in out.split(b"\0") if p]
+
+
 def pinned_code_hash():
     """The code hash of ``PINNED_COMMIT``, after the manifest check of the module's docstring."""
     from refute.core import codehash
     from refute.core.hashing import sha256_bytes
 
     current = dict(codehash.compute_code_hash(ROOT).files)
-    paths = _git("ls-tree", "-r", "--name-only", PINNED_COMMIT, "--", "src").decode().split()
+    paths = ls_tree_paths(_git("ls-tree", "-r", "-z", "--name-only", PINNED_COMMIT, "--", "src"))
     expected = {}
     for p in paths:
         rel = Path(p)

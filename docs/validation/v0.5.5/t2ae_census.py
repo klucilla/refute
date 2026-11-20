@@ -59,6 +59,8 @@ import budgeted  # noqa: E402
 
 DESIGN = ROOT / "docs/plans/v0.5.5-r1-designs.md"
 CHARTER = ROOT / "docs/plans/v0.5.5-charter.md"
+AMENDMENT = ROOT / "docs/plans/v0.5.5-charter-amendment-1.md"
+REVISION = ROOT / "docs/plans/v0.5.5-r1-designs-revision-1.md"
 OUT = ROOT / ".cache/v055/t2ae"
 STAGES = ("1", "2")
 SHIFTS = 24
@@ -219,6 +221,9 @@ def one(arg: dict) -> dict:
             "numpy": md.version("numpy"),
             "scipy": md.version("scipy"),
             "astropy": md.version("astropy"),
+            # the packages 5e5f40a changed (the decision of 2026-11-20, night, 4b)
+            "soupsieve": md.version("soupsieve"),
+            "tornado": md.version("tornado"),
         },
     }
     rec, cap = s6.replay({k: v for k, v in arg.items() if k != "i1_reference"})
@@ -329,11 +334,17 @@ FROZEN = (
     HERE / "pinned_hash.py",
     DESIGN,
     CHARTER,
+    AMENDMENT,
+    REVISION,
     V054 / "step6_i2.py",
     V054 / "i1_diagnose.py",
     V054 / "i1-diagnosis.json",
     V054 / "i4_bound.py",
+    V054 / "i4_rest.py",
     V054 / "ledger_i.py",
+    s6.i4.STAGE_A / "d2_bounds.py",
+    s6.i4.STAGE_A / "ledger_a.py",
+    ROOT / "docs/validation/v0.5.1/feasibility/forecast.py",  # d2_bounds._wp1
     V054 / "budgeted_v3.py",
     V052 / "budgeted.py",
     V052 / "driver.py",
@@ -362,6 +373,7 @@ def code_identity() -> dict:
     compares in full."""
     from refute.core.codehash import compute_code_hash
 
+    rc.require_frozen(ROOT, FROZEN)  # the list is complete (4c)
     ident = {
         "src_code_hash": compute_code_hash().sha256,
         "pinned_code_hash_for_earlier_records": pinned_hash.pinned_code_hash().sha256,

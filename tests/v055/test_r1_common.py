@@ -78,40 +78,7 @@ def test_wilson_and_non_rejection():
     assert rc.non_rejection(10.0, 0.05) < 1e-6
 
 
-def test_d1p_readings_and_exit_outcome():
-    assert rc.d1p_set_reading(8.0, 10, 0.5, 0.99) == "route"
-    assert rc.d1p_set_reading(8.1, 10, 0.9, 0.99) == "unresolved"
-    assert rc.d1p_set_reading(8.0, 10, 0.49, 0.99) == "unresolved"
-    assert rc.d1p_set_reading(10.5, 10, 0.0, 0.04) == "closed"
-    assert rc.d1p_set_reading(10.0, 10, 0.0, 0.01) == "unresolved"  # not above k
-    route = {"A": {"EB1": "route", "EB2": "route"}, "B": {"EB1": "route", "EB2": "route"}}
-    assert rc.d1p_exit_outcome(route) == "route"
-    one_closed = {"A": {"EB1": "closed", "EB2": "route"}, "B": {"EB1": "closed", "EB2": "route"}}
-    assert rc.d1p_exit_outcome(one_closed) == "closed"
-    split = {"A": {"EB1": "closed", "EB2": "route"}, "B": {"EB1": "unresolved", "EB2": "route"}}
-    assert rc.d1p_exit_outcome(split) == "unresolved"
-    assert rc.d1p_exit_outcome({"A": route["A"]}) == "unresolved"  # one set is never enough
-
-
-def test_d1p_futility():
-    assert rc.d1p_futile_after_first({"weakened": {"EB1": "unresolved", "EB2": "route"}})
-    assert not rc.d1p_futile_after_first({"weakened": {"EB1": "route", "EB2": "route"}})
-    assert not rc.d1p_futile_after_first({"weakened": {"EB1": "closed", "EB2": "unresolved"}})
-
-
-def test_d2f_outcome_has_no_closed():
-    # pooled 18 of 356 with each set at 9 of 178 (0.0506 <= 14/178): route
-    assert rc.d2f_variant_outcome({"A": (9, 178), "B": (9, 178)}) == "route under the variant"
-    # pooled 19 of 356: the Wilson upper end passes 14/178
-    assert rc.d2f_variant_outcome({"A": (10, 178), "B": (9, 178)}) == "unresolved"
-    # a large count never closes D2 (Codex, r0r1 round 1): it stays unresolved
-    assert rc.d2f_variant_outcome({"A": (60, 178), "B": (60, 178)}) == "unresolved"
-    assert rc.d2f_variant_outcome({"A": (5, 178)}) == "unresolved"  # two sets at least
-
-
-def test_d2f_futility():
-    assert rc.d2f_futile_after_first({"current": (20, 178), "variant_2_joint": (15, 178)})
-    assert not rc.d2f_futile_after_first({"current": (20, 178), "variant_2_joint": (14, 178)})
+# D1-P's and D2-F's rules are tested in test_r1_glue.py, beside their glue functions.
 
 
 def test_t2ae_outcome_and_futility():

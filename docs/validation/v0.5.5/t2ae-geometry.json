@@ -1,0 +1,829 @@
+{
+ "cpu_hours": 0.0009,
+ "decision": "the maintainer's decision of 2026-11-20 (night), item 4b (#218)",
+ "injections": 102,
+ "label": "v0.5.5: T2a-E's geometry count from the recorded candidates' periods and the injected durations (a proxy), before it runs (development records; geometry is necessary, not sufficient)",
+ "method_status": "not_validated",
+ "outcome_if_not_run": null,
+ "per_injection": [
+  {
+   "duration_over_period": 0.023885376212096954,
+   "excludes_phase_half": false,
+   "geometric_phases": 20,
+   "key": "TIC-120900130",
+   "secondary_eclipse": "PASS",
+   "slot": 2
+  },
+  {
+   "duration_over_period": 0.01523785933951039,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-122616851",
+   "secondary_eclipse": "PASS",
+   "slot": 8
+  },
+  {
+   "duration_over_period": 0.0982949406758679,
+   "excludes_phase_half": false,
+   "geometric_phases": 6,
+   "key": "TIC-122616851",
+   "secondary_eclipse": "PASS",
+   "slot": 9
+  },
+  {
+   "duration_over_period": 0.020498431945161554,
+   "excludes_phase_half": false,
+   "geometric_phases": 20,
+   "key": "TIC-138651299",
+   "secondary_eclipse": "PASS",
+   "slot": 2
+  },
+  {
+   "duration_over_period": 0.02707614794116946,
+   "excludes_phase_half": false,
+   "geometric_phases": 20,
+   "key": "TIC-140867523",
+   "secondary_eclipse": "PASS",
+   "slot": 1
+  },
+  {
+   "duration_over_period": 0.016402353534361928,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-142727252",
+   "secondary_eclipse": "PASS",
+   "slot": 2
+  },
+  {
+   "duration_over_period": 0.015907093987713804,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-142727252",
+   "secondary_eclipse": "PASS",
+   "slot": 3
+  },
+  {
+   "duration_over_period": 0.014517652603059397,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-14802455",
+   "secondary_eclipse": "PASS",
+   "slot": 2
+  },
+  {
+   "duration_over_period": 0.023998528245999493,
+   "excludes_phase_half": false,
+   "geometric_phases": 20,
+   "key": "TIC-149968737",
+   "secondary_eclipse": "PASS",
+   "slot": 2
+  },
+  {
+   "duration_over_period": 0.05647185899048271,
+   "excludes_phase_half": false,
+   "geometric_phases": 14,
+   "key": "TIC-149968737",
+   "secondary_eclipse": "PASS",
+   "slot": 8
+  },
+  {
+   "duration_over_period": 0.05150280198898528,
+   "excludes_phase_half": false,
+   "geometric_phases": 14,
+   "key": "TIC-154257406",
+   "secondary_eclipse": "PASS",
+   "slot": 0
+  },
+  {
+   "duration_over_period": 0.03223460927892327,
+   "excludes_phase_half": false,
+   "geometric_phases": 18,
+   "key": "TIC-154257406",
+   "secondary_eclipse": "PASS",
+   "slot": 8
+  },
+  {
+   "duration_over_period": 0.04558469274936078,
+   "excludes_phase_half": false,
+   "geometric_phases": 16,
+   "key": "TIC-158461758",
+   "secondary_eclipse": "PASS",
+   "slot": 2
+  },
+  {
+   "duration_over_period": 0.023439826257353285,
+   "excludes_phase_half": false,
+   "geometric_phases": 20,
+   "key": "TIC-158461758",
+   "secondary_eclipse": "PASS",
+   "slot": 4
+  },
+  {
+   "duration_over_period": 0.03190961766994437,
+   "excludes_phase_half": false,
+   "geometric_phases": 18,
+   "key": "TIC-166087356",
+   "secondary_eclipse": "PASS",
+   "slot": 0
+  },
+  {
+   "duration_over_period": 0.03105811981483623,
+   "excludes_phase_half": false,
+   "geometric_phases": 18,
+   "key": "TIC-166087356",
+   "secondary_eclipse": "PASS",
+   "slot": 1
+  },
+  {
+   "duration_over_period": 0.024970366597513644,
+   "excludes_phase_half": false,
+   "geometric_phases": 20,
+   "key": "TIC-166087356",
+   "secondary_eclipse": "PASS",
+   "slot": 6
+  },
+  {
+   "duration_over_period": 0.05913104782780249,
+   "excludes_phase_half": false,
+   "geometric_phases": 14,
+   "key": "TIC-166151416",
+   "secondary_eclipse": "PASS",
+   "slot": 0
+  },
+  {
+   "duration_over_period": 0.021470462756301933,
+   "excludes_phase_half": false,
+   "geometric_phases": 20,
+   "key": "TIC-166151416",
+   "secondary_eclipse": "PASS",
+   "slot": 3
+  },
+  {
+   "duration_over_period": 0.03214400416179757,
+   "excludes_phase_half": false,
+   "geometric_phases": 18,
+   "key": "TIC-166761808",
+   "secondary_eclipse": "PASS",
+   "slot": 3
+  },
+  {
+   "duration_over_period": 0.11993452506577902,
+   "excludes_phase_half": false,
+   "geometric_phases": 2,
+   "key": "TIC-167755099",
+   "secondary_eclipse": "PASS",
+   "slot": 2
+  },
+  {
+   "duration_over_period": 0.07248985268869108,
+   "excludes_phase_half": false,
+   "geometric_phases": 10,
+   "key": "TIC-167755099",
+   "secondary_eclipse": "PASS",
+   "slot": 5
+  },
+  {
+   "duration_over_period": 0.01876304869687115,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-198407396",
+   "secondary_eclipse": "PASS",
+   "slot": 0
+  },
+  {
+   "duration_over_period": 0.01802134255820065,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-198407396",
+   "secondary_eclipse": "PASS",
+   "slot": 4
+  },
+  {
+   "duration_over_period": 0.01591690249264697,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-202295593",
+   "secondary_eclipse": "PASS",
+   "slot": 3
+  },
+  {
+   "duration_over_period": 0.04952036742472139,
+   "excludes_phase_half": false,
+   "geometric_phases": 16,
+   "key": "TIC-202295593",
+   "secondary_eclipse": "PASS",
+   "slot": 5
+  },
+  {
+   "duration_over_period": 0.01302630795916086,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-202295593",
+   "secondary_eclipse": "PASS",
+   "slot": 9
+  },
+  {
+   "duration_over_period": 0.061513554776215604,
+   "excludes_phase_half": false,
+   "geometric_phases": 12,
+   "key": "TIC-210464356",
+   "secondary_eclipse": "PASS",
+   "slot": 8
+  },
+  {
+   "duration_over_period": 0.03554119911270959,
+   "excludes_phase_half": false,
+   "geometric_phases": 18,
+   "key": "TIC-232966887",
+   "secondary_eclipse": "PASS",
+   "slot": 5
+  },
+  {
+   "duration_over_period": 0.026102315932928683,
+   "excludes_phase_half": false,
+   "geometric_phases": 20,
+   "key": "TIC-233231885",
+   "secondary_eclipse": "PASS",
+   "slot": 3
+  },
+  {
+   "duration_over_period": 0.013145549932647124,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-233231885",
+   "secondary_eclipse": "PASS",
+   "slot": 6
+  },
+  {
+   "duration_over_period": 0.08254776740749437,
+   "excludes_phase_half": false,
+   "geometric_phases": 8,
+   "key": "TIC-233231885",
+   "secondary_eclipse": "PASS",
+   "slot": 9
+  },
+  {
+   "duration_over_period": 0.021808646517069586,
+   "excludes_phase_half": false,
+   "geometric_phases": 20,
+   "key": "TIC-23708215",
+   "secondary_eclipse": "PASS",
+   "slot": 6
+  },
+  {
+   "duration_over_period": 0.014330846300435211,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-240171830",
+   "secondary_eclipse": "PASS",
+   "slot": 0
+  },
+  {
+   "duration_over_period": 0.02229832237102219,
+   "excludes_phase_half": false,
+   "geometric_phases": 20,
+   "key": "TIC-240171830",
+   "secondary_eclipse": "PASS",
+   "slot": 1
+  },
+  {
+   "duration_over_period": 0.10067541082086277,
+   "excludes_phase_half": false,
+   "geometric_phases": 4,
+   "key": "TIC-24607925",
+   "secondary_eclipse": "PASS",
+   "slot": 0
+  },
+  {
+   "duration_over_period": 0.014196025127178673,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-24607925",
+   "secondary_eclipse": "PASS",
+   "slot": 2
+  },
+  {
+   "duration_over_period": 0.04416172993955608,
+   "excludes_phase_half": false,
+   "geometric_phases": 16,
+   "key": "TIC-248356317",
+   "secondary_eclipse": "PASS",
+   "slot": 3
+  },
+  {
+   "duration_over_period": 0.047688869471670677,
+   "excludes_phase_half": false,
+   "geometric_phases": 16,
+   "key": "TIC-248356317",
+   "secondary_eclipse": "PASS",
+   "slot": 7
+  },
+  {
+   "duration_over_period": 0.024398442903322548,
+   "excludes_phase_half": false,
+   "geometric_phases": 20,
+   "key": "TIC-25155713",
+   "secondary_eclipse": "PASS",
+   "slot": 1
+  },
+  {
+   "duration_over_period": 0.014445047095206569,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-255927008",
+   "secondary_eclipse": "PASS",
+   "slot": 1
+  },
+  {
+   "duration_over_period": 0.07674346775345897,
+   "excludes_phase_half": false,
+   "geometric_phases": 10,
+   "key": "TIC-255927008",
+   "secondary_eclipse": "PASS",
+   "slot": 3
+  },
+  {
+   "duration_over_period": 0.01452034931588912,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-255927008",
+   "secondary_eclipse": "PASS",
+   "slot": 4
+  },
+  {
+   "duration_over_period": 0.018631411959608452,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-255927008",
+   "secondary_eclipse": "PASS",
+   "slot": 5
+  },
+  {
+   "duration_over_period": 0.01687356047717556,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-255927008",
+   "secondary_eclipse": "PASS",
+   "slot": 6
+  },
+  {
+   "duration_over_period": 0.013976321696723304,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-255927008",
+   "secondary_eclipse": "PASS",
+   "slot": 7
+  },
+  {
+   "duration_over_period": 0.05480300357382659,
+   "excludes_phase_half": false,
+   "geometric_phases": 14,
+   "key": "TIC-255927008",
+   "secondary_eclipse": "PASS",
+   "slot": 9
+  },
+  {
+   "duration_over_period": 0.011597967570830208,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-258827696",
+   "secondary_eclipse": "PASS",
+   "slot": 4
+  },
+  {
+   "duration_over_period": 0.011786536126966889,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-258827696",
+   "secondary_eclipse": "PASS",
+   "slot": 5
+  },
+  {
+   "duration_over_period": 0.04159973445863243,
+   "excludes_phase_half": false,
+   "geometric_phases": 16,
+   "key": "TIC-258827696",
+   "secondary_eclipse": "PASS",
+   "slot": 7
+  },
+  {
+   "duration_over_period": 0.0902281940824346,
+   "excludes_phase_half": false,
+   "geometric_phases": 6,
+   "key": "TIC-267039954",
+   "secondary_eclipse": "PASS",
+   "slot": 3
+  },
+  {
+   "duration_over_period": 0.024290033379788425,
+   "excludes_phase_half": false,
+   "geometric_phases": 20,
+   "key": "TIC-269533563",
+   "secondary_eclipse": "PASS",
+   "slot": 1
+  },
+  {
+   "duration_over_period": 0.05995299615635965,
+   "excludes_phase_half": false,
+   "geometric_phases": 14,
+   "key": "TIC-281574170",
+   "secondary_eclipse": "PASS",
+   "slot": 1
+  },
+  {
+   "duration_over_period": 0.03231248205665664,
+   "excludes_phase_half": false,
+   "geometric_phases": 18,
+   "key": "TIC-28289264",
+   "secondary_eclipse": "PASS",
+   "slot": 3
+  },
+  {
+   "duration_over_period": 0.11010986391852944,
+   "excludes_phase_half": false,
+   "geometric_phases": 2,
+   "key": "TIC-28289264",
+   "secondary_eclipse": "PASS",
+   "slot": 5
+  },
+  {
+   "duration_over_period": 0.018501033199950122,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-28289264",
+   "secondary_eclipse": "PASS",
+   "slot": 6
+  },
+  {
+   "duration_over_period": 0.03155815181214582,
+   "excludes_phase_half": false,
+   "geometric_phases": 18,
+   "key": "TIC-29267852",
+   "secondary_eclipse": "PASS",
+   "slot": 3
+  },
+  {
+   "duration_over_period": 0.010397949533422475,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-29267852",
+   "secondary_eclipse": "PASS",
+   "slot": 4
+  },
+  {
+   "duration_over_period": 0.06845118940017217,
+   "excludes_phase_half": false,
+   "geometric_phases": 12,
+   "key": "TIC-29267852",
+   "secondary_eclipse": "PASS",
+   "slot": 6
+  },
+  {
+   "duration_over_period": 0.028077965750573173,
+   "excludes_phase_half": false,
+   "geometric_phases": 20,
+   "key": "TIC-298001089",
+   "secondary_eclipse": "PASS",
+   "slot": 1
+  },
+  {
+   "duration_over_period": 0.014040418373872406,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-298001089",
+   "secondary_eclipse": "PASS",
+   "slot": 3
+  },
+  {
+   "duration_over_period": 0.020367510865399868,
+   "excludes_phase_half": false,
+   "geometric_phases": 20,
+   "key": "TIC-326209514",
+   "secondary_eclipse": "PASS",
+   "slot": 0
+  },
+  {
+   "duration_over_period": 0.07262962401216463,
+   "excludes_phase_half": false,
+   "geometric_phases": 10,
+   "key": "TIC-326209514",
+   "secondary_eclipse": "PASS",
+   "slot": 2
+  },
+  {
+   "duration_over_period": 0.07093257901479644,
+   "excludes_phase_half": false,
+   "geometric_phases": 10,
+   "key": "TIC-326209514",
+   "secondary_eclipse": "PASS",
+   "slot": 4
+  },
+  {
+   "duration_over_period": 0.01721820387355771,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-334900819",
+   "secondary_eclipse": "PASS",
+   "slot": 1
+  },
+  {
+   "duration_over_period": 0.05204717381258866,
+   "excludes_phase_half": false,
+   "geometric_phases": 14,
+   "key": "TIC-334900819",
+   "secondary_eclipse": "PASS",
+   "slot": 2
+  },
+  {
+   "duration_over_period": 0.013777555377252391,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-334900819",
+   "secondary_eclipse": "PASS",
+   "slot": 3
+  },
+  {
+   "duration_over_period": 0.011396200550023465,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-334900819",
+   "secondary_eclipse": "PASS",
+   "slot": 6
+  },
+  {
+   "duration_over_period": 0.04077865330169186,
+   "excludes_phase_half": false,
+   "geometric_phases": 16,
+   "key": "TIC-336265633",
+   "secondary_eclipse": "PASS",
+   "slot": 0
+  },
+  {
+   "duration_over_period": 0.01600731494637448,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-336265633",
+   "secondary_eclipse": "PASS",
+   "slot": 8
+  },
+  {
+   "duration_over_period": 0.027336160505619145,
+   "excludes_phase_half": false,
+   "geometric_phases": 20,
+   "key": "TIC-349577085",
+   "secondary_eclipse": "PASS",
+   "slot": 5
+  },
+  {
+   "duration_over_period": 0.02576500360987112,
+   "excludes_phase_half": false,
+   "geometric_phases": 20,
+   "key": "TIC-349682621",
+   "secondary_eclipse": "PASS",
+   "slot": 1
+  },
+  {
+   "duration_over_period": 0.02367380928111556,
+   "excludes_phase_half": false,
+   "geometric_phases": 20,
+   "key": "TIC-354822931",
+   "secondary_eclipse": "PASS",
+   "slot": 3
+  },
+  {
+   "duration_over_period": 0.02699101856327462,
+   "excludes_phase_half": false,
+   "geometric_phases": 20,
+   "key": "TIC-354822931",
+   "secondary_eclipse": "PASS",
+   "slot": 7
+  },
+  {
+   "duration_over_period": 0.009237385594565268,
+   "excludes_phase_half": false,
+   "geometric_phases": 24,
+   "key": "TIC-356683052",
+   "secondary_eclipse": "PASS",
+   "slot": 1
+  },
+  {
+   "duration_over_period": 0.01224794141225611,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-356683052",
+   "secondary_eclipse": "PASS",
+   "slot": 7
+  },
+  {
+   "duration_over_period": 0.0533122901067955,
+   "excludes_phase_half": false,
+   "geometric_phases": 14,
+   "key": "TIC-364129259",
+   "secondary_eclipse": "PASS",
+   "slot": 0
+  },
+  {
+   "duration_over_period": 0.009040369754395218,
+   "excludes_phase_half": false,
+   "geometric_phases": 24,
+   "key": "TIC-380039482",
+   "secondary_eclipse": "PASS",
+   "slot": 2
+  },
+  {
+   "duration_over_period": 0.04206960605541738,
+   "excludes_phase_half": false,
+   "geometric_phases": 16,
+   "key": "TIC-381981543",
+   "secondary_eclipse": "PASS",
+   "slot": 4
+  },
+  {
+   "duration_over_period": 0.019375491900733413,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-381981543",
+   "secondary_eclipse": "PASS",
+   "slot": 6
+  },
+  {
+   "duration_over_period": 0.008204343173631463,
+   "excludes_phase_half": false,
+   "geometric_phases": 24,
+   "key": "TIC-387512509",
+   "secondary_eclipse": "PASS",
+   "slot": 1
+  },
+  {
+   "duration_over_period": 0.01184960451898166,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-388198210",
+   "secondary_eclipse": "PASS",
+   "slot": 1
+  },
+  {
+   "duration_over_period": 0.01937554741237915,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-394103866",
+   "secondary_eclipse": "PASS",
+   "slot": 0
+  },
+  {
+   "duration_over_period": 0.011575440891568069,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-394103866",
+   "secondary_eclipse": "PASS",
+   "slot": 3
+  },
+  {
+   "duration_over_period": 0.014568552341429317,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-394103866",
+   "secondary_eclipse": "PASS",
+   "slot": 5
+  },
+  {
+   "duration_over_period": 0.018349338290132963,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-397000139",
+   "secondary_eclipse": "PASS",
+   "slot": 3
+  },
+  {
+   "duration_over_period": 0.014978084621668452,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-416715793",
+   "secondary_eclipse": "PASS",
+   "slot": 1
+  },
+  {
+   "duration_over_period": 0.03187666738082631,
+   "excludes_phase_half": false,
+   "geometric_phases": 18,
+   "key": "TIC-421801900",
+   "secondary_eclipse": "PASS",
+   "slot": 1
+  },
+  {
+   "duration_over_period": 0.011126071347184473,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-421801900",
+   "secondary_eclipse": "PASS",
+   "slot": 3
+  },
+  {
+   "duration_over_period": 0.013203236233092991,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-421801900",
+   "secondary_eclipse": "PASS",
+   "slot": 8
+  },
+  {
+   "duration_over_period": 0.013972059542609059,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-441633615",
+   "secondary_eclipse": "PASS",
+   "slot": 9
+  },
+  {
+   "duration_over_period": 0.02916771137476735,
+   "excludes_phase_half": false,
+   "geometric_phases": 20,
+   "key": "TIC-441803025",
+   "secondary_eclipse": "PASS",
+   "slot": 5
+  },
+  {
+   "duration_over_period": 0.03357839168324173,
+   "excludes_phase_half": false,
+   "geometric_phases": 18,
+   "key": "TIC-456894260",
+   "secondary_eclipse": "PASS",
+   "slot": 1
+  },
+  {
+   "duration_over_period": 0.01403425605515865,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-456894260",
+   "secondary_eclipse": "PASS",
+   "slot": 4
+  },
+  {
+   "duration_over_period": 0.114102091646542,
+   "excludes_phase_half": false,
+   "geometric_phases": 2,
+   "key": "TIC-456894260",
+   "secondary_eclipse": "PASS",
+   "slot": 5
+  },
+  {
+   "duration_over_period": 0.049088879591799486,
+   "excludes_phase_half": false,
+   "geometric_phases": 16,
+   "key": "TIC-456894260",
+   "secondary_eclipse": "PASS",
+   "slot": 6
+  },
+  {
+   "duration_over_period": 0.03316757597902852,
+   "excludes_phase_half": false,
+   "geometric_phases": 18,
+   "key": "TIC-456894260",
+   "secondary_eclipse": "PASS",
+   "slot": 7
+  },
+  {
+   "duration_over_period": 0.0690510200201121,
+   "excludes_phase_half": false,
+   "geometric_phases": 12,
+   "key": "TIC-62815027",
+   "secondary_eclipse": "PASS",
+   "slot": 4
+  },
+  {
+   "duration_over_period": 0.014263353635747813,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-75628092",
+   "secondary_eclipse": "PASS",
+   "slot": 0
+  },
+  {
+   "duration_over_period": 0.10655147117294045,
+   "excludes_phase_half": false,
+   "geometric_phases": 4,
+   "key": "TIC-75628092",
+   "secondary_eclipse": "PASS",
+   "slot": 1
+  },
+  {
+   "duration_over_period": 0.011561875795278148,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-79569472",
+   "secondary_eclipse": "PASS",
+   "slot": 1
+  },
+  {
+   "duration_over_period": 0.014818420901848778,
+   "excludes_phase_half": false,
+   "geometric_phases": 22,
+   "key": "TIC-95860790",
+   "secondary_eclipse": "PASS",
+   "slot": 7
+  }
+ ],
+ "rule": "T2a-E does not run if more than 20 of the 102 would be UNK on geometry alone",
+ "t2ae_runs": true,
+ "unk_on_geometry": 12
+}

@@ -48,3 +48,25 @@ Applied as Codex wrote them, with the conservative option wherever one was offer
 - **T2a-E** compares each replay with I1's historical record; its chi-square inflation is heuristic; `pinned_hash.py` locates the earlier records under commit 8653911's code hash (the manifest checked file by file, two locks admitted) and never wraps the replay.
 - **The common code:** pause_at is never None; R1 uses at most 10 workers at every hour; one lock covers the whole run; every start is recorded, one beyond the first being the pre-approved resume; the cap is cumulative over the identity; the complete code identity is compared between stages.
 - **The ROADMAP** keeps the historical sentence with a pointer only.
+
+## The night decision: I4's diagnosis, D2-F's redesign, amendment 1 and the fixes
+
+Codex's review of the work of the maintainer's decision of 2026-11-20 (night) on the independent review (#218, comment 7050514004): I4's convergence diagnosis (item 3a), D2-F's redesign and its decision-value test (3b, 3c), amendment 1 to the charter (item 2), D1-P's and T2a-E's fixes (4a, 4b), the code's fixes (4c), the offline tests (4d) and the designs' revision, up to 3 rounds. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [night-round-1-answer.md](night-round-1-answer.md) | gpt-6.1-sol, high | I4, 3a, 3b, 3e, 3f, T2a-E `SURVIVED`; D2-F, 3c, 3d, D1-P, tests, revision `WEAKENED`; D2-F's plausibility reading and the code `REFUTED` (a race in the stale lock's recovery; partial coverage accepted by `d1p_exit_outcome`); 11 corrections | `73b178edf9516b663943ea83b0435135fceb805e55f338a2ebc8d8dbdd598ee9` |
+| 2 | [night-round-2-answer.md](night-round-2-answer.md) | gpt-6.1-sol, high | every item `SURVIVED` but the revision `WEAKENED` (the bridge summary's cost); no blocker to D1-P or T2a-E; two wording corrections, applied | `a26be6db25ec56e1f6998b61ccfc719df0d20f6f44595adab202327e470a046e` |
+
+The tokens are cumulative over the conversation `night`:
+
+- round 1: 2,482,266 input (2,318,208 cached) and 15,163 output;
+- round 2: 3,752,100 input (3,548,800 cached) and 20,234 output;
+
+The conversation counts **223,534** review tokens (the last round's uncached input plus output).
+
+Applied as Codex wrote them, with the conservative option wherever one was offered (no divergence left after round 2):
+- **D2-F does not run.** It was not shown that "route" is implausible under the charter (about 0.11, a conditional predictive estimate, not an upper bound for generator version 2); D2-F stays unrun while the justification of its decision value and the funding of its two stages are not resolved, and this stop is not a conclusion on D2's feasibility. The decision is the maintainer's.
+- **The lock:** acquisition, release and recovery under an operating-system guard; a recovered lock's identity is checked again just before its removal, recorded after it; a release removes only its own instance; files opened in binary mode.
+- **D1-P:** the eight cells (two views, sets A and B, EB1 and EB2) are required, and incomplete coverage is INCONCLUSIVE; the bridge compares the same 100 indices under version 1 and version 2 side by side.
+- **The texts:** the decision-value figures rectified as conditional estimates (the record kept as written); the provenance disclosures; the amendment's joint ceilings and qualified directions; the bridge summary's cost (three blocks, about 432 CPU-s).

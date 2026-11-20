@@ -850,7 +850,8 @@ The phase stops at 80 % of any cap.
 Tracking: #218. Plan (an agent's proposal, stored unchanged; it decides nothing):
 [docs/plans/v0.5.5-fable-core-plan.md](docs/plans/v0.5.5-fable-core-plan.md). Charter:
 [docs/plans/v0.5.5-charter.md](docs/plans/v0.5.5-charter.md). Designs of the checks:
-[docs/plans/v0.5.5-r1-designs.md](docs/plans/v0.5.5-r1-designs.md).
+[docs/plans/v0.5.5-r1-designs.md](docs/plans/v0.5.5-r1-designs.md). Amendment 1 to the charter
+(from the independent review): [docs/plans/v0.5.5-charter-amendment-1.md](docs/plans/v0.5.5-charter-amendment-1.md).
 
 **Opened on 2026-11-20** by the maintainer's decision of that day (15:40, #218), which resumed
 the v0.5 line through a new change of approach. **The advance rule is not amended, and no phase

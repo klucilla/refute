@@ -1,6 +1,9 @@
-"""v0.5.5, R1, check D2-F: D2's rule floor at the oracle on new planets, under three variants
-(#218; the frozen design is ``docs/plans/v0.5.5-r1-designs.md``, section D2-F).
-``method_status: not_validated``. **It decides nothing by itself: never a draft, and no variant is
+"""v0.5.5, R1, check D2-F: D2's rule floor at the oracle on new planets, under four variants
+(#218; the frozen design is ``docs/plans/v0.5.5-r1-designs.md``, section D2-F, **as redesigned
+by** ``docs/plans/v0.5.5-r1-designs-revision-1.md``, section 2). ``method_status: not_validated``.
+**Redesigned, not run:** D2-F does not run before its redesign is checked (a stop that is not
+delegated), and its decision-value test, redone (``d2f_decision_value.py``), gives "route" at
+most about 0.11. **It decides nothing by itself: never a draft, and no variant is
 adopted by it** (a design question is R2's, after G1, a stop that is not delegated).
 
 Per planet of two new, disjoint seed sets (A and B; 200 attempted each), from C1 **version 2**:
@@ -9,7 +12,9 @@ Per planet of two new, disjoint seed sets (A and B; 200 attempted each), from C1
   message kept;
 - at the oracle (the generator's model, the true ephemeris and depth, the stellar trend known):
   - **INFO**: ``odd_even``'s power with the transit shape as a nuisance (I4's
-    ``nuisance_bound``) below 0.95;
+    ``nuisance_bound``, with I4's convergence check made on the cadences that straddle no corner
+    of the trapezoid when it is I4's only invalid reason: ``i4_fix.py``) below 0.95; a bound that
+    stays invalid is unknown, and its power is stored apart;
   - **SIN_F**: ``sinusoid``'s Fréchet certificate (step 7's) below 0.95 - 0.02;
   - **SIN_J**: the same block as a **simulated joint probability** of the flag and the small
     residual (their exact Gaussian joint law under the generator's covariance), below 0.95 - 0.01;
@@ -19,9 +24,11 @@ Per planet of two new, disjoint seed sets (A and B; 200 attempted each), from C1
     multiplicative stellar trend, computed, not assumed equal to the depth);
   - **DATA**: a decisive test INCONCLUSIVE with the class ``not_enough_data``.
 - the counts: **current** = DATA ∪ INFO ∪ SIN_F ∪ RULE; **variant 2** = DATA ∪ INFO ∪ SIN_J ∪ RULE;
-  **variant 3** = DATA ∪ INFO ∪ SIN_F ∪ RULE_3; each counted strictly and with every uncertain and
-  unknown planet (the upper count), then the frozen outcome per variant
-  (``r1_common.d2f_variant_outcome``): "route under the variant" or "unresolved".
+  **variant 3** = DATA ∪ INFO ∪ SIN_F ∪ RULE_3; **variant 4** = DATA ∪ INFO ∪ SIN_J ∪ RULE_3
+  (frozen before any data); each counted strictly and with every uncertain and unknown planet
+  (the upper count, its unknown rate disclosed), then the frozen outcome per variant
+  (``r1_common.d2f_variant_outcome``), against the stricter of 14/178 and the set's own unit (its
+  own v0.4 kept fraction): "route under the variant" or "unresolved".
 
 **These counts diagnose certificate limitations and observed blockers. They are not demonstrated
 lower bounds on unavoidable retention losses** (a certificate's failure does not exclude a warning
@@ -57,6 +64,7 @@ import i4_bound as i4  # noqa: E402,I001  (stage A's and B's modules, then ledge
 from i4_bound import sa, b1_b14  # noqa: E402
 import step7_sinusoid as s7  # noqa: E402
 import generator_v2 as g2  # noqa: E402
+import i4_fix  # noqa: E402
 import r1_common as rc  # noqa: E402
 import budgeted_v3  # noqa: E402
 import ledger_v055 as lv  # noqa: E402  (last: it binds budgeted to v0.5.5's ledger)
@@ -64,6 +72,8 @@ import budgeted  # noqa: E402
 
 DESIGN = ROOT / "docs/plans/v0.5.5-r1-designs.md"
 CHARTER = ROOT / "docs/plans/v0.5.5-charter.md"
+AMENDMENT = ROOT / "docs/plans/v0.5.5-charter-amendment-1.md"
+REVISION = ROOT / "docs/plans/v0.5.5-r1-designs-revision-1.md"
 OUT = ROOT / ".cache/v055/d2f"
 SETS = ("A", "B")
 SIZE = 200  # attempted per set (the design's sizing and price)
@@ -73,7 +83,8 @@ SIN_BAND_J = 0.01  # the joint simulation's band (20,000 draws per phase)
 JOINT_DRAWS = 20_000
 PHASES = 8
 MARGINAL_TOL = 0.02  # the joint draws' marginals must agree with the battery's own computation
-VARIANTS = ("current", "variant_2_joint", "variant_3_evidence")
+VARIANTS = ("current", "variant_2_joint", "variant_3_evidence", "variant_4_combined")
+CONVERGENCE_REASON = "the convergence check failed"
 
 
 def part(set_name: str) -> str:
@@ -324,11 +335,28 @@ def one(set_name: str, i: int) -> dict:
     t, sector = data.lc.time, data.lc.sector
     nb = i4.nuisance_bound(t, sector, truth, sigma_w, sigma_r)
     alt = p4.stronger.odd_even_alternative_depth_fraction * depth
-    rec["odd_even_oracle"] = {"final_depth": depth, "alternative": alt, "invalid": nb["invalid"]}
-    if "sigma" in nb and not nb["invalid"]:
+    oe = {"final_depth": depth, "alternative": alt, "invalid_by_i4": list(nb["invalid"])}
+    oe["convergence_i4"] = nb.get("convergence")
+    invalid = list(nb["invalid"])
+    if invalid == [CONVERGENCE_REASON]:  # only when it is I4's only invalid reason
+        # the redesign (3b): I4's check on the cadences that straddle no corner (i4_fix.py, the
+        # diagnosis of record-defects.md section 3); the reason is dropped only if it passes
+        _, deriv, n = i4.shape_and_derivatives(t, truth)
+        conv = i4_fix.masked_convergence(
+            t, truth, deriv, n, lambda name, h: i4._numeric(t, truth, name, h)
+        )
+        oe["masked_convergence"] = conv
+        if i4_fix.passes(conv) is True:
+            invalid.remove(CONVERGENCE_REASON)
+    oe["invalid"] = invalid
+    if "sigma" in nb:
         power = gaussian_probability(alt, nb["sigma"], p4.gauntlet.odd_even.max_sigma)
         if isinstance(power, float) and math.isfinite(power):
-            rec["odd_even_oracle"]["power"] = power
+            if invalid:
+                oe["power_of_an_invalid_bound"] = power  # stored apart, never counted
+            else:
+                oe["power"] = power
+    rec["odd_even_oracle"] = oe
     rec["sinusoid_oracle"] = sinusoid_oracle(data, truth, f"{set_name}:{i}")
     rec["cpu_seconds"] = time.process_time() - started
     return rec
@@ -392,6 +420,8 @@ FLOOR_SETS = {
     "current": ("DATA", "INFO", "SIN_F", "RULE"),
     "variant_2_joint": ("DATA", "INFO", "SIN_J", "RULE"),
     "variant_3_evidence": ("DATA", "INFO", "SIN_F", "RULE_3"),
+    # frozen before any data (the decision of 2026-11-20, night, 3b): both method changes at once
+    "variant_4_combined": ("DATA", "INFO", "SIN_J", "RULE_3"),
 }
 
 
@@ -435,10 +465,13 @@ def shard(arg: dict) -> bytes:
 FROZEN = (
     Path(__file__),
     HERE / "generator_v2.py",
+    HERE / "i4_fix.py",
     HERE / "r1_common.py",
     HERE / "ledger_v055.py",
     DESIGN,
     CHARTER,
+    AMENDMENT,
+    REVISION,
     V054 / "i4_bound.py",
     V054 / "step7_sinusoid.py",
     V054 / "ledger_i.py",
@@ -446,11 +479,20 @@ FROZEN = (
     V052 / "budgeted.py",
     V052 / "driver.py",
     V052 / "forecast_v4.py",
+    V052 / "forecast_t2a.py",
+    V054 / "i4_rest.py",
+    V054 / "i4_rest2.py",
     i4.STAGE_A / "d2_bounds.py",
+    i4.STAGE_A / "ledger_a.py",
     i4.STAGE_B / "b1_b14.py",
     i4.STAGE_B / "b1_forecast.py",
     i4.STAGE_B / "battery_b1.py",
     i4.STAGE_B / "ledger_b.py",
+    i4.STAGE_B / "b1_d2d4_rest.py",
+    i4.STAGE_B / "b1_data.py",
+    i4.STAGE_B / "b1_blockers_decisive.py",
+    V054 / "i1_diagnose.py",
+    ROOT / "docs/validation/v0.5.1/feasibility/forecast.py",  # d2_bounds._wp1 (mahalanobis2)
     b1_b14.COMPOSITION,  # the frozen composition config() reads (round 3's B1.3)
     ROOT / "calibration/v0.4/claim.yaml",
 )
@@ -460,6 +502,7 @@ def code_identity() -> dict:
     """``src/``'s code hash and every frozen file outside it (the charter, process change 4)."""
     from refute.core.codehash import compute_code_hash
 
+    rc.require_frozen(ROOT, FROZEN)  # the list is complete (4c)
     ident = {"src_code_hash": compute_code_hash().sha256, **rc.identity(ROOT, FROZEN)}
     ident["digest"] = rc.digest(ident)
     return ident
@@ -565,20 +608,47 @@ def _set_counts(recs: list) -> dict:
     ok = [r for r in recs if r.get("status") == "OK"]
     elig = [r for r in ok if r["gate_passed"] and r["identity"]]
     cats = [categories(r) for r in elig]
+    n = len(elig)
     kept = sum(r["v5"] in ("SURVIVED", "WEAKENED") for r in elig)
+    v04_kept = sum(r["v04"] in ("SURVIVED", "WEAKENED") for r in elig)
     tally = {
         k: {"true": sum(c[k] is True for c in cats), "unknown": sum(c[k] is None for c in cats)}
         for k in ("DATA", "INFO", "SIN_F", "SIN_J", "RULE", "RULE_3")
     }
+    fl = floors(cats)
+    oe = [r["odd_even_oracle"] for r in elig]
     return {
         "attempted": len(recs),
-        "eligible": len(elig),
+        "eligible": n,
         "generation_failures": sum(r.get("status") == "GENERATION_FAILURE" for r in recs),
         "errors": sorted(r["index"] for r in recs if r.get("status") == "ERROR"),
         "version_5_kept": kept,
+        "v04_kept": v04_kept,
+        # the threshold in the population's own unit (the redesign, 3b); the stricter decides
+        "route_fraction_own_unit": rc.d2f_route_fraction(v04_kept, n) if n else None,
+        "route_fraction_fixed": rc.D2_ROUTE,
         "categories": tally,
-        "floors": floors(cats),
+        "floors": fl,
+        # the unknowns stay in the upper count; their rate is disclosed (the redesign, 3b)
+        "unknown_rate_per_variant": {
+            v: ((fl[v][1] - fl[v][0]) / n if n else None) for v in VARIANTS
+        },
+        "i4_bound": {
+            "invalid_by_i4": sum(bool(o["invalid_by_i4"]) for o in oe),
+            "convergence_failures_by_i4": sum(CONVERGENCE_REASON in o["invalid_by_i4"] for o in oe),
+            "valid_after_the_fix": sum(bool(o["invalid_by_i4"]) and not o["invalid"] for o in oe),
+            "invalid_after_the_fix": sum(bool(o["invalid"]) for o in oe),
+            "reasons_after_the_fix": sorted({x for o in oe for x in o["invalid"]}),
+            # the power of the bounds that stay invalid, apart; never counted
+            "powers_of_invalid_bounds": sorted(
+                o["power_of_an_invalid_bound"] for o in oe if "power_of_an_invalid_bound" in o
+            ),
+        },
     }
+
+
+def _upper(counts: dict, v: str) -> tuple[int, int, int]:
+    return counts["floors"][v][1], counts["eligible"], counts["v04_kept"]
 
 
 def _summarize(set_name: str) -> None:
@@ -589,22 +659,28 @@ def _summarize(set_name: str) -> None:
     if counts["eligible"] < 150:
         stops.append(f"{counts['eligible']} eligible planets, fewer than 150")
     doc: dict = {
-        "label": "v0.5.5 R1, D2-F: D2's rule floor at the oracle on new planets (C1 version 2), "
-        "three variants; decides nothing by itself; never a draft; no variant is adopted by it",
+        "label": "v0.5.5 R1, D2-F (redesigned): D2's rule counts at the oracle on new planets "
+        "(C1 version 2), four variants; decides nothing by itself; never a draft; no variant is "
+        "adopted by it",
         "method_status": "not_validated",
         "set": set_name,
-        "design": "docs/plans/v0.5.5-r1-designs.md (D2-F)",
+        "design": "docs/plans/v0.5.5-r1-designs.md (D2-F, the redesign)",
         "code_identity": code_identity(),
         "counts": counts,
         "stops": stops,
-        "threshold": {"route": "14/178, with the upper count"},
+        "threshold": {
+            "route": "the upper count against the stricter of 14/178 and the population's own "
+            "unit (r1_common.d2f_route_fraction)"
+        },
         "note": "These counts diagnose certificate limitations and observed blockers. They are "
         "not demonstrated lower bounds on unavoidable retention losses.",
         "cpu_hours": round(lv.part_consumption(part(set_name)), 4),
     }
-    per_upper = {v: (counts["floors"][v][1], counts["eligible"]) for v in VARIANTS}
+    per_upper = {v: _upper(counts, v) for v in VARIANTS}
     if set_name == "A":
         doc["futile_after_A"] = bool(stops) or rc.d2f_futile_after_first(per_upper)
+        if doc["futile_after_A"]:  # set B does not run: the outcome is read now
+            doc["outcome_per_variant"] = {v: "unresolved" for v in VARIANTS}
     else:
         first_doc = _first_set()
         doc["set_A_record_sha256"] = first_doc["_sha256"]
@@ -613,9 +689,7 @@ def _summarize(set_name: str) -> None:
             {v: "unresolved (a stop)" for v in VARIANTS}
             if stops
             else {
-                v: rc.d2f_variant_outcome(
-                    {"A": (first["floors"][v][1], first["eligible"]), "B": per_upper[v]}
-                )
+                v: rc.d2f_variant_outcome({"A": _upper(first, v), "B": per_upper[v]})
                 for v in VARIANTS
             }
         )
@@ -623,21 +697,11 @@ def _summarize(set_name: str) -> None:
     if out.exists():
         raise SystemExit(f"{out.name} exists: the record is written once")
     out.write_text(json.dumps(doc, indent=1, sort_keys=True) + "\n", "utf-8", newline="\n")
-    print(
-        json.dumps(
-            {
-                "floors": counts["floors"],
-                "eligible": counts["eligible"],
-                "stops": stops,
-                **(
-                    {"futile_after_A": doc["futile_after_A"]}
-                    if set_name == "A"
-                    else {"outcome_per_variant": doc["outcome_per_variant"]}
-                ),
-            },
-            indent=1,
-        )
-    )
+    shown = {"floors": counts["floors"], "eligible": counts["eligible"], "stops": stops}
+    for key in ("futile_after_A", "outcome_per_variant"):
+        if key in doc:
+            shown[key] = doc[key]
+    print(json.dumps(shown, indent=1))
     if stops:
         raise SystemExit("STOP for the maintainer: " + "; ".join(stops))
 

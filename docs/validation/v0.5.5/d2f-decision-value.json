@@ -1,0 +1,82 @@
+{
+ "cpu_hours": 0.0007,
+ "decision": "the maintainer's decision of 2026-11-20 (night), item 3b (#218)",
+ "draws": 400000,
+ "label": "v0.5.5: D2-F's decision-value test, redone (a reading of existing development records; upper bounds on P(route) for the best variant)",
+ "left_out_each_can_only_lower_p_route": [
+  "RULE_3's planets outside DATA, INFO and SIN_J",
+  "I4's bounds still invalid after the fix (0 of 178 fresh; 1 of 112 in v0.5.2's set)",
+  "generator version 2's change of the star (not measured on these planets)"
+ ],
+ "method_status": "not_validated",
+ "p_route_upper_bound": {
+  "on_the_strict_count": 0.314705,
+  "on_the_upper_count": 0.113865
+ },
+ "round_3": {
+  "data_losses_step1": [
+   3049,
+   3191
+  ],
+  "i4_invalid_after_the_fix": "0 of 178 (i4-convergence-diagnosis.json, set fresh)",
+  "info_limited_i4": [
+   3041,
+   3182
+  ],
+  "joint_bounds": {
+   "bound_per_planet_below_0_97": {
+    "3004": 0.9418,
+    "3041": 0.7174,
+    "3083": 0.6524,
+    "3086": 0.9208,
+    "3112": 0.9436,
+    "3113": 0.3035,
+    "3114": 0.956,
+    "3158": 0.601,
+    "3162": 0.7231,
+    "3164": 0.8957,
+    "3175": 0.78,
+    "3182": 0.6578
+   },
+   "ok": 178,
+   "planets": 178,
+   "sin_j_true_or_unknown": [
+    3004,
+    3112,
+    3114
+   ],
+   "sin_j_true_under_any_joint_law": [
+    3041,
+    3083,
+    3086,
+    3113,
+    3158,
+    3162,
+    3164,
+    3175,
+    3182
+   ]
+  },
+  "step7_certificate_fails": [
+   3041,
+   3083,
+   3086,
+   3113,
+   3158,
+   3162,
+   3164,
+   3175,
+   3182
+  ],
+  "step7_floor_data_info_sin_f": 11,
+  "variant_4_strict_lower_bound": 11,
+  "variant_4_upper_lower_bound": 14
+ },
+ "route_needs": {
+  "each_set_at_most": 14,
+  "of": 356,
+  "of_each": 178,
+  "pooled_upper_count_at_most": 18
+ },
+ "seed": 20261120
+}

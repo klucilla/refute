@@ -1,0 +1,51 @@
+{
+ "charges": [
+  {
+   "basis": "i4_diagnosis.py: process time 8.1 s",
+   "hours": 0.0022526041666666666,
+   "name": "i4_diagnosis_20261120T210349Z"
+  },
+  {
+   "basis": "pilot_costs.py: process time 391.1 s",
+   "hours": 0.10864583333333333,
+   "name": "pilot_costs_20261120T211130Z"
+  },
+  {
+   "basis": "t2ae_geometry.py: process time 3.1 s",
+   "hours": 0.0008550347222222222,
+   "name": "t2ae_geometry_20261120T211336Z"
+  },
+  {
+   "basis": "d2f_decision_value.py: process time 2.4 s",
+   "hours": 0.0006727430555555556,
+   "name": "d2f_decision_value_20261120T212537Z"
+  }
+ ],
+ "sections": {
+  "v055": {
+   "parts": {
+    "r1_d1p_a": {
+     "allocation_hours": 16.0
+    },
+    "r1_d1p_b": {
+     "allocation_hours": 16.0
+    },
+    "r1_d2f_a": {
+     "allocation_hours": 11.0
+    },
+    "r1_d2f_b": {
+     "allocation_hours": 11.0
+    },
+    "r1_reserve": {
+     "allocation_hours": 4.5
+    },
+    "r1_t2ae_1": {
+     "allocation_hours": 2.5
+    },
+    "r1_t2ae_2": {
+     "allocation_hours": 2.5
+    }
+   }
+  }
+ }
+}
