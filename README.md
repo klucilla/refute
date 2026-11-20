@@ -11,7 +11,7 @@
   <a href="https://doi.org/10.5281/zenodo.23301000"><img alt="DOI 10.5281/zenodo.23301000 (all versions of the software)" src="https://zenodo.org/badge/DOI/10.5281/zenodo.23301000.svg"></a>
   <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-blue.svg"></a>
   <a href="pyproject.toml"><img alt="Python 3.12 | 3.13 (tested in CI)" src="https://img.shields.io/badge/python-3.12%20%7C%203.13-3776AB.svg"></a>
-  <a href="ROADMAP.md"><img alt="Status: v0.4 Discover pilot closed; method not validated" src="https://img.shields.io/badge/status-v0.4%20pilot%20closed%2C%20not%20validated-orange.svg"></a>
+  <a href="ROADMAP.md"><img alt="Status: v0.5 Stronger tests closed as WEAKENED; method not validated" src="https://img.shields.io/badge/status-v0.5%20closed%20WEAKENED%2C%20not%20validated-orange.svg"></a>
   <a href="CONTRIBUTING.md"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"></a>
 </p>
 
@@ -21,7 +21,26 @@
 </p>
 
 > [!IMPORTANT]
-> **Status (v0.4.0).** No method of Refute is validated (`method_status: not_validated`).
+> **Status (v0.5.0).** No method of Refute is validated (`method_status: not_validated`).
+> - **v0.5 Stronger tests** closed as `WEAKENED`
+>   ([closing record](calibration/v0.5/results/closing-record.md);
+>   [gate reviews](calibration/v0.5/gate/)). The TESS battery now says INCONCLUSIVE when a test
+>   could not have failed: fewer spurious signals survive, and many more planets end
+>   INCONCLUSIVE (synthetic planets kept: 96.8 % with the v0.4 battery, 53.8 % with v0.5). The
+>   targets D1 (synthetic eclipsing binaries), D2, D4 and T2a failed and are recorded as results.
+> - **The v0.5 line is paused** by the maintainer's decision of 2026-11-13
+>   ([pause record](docs/validation/v0.5.4/pause-record.md)). No target was relaxed and none was
+>   declared infeasible; v0.5 stays `WEAKENED`.
+>   - The three correction rounds allowed by the advance rule of the [ROADMAP](ROADMAP.md) closed
+>     as not approved: [v0.5.1](docs/validation/v0.5.1/closing-record.md),
+>     [v0.5.2](docs/validation/v0.5.2/closing-record.md) and
+>     [v0.5.3](docs/validation/v0.5.3/closing-record.md).
+>   - v0.5.4 Information checks, a change of approach and not a fourth round, closed on 2026-11-13
+>     without passing or failing a target
+>     ([first half](docs/validation/v0.5.4/h1-stop-report.md),
+>     [second half](docs/validation/v0.5.4/h2-stop-report.md)).
+>   - Under the advance rule, no new capability phase starts while the failed targets of v0.5
+>     stay outstanding.
 > - **v0.4 Discover** closed as a pilot of complete, auditable cases for `refute discover`
 >   ([results](calibration/v0.4/results/README.md); dossiers:
 >   [10.5281/zenodo.23898648](https://doi.org/10.5281/zenodo.23898648)). Its gate verdict,
@@ -241,7 +260,9 @@ v0.1 claim is verified the same way at tag [`v0.1.0`](https://github.com/klucill
 In the same way, from version 0.4.0 on, the v0.4 pilot claim (`calibration/v0.4/claim.yaml`)
 is `TAMPERED` on `main`; it is verified at tag
 [`v0.4.0-pilot-lock`](https://github.com/klucilla/refute/tree/v0.4.0-pilot-lock) (commit
-`65e4363`), and the five v0.3 claims at tag
+`65e4363`); from version 0.5.0 on, the v0.5 calibration claim (`calibration/v0.5/claim.yaml`)
+at tag [`v0.5.0-calibration-lock`](https://github.com/klucilla/refute/tree/v0.5.0-calibration-lock)
+(commit `b6249b5`); and the five v0.3 claims at tag
 [`v0.3.0-main-lock`](https://github.com/klucilla/refute/tree/v0.3.0-main-lock).
 `scripts/verify_locked_tags.py` checks every lock at its tag.
 
@@ -263,6 +284,22 @@ in [10.5281/zenodo.23898648](https://doi.org/10.5281/zenodo.23898648), and the i
 clone needs to reproduce them in
 [10.5281/zenodo.23874043](https://doi.org/10.5281/zenodo.23874043). A candidate that survives
 the declared battery is only a candidate, never support for a new object.
+
+### Stronger tests (v0.5)
+
+`method_status: not_validated`. A battery whose fatal and warning tests pass only with the power
+to fail, measured against the v0.4 battery on the same curves, pre-registered and locked, and
+reported as it came out: a synthetic population (2,400 curves), the 100 real curves of the v0.4
+pilot (both batteries, paired) and 16 newly drawn real controls (8 known planets from the NASA
+Exoplanet Archive and 8 catalogued eclipsing-binary false positives). Fewer spurious signals
+survive and many more planets end INCONCLUSIVE; the targets D1 (synthetic eclipsing binaries),
+D2, D4 and T2a failed. The battery has no decisive centroid test: the per-sector centroid failed
+its own acceptance and stayed a diagnostic
+([#200](https://github.com/klucilla/refute/issues/200)). Results: [calibration/v0.5/runs/](calibration/v0.5/runs/), the
+[closing record](calibration/v0.5/results/closing-record.md) and the
+[gate reviews](calibration/v0.5/gate/) (`WEAKENED`); the open findings are #201 to #206. One
+C3 dossier was reproduced in a clean clone with one recorded deviation (the TESS-EB table placed
+from an official VizieR mirror while the CDS did not answer).
 
 ### Calibration results (v0.1)
 
@@ -373,7 +410,7 @@ Packs are discovered through Python entry points, so they can live in their own 
 | Full TESS false-positive battery | Centroids, apertures, aliases, known binaries | ![v0.2 released](https://img.shields.io/badge/-v0.2%20released-blue) self-claim FAIL ([post-mortem](calibration/v0.2/POSTMORTEM.md)) |
 | Paper replication (ML) | Published results with public code and data | ![v0.3 closed](https://img.shields.io/badge/-v0.3%20closed-blue) gate `WEAKENED` ([gate record](calibration/v0.3/main/gate/README.md)) |
 | Discover pilot (TESS) | New signals in TESS light curves, through a two-stage funnel | ![v0.4 pilot closed](https://img.shields.io/badge/-v0.4%20pilot%20closed-blue) `method_status: not_validated` ([results](calibration/v0.4/results/README.md)) |
-| Stronger tests (TESS) | A battery that says INCONCLUSIVE when a test could not have failed, and attacks noise, variability and one-sector centroid artifacts | ![v0.5 in progress](https://img.shields.io/badge/-v0.5%20in%20progress-orange) ([plan](docs/plans/v0.5-plan.md)) |
+| Stronger tests (TESS) | A battery that says INCONCLUSIVE when a test could not have failed, and attacks noise and stellar variability; its per-sector centroid test is a diagnostic only ([#200](https://github.com/klucilla/refute/issues/200)) | ![v0.5 closed, WEAKENED](https://img.shields.io/badge/-v0.5%20closed%2C%20WEAKENED-yellow) `method_status: not_validated` ([closing record](calibration/v0.5/results/closing-record.md), [gate reviews](calibration/v0.5/gate/)); the v0.5 line is paused since 2026-11-13 ([pause record](docs/validation/v0.5.4/pause-record.md)) |
 | Variable stars (TESS) | Eclipsing binaries and pulsating stars | ![planned](https://img.shields.io/badge/-planned-lightgrey) v0.6 |
 | Mathematics | Conjectures, by verifiable counterexample search | ![planned](https://img.shields.io/badge/-planned-lightgrey) v0.7 |
 | Your field | Anything with public data and falsifiable claims | ![proposals welcome](https://img.shields.io/badge/-proposals%20welcome-brightgreen) pack SDK in v1.0 |
@@ -404,7 +441,9 @@ SETI@home and Einstein@Home. The plan for Refute@Home
 | v0.2.1 Gauntlet fixes | Fixes from the v0.2 post-mortem, new pre-registered calibration | ![ended, not approved](https://img.shields.io/badge/-ended%2C%20not%20approved-lightgrey) on 2026-10-27, no exit criterion met ([closing record](docs/validation/v0.2.1/closing-2026-10-27.md)) |
 | v0.3 Replicate papers | ML papers with public code and data, right of reply | ![closed, gate WEAKENED](https://img.shields.io/badge/-closed%2C%20gate%20WEAKENED-yellow) [gate record](calibration/v0.3/main/gate/README.md) |
 | v0.4 Discover | New candidates in TESS data (a pilot) | ![closed, pilot](https://img.shields.io/badge/-closed%2C%20pilot-yellow) gate `SURVIVED` on the phase's completeness; `method_status: not_validated` ([gate reviews](docs/gates/v0.4-review.md), [release](https://github.com/klucilla/refute/releases/tag/v0.4.0)) |
-| v0.5 Stronger tests | Tests that report their power; refute noise, variability and one-sector artifacts; paired calibration against the v0.4 battery | ![in progress](https://img.shields.io/badge/-in%20progress-orange) ([plan](docs/plans/v0.5-plan.md)) |
+| v0.5 Stronger tests | Tests that report their power; refute noise and variability (the per-sector centroid stayed a diagnostic, [#200](https://github.com/klucilla/refute/issues/200)); paired calibration against the v0.4 battery | ![closed, WEAKENED](https://img.shields.io/badge/-closed%2C%20WEAKENED-yellow) gate `WEAKENED` on the phase's completeness; `method_status: not_validated` ([gate reviews](calibration/v0.5/gate/), [release](https://github.com/klucilla/refute/releases/tag/v0.5.0)) |
+| v0.5.1 to v0.5.3 Battery corrections | Three correction rounds on the failed targets of v0.5 (synthetic eclipsing binaries that survive; planets lost to INCONCLUSIVE), by the advance rule | ![closed, not approved](https://img.shields.io/badge/-closed%2C%20not%20approved-lightgrey) no target passed or was declared infeasible ([v0.5.1](docs/validation/v0.5.1/closing-record.md), [v0.5.2](docs/validation/v0.5.2/closing-record.md), [v0.5.3](docs/validation/v0.5.3/closing-record.md)) |
+| v0.5.4 Information checks | Cheap checks of what blocks the failed targets, before any new estimator; not a correction round | ![closed](https://img.shields.io/badge/-closed-lightgrey) on 2026-11-13; **the v0.5 line is paused** by the maintainer's decision of that day, with no target relaxed and none declared infeasible ([pause record](docs/validation/v0.5.4/pause-record.md)) |
 | v0.6 Variable stars | Same TESS data, new science | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
 | v0.7 Mathematics | Counterexample search | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
 | v0.8 Refute@Home | Volunteer computing with double verification | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
@@ -526,7 +565,7 @@ If you use Refute, please cite it via [CITATION.cff](CITATION.cff) (GitHub's "Ci
 @software{refute,
   author  = {Lucilla, Klauber},
   title   = {Refute: find signals, try to kill them, keep what survives},
-  version = {0.4.0},
+  version = {0.5.0},
   year    = {2026},
   url     = {https://github.com/klucilla/refute},
   doi     = {10.5281/zenodo.23301000},
@@ -575,7 +614,10 @@ pages listed (retrieved 2026-10-07; whitespace and line wrapping normalized).
 The Archive also asks to cite Christiansen et al. (2025),
 [doi:10.3847/PSJ/ade3c2](https://doi.org/10.3847/PSJ/ade3c2), and to acknowledge directly
 any specific literature reference whose data you use. Each calibration target keeps its
-reference in [`calibration/targets.yaml`](calibration/targets.yaml).
+reference in [`calibration/targets.yaml`](calibration/targets.yaml); the references of the values
+used by the v0.4 and v0.5 planet targets are in
+[`calibration/v0.4/inputs-references/`](calibration/v0.4/inputs-references/) and
+[`calibration/v0.5/inputs-references/`](calibration/v0.5/inputs-references/).
 
 **ExoFOP** (TOI dispositions): <https://exofop.ipac.caltech.edu/tess/>
 
@@ -663,12 +705,29 @@ All artwork in this repository is original ([docs/assets/build_assets.py](docs/a
 
 The code is licensed under [Apache-2.0](LICENSE).
 
-Some data files are not code and keep the terms of their sources
-([details](calibration/v0.2/eb_snapshot/DATA_LICENSE.md)):
+Some data files are not code and keep the terms of their sources; no single license covers the
+repository's data. Every third-party data file of the repository, in all phases, is listed with
+the record that states its terms in [docs/third-party-data.md](docs/third-party-data.md). The
+records are [calibration/DATA_LICENSE.md](calibration/DATA_LICENSE.md) (content no phase record
+covered, such as the v0.1 and v0.2 pool snapshots), [calibration/v0.2/eb_snapshot/DATA_LICENSE.md](calibration/v0.2/eb_snapshot/DATA_LICENSE.md),
+[calibration/v0.4/DATA_LICENSE.md](calibration/v0.4/DATA_LICENSE.md) with its
+[addendum](calibration/v0.4/DATA_LICENSE-addendum-2026-11-06.md), and
+[calibration/v0.5/DATA_LICENSE.md](calibration/v0.5/DATA_LICENSE.md).
+
+The input tables of the calibrations and the pilot (sources read on 2026-11-06:
+[docs/sources/third-party-data-2026-11-06.md](docs/sources/third-party-data-2026-11-06.md)):
 
 | Data | Terms |
 |---|---|
-| Gaia DR3 rows: `calibration/v0.2/eb_catalog.csv` (written by the v0.2 selection) and the Gaia snapshot `gaia_dr3_vari_eclipsing_binary.csv` published as a release asset | [CC BY-NC 3.0 IGO](https://creativecommons.org/licenses/by-nc/3.0/igo/): non-commercial use, with credit to ESA/Gaia/DPAC |
+| ExoFOP-TESS TOI table (whole, with its `Comments` column): `calibration/pool_snapshot/`, `calibration/v0.2/pool_snapshot/`, `calibration/v0.4/inputs/`, `calibration/v0.5/inputs/`; and the community candidate table (CTOI, whole): `calibration/v0.4/inputs/ctoi.csv` | no formal license stated; ExoFOP asks for its standard acknowledgment (DOI [10.26134/ExoFOP5](https://doi.org/10.26134/ExoFOP5)) and a citation of the article behind any published value ([policy](https://exofop.ipac.caltech.edu/tess/pcp.php)); data supplied by a user remain theirs. Redistributed on the maintainer's acceptance of 2026-11-01, extended to the whole TOI table and the whole CTOI table on 2026-11-06 |
+| NASA Exoplanet Archive, Planetary Systems Composite Parameters (`pscomppars`): the same folders, and the references of the values used by the v0.4 and v0.5 planet targets in `calibration/v0.4/inputs-references/` and `calibration/v0.5/inputs-references/` | no formal license stated on the archive's [acknowledgment page](https://exoplanetarchive.ipac.caltech.edu/docs/acknowledge.html); it asks for its acknowledgment, a citation of Christiansen et al. (2025), [doi:10.3847/PSJ/ade3c2](https://doi.org/10.3847/PSJ/ade3c2), and of the literature reference of each value used |
+| TESS target lists page (TESS Science Office, MIT): `calibration/v0.4/inputs/` and `calibration/v0.5/inputs/target_lists.html` | **unconfirmed as of 2026-11-06**: the [page](https://tess.mit.edu/public/target_lists/target_lists.html) states no terms; credit the TESS Science Office (MIT) |
+
+The catalogs of eclipsing binaries:
+
+| Data | Terms |
+|---|---|
+| Gaia DR3 rows: `calibration/v0.2/eb_catalog.csv` (written by the v0.2 selection), the same file of `calibration/v0.4/` and `calibration/v0.5/`, and the Gaia snapshot `gaia_dr3_vari_eclipsing_binary.csv` published as a release asset | [CC BY-NC 3.0 IGO](https://creativecommons.org/licenses/by-nc/3.0/igo/): non-commercial use, with credit to ESA/Gaia/DPAC |
 | TESS-EB catalog (Prsa et al. 2022) | **not redistributed**, as a precaution (a conflict between the publisher's and the CDS's terms is not demonstrated by the sources checked on 2026-10-10; an earlier statement about the CDS terms was withdrawn as unconfirmed, see [erratum E1](calibration/v0.2/ERRATA.md)). The repository keeps the download script, URL, date and SHA-256, and identifiers in `eb_catalog.csv`; besides these, it contains the 4 TESS-EB periods quoted in four review reports of the v0.2 calibration and the record of the search for TESS-EB values (see "Search record" in [DATA_LICENSE.md](calibration/v0.2/eb_snapshot/DATA_LICENSE.md)). The file is downloaded and its hash checked on every run. Four records appear, with citation, in the v0.2 calibration dossiers, which were published with [release v0.2.0](https://github.com/klucilla/refute/releases/tag/v0.2.0) on 2026-10-11. |
 
 **The v0.4 pilot's dossiers and reproduction archives** (the Zenodo records

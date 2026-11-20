@@ -1,5 +1,11 @@
 # The publication of 2026-11-19: the day's script
 
+> **Postponed by one day.** The publication runs on 2026-11-20 (the maintainer's decision of
+> 2026-11-20, morning; #217). The file keeps its name. Every 2026-11-19 below that is a
+> publication or check date reads 2026-11-20, and the drafts carry 2026-11-20. Part 0 was done
+> by the maintainer on 2026-11-20: "period ended, no reply received", for both notices. The
+> go-ahead of step 1.5 was given in the same decision.
+
 **The decision.** The maintainer's decision of 2026-11-16 (#217), item 1e: "Escreva
 docs/plans/publication-2026-11-19.md com o roteiro do dia: a ordem exata (começando pela minha
 confirmação do período de resposta), cada comando em uma linha, o que conferir depois de cada um,

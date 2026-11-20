@@ -6,8 +6,8 @@ authors:
   - family-names: Lucilla
     given-names: Klauber
     orcid: "https://orcid.org/0009-0002-4519-5457"
-version: 0.4.0
-date-released: 2026-11-03
+version: 0.5.0
+date-released: 2026-11-20
 doi: 10.5281/zenodo.23301000
 identifiers:
   - type: doi
@@ -15,7 +15,7 @@ identifiers:
     description: "Concept DOI: all versions of Refute on Zenodo."
   - type: doi
     value: 10.5281/zenodo.23905113
-    description: "Version DOI of Refute 0.4.0 on Zenodo."
+    description: "Version DOI of Refute 0.4.0 on Zenodo (the 0.5.0 version DOI is added after its record is published)."
 license: Apache-2.0
 repository-code: "https://github.com/klucilla/refute"
 url: "https://github.com/klucilla/refute"
