@@ -9,5 +9,195 @@
  },
  "review_tokens_method": "each Codex conversation's last turn input_tokens - cached_input_tokens + output_tokens (events under .cache/v055/codex/); the independent review counts apart",
  "agent_days_method": "Claude's session transcripts since 2026-11-20T18:40:00Z (15:40 local), wall clock over 8-hour days as an upper bound, active time with gaps capped at 10 minutes",
- "entries": []
+ "entries": [
+  {
+   "utc": "2026-11-20T22:32:19Z",
+   "step": "d1p run A",
+   "codex_tokens": {
+    "conversations": {
+     "facts": 168755,
+     "night": 223534,
+     "r0r1": 395037
+    },
+    "phase": 787326
+   },
+   "agent_days_wall": 0.49,
+   "agent_days_active": 0.35,
+   "cpu_hours": 0.112,
+   "disk_bytes": 2702393,
+   "reserved": {
+    "agent_days": 0.5,
+    "review_tokens": 300000,
+    "disk_bytes": 53200000
+   }
+  },
+  {
+   "utc": "2026-11-20T23:07:54Z",
+   "step": "d1p after the run A",
+   "codex_tokens": {
+    "conversations": {
+     "facts": 168755,
+     "night": 223534,
+     "r0r1": 395037
+    },
+    "phase": 787326
+   },
+   "agent_days_wall": 0.49,
+   "agent_days_active": 0.36,
+   "cpu_hours": 4.789,
+   "disk_bytes": 4992938,
+   "reserved": {
+    "agent_days": 0.0,
+    "review_tokens": 0,
+    "disk_bytes": 0
+   }
+  },
+  {
+   "utc": "2026-11-20T23:08:41Z",
+   "step": "d1p summarize A",
+   "codex_tokens": {
+    "conversations": {
+     "facts": 168755,
+     "night": 223534,
+     "r0r1": 395037
+    },
+    "phase": 787326
+   },
+   "agent_days_wall": 0.56,
+   "agent_days_active": 0.38,
+   "cpu_hours": 4.789,
+   "disk_bytes": 5009468,
+   "reserved": {
+    "agent_days": 0.05,
+    "review_tokens": 0,
+    "disk_bytes": 0
+   }
+  },
+  {
+   "utc": "2026-11-20T23:11:32Z",
+   "step": "d1p run bridge",
+   "codex_tokens": {
+    "conversations": {
+     "facts": 168755,
+     "night": 223534,
+     "r0r1": 395037
+    },
+    "phase": 787326
+   },
+   "agent_days_wall": 0.56,
+   "agent_days_active": 0.38,
+   "cpu_hours": 4.829,
+   "disk_bytes": 5045195,
+   "reserved": {
+    "agent_days": 0.5,
+    "review_tokens": 300000,
+    "disk_bytes": 51600000
+   }
+  },
+  {
+   "utc": "2026-11-20T23:32:06Z",
+   "step": "d1p after the run bridge",
+   "codex_tokens": {
+    "conversations": {
+     "facts": 168755,
+     "night": 223534,
+     "r0r1": 395037
+    },
+    "phase": 787326
+   },
+   "agent_days_wall": 0.59,
+   "agent_days_active": 0.4,
+   "cpu_hours": 7.128,
+   "disk_bytes": 6088881,
+   "reserved": {
+    "agent_days": 0.0,
+    "review_tokens": 0,
+    "disk_bytes": 0
+   }
+  },
+  {
+   "utc": "2026-11-20T23:32:43Z",
+   "step": "d1p summarize bridge",
+   "codex_tokens": {
+    "conversations": {
+     "facts": 168755,
+     "night": 223534,
+     "r0r1": 395037
+    },
+    "phase": 787326
+   },
+   "agent_days_wall": 0.61,
+   "agent_days_active": 0.42,
+   "cpu_hours": 7.128,
+   "disk_bytes": 6088881,
+   "reserved": {
+    "agent_days": 0.05,
+    "review_tokens": 0,
+    "disk_bytes": 0
+   }
+  },
+  {
+   "utc": "2026-11-20T23:40:18Z",
+   "step": "t2ae run 1",
+   "codex_tokens": {
+    "conversations": {
+     "facts": 168755,
+     "night": 223534,
+     "r0r1": 395037
+    },
+    "phase": 787326
+   },
+   "agent_days_wall": 0.62,
+   "agent_days_active": 0.44,
+   "cpu_hours": 7.244,
+   "disk_bytes": 6091329,
+   "reserved": {
+    "agent_days": 0.3,
+    "review_tokens": 300000,
+    "disk_bytes": 51020000
+   }
+  },
+  {
+   "utc": "2026-11-20T23:51:02Z",
+   "step": "t2ae after the run 1",
+   "codex_tokens": {
+    "conversations": {
+     "facts": 168755,
+     "night": 223534,
+     "r0r1": 395037
+    },
+    "phase": 787326
+   },
+   "agent_days_wall": 0.62,
+   "agent_days_active": 0.44,
+   "cpu_hours": 8.778,
+   "disk_bytes": 6376858,
+   "reserved": {
+    "agent_days": 0.0,
+    "review_tokens": 0,
+    "disk_bytes": 0
+   }
+  },
+  {
+   "utc": "2026-11-20T23:51:18Z",
+   "step": "t2ae summarize 1",
+   "codex_tokens": {
+    "conversations": {
+     "facts": 168755,
+     "night": 223534,
+     "r0r1": 395037
+    },
+    "phase": 787326
+   },
+   "agent_days_wall": 0.65,
+   "agent_days_active": 0.46,
+   "cpu_hours": 8.778,
+   "disk_bytes": 6376921,
+   "reserved": {
+    "agent_days": 0.05,
+    "review_tokens": 0,
+    "disk_bytes": 0
+   }
+  }
+ ]
 }

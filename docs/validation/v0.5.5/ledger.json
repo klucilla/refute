@@ -19,33 +19,93 @@
    "basis": "d2f_decision_value.py: process time 2.4 s",
    "hours": 0.0006727430555555556,
    "name": "d2f_decision_value_20261120T212537Z"
+  },
+  {
+   "basis": "d1p_price.summarize A: process time 143.6 s",
+   "hours": 0.0398828125,
+   "name": "d1p_summarize_A_20261120T231105Z"
+  },
+  {
+   "basis": "d1p_price.summarize bridge: process time 419.2 s",
+   "hours": 0.11644097222222222,
+   "name": "d1p_summarize_bridge_20261120T233944Z"
+  },
+  {
+   "basis": "t2ae_census.summarize 1: process time 3.4 s",
+   "hours": 0.0009461805555555556,
+   "name": "t2ae_summarize_1_20261120T235128Z"
   }
  ],
  "sections": {
   "v055": {
    "parts": {
     "r1_d1p_a": {
-     "allocation_hours": 16.0
+     "allocation_hours": 14.2,
+     "checkpoint_shards": 4,
+     "driver": "v3",
+     "identity": "98d193ddbb20c5dc",
+     "projection_basis": "measured CPU of the checkpoint (budgeted_v3)",
+     "projection_hours": 3.987847222222222,
+     "spent_hours": 4.676293402777778
     },
     "r1_d1p_b": {
-     "allocation_hours": 16.0
+     "allocation_hours": 14.2
+    },
+    "r1_d1p_bridge": {
+     "allocation_hours": 7.1,
+     "checkpoint_shards": 2,
+     "driver": "v3",
+     "identity": "dde499826cccae53",
+     "projection_basis": "measured CPU of the checkpoint (budgeted_v3)",
+     "projection_hours": 2.072048611111111,
+     "spent_hours": 2.2991145833333335
     },
     "r1_d2f_a": {
-     "allocation_hours": 11.0
+     "allocation_hours": 0.0
     },
     "r1_d2f_b": {
-     "allocation_hours": 11.0
+     "allocation_hours": 0.0
     },
     "r1_reserve": {
-     "allocation_hours": 4.5
+     "allocation_hours": 21.8
     },
     "r1_t2ae_1": {
-     "allocation_hours": 2.5
+     "allocation_hours": 3.1,
+     "checkpoint_shards": 3,
+     "driver": "v3",
+     "identity": "eeb944db6f2c6224",
+     "projection_basis": "measured CPU of the checkpoint (budgeted_v3)",
+     "projection_hours": 0.9293185763888888,
+     "spent_hours": 1.5339192708333333,
+     "unresolved_stop": "over the cap: the workers were ended"
     },
     "r1_t2ae_2": {
-     "allocation_hours": 2.5
+     "allocation_hours": 3.1
     }
    }
   }
+ },
+ "starts": {
+  "r1_d1p_a": [
+   {
+    "identity": "98d193ddbb20c5dc",
+    "resume": false,
+    "utc": "2026-11-20T22:32:19Z"
+   }
+  ],
+  "r1_d1p_bridge": [
+   {
+    "identity": "dde499826cccae53",
+    "resume": false,
+    "utc": "2026-11-20T23:11:32Z"
+   }
+  ],
+  "r1_t2ae_1": [
+   {
+    "identity": "eeb944db6f2c6224",
+    "resume": false,
+    "utc": "2026-11-20T23:40:18Z"
+   }
+  ]
  }
 }

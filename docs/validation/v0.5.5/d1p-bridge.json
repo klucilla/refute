@@ -1,0 +1,5220 @@
+{
+ "bridge": {
+  "eligibility_differences": 4,
+  "per_index": [
+   {
+    "family": "EB1",
+    "index": 0,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 1,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "WEAKENED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "WEAKENED"
+   },
+   {
+    "family": "EB1",
+    "index": 2,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 3,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "WEAKENED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "WEAKENED"
+   },
+   {
+    "family": "EB1",
+    "index": 4,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "WEAKENED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "WEAKENED"
+   },
+   {
+    "family": "EB1",
+    "index": 5,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 6,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 7,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 8,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 9,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 10,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 11,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 12,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB1",
+    "index": 13,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 14,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 15,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB1",
+    "index": 16,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB1",
+    "index": 17,
+    "v1_eligible": false,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": false,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 18,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB1",
+    "index": 19,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 20,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 21,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 22,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 23,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 24,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "WEAKENED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "WEAKENED"
+   },
+   {
+    "family": "EB1",
+    "index": 25,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 26,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 27,
+    "v1_eligible": null,
+    "v1_status": "GENERATION_FAILURE",
+    "v1_v05_verdict": null,
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 28,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 29,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 30,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 31,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB1",
+    "index": 32,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 33,
+    "v1_eligible": false,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": false,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 34,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 35,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 36,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "WEAKENED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "WEAKENED"
+   },
+   {
+    "family": "EB1",
+    "index": 37,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 38,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 39,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "WEAKENED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "WEAKENED"
+   },
+   {
+    "family": "EB1",
+    "index": 40,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB1",
+    "index": 41,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 42,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 43,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 44,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 45,
+    "v1_eligible": false,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": false,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 46,
+    "v1_eligible": null,
+    "v1_status": "GENERATION_FAILURE",
+    "v1_v05_verdict": null,
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "WEAKENED"
+   },
+   {
+    "family": "EB1",
+    "index": 47,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 48,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "WEAKENED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "WEAKENED"
+   },
+   {
+    "family": "EB1",
+    "index": 49,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "WEAKENED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "WEAKENED"
+   },
+   {
+    "family": "EB1",
+    "index": 50,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": null,
+    "v2_status": "GENERATION_FAILURE",
+    "v2_v05_verdict": null
+   },
+   {
+    "family": "EB1",
+    "index": 51,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 52,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 53,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 54,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "WEAKENED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "WEAKENED"
+   },
+   {
+    "family": "EB1",
+    "index": 55,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 56,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 57,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 58,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 59,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 60,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "WEAKENED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "WEAKENED"
+   },
+   {
+    "family": "EB1",
+    "index": 61,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 62,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 63,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 64,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB1",
+    "index": 65,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 66,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 67,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 68,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "WEAKENED"
+   },
+   {
+    "family": "EB1",
+    "index": 69,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 70,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "WEAKENED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "WEAKENED"
+   },
+   {
+    "family": "EB1",
+    "index": 71,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 72,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB1",
+    "index": 73,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 74,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB1",
+    "index": 75,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 76,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 77,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 78,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 79,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 80,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "WEAKENED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "WEAKENED"
+   },
+   {
+    "family": "EB1",
+    "index": 81,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "WEAKENED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "WEAKENED"
+   },
+   {
+    "family": "EB1",
+    "index": 82,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 83,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 84,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 85,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB1",
+    "index": 86,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 87,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 88,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 89,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 90,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "WEAKENED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "WEAKENED"
+   },
+   {
+    "family": "EB1",
+    "index": 91,
+    "v1_eligible": false,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 92,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 93,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "WEAKENED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "WEAKENED"
+   },
+   {
+    "family": "EB1",
+    "index": 94,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 95,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 96,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 97,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB1",
+    "index": 98,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB1",
+    "index": 99,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "WEAKENED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "WEAKENED"
+   },
+   {
+    "family": "EB2",
+    "index": 0,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 1,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 2,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 3,
+    "v1_eligible": false,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": false,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 4,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB2",
+    "index": 5,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB2",
+    "index": 6,
+    "v1_eligible": false,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": false,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 7,
+    "v1_eligible": false,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": false,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 8,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 9,
+    "v1_eligible": false,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": false,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 10,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 11,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 12,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 13,
+    "v1_eligible": false,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": false,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 14,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 15,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 16,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 17,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 18,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 19,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB2",
+    "index": 20,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 21,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 22,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB2",
+    "index": 23,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 24,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 25,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 26,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 27,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 28,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 29,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB2",
+    "index": 30,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 31,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 32,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 33,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 34,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 35,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 36,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB2",
+    "index": 37,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB2",
+    "index": 38,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB2",
+    "index": 39,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 40,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB2",
+    "index": 41,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 42,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 43,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB2",
+    "index": 44,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB2",
+    "index": 45,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 46,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB2",
+    "index": 47,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 48,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 49,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 50,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 51,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 52,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 53,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 54,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 55,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 56,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB2",
+    "index": 57,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 58,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 59,
+    "v1_eligible": false,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": false,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 60,
+    "v1_eligible": false,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": false,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 61,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 62,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 63,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 64,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 65,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 66,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 67,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 68,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 69,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 70,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 71,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 72,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 73,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 74,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 75,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 76,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 77,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB2",
+    "index": 78,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 79,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 80,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 81,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 82,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 83,
+    "v1_eligible": false,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": false,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 84,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 85,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 86,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 87,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 88,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 89,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 90,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 91,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 92,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 93,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "INCONCLUSIVE",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "INCONCLUSIVE"
+   },
+   {
+    "family": "EB2",
+    "index": 94,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 95,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 96,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB2",
+    "index": 97,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   },
+   {
+    "family": "EB2",
+    "index": 98,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "SURVIVED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "SURVIVED"
+   },
+   {
+    "family": "EB2",
+    "index": 99,
+    "v1_eligible": true,
+    "v1_status": "OK",
+    "v1_v05_verdict": "REFUTED",
+    "v2_eligible": true,
+    "v2_status": "OK",
+    "v2_v05_verdict": "REFUTED"
+   }
+  ],
+  "v1": {
+   "families": {
+    "EB1": {
+     "attempted": 100,
+     "c1_prime_projection": 188,
+     "d1_allowance": 10,
+     "eligible": 94,
+     "eligible_without_a_distance": 0,
+     "generation_failures": 2,
+     "readings": {
+      "box": {
+       "0.0027": {
+        "all_eligible": {
+         "expected_survived_at_projection": 27.981470705676518,
+         "pass_probability_median": 7.35152811637697e-12,
+         "pass_probability_p05": 1.2310396940469656e-19,
+         "pass_probability_p95": 1.975355737155099e-06,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 8.85790243619196,
+         "pass_probability_median": 0.8551653298233466,
+         "pass_probability_p05": 0.08862253218704126,
+         "pass_probability_p95": 0.9998124241687237,
+         "reading": "unresolved"
+        }
+       },
+       "0.00814607": {
+        "all_eligible": {
+         "expected_survived_at_projection": 22.74455687822414,
+         "pass_probability_median": 2.94682599850654e-07,
+         "pass_probability_p05": 7.786494623990071e-13,
+         "pass_probability_p95": 0.0034280891894363473,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 7.17431659962474,
+         "pass_probability_median": 0.9851166526522392,
+         "pass_probability_p05": 0.3792312120700163,
+         "pass_probability_p95": 0.9999978956795452,
+         "reading": "unresolved"
+        }
+       },
+       "0.01": {
+        "all_eligible": {
+         "expected_survived_at_projection": 21.791372564225068,
+         "pass_probability_median": 1.5325570025843897e-06,
+         "pass_probability_p05": 6.6436226843709586e-12,
+         "pass_probability_p95": 0.0075014348637383954,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 6.871655061143634,
+         "pass_probability_median": 0.9929359704493128,
+         "pass_probability_p05": 0.4802104005524615,
+         "pass_probability_p95": 0.99999928715906,
+         "reading": "unresolved"
+        }
+       },
+       "0.025": {
+        "all_eligible": {
+         "expected_survived_at_projection": 17.5935918068289,
+         "pass_probability_median": 0.001183388143286039,
+         "pass_probability_p05": 1.763839275906033e-07,
+         "pass_probability_p95": 0.20186440935206965,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 5.564115021775648,
+         "pass_probability_median": 0.9997355506759279,
+         "pass_probability_p05": 0.8741613705166046,
+         "pass_probability_p95": 0.9999999969530536,
+         "reading": "route"
+        }
+       },
+       "0.03": {
+        "all_eligible": {
+         "expected_survived_at_projection": 16.766064160061664,
+         "pass_probability_median": 0.0034567016170847014,
+         "pass_probability_p05": 1.4901318720811768e-06,
+         "pass_probability_p95": 0.26566430478323433,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 5.311903390715907,
+         "pass_probability_median": 0.9998911645201224,
+         "pass_probability_p05": 0.9177679172536616,
+         "pass_probability_p95": 0.9999999995381919,
+         "reading": "route"
+        }
+       },
+       "0.05": {
+        "all_eligible": {
+         "expected_survived_at_projection": 14.445579236974064,
+         "pass_probability_median": 0.04213308255787049,
+         "pass_probability_p05": 0.00017832983572018361,
+         "pass_probability_p95": 0.6554183808820027,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 4.6138397508274185,
+         "pass_probability_median": 0.9999937076634934,
+         "pass_probability_p05": 0.9681647430366515,
+         "pass_probability_p95": 0.9999999999951371,
+         "reading": "route"
+        }
+       },
+       "0.1": {
+        "all_eligible": {
+         "expected_survived_at_projection": 11.243645689102433,
+         "pass_probability_median": 0.37780150715127514,
+         "pass_probability_p05": 0.01852235013502328,
+         "pass_probability_p95": 0.9594454847457653,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 3.663952194331885,
+         "pass_probability_median": 0.9999999790034513,
+         "pass_probability_p05": 0.9990999884086393,
+         "pass_probability_p95": 0.9999999999999981,
+         "reading": "route"
+        }
+       },
+       "0.15": {
+        "all_eligible": {
+         "expected_survived_at_projection": 9.306388288135643,
+         "pass_probability_median": 0.7555130349197265,
+         "pass_probability_p05": 0.151088408069002,
+         "pass_probability_p95": 0.9942571012639657,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 3.086782884133645,
+         "pass_probability_median": 0.9999999997319773,
+         "pass_probability_p05": 0.9999098715895388,
+         "pass_probability_p95": 1.0,
+         "reading": "route"
+        }
+       },
+       "0.2": {
+        "all_eligible": {
+         "expected_survived_at_projection": 7.889824650742063,
+         "pass_probability_median": 0.9156885378541353,
+         "pass_probability_p05": 0.3881665742162332,
+         "pass_probability_p95": 0.9995468573420492,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 2.65808595678053,
+         "pass_probability_median": 0.9999999999936147,
+         "pass_probability_p05": 0.9999839610494317,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        }
+       },
+       "0.3": {
+        "all_eligible": {
+         "expected_survived_at_projection": 5.827419724357727,
+         "pass_probability_median": 0.9935398143299516,
+         "pass_probability_p05": 0.8516041561525438,
+         "pass_probability_p95": 0.9999897019474765,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 2.01656688246821,
+         "pass_probability_median": 0.9999999999999947,
+         "pass_probability_p05": 0.9999998014044997,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        }
+       }
+      },
+      "known": {
+       "0.0027": {
+        "all_eligible": {
+         "expected_survived_at_projection": 10.948321885305047,
+         "pass_probability_median": 0.4386922884475325,
+         "pass_probability_p05": 0.008300806187405804,
+         "pass_probability_p95": 0.9842303897141415,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 2.5774260699069687,
+         "pass_probability_median": 0.9999999999999998,
+         "pass_probability_p05": 0.9999986995922483,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        }
+       },
+       "0.00814607": {
+        "all_eligible": {
+         "expected_survived_at_projection": 8.72278480142821,
+         "pass_probability_median": 0.8689980445131136,
+         "pass_probability_p05": 0.12055300486623742,
+         "pass_probability_p95": 0.9996240416026326,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 2.137839782317559,
+         "pass_probability_median": 0.9999999999999997,
+         "pass_probability_p05": 0.9999999912366233,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        }
+       },
+       "0.01": {
+        "all_eligible": {
+         "expected_survived_at_projection": 8.322175280774486,
+         "pass_probability_median": 0.9103522554639123,
+         "pass_probability_p05": 0.1693203127026941,
+         "pass_probability_p95": 0.9998834243486749,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 2.0615045542880637,
+         "pass_probability_median": 0.9999999999999997,
+         "pass_probability_p05": 0.999999998746647,
+         "pass_probability_p95": 1.0,
+         "reading": "route"
+        }
+       },
+       "0.025": {
+        "all_eligible": {
+         "expected_survived_at_projection": 6.561083243375235,
+         "pass_probability_median": 0.9928104657702079,
+         "pass_probability_p05": 0.6096893239667815,
+         "pass_probability_p95": 0.9999991994441824,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.723491660628482,
+         "pass_probability_median": 1.0,
+         "pass_probability_p05": 0.9999999999974829,
+         "pass_probability_p95": 1.0000000000000004,
+         "reading": "route"
+        }
+       },
+       "0.03": {
+        "all_eligible": {
+         "expected_survived_at_projection": 6.214374053757784,
+         "pass_probability_median": 0.9969694416644943,
+         "pass_probability_p05": 0.6612582980615609,
+         "pass_probability_p95": 0.9999998009647019,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.6541856698907573,
+         "pass_probability_median": 0.9999999999999997,
+         "pass_probability_p05": 0.9999999999978897,
+         "pass_probability_p95": 1.0,
+         "reading": "route"
+        }
+       },
+       "0.05": {
+        "all_eligible": {
+         "expected_survived_at_projection": 5.246021273126428,
+         "pass_probability_median": 0.9998205331589208,
+         "pass_probability_p05": 0.8945180105864992,
+         "pass_probability_p95": 0.9999999986955747,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.4499450259473163,
+         "pass_probability_median": 1.0,
+         "pass_probability_p05": 0.9999999999999777,
+         "pass_probability_p95": 1.0000000000000004,
+         "reading": "route"
+        }
+       },
+       "0.1": {
+        "all_eligible": {
+         "expected_survived_at_projection": 3.9351270930827025,
+         "pass_probability_median": 0.9999979214587711,
+         "pass_probability_p05": 0.9937277780109058,
+         "pass_probability_p95": 0.9999999999981718,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.136897253284646,
+         "pass_probability_median": 0.9999999999999999,
+         "pass_probability_p05": 0.9999999999999994,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        }
+       },
+       "0.15": {
+        "all_eligible": {
+         "expected_survived_at_projection": 3.169775676635925,
+         "pass_probability_median": 0.9999999516477214,
+         "pass_probability_p05": 0.9996033731068786,
+         "pass_probability_p95": 0.9999999999999927,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.929761421581853,
+         "pass_probability_median": 0.9999999999999998,
+         "pass_probability_p05": 0.9999999999999994,
+         "pass_probability_p95": 1.0,
+         "reading": "route"
+        }
+       },
+       "0.2": {
+        "all_eligible": {
+         "expected_survived_at_projection": 2.6289843195295615,
+         "pass_probability_median": 0.9999999974822538,
+         "pass_probability_p05": 0.9999061827986301,
+         "pass_probability_p95": 0.9999999999999996,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.7724602005477375,
+         "pass_probability_median": 0.9999999999999998,
+         "pass_probability_p05": 0.9999999999999994,
+         "pass_probability_p95": 1.0,
+         "reading": "route"
+        }
+       },
+       "0.3": {
+        "all_eligible": {
+         "expected_survived_at_projection": 1.8752139001346408,
+         "pass_probability_median": 0.9999999999969473,
+         "pass_probability_p05": 0.9999986766787798,
+         "pass_probability_p95": 1.0000000000000009,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.5411023102776192,
+         "pass_probability_median": 1.0,
+         "pass_probability_p05": 0.9999999999999998,
+         "pass_probability_p95": 1.0000000000000004,
+         "reading": "route"
+        }
+       }
+      },
+      "prior": {
+       "0.0027": {
+        "all_eligible": {
+         "expected_survived_at_projection": 14.661739070869253,
+         "pass_probability_median": 0.03492025707120067,
+         "pass_probability_p05": 9.97579911831307e-05,
+         "pass_probability_p95": 0.57858538153504,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 4.370573103462133,
+         "pass_probability_median": 0.9999982678435946,
+         "pass_probability_p05": 0.9850004522760759,
+         "pass_probability_p95": 0.9999999999993624,
+         "reading": "route"
+        }
+       },
+       "0.00814607": {
+        "all_eligible": {
+         "expected_survived_at_projection": 11.143928887054235,
+         "pass_probability_median": 0.38536505640069174,
+         "pass_probability_p05": 0.015808835093090945,
+         "pass_probability_p95": 0.9471768103865682,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 3.3856532686568026,
+         "pass_probability_median": 0.9999999949190107,
+         "pass_probability_p05": 0.9997129387051514,
+         "pass_probability_p95": 0.9999999999999997,
+         "reading": "route"
+        }
+       },
+       "0.01": {
+        "all_eligible": {
+         "expected_survived_at_projection": 10.526774279490416,
+         "pass_probability_median": 0.547877550796319,
+         "pass_probability_p05": 0.03560842151849882,
+         "pass_probability_p95": 0.9660359878858794,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 3.210342890048602,
+         "pass_probability_median": 0.9999999988938775,
+         "pass_probability_p05": 0.9997529315070701,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        }
+       },
+       "0.025": {
+        "all_eligible": {
+         "expected_survived_at_projection": 7.906710107000566,
+         "pass_probability_median": 0.9087037980182053,
+         "pass_probability_p05": 0.317957018795601,
+         "pass_probability_p95": 0.9993532638797248,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 2.4559080332243504,
+         "pass_probability_median": 0.9999999999989078,
+         "pass_probability_p05": 0.9999960110469407,
+         "pass_probability_p95": 1.0,
+         "reading": "route"
+        }
+       },
+       "0.03": {
+        "all_eligible": {
+         "expected_survived_at_projection": 7.412499887412685,
+         "pass_probability_median": 0.9562701273727126,
+         "pass_probability_p05": 0.4453682622146361,
+         "pass_probability_p95": 0.999739426677524,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 2.3111127279720183,
+         "pass_probability_median": 0.999999999999795,
+         "pass_probability_p05": 0.9999976962931135,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        }
+       },
+       "0.05": {
+        "all_eligible": {
+         "expected_survived_at_projection": 6.076600361530986,
+         "pass_probability_median": 0.995046781751293,
+         "pass_probability_p05": 0.7877297154697619,
+         "pass_probability_p95": 0.9999911853510156,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.9135388430396114,
+         "pass_probability_median": 0.999999999999999,
+         "pass_probability_p05": 0.9999999610966498,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        }
+       },
+       "0.1": {
+        "all_eligible": {
+         "expected_survived_at_projection": 4.380314982510081,
+         "pass_probability_median": 0.9999230745592436,
+         "pass_probability_p05": 0.9769943609251056,
+         "pass_probability_p95": 0.9999999878302668,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.3898488990101452,
+         "pass_probability_median": 1.0,
+         "pass_probability_p05": 0.9999999999371295,
+         "pass_probability_p95": 1.0000000000000007,
+         "reading": "route"
+        }
+       },
+       "0.15": {
+        "all_eligible": {
+         "expected_survived_at_projection": 3.450875163277107,
+         "pass_probability_median": 0.9999977567195667,
+         "pass_probability_p05": 0.9979053687737475,
+         "pass_probability_p95": 0.9999999999450123,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.0907715188582445,
+         "pass_probability_median": 0.9999999999999997,
+         "pass_probability_p05": 0.9999999999994804,
+         "pass_probability_p95": 1.0,
+         "reading": "route"
+        }
+       },
+       "0.2": {
+        "all_eligible": {
+         "expected_survived_at_projection": 2.820069505944762,
+         "pass_probability_median": 0.9999999223485468,
+         "pass_probability_p05": 0.9997908689960121,
+         "pass_probability_p95": 0.9999999999993214,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.8825865109293752,
+         "pass_probability_median": 1.0000000000000004,
+         "pass_probability_p05": 0.9999999999999859,
+         "pass_probability_p95": 1.0000000000000009,
+         "reading": "route"
+        }
+       },
+       "0.3": {
+        "all_eligible": {
+         "expected_survived_at_projection": 1.973723895044028,
+         "pass_probability_median": 0.9999999997694461,
+         "pass_probability_p05": 0.9999974995768274,
+         "pass_probability_p95": 0.9999999999999993,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.5986822570807844,
+         "pass_probability_median": 1.0000000000000002,
+         "pass_probability_p05": 0.9999999999999998,
+         "pass_probability_p95": 1.0000000000000007,
+         "reading": "route"
+        }
+       }
+      }
+     },
+     "survived_by_the_battery": 13,
+     "valid": true,
+     "zero_survivors": false
+    },
+    "EB2": {
+     "attempted": 100,
+     "c1_prime_projection": 184,
+     "d1_allowance": 10,
+     "eligible": 92,
+     "eligible_without_a_distance": 0,
+     "generation_failures": 0,
+     "readings": {
+      "box": {
+       "0.0027": {
+        "all_eligible": {
+         "expected_survived_at_projection": 40.179246884433425,
+         "pass_probability_median": 7.663535752398648e-16,
+         "pass_probability_p05": 5.175353321183752e-21,
+         "pass_probability_p95": 3.324334334004093e-11,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 9.830575377469355,
+         "pass_probability_median": 0.6644406342956035,
+         "pass_probability_p05": 0.05985185680324121,
+         "pass_probability_p95": 0.998806689693369,
+         "reading": "unresolved"
+        }
+       },
+       "0.00814607": {
+        "all_eligible": {
+         "expected_survived_at_projection": 30.540776912548342,
+         "pass_probability_median": 9.441466760256286e-09,
+         "pass_probability_p05": 4.600291055624055e-12,
+         "pass_probability_p95": 5.174659064857687e-06,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 7.555274217164899,
+         "pass_probability_median": 0.9481858973464397,
+         "pass_probability_p05": 0.43636769603017317,
+         "pass_probability_p95": 0.9999768192506822,
+         "reading": "unresolved"
+        }
+       },
+       "0.01": {
+        "all_eligible": {
+         "expected_survived_at_projection": 28.71782075967914,
+         "pass_probability_median": 1.2381299352852757e-07,
+         "pass_probability_p05": 1.5312552295365534e-10,
+         "pass_probability_p95": 5.1407279417383285e-05,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 7.1157939942346555,
+         "pass_probability_median": 0.9664968217659977,
+         "pass_probability_p05": 0.521802678896542,
+         "pass_probability_p95": 0.9999668017163689,
+         "reading": "route"
+        }
+       },
+       "0.025": {
+        "all_eligible": {
+         "expected_survived_at_projection": 20.599061171599644,
+         "pass_probability_median": 0.001109333262464706,
+         "pass_probability_p05": 2.4855019355580952e-05,
+         "pass_probability_p95": 0.025216397821405043,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 5.1407997217435915,
+         "pass_probability_median": 0.9988645231929882,
+         "pass_probability_p05": 0.9272664762275766,
+         "pass_probability_p95": 0.9999999032859407,
+         "reading": "route"
+        }
+       },
+       "0.03": {
+        "all_eligible": {
+         "expected_survived_at_projection": 19.014127092477462,
+         "pass_probability_median": 0.003943564830155782,
+         "pass_probability_p05": 0.00012317970125151674,
+         "pass_probability_p95": 0.059030527718709154,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 4.753366224636043,
+         "pass_probability_median": 0.9995200731014101,
+         "pass_probability_p05": 0.9554478157911991,
+         "pass_probability_p95": 0.9999999700290413,
+         "reading": "route"
+        }
+       },
+       "0.05": {
+        "all_eligible": {
+         "expected_survived_at_projection": 14.697178519359158,
+         "pass_probability_median": 0.08568726159583723,
+         "pass_probability_p05": 0.010740273174611415,
+         "pass_probability_p95": 0.3641076910823959,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 3.6968875287415237,
+         "pass_probability_median": 0.9999801379569921,
+         "pass_probability_p05": 0.994507452061081,
+         "pass_probability_p95": 0.9999999994947285,
+         "reading": "route"
+        }
+       },
+       "0.1": {
+        "all_eligible": {
+         "expected_survived_at_projection": 9.313648798934196,
+         "pass_probability_median": 0.6852924294886586,
+         "pass_probability_p05": 0.3666735505642782,
+         "pass_probability_p95": 0.922433996313049,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 2.376324992194794,
+         "pass_probability_median": 0.9999999252500302,
+         "pass_probability_p05": 0.9999057416205195,
+         "pass_probability_p95": 0.9999999999994442,
+         "reading": "route"
+        }
+       },
+       "0.15": {
+        "all_eligible": {
+         "expected_survived_at_projection": 6.549855658509258,
+         "pass_probability_median": 0.9521655708026493,
+         "pass_probability_p05": 0.8148644665686543,
+         "pass_probability_p95": 0.9934284292473693,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.6941605041300198,
+         "pass_probability_median": 0.9999999991582726,
+         "pass_probability_p05": 0.9999979822210379,
+         "pass_probability_p95": 0.999999999999999,
+         "reading": "route"
+        }
+       },
+       "0.2": {
+        "all_eligible": {
+         "expected_survived_at_projection": 4.81861470644664,
+         "pass_probability_median": 0.9950143225389163,
+         "pass_probability_p05": 0.964872142849951,
+         "pass_probability_p95": 0.9995910928976895,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.2630472878438566,
+         "pass_probability_median": 0.9999999999858633,
+         "pass_probability_p05": 0.9999999393033705,
+         "pass_probability_p95": 0.9999999999999998,
+         "reading": "route"
+        }
+       },
+       "0.3": {
+        "all_eligible": {
+         "expected_survived_at_projection": 2.768602988601982,
+         "pass_probability_median": 0.9999595562692407,
+         "pass_probability_p05": 0.9994904199077953,
+         "pass_probability_p95": 0.9999988132643202,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.7447051133148014,
+         "pass_probability_median": 0.9999999999999903,
+         "pass_probability_p05": 0.9999999998518079,
+         "pass_probability_p95": 1.0000000000000004,
+         "reading": "route"
+        }
+       }
+      },
+      "known": {
+       "0.0027": {
+        "all_eligible": {
+         "expected_survived_at_projection": 10.437193488593334,
+         "pass_probability_median": 0.5284942911524257,
+         "pass_probability_p05": 0.11196033498849012,
+         "pass_probability_p95": 0.9442331729271323,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 3.903088968491079,
+         "pass_probability_median": 0.999996788323736,
+         "pass_probability_p05": 0.9916243423879274,
+         "pass_probability_p95": 0.9999999999999993,
+         "reading": "route"
+        }
+       },
+       "0.00814607": {
+        "all_eligible": {
+         "expected_survived_at_projection": 6.978155974693895,
+         "pass_probability_median": 0.9505327371807935,
+         "pass_probability_p05": 0.6985595755609121,
+         "pass_probability_p95": 0.998309578147216,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 2.5608385089523327,
+         "pass_probability_median": 0.9999999869743188,
+         "pass_probability_p05": 0.9998404127425758,
+         "pass_probability_p95": 1.0,
+         "reading": "route"
+        }
+       },
+       "0.01": {
+        "all_eligible": {
+         "expected_survived_at_projection": 6.37644136137958,
+         "pass_probability_median": 0.9739307394351912,
+         "pass_probability_p05": 0.7852974421438551,
+         "pass_probability_p95": 0.9993420346477533,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 2.3268052299429045,
+         "pass_probability_median": 0.999999997798648,
+         "pass_probability_p05": 0.9999267417990084,
+         "pass_probability_p95": 1.0,
+         "reading": "route"
+        }
+       },
+       "0.025": {
+        "all_eligible": {
+         "expected_survived_at_projection": 3.9255611440470197,
+         "pass_probability_median": 0.9995926484961245,
+         "pass_probability_p05": 0.9895979978795102,
+         "pass_probability_p95": 0.9999973423022205,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.3828880360701574,
+         "pass_probability_median": 0.9999999999953926,
+         "pass_probability_p05": 0.9999997217204333,
+         "pass_probability_p95": 1.0,
+         "reading": "route"
+        }
+       },
+       "0.03": {
+        "all_eligible": {
+         "expected_survived_at_projection": 3.494469621655682,
+         "pass_probability_median": 0.9998635488114196,
+         "pass_probability_p05": 0.9965080675058033,
+         "pass_probability_p95": 0.9999990272489521,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.2197507972305373,
+         "pass_probability_median": 0.999999999998983,
+         "pass_probability_p05": 0.999999891059561,
+         "pass_probability_p95": 0.9999999999999999,
+         "reading": "route"
+        }
+       },
+       "0.05": {
+        "all_eligible": {
+         "expected_survived_at_projection": 2.4080419056509683,
+         "pass_probability_median": 0.9999968358127657,
+         "pass_probability_p05": 0.9998341340899959,
+         "pass_probability_p95": 0.9999999879789004,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.8153343871184461,
+         "pass_probability_median": 0.9999999999999907,
+         "pass_probability_p05": 0.9999999992132463,
+         "pass_probability_p95": 1.0,
+         "reading": "route"
+        }
+       },
+       "0.1": {
+        "all_eligible": {
+         "expected_survived_at_projection": 1.2544125596120033,
+         "pass_probability_median": 0.9999999968993913,
+         "pass_probability_p05": 0.9999997545005569,
+         "pass_probability_p95": 0.9999999999958377,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.4020440749120213,
+         "pass_probability_median": 1.0,
+         "pass_probability_p05": 0.9999999999994502,
+         "pass_probability_p95": 1.0000000000000004,
+         "reading": "route"
+        }
+       },
+       "0.15": {
+        "all_eligible": {
+         "expected_survived_at_projection": 0.7634809908201535,
+         "pass_probability_median": 0.9999999999876414,
+         "pass_probability_p05": 0.9999999983403346,
+         "pass_probability_p95": 0.9999999999999929,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.23464624555125488,
+         "pass_probability_median": 1.0,
+         "pass_probability_p05": 0.9999999999999993,
+         "pass_probability_p95": 1.0000000000000004,
+         "reading": "route"
+        }
+       },
+       "0.2": {
+        "all_eligible": {
+         "expected_survived_at_projection": 0.4975003641332473,
+         "pass_probability_median": 0.9999999999998932,
+         "pass_probability_p05": 0.99999999998407,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.1475076463955607,
+         "pass_probability_median": 1.0,
+         "pass_probability_p05": 0.9999999999999996,
+         "pass_probability_p95": 1.0000000000000004,
+         "reading": "route"
+        }
+       },
+       "0.3": {
+        "all_eligible": {
+         "expected_survived_at_projection": 0.2319826018285954,
+         "pass_probability_median": 1.0000000000000004,
+         "pass_probability_p05": 0.9999999999999967,
+         "pass_probability_p95": 1.0000000000000013,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.06458411683146847,
+         "pass_probability_median": 1.0,
+         "pass_probability_p05": 0.9999999999999997,
+         "pass_probability_p95": 1.0000000000000004,
+         "reading": "route"
+        }
+       }
+      },
+      "prior": {
+       "0.0027": {
+        "all_eligible": {
+         "expected_survived_at_projection": 20.77981141303275,
+         "pass_probability_median": 0.0005460577715238484,
+         "pass_probability_p05": 4.14699682493965e-06,
+         "pass_probability_p95": 0.022306618987673787,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 7.018957351697583,
+         "pass_probability_median": 0.9707075601269661,
+         "pass_probability_p05": 0.6043408703965087,
+         "pass_probability_p95": 0.9999858265355271,
+         "reading": "route"
+        }
+       },
+       "0.00814607": {
+        "all_eligible": {
+         "expected_survived_at_projection": 14.446841453365225,
+         "pass_probability_median": 0.09088879890392773,
+         "pass_probability_p05": 0.006669149539087755,
+         "pass_probability_p95": 0.4583980964092333,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 4.897830030295072,
+         "pass_probability_median": 0.999118859082228,
+         "pass_probability_p05": 0.9490675423387306,
+         "pass_probability_p95": 0.9999999654542219,
+         "reading": "route"
+        }
+       },
+       "0.01": {
+        "all_eligible": {
+         "expected_survived_at_projection": 13.327566898287868,
+         "pass_probability_median": 0.1733911416482788,
+         "pass_probability_p05": 0.021853638863751412,
+         "pass_probability_p95": 0.5841920745749923,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 4.513182279395236,
+         "pass_probability_median": 0.9996266022188773,
+         "pass_probability_p05": 0.9667471054991069,
+         "pass_probability_p95": 0.999999988982888,
+         "reading": "route"
+        }
+       },
+       "0.025": {
+        "all_eligible": {
+         "expected_survived_at_projection": 8.666143034298116,
+         "pass_probability_median": 0.7788365366412113,
+         "pass_probability_p05": 0.422420337559833,
+         "pass_probability_p95": 0.9682431686275872,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 2.8969367062055937,
+         "pass_probability_median": 0.9999973696688698,
+         "pass_probability_p05": 0.9993222511470552,
+         "pass_probability_p95": 0.9999999999650471,
+         "reading": "route"
+        }
+       },
+       "0.03": {
+        "all_eligible": {
+         "expected_survived_at_projection": 7.821482007262625,
+         "pass_probability_median": 0.8677465198174964,
+         "pass_probability_p05": 0.5641898310217865,
+         "pass_probability_p95": 0.9868019437696091,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 2.603611471876263,
+         "pass_probability_median": 0.9999991321161571,
+         "pass_probability_p05": 0.9997218514751539,
+         "pass_probability_p95": 0.9999999999986603,
+         "reading": "route"
+        }
+       },
+       "0.05": {
+        "all_eligible": {
+         "expected_survived_at_projection": 5.6396330188232,
+         "pass_probability_median": 0.9853232532127157,
+         "pass_probability_p05": 0.9022488009829248,
+         "pass_probability_p95": 0.999014621558458,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.8494479154000036,
+         "pass_probability_median": 0.999999981680934,
+         "pass_probability_p05": 0.9999913058142139,
+         "pass_probability_p95": 0.9999999999999784,
+         "reading": "route"
+        }
+       },
+       "0.1": {
+        "all_eligible": {
+         "expected_survived_at_projection": 3.190000453527447,
+         "pass_probability_median": 0.9998967372835232,
+         "pass_probability_p05": 0.9981492642860835,
+         "pass_probability_p95": 0.9999977788065355,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.0165657536110784,
+         "pass_probability_median": 0.999999999983461,
+         "pass_probability_p05": 0.9999999858795974,
+         "pass_probability_p95": 0.9999999999999998,
+         "reading": "route"
+        }
+       },
+       "0.15": {
+        "all_eligible": {
+         "expected_survived_at_projection": 2.0701171162704544,
+         "pass_probability_median": 0.999998937997749,
+         "pass_probability_p05": 0.9999623793563334,
+         "pass_probability_p95": 0.9999999858616456,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.6453085596220771,
+         "pass_probability_median": 0.9999999999999631,
+         "pass_probability_p05": 0.9999999999178245,
+         "pass_probability_p95": 1.0,
+         "reading": "route"
+        }
+       },
+       "0.2": {
+        "all_eligible": {
+         "expected_survived_at_projection": 1.426275685625085,
+         "pass_probability_median": 0.9999999785111083,
+         "pass_probability_p05": 0.9999988096079281,
+         "pass_probability_p95": 0.9999999998352742,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.4364469352795831,
+         "pass_probability_median": 0.9999999999999999,
+         "pass_probability_p05": 0.9999999999990832,
+         "pass_probability_p95": 1.0000000000000004,
+         "reading": "route"
+        }
+       },
+       "0.3": {
+        "all_eligible": {
+         "expected_survived_at_projection": 0.7346379746348353,
+         "pass_probability_median": 0.9999999999882616,
+         "pass_probability_p05": 0.9999999988034136,
+         "pass_probability_p95": 0.9999999999999497,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.21788253187078319,
+         "pass_probability_median": 0.9999999999999994,
+         "pass_probability_p05": 0.9999999999999989,
+         "pass_probability_p95": 0.9999999999999998,
+         "reading": "route"
+        }
+       }
+      }
+     },
+     "survived_by_the_battery": 11,
+     "valid": true,
+     "zero_survivors": false
+    }
+   },
+   "per_exit_primary": {
+    "inconclusive_if_d2_d4_met": {
+     "all_eligible": {
+      "EB1": "route",
+      "EB2": "route"
+     },
+     "survivors": {
+      "EB1": "route",
+      "EB2": "route"
+     }
+    },
+    "weakened": {
+     "all_eligible": {
+      "EB1": "route",
+      "EB2": "route"
+     },
+     "survivors": {
+      "EB1": "route",
+      "EB2": "route"
+     }
+    }
+   },
+   "scenarios_primary": {
+    "fatal_strict_budget_less_reference_scenario": {
+     "all_eligible": {
+      "EB1": "unresolved",
+      "EB2": "unresolved"
+     },
+     "survivors": {
+      "EB1": "route",
+      "EB2": "route"
+     }
+    },
+    "fatal_strict_budget_scenario": {
+     "all_eligible": {
+      "EB1": "unresolved",
+      "EB2": "unresolved"
+     },
+     "survivors": {
+      "EB1": "route",
+      "EB2": "route"
+     }
+    },
+    "weakened_battery_unit_scenario": {
+     "all_eligible": {
+      "EB1": "route",
+      "EB2": "route"
+     },
+     "survivors": {
+      "EB1": "route",
+      "EB2": "route"
+     }
+    }
+   },
+   "valid": true
+  },
+  "v2_same_indices": {
+   "families": {
+    "EB1": {
+     "attempted": 100,
+     "c1_prime_projection": 192,
+     "d1_allowance": 11,
+     "eligible": 96,
+     "eligible_without_a_distance": 0,
+     "generation_failures": 1,
+     "readings": {
+      "box": {
+       "0.0027": {
+        "all_eligible": {
+         "expected_survived_at_projection": 29.154240951703144,
+         "pass_probability_median": 3.1388268083358945e-12,
+         "pass_probability_p05": 4.0847802829704374e-20,
+         "pass_probability_p95": 1.2049094383390896e-06,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 8.281980856577835,
+         "pass_probability_median": 0.9972908746130731,
+         "pass_probability_p05": 0.1609460503335942,
+         "pass_probability_p95": 0.9999999998455362,
+         "reading": "unresolved"
+        }
+       },
+       "0.00814607": {
+        "all_eligible": {
+         "expected_survived_at_projection": 24.32403837102016,
+         "pass_probability_median": 1.9389827539711896e-07,
+         "pass_probability_p05": 8.278248832371107e-13,
+         "pass_probability_p95": 0.0018523951414240064,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 7.246915106604488,
+         "pass_probability_median": 0.9997838796492837,
+         "pass_probability_p05": 0.5331738195598237,
+         "pass_probability_p95": 0.9999999999986996,
+         "reading": "route"
+        }
+       },
+       "0.01": {
+        "all_eligible": {
+         "expected_survived_at_projection": 23.409865554405286,
+         "pass_probability_median": 1.0086476196359979e-06,
+         "pass_probability_p05": 9.86850584789045e-12,
+         "pass_probability_p95": 0.0040389432918792245,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 7.039349093473891,
+         "pass_probability_median": 0.9999545349819329,
+         "pass_probability_p05": 0.615905770275483,
+         "pass_probability_p95": 0.9999999999999832,
+         "reading": "route"
+        }
+       },
+       "0.025": {
+        "all_eligible": {
+         "expected_survived_at_projection": 19.184418397839348,
+         "pass_probability_median": 0.0010873376253814277,
+         "pass_probability_p05": 4.447252566053427e-07,
+         "pass_probability_p95": 0.15288663214653023,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 6.004554721018399,
+         "pass_probability_median": 0.9999995713871799,
+         "pass_probability_p05": 0.9352063510061797,
+         "pass_probability_p95": 0.9999999999999997,
+         "reading": "route"
+        }
+       },
+       "0.03": {
+        "all_eligible": {
+         "expected_survived_at_projection": 18.306387383121177,
+         "pass_probability_median": 0.003108832568284655,
+         "pass_probability_p05": 3.1111082683490874e-06,
+         "pass_probability_p95": 0.20858989311191167,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 5.771574277862106,
+         "pass_probability_median": 0.999999759716191,
+         "pass_probability_p05": 0.9214913604732318,
+         "pass_probability_p95": 0.9999999999999996,
+         "reading": "route"
+        }
+       },
+       "0.05": {
+        "all_eligible": {
+         "expected_survived_at_projection": 15.75877163014766,
+         "pass_probability_median": 0.046026567402162155,
+         "pass_probability_p05": 0.0003957558211405827,
+         "pass_probability_p95": 0.5786280804844103,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 5.0582139785611435,
+         "pass_probability_median": 0.9999999949233926,
+         "pass_probability_p05": 0.9828034530623592,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        }
+       },
+       "0.1": {
+        "all_eligible": {
+         "expected_survived_at_projection": 12.063076921611994,
+         "pass_probability_median": 0.4312707082852356,
+         "pass_probability_p05": 0.04342360154677709,
+         "pass_probability_p95": 0.9492802580049577,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 3.9310235752889486,
+         "pass_probability_median": 0.9999999999907996,
+         "pass_probability_p05": 0.9992715365309961,
+         "pass_probability_p95": 1.0,
+         "reading": "route"
+        }
+       },
+       "0.15": {
+        "all_eligible": {
+         "expected_survived_at_projection": 9.770656885272441,
+         "pass_probability_median": 0.7857031580510929,
+         "pass_probability_p05": 0.2707935303644624,
+         "pass_probability_p95": 0.9924211072071888,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 3.1874164379665064,
+         "pass_probability_median": 0.9999999999998853,
+         "pass_probability_p05": 0.9999487938467605,
+         "pass_probability_p95": 1.0000000000000004,
+         "reading": "route"
+        }
+       },
+       "0.2": {
+        "all_eligible": {
+         "expected_survived_at_projection": 8.097709744466087,
+         "pass_probability_median": 0.9450522095713498,
+         "pass_probability_p05": 0.5622598139328588,
+         "pass_probability_p95": 0.9992972701266074,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 2.629971102457867,
+         "pass_probability_median": 0.9999999999999987,
+         "pass_probability_p05": 0.99999268506277,
+         "pass_probability_p95": 1.0,
+         "reading": "route"
+        }
+       },
+       "0.3": {
+        "all_eligible": {
+         "expected_survived_at_projection": 5.71362664921903,
+         "pass_probability_median": 0.9975300304792658,
+         "pass_probability_p05": 0.9391678214629091,
+         "pass_probability_p95": 0.9999887620158205,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.824360726035743,
+         "pass_probability_median": 1.0,
+         "pass_probability_p05": 0.9999999222350179,
+         "pass_probability_p95": 1.0000000000000004,
+         "reading": "route"
+        }
+       }
+      },
+      "known": {
+       "0.0027": {
+        "all_eligible": {
+         "expected_survived_at_projection": 11.994371733933699,
+         "pass_probability_median": 0.4496164695740732,
+         "pass_probability_p05": 0.005777384752757699,
+         "pass_probability_p95": 0.984153363507182,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 2.57132161379524,
+         "pass_probability_median": 0.9999999999999997,
+         "pass_probability_p05": 0.9999999901449648,
+         "pass_probability_p95": 1.0,
+         "reading": "route"
+        }
+       },
+       "0.00814607": {
+        "all_eligible": {
+         "expected_survived_at_projection": 9.590970362941267,
+         "pass_probability_median": 0.8884748795132564,
+         "pass_probability_p05": 0.12095953631096687,
+         "pass_probability_p95": 0.9997397102385306,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 2.007721981433364,
+         "pass_probability_median": 1.0,
+         "pass_probability_p05": 0.9999999999686789,
+         "pass_probability_p95": 1.0000000000000004,
+         "reading": "route"
+        }
+       },
+       "0.01": {
+        "all_eligible": {
+         "expected_survived_at_projection": 9.156446533479311,
+         "pass_probability_median": 0.920547812766702,
+         "pass_probability_p05": 0.1606556025620384,
+         "pass_probability_p95": 0.9998445339124269,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.906574974617043,
+         "pass_probability_median": 1.0,
+         "pass_probability_p05": 0.9999999999957729,
+         "pass_probability_p95": 1.0000000000000004,
+         "reading": "route"
+        }
+       },
+       "0.025": {
+        "all_eligible": {
+         "expected_survived_at_projection": 7.225071153654357,
+         "pass_probability_median": 0.9960345901969638,
+         "pass_probability_p05": 0.5882282906818097,
+         "pass_probability_p95": 0.9999997778030189,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.4610164187293333,
+         "pass_probability_median": 0.9999999999999999,
+         "pass_probability_p05": 0.9999999999999768,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        }
+       },
+       "0.03": {
+        "all_eligible": {
+         "expected_survived_at_projection": 6.838720651380189,
+         "pass_probability_median": 0.9978823440936759,
+         "pass_probability_p05": 0.6943935302787726,
+         "pass_probability_p95": 0.9999998840267103,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.3727074670205415,
+         "pass_probability_median": 0.9999999999999999,
+         "pass_probability_p05": 0.999999999999999,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        }
+       },
+       "0.05": {
+        "all_eligible": {
+         "expected_survived_at_projection": 5.745189284697141,
+         "pass_probability_median": 0.9998638527104109,
+         "pass_probability_p05": 0.9319391551419526,
+         "pass_probability_p95": 0.9999999987084455,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.1244472849633258,
+         "pass_probability_median": 1.0000000000000002,
+         "pass_probability_p05": 1.0,
+         "pass_probability_p95": 1.0000000000000007,
+         "reading": "route"
+        }
+       },
+       "0.1": {
+        "all_eligible": {
+         "expected_survived_at_projection": 4.2300342372699316,
+         "pass_probability_median": 0.9999994835375662,
+         "pass_probability_p05": 0.9961619945814353,
+         "pass_probability_p95": 0.9999999999997086,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.7865144771679268,
+         "pass_probability_median": 0.9999999999999999,
+         "pass_probability_p05": 0.9999999999999997,
+         "pass_probability_p95": 1.0,
+         "reading": "route"
+        }
+       },
+       "0.15": {
+        "all_eligible": {
+         "expected_survived_at_projection": 3.333254699262496,
+         "pass_probability_median": 0.9999999886820242,
+         "pass_probability_p05": 0.9997482586228792,
+         "pass_probability_p95": 0.9999999999999986,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.5923710239574069,
+         "pass_probability_median": 0.9999999999999998,
+         "pass_probability_p05": 0.9999999999999994,
+         "pass_probability_p95": 1.0,
+         "reading": "route"
+        }
+       },
+       "0.2": {
+        "all_eligible": {
+         "expected_survived_at_projection": 2.700786257124889,
+         "pass_probability_median": 0.9999999996975903,
+         "pass_probability_p05": 0.9999702337194772,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.4598324611832063,
+         "pass_probability_median": 0.9999999999999998,
+         "pass_probability_p05": 0.9999999999999994,
+         "pass_probability_p95": 1.0,
+         "reading": "route"
+        }
+       },
+       "0.3": {
+        "all_eligible": {
+         "expected_survived_at_projection": 1.8343008636621052,
+         "pass_probability_median": 0.9999999999998017,
+         "pass_probability_p05": 0.9999998540603671,
+         "pass_probability_p95": 1.0,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.2872232297837889,
+         "pass_probability_median": 1.0,
+         "pass_probability_p05": 0.9999999999999998,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        }
+       }
+      },
+      "prior": {
+       "0.0027": {
+        "all_eligible": {
+         "expected_survived_at_projection": 16.830356450032337,
+         "pass_probability_median": 0.012068904662188334,
+         "pass_probability_p05": 8.684109826653236e-06,
+         "pass_probability_p95": 0.4388093390962742,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 5.249635098306485,
+         "pass_probability_median": 0.9999999456832431,
+         "pass_probability_p05": 0.9799973502317146,
+         "pass_probability_p95": 0.9999999999999997,
+         "reading": "route"
+        }
+       },
+       "0.00814607": {
+        "all_eligible": {
+         "expected_survived_at_projection": 13.12852191554504,
+         "pass_probability_median": 0.22100302276784314,
+         "pass_probability_p05": 0.00407935646715734,
+         "pass_probability_p95": 0.9017414655474619,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 4.2183065353049605,
+         "pass_probability_median": 0.9999999999476956,
+         "pass_probability_p05": 0.9992882383687828,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        }
+       },
+       "0.01": {
+        "all_eligible": {
+         "expected_survived_at_projection": 12.4608898783804,
+         "pass_probability_median": 0.3478119304369672,
+         "pass_probability_p05": 0.01375953878107703,
+         "pass_probability_p95": 0.9456252555844987,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 4.01550144679446,
+         "pass_probability_median": 0.9999999999909865,
+         "pass_probability_p05": 0.9994288863579318,
+         "pass_probability_p95": 0.9999999999999999,
+         "reading": "route"
+        }
+       },
+       "0.025": {
+        "all_eligible": {
+         "expected_survived_at_projection": 9.53136129932853,
+         "pass_probability_median": 0.837672440838821,
+         "pass_probability_p05": 0.21079740666950225,
+         "pass_probability_p95": 0.9987795518936317,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 3.067076734001228,
+         "pass_probability_median": 0.99999999999998,
+         "pass_probability_p05": 0.9999896842246506,
+         "pass_probability_p95": 0.9999999999999998,
+         "reading": "route"
+        }
+       },
+       "0.03": {
+        "all_eligible": {
+         "expected_survived_at_projection": 8.957100476064593,
+         "pass_probability_median": 0.9059807085013396,
+         "pass_probability_p05": 0.28675549819063717,
+         "pass_probability_p95": 0.9992758999852001,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 2.871372992028051,
+         "pass_probability_median": 0.9999999999999962,
+         "pass_probability_p05": 0.9999979045317887,
+         "pass_probability_p95": 1.0000000000000007,
+         "reading": "route"
+        }
+       },
+       "0.05": {
+        "all_eligible": {
+         "expected_survived_at_projection": 7.36214517447436,
+         "pass_probability_median": 0.9871178721320182,
+         "pass_probability_p05": 0.6428954665126371,
+         "pass_probability_p95": 0.9999841892212749,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 2.316133452780368,
+         "pass_probability_median": 0.9999999999999999,
+         "pass_probability_p05": 0.9999999329140089,
+         "pass_probability_p95": 1.0000000000000004,
+         "reading": "route"
+        }
+       },
+       "0.1": {
+        "all_eligible": {
+         "expected_survived_at_projection": 5.241454110227725,
+         "pass_probability_median": 0.999755629629598,
+         "pass_probability_p05": 0.9670174236167329,
+         "pass_probability_p95": 0.9999999631672097,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.5671275211817925,
+         "pass_probability_median": 0.9999999999999997,
+         "pass_probability_p05": 0.9999999995699284,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        }
+       },
+       "0.15": {
+        "all_eligible": {
+         "expected_survived_at_projection": 4.04156706404204,
+         "pass_probability_median": 0.9999923353348472,
+         "pass_probability_p05": 0.996765147849184,
+         "pass_probability_p95": 0.9999999997699734,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.1503224006896438,
+         "pass_probability_median": 0.9999999999999996,
+         "pass_probability_p05": 0.9999999999991845,
+         "pass_probability_p95": 1.0,
+         "reading": "route"
+        }
+       },
+       "0.2": {
+        "all_eligible": {
+         "expected_survived_at_projection": 3.221605005153812,
+         "pass_probability_median": 0.9999997374598835,
+         "pass_probability_p05": 0.9996975650455553,
+         "pass_probability_p95": 0.9999999999976664,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.8743741777971423,
+         "pass_probability_median": 0.9999999999999999,
+         "pass_probability_p05": 0.9999999999999044,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        }
+       },
+       "0.3": {
+        "all_eligible": {
+         "expected_survived_at_projection": 2.1349856483366247,
+         "pass_probability_median": 0.9999999990293926,
+         "pass_probability_p05": 0.9999972237970038,
+         "pass_probability_p95": 0.9999999999999971,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.5280156139297001,
+         "pass_probability_median": 0.9999999999999998,
+         "pass_probability_p05": 0.9999999999999993,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        }
+       }
+      }
+     },
+     "survived_by_the_battery": 10,
+     "valid": true,
+     "zero_survivors": false
+    },
+    "EB2": {
+     "attempted": 100,
+     "c1_prime_projection": 184,
+     "d1_allowance": 10,
+     "eligible": 92,
+     "eligible_without_a_distance": 0,
+     "generation_failures": 0,
+     "readings": {
+      "box": {
+       "0.0027": {
+        "all_eligible": {
+         "expected_survived_at_projection": 39.56127767043268,
+         "pass_probability_median": 5.067583289285336e-15,
+         "pass_probability_p05": 5.657809449819509e-20,
+         "pass_probability_p95": 6.070168147353234e-11,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 10.41443544662957,
+         "pass_probability_median": 0.5276871405551194,
+         "pass_probability_p05": 0.05881922340200776,
+         "pass_probability_p95": 0.9827176793750046,
+         "reading": "unresolved"
+        }
+       },
+       "0.00814607": {
+        "all_eligible": {
+         "expected_survived_at_projection": 29.60896875388201,
+         "pass_probability_median": 3.791412807603067e-08,
+         "pass_probability_p05": 2.8421911523233215e-11,
+         "pass_probability_p95": 1.4873843322817211e-05,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 7.6328301607577185,
+         "pass_probability_median": 0.9295554520383016,
+         "pass_probability_p05": 0.4772707562700681,
+         "pass_probability_p95": 0.9994526341252047,
+         "reading": "unresolved"
+        }
+       },
+       "0.01": {
+        "all_eligible": {
+         "expected_survived_at_projection": 27.763432421094322,
+         "pass_probability_median": 3.530796880613773e-07,
+         "pass_probability_p05": 5.206407923435909e-10,
+         "pass_probability_p95": 9.74847888477517e-05,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 7.116229409484846,
+         "pass_probability_median": 0.9594919335631197,
+         "pass_probability_p05": 0.591060214629109,
+         "pass_probability_p95": 0.9998164136007688,
+         "reading": "route"
+        }
+       },
+       "0.025": {
+        "all_eligible": {
+         "expected_survived_at_projection": 19.684192927303656,
+         "pass_probability_median": 0.0022835978567866183,
+         "pass_probability_p05": 5.8053919647990656e-05,
+         "pass_probability_p95": 0.036859790299259974,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 4.88112386282779,
+         "pass_probability_median": 0.9985256701411378,
+         "pass_probability_p05": 0.9488499675373383,
+         "pass_probability_p95": 0.9999972269155363,
+         "reading": "route"
+        }
+       },
+       "0.03": {
+        "all_eligible": {
+         "expected_survived_at_projection": 18.133012402879306,
+         "pass_probability_median": 0.008269073021173561,
+         "pass_probability_p05": 0.0003898926512248171,
+         "pass_probability_p95": 0.10203450567330935,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 4.460426658352251,
+         "pass_probability_median": 0.9994980636997142,
+         "pass_probability_p05": 0.9733644531678659,
+         "pass_probability_p95": 0.9999996120504292,
+         "reading": "route"
+        }
+       },
+       "0.05": {
+        "all_eligible": {
+         "expected_survived_at_projection": 13.949219301373775,
+         "pass_probability_median": 0.1261882984627969,
+         "pass_probability_p05": 0.016539810469532963,
+         "pass_probability_p95": 0.4383202668615951,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 3.346671364195863,
+         "pass_probability_median": 0.9999808561219978,
+         "pass_probability_p05": 0.9970123828510379,
+         "pass_probability_p95": 0.9999999878146235,
+         "reading": "route"
+        }
+       },
+       "0.1": {
+        "all_eligible": {
+         "expected_survived_at_projection": 8.811018989563559,
+         "pass_probability_median": 0.7631710027183185,
+         "pass_probability_p05": 0.4238041103119321,
+         "pass_probability_p95": 0.9475055015779451,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 2.033914458141977,
+         "pass_probability_median": 0.9999999523221026,
+         "pass_probability_p05": 0.9999833120568957,
+         "pass_probability_p95": 0.9999999999933717,
+         "reading": "route"
+        }
+       },
+       "0.15": {
+        "all_eligible": {
+         "expected_survived_at_projection": 6.20288755934485,
+         "pass_probability_median": 0.9680021163778681,
+         "pass_probability_p05": 0.843529183514431,
+         "pass_probability_p95": 0.9964466325708202,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.3979125266167394,
+         "pass_probability_median": 0.9999999995944938,
+         "pass_probability_p05": 0.9999996570098627,
+         "pass_probability_p95": 0.9999999999999897,
+         "reading": "route"
+        }
+       },
+       "0.2": {
+        "all_eligible": {
+         "expected_survived_at_projection": 4.576633333629697,
+         "pass_probability_median": 0.996879090841283,
+         "pass_probability_p05": 0.9752998564905874,
+         "pass_probability_p95": 0.9998234059389949,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.014058388401099,
+         "pass_probability_median": 0.9999999999942697,
+         "pass_probability_p05": 0.9999999916841449,
+         "pass_probability_p95": 0.9999999999999999,
+         "reading": "route"
+        }
+       },
+       "0.3": {
+        "all_eligible": {
+         "expected_survived_at_projection": 2.653259602337693,
+         "pass_probability_median": 0.9999818415720714,
+         "pass_probability_p05": 0.9996944713884565,
+         "pass_probability_p95": 0.9999993359808591,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.5747327335820528,
+         "pass_probability_median": 0.9999999999999988,
+         "pass_probability_p05": 0.9999999999921781,
+         "pass_probability_p95": 1.0000000000000007,
+         "reading": "route"
+        }
+       }
+      },
+      "known": {
+       "0.0027": {
+        "all_eligible": {
+         "expected_survived_at_projection": 10.738233771472865,
+         "pass_probability_median": 0.48335664809702883,
+         "pass_probability_p05": 0.06399016132309145,
+         "pass_probability_p95": 0.9367371996090664,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 3.430093065833125,
+         "pass_probability_median": 0.9999999491391717,
+         "pass_probability_p05": 0.9984752162679629,
+         "pass_probability_p95": 0.9999999999999992,
+         "reading": "route"
+        }
+       },
+       "0.00814607": {
+        "all_eligible": {
+         "expected_survived_at_projection": 7.503333302826928,
+         "pass_probability_median": 0.9308434750804649,
+         "pass_probability_p05": 0.52942612185032,
+         "pass_probability_p95": 0.9989255091356474,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 2.274423783155088,
+         "pass_probability_median": 0.999999999920317,
+         "pass_probability_p05": 0.9999752862049396,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        }
+       },
+       "0.01": {
+        "all_eligible": {
+         "expected_survived_at_projection": 6.93517155091291,
+         "pass_probability_median": 0.9587732279301227,
+         "pass_probability_p05": 0.658949637083203,
+         "pass_probability_p95": 0.9993057811888993,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 2.0716693872416756,
+         "pass_probability_median": 0.9999999999879314,
+         "pass_probability_p05": 0.9999916898571547,
+         "pass_probability_p95": 1.0000000000000004,
+         "reading": "route"
+        }
+       },
+       "0.025": {
+        "all_eligible": {
+         "expected_survived_at_projection": 4.570877868686528,
+         "pass_probability_median": 0.9990837840114547,
+         "pass_probability_p05": 0.9650216404683059,
+         "pass_probability_p95": 0.9999965128175295,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.2469877534050289,
+         "pass_probability_median": 0.9999999999999936,
+         "pass_probability_p05": 0.9999999457377355,
+         "pass_probability_p95": 1.0,
+         "reading": "route"
+        }
+       },
+       "0.03": {
+        "all_eligible": {
+         "expected_survived_at_projection": 4.14138276530131,
+         "pass_probability_median": 0.999681013209512,
+         "pass_probability_p05": 0.9843352153275037,
+         "pass_probability_p95": 0.9999995487754396,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.1030030020836423,
+         "pass_probability_median": 0.9999999999999986,
+         "pass_probability_p05": 0.9999999874608354,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        }
+       },
+       "0.05": {
+        "all_eligible": {
+         "expected_survived_at_projection": 3.0268461501228954,
+         "pass_probability_median": 0.9999906475903542,
+         "pass_probability_p05": 0.9989088878433859,
+         "pass_probability_p95": 0.9999999912030066,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.7435577409000355,
+         "pass_probability_median": 0.9999999999999994,
+         "pass_probability_p05": 0.9999999998161415,
+         "pass_probability_p95": 1.0,
+         "reading": "route"
+        }
+       },
+       "0.1": {
+        "all_eligible": {
+         "expected_survived_at_projection": 1.7581347241501102,
+         "pass_probability_median": 0.9999999828187305,
+         "pass_probability_p05": 0.9999946428069325,
+         "pass_probability_p95": 0.9999999999931123,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.37135651561762417,
+         "pass_probability_median": 1.0000000000000002,
+         "pass_probability_p05": 0.999999999999919,
+         "pass_probability_p95": 1.0000000000000007,
+         "reading": "route"
+        }
+       },
+       "0.15": {
+        "all_eligible": {
+         "expected_survived_at_projection": 1.1657217097271284,
+         "pass_probability_median": 0.9999999999201266,
+         "pass_probability_p05": 0.9999999502506387,
+         "pass_probability_p95": 0.9999999999999808,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.21853135883267538,
+         "pass_probability_median": 0.9999999999999998,
+         "pass_probability_p05": 0.9999999999999992,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        }
+       },
+       "0.2": {
+        "all_eligible": {
+         "expected_survived_at_projection": 0.8185135072548075,
+         "pass_probability_median": 0.9999999999990434,
+         "pass_probability_p05": 0.999999999075824,
+         "pass_probability_p95": 0.9999999999999996,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.13824602681746634,
+         "pass_probability_median": 1.0,
+         "pass_probability_p05": 0.9999999999999996,
+         "pass_probability_p95": 1.0000000000000004,
+         "reading": "route"
+        }
+       },
+       "0.3": {
+        "all_eligible": {
+         "expected_survived_at_projection": 0.43608616569055864,
+         "pass_probability_median": 0.9999999999999983,
+         "pass_probability_p05": 0.9999999999990533,
+         "pass_probability_p95": 0.9999999999999996,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.06112240340669217,
+         "pass_probability_median": 0.9999999999999996,
+         "pass_probability_p05": 0.9999999999999992,
+         "pass_probability_p95": 0.9999999999999999,
+         "reading": "route"
+        }
+       }
+      },
+      "prior": {
+       "0.0027": {
+        "all_eligible": {
+         "expected_survived_at_projection": 21.18867415158346,
+         "pass_probability_median": 0.0002975212342984302,
+         "pass_probability_p05": 1.1876259416713518e-06,
+         "pass_probability_p95": 0.01682745950502812,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 6.746688842784392,
+         "pass_probability_median": 0.9790863499487847,
+         "pass_probability_p05": 0.6119680235958985,
+         "pass_probability_p95": 0.9999873759385369,
+         "reading": "route"
+        }
+       },
+       "0.00814607": {
+        "all_eligible": {
+         "expected_survived_at_projection": 14.861918975621936,
+         "pass_probability_median": 0.06836069458757862,
+         "pass_probability_p05": 0.0035628371727717155,
+         "pass_probability_p95": 0.41215974949239315,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 4.682175846357294,
+         "pass_probability_median": 0.9994977022101887,
+         "pass_probability_p05": 0.9656212906540411,
+         "pass_probability_p95": 0.9999998919049832,
+         "reading": "route"
+        }
+       },
+       "0.01": {
+        "all_eligible": {
+         "expected_survived_at_projection": 13.748169376633149,
+         "pass_probability_median": 0.13213695108445414,
+         "pass_probability_p05": 0.013110651283317714,
+         "pass_probability_p95": 0.5476663077162907,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 4.315726412612051,
+         "pass_probability_median": 0.9998108579676934,
+         "pass_probability_p05": 0.9802441509607474,
+         "pass_probability_p95": 0.9999999849380177,
+         "reading": "route"
+        }
+       },
+       "0.025": {
+        "all_eligible": {
+         "expected_survived_at_projection": 9.099822893681772,
+         "pass_probability_median": 0.7287264870726429,
+         "pass_probability_p05": 0.3186037086513122,
+         "pass_probability_p95": 0.9606993461685418,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 2.792037361253298,
+         "pass_probability_median": 0.9999987985498724,
+         "pass_probability_p05": 0.9995628103386157,
+         "pass_probability_p95": 0.9999999999887837,
+         "reading": "route"
+        }
+       },
+       "0.03": {
+        "all_eligible": {
+         "expected_survived_at_projection": 8.25225698471297,
+         "pass_probability_median": 0.833404929199349,
+         "pass_probability_p05": 0.4847309162977458,
+         "pass_probability_p95": 0.9794966858597564,
+         "reading": "unresolved"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 2.517102279212466,
+         "pass_probability_median": 0.999999642199662,
+         "pass_probability_p05": 0.999812651120374,
+         "pass_probability_p95": 0.9999999999979153,
+         "reading": "route"
+        }
+       },
+       "0.05": {
+        "all_eligible": {
+         "expected_survived_at_projection": 6.046637482421248,
+         "pass_probability_median": 0.9768156117070189,
+         "pass_probability_p05": 0.8553216216472578,
+         "pass_probability_p95": 0.9989930870840823,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.8097876884034227,
+         "pass_probability_median": 0.9999999958509374,
+         "pass_probability_p05": 0.9999946163660621,
+         "pass_probability_p95": 0.9999999999999933,
+         "reading": "route"
+        }
+       },
+       "0.1": {
+        "all_eligible": {
+         "expected_survived_at_projection": 3.5223329823373977,
+         "pass_probability_median": 0.9997982031523828,
+         "pass_probability_p05": 0.9960710731883746,
+         "pass_probability_p95": 0.9999956442252034,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 1.0219321211853227,
+         "pass_probability_median": 0.9999999999980086,
+         "pass_probability_p05": 0.9999999936605896,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        }
+       },
+       "0.15": {
+        "all_eligible": {
+         "expected_survived_at_projection": 2.337592000951287,
+         "pass_probability_median": 0.9999968065014291,
+         "pass_probability_p05": 0.9998887815365336,
+         "pass_probability_p95": 0.9999999753029828,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.664182474980025,
+         "pass_probability_median": 0.999999999999986,
+         "pass_probability_p05": 0.9999999999301138,
+         "pass_probability_p95": 1.0000000000000002,
+         "reading": "route"
+        }
+       },
+       "0.2": {
+        "all_eligible": {
+         "expected_survived_at_projection": 1.6413167603804433,
+         "pass_probability_median": 0.9999999279272812,
+         "pass_probability_p05": 0.9999957253942681,
+         "pass_probability_p95": 0.9999999996468046,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.4590085268948486,
+         "pass_probability_median": 0.9999999999999998,
+         "pass_probability_p05": 0.999999999999546,
+         "pass_probability_p95": 1.0000000000000004,
+         "reading": "route"
+        }
+       },
+       "0.3": {
+        "all_eligible": {
+         "expected_survived_at_projection": 0.8730893168673404,
+         "pass_probability_median": 0.9999999999395286,
+         "pass_probability_p05": 0.9999999925153642,
+         "pass_probability_p95": 0.9999999999998516,
+         "reading": "route"
+        },
+        "survivors": {
+         "expected_survived_at_projection": 0.2384749668374876,
+         "pass_probability_median": 1.0000000000000004,
+         "pass_probability_p05": 0.9999999999999999,
+         "pass_probability_p95": 1.000000000000001,
+         "reading": "route"
+        }
+       }
+      }
+     },
+     "survived_by_the_battery": 16,
+     "valid": true,
+     "zero_survivors": false
+    }
+   },
+   "per_exit_primary": {
+    "inconclusive_if_d2_d4_met": {
+     "all_eligible": {
+      "EB1": "route",
+      "EB2": "route"
+     },
+     "survivors": {
+      "EB1": "route",
+      "EB2": "route"
+     }
+    },
+    "weakened": {
+     "all_eligible": {
+      "EB1": "route",
+      "EB2": "route"
+     },
+     "survivors": {
+      "EB1": "route",
+      "EB2": "route"
+     }
+    }
+   },
+   "scenarios_primary": {
+    "fatal_strict_budget_less_reference_scenario": {
+     "all_eligible": {
+      "EB1": "unresolved",
+      "EB2": "unresolved"
+     },
+     "survivors": {
+      "EB1": "route",
+      "EB2": "route"
+     }
+    },
+    "fatal_strict_budget_scenario": {
+     "all_eligible": {
+      "EB1": "unresolved",
+      "EB2": "unresolved"
+     },
+     "survivors": {
+      "EB1": "route",
+      "EB2": "route"
+     }
+    },
+    "weakened_battery_unit_scenario": {
+     "all_eligible": {
+      "EB1": "route",
+      "EB2": "route"
+     },
+     "survivors": {
+      "EB1": "route",
+      "EB2": "route"
+     }
+    }
+   },
+   "valid": true
+  },
+  "verdict_differences": 17
+ },
+ "bridge_note": "The bridge compares the same 100 attempted indices per family under C1 version 1 and version 2 (set A's seeds); differences of eligibility are published. It gives no outcome (the amendment's (c); Codex, night round 1)",
+ "code_identity": {
+  "digest": "103c41f496530ff71a25596db465ea83ff5c717c6b4a676bd8a41be0cf90f0a8",
+  "files": {
+   "calibration/v0.4/claim.yaml": "95acddf2667f8f225d16511f187ca45f317294bf298340678b98b9eb03172cf3",
+   "docs/plans/v0.5.5-charter-amendment-1.md": "c9bea0fd746949f7f01a73e4a0f7ce113c9a880ffe92af872b06c524f9107c77",
+   "docs/plans/v0.5.5-charter.md": "aab4ec2ff085db76e8f486ba2ab557cac0294f6db38b44c33085e29098cc5246",
+   "docs/plans/v0.5.5-r1-designs-revision-1.md": "aff01c25f1de8b67efccc2ebe1760f93aca706c55f76ce17162d6eaca11ccf4e",
+   "docs/plans/v0.5.5-r1-designs.md": "1013a88e9075f3a5cc16b18b623b0c1929c9e92c2883f30436ee55ec9a8ba9eb",
+   "docs/validation/v0.5.1/feasibility/d1_routes.py": "16304b368743aac7fe3ba43b53478ad3e7baa4dcc843a592f42ff6e9420ccfcd",
+   "docs/validation/v0.5.1/feasibility/forecast.py": "2e666b4269016c0df2cbb0fdb8dcf493fba7b90ad601c1002bc555e93e5fd31a",
+   "docs/validation/v0.5.2/stage2/budgeted.py": "557e82ae2e79d6661a875220b84e209ea961171fb83b3fe5c9839221e927874f",
+   "docs/validation/v0.5.2/stage2/driver.py": "90ad1700b935b900d1ae4c74842197cb1de710b1159369fa0ebcf9040af12bf8",
+   "docs/validation/v0.5.3/stageB/d1_bound.py": "a222f5709ea8c9b418e53bdb0c9ed4a24570dcf1e568b5a0c3e9dd9fba266636",
+   "docs/validation/v0.5.3/stageB/ledger_b.py": "173eeee95956d786a520373e3b52619bc6651ff0d5be032b2765257d3e31e1fd",
+   "docs/validation/v0.5.4/budgeted_v3.py": "0c79dc8ff595c063e432e4ffe6c5463cb20bcbc74eec12f04d08390a5b824229",
+   "docs/validation/v0.5.5/d1p_price.py": "f2d754c2acf27c65d69f418d05adb9ab08ab03b9e7f55799bdd3c3b8726cd0f4",
+   "docs/validation/v0.5.5/generator_v2.py": "4a42c26b641df1890624315e46f640cdd3d300d804694644e62bb50b350bf723",
+   "docs/validation/v0.5.5/ledger_v055.py": "65e65400357b5866f27cc83c8a7858fb404ee9af39cb9460737d24cf7fcd0a17",
+   "docs/validation/v0.5.5/r1_common.py": "0157b43e6f695011868592a9cefc51ef59bee00b32c93d9ce5e60b6311ea223e"
+  },
+  "sha256": "29b780e0fcd497f227e119a72344ae900b43522b0fe053c044d5c6e458155ca4",
+  "src_code_hash": "e1a89af9784a51baad9479044c0c678664104e571e4434e287519cc1e08d0cab"
+ },
+ "cpu_hours": 2.2991,
+ "design": "docs/plans/v0.5.5-r1-designs.md (D1-P)",
+ "errors": [],
+ "exit_prices": {
+  "inconclusive_if_d2_d4_met": 0.05,
+  "weakened": 0.05
+ },
+ "families": {
+  "EB1": {
+   "attempted": 100,
+   "c1_prime_projection": 188,
+   "d1_allowance": 10,
+   "eligible": 94,
+   "eligible_without_a_distance": 0,
+   "generation_failures": 2,
+   "readings": {
+    "box": {
+     "0.0027": {
+      "all_eligible": {
+       "expected_survived_at_projection": 27.981470705676518,
+       "pass_probability_median": 7.35152811637697e-12,
+       "pass_probability_p05": 1.2310396940469656e-19,
+       "pass_probability_p95": 1.975355737155099e-06,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 8.85790243619196,
+       "pass_probability_median": 0.8551653298233466,
+       "pass_probability_p05": 0.08862253218704126,
+       "pass_probability_p95": 0.9998124241687237,
+       "reading": "unresolved"
+      }
+     },
+     "0.00814607": {
+      "all_eligible": {
+       "expected_survived_at_projection": 22.74455687822414,
+       "pass_probability_median": 2.94682599850654e-07,
+       "pass_probability_p05": 7.786494623990071e-13,
+       "pass_probability_p95": 0.0034280891894363473,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 7.17431659962474,
+       "pass_probability_median": 0.9851166526522392,
+       "pass_probability_p05": 0.3792312120700163,
+       "pass_probability_p95": 0.9999978956795452,
+       "reading": "unresolved"
+      }
+     },
+     "0.01": {
+      "all_eligible": {
+       "expected_survived_at_projection": 21.791372564225068,
+       "pass_probability_median": 1.5325570025843897e-06,
+       "pass_probability_p05": 6.6436226843709586e-12,
+       "pass_probability_p95": 0.0075014348637383954,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 6.871655061143634,
+       "pass_probability_median": 0.9929359704493128,
+       "pass_probability_p05": 0.4802104005524615,
+       "pass_probability_p95": 0.99999928715906,
+       "reading": "unresolved"
+      }
+     },
+     "0.025": {
+      "all_eligible": {
+       "expected_survived_at_projection": 17.5935918068289,
+       "pass_probability_median": 0.001183388143286039,
+       "pass_probability_p05": 1.763839275906033e-07,
+       "pass_probability_p95": 0.20186440935206965,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 5.564115021775648,
+       "pass_probability_median": 0.9997355506759279,
+       "pass_probability_p05": 0.8741613705166046,
+       "pass_probability_p95": 0.9999999969530536,
+       "reading": "route"
+      }
+     },
+     "0.03": {
+      "all_eligible": {
+       "expected_survived_at_projection": 16.766064160061664,
+       "pass_probability_median": 0.0034567016170847014,
+       "pass_probability_p05": 1.4901318720811768e-06,
+       "pass_probability_p95": 0.26566430478323433,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 5.311903390715907,
+       "pass_probability_median": 0.9998911645201224,
+       "pass_probability_p05": 0.9177679172536616,
+       "pass_probability_p95": 0.9999999995381919,
+       "reading": "route"
+      }
+     },
+     "0.05": {
+      "all_eligible": {
+       "expected_survived_at_projection": 14.445579236974064,
+       "pass_probability_median": 0.04213308255787049,
+       "pass_probability_p05": 0.00017832983572018361,
+       "pass_probability_p95": 0.6554183808820027,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 4.6138397508274185,
+       "pass_probability_median": 0.9999937076634934,
+       "pass_probability_p05": 0.9681647430366515,
+       "pass_probability_p95": 0.9999999999951371,
+       "reading": "route"
+      }
+     },
+     "0.1": {
+      "all_eligible": {
+       "expected_survived_at_projection": 11.243645689102433,
+       "pass_probability_median": 0.37780150715127514,
+       "pass_probability_p05": 0.01852235013502328,
+       "pass_probability_p95": 0.9594454847457653,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 3.663952194331885,
+       "pass_probability_median": 0.9999999790034513,
+       "pass_probability_p05": 0.9990999884086393,
+       "pass_probability_p95": 0.9999999999999981,
+       "reading": "route"
+      }
+     },
+     "0.15": {
+      "all_eligible": {
+       "expected_survived_at_projection": 9.306388288135643,
+       "pass_probability_median": 0.7555130349197265,
+       "pass_probability_p05": 0.151088408069002,
+       "pass_probability_p95": 0.9942571012639657,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 3.086782884133645,
+       "pass_probability_median": 0.9999999997319773,
+       "pass_probability_p05": 0.9999098715895388,
+       "pass_probability_p95": 1.0,
+       "reading": "route"
+      }
+     },
+     "0.2": {
+      "all_eligible": {
+       "expected_survived_at_projection": 7.889824650742063,
+       "pass_probability_median": 0.9156885378541353,
+       "pass_probability_p05": 0.3881665742162332,
+       "pass_probability_p95": 0.9995468573420492,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 2.65808595678053,
+       "pass_probability_median": 0.9999999999936147,
+       "pass_probability_p05": 0.9999839610494317,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      }
+     },
+     "0.3": {
+      "all_eligible": {
+       "expected_survived_at_projection": 5.827419724357727,
+       "pass_probability_median": 0.9935398143299516,
+       "pass_probability_p05": 0.8516041561525438,
+       "pass_probability_p95": 0.9999897019474765,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 2.01656688246821,
+       "pass_probability_median": 0.9999999999999947,
+       "pass_probability_p05": 0.9999998014044997,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      }
+     }
+    },
+    "known": {
+     "0.0027": {
+      "all_eligible": {
+       "expected_survived_at_projection": 10.948321885305047,
+       "pass_probability_median": 0.4386922884475325,
+       "pass_probability_p05": 0.008300806187405804,
+       "pass_probability_p95": 0.9842303897141415,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 2.5774260699069687,
+       "pass_probability_median": 0.9999999999999998,
+       "pass_probability_p05": 0.9999986995922483,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      }
+     },
+     "0.00814607": {
+      "all_eligible": {
+       "expected_survived_at_projection": 8.72278480142821,
+       "pass_probability_median": 0.8689980445131136,
+       "pass_probability_p05": 0.12055300486623742,
+       "pass_probability_p95": 0.9996240416026326,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 2.137839782317559,
+       "pass_probability_median": 0.9999999999999997,
+       "pass_probability_p05": 0.9999999912366233,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      }
+     },
+     "0.01": {
+      "all_eligible": {
+       "expected_survived_at_projection": 8.322175280774486,
+       "pass_probability_median": 0.9103522554639123,
+       "pass_probability_p05": 0.1693203127026941,
+       "pass_probability_p95": 0.9998834243486749,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 2.0615045542880637,
+       "pass_probability_median": 0.9999999999999997,
+       "pass_probability_p05": 0.999999998746647,
+       "pass_probability_p95": 1.0,
+       "reading": "route"
+      }
+     },
+     "0.025": {
+      "all_eligible": {
+       "expected_survived_at_projection": 6.561083243375235,
+       "pass_probability_median": 0.9928104657702079,
+       "pass_probability_p05": 0.6096893239667815,
+       "pass_probability_p95": 0.9999991994441824,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.723491660628482,
+       "pass_probability_median": 1.0,
+       "pass_probability_p05": 0.9999999999974829,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      }
+     },
+     "0.03": {
+      "all_eligible": {
+       "expected_survived_at_projection": 6.214374053757784,
+       "pass_probability_median": 0.9969694416644943,
+       "pass_probability_p05": 0.6612582980615609,
+       "pass_probability_p95": 0.9999998009647019,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.6541856698907573,
+       "pass_probability_median": 0.9999999999999997,
+       "pass_probability_p05": 0.9999999999978897,
+       "pass_probability_p95": 1.0,
+       "reading": "route"
+      }
+     },
+     "0.05": {
+      "all_eligible": {
+       "expected_survived_at_projection": 5.246021273126428,
+       "pass_probability_median": 0.9998205331589208,
+       "pass_probability_p05": 0.8945180105864992,
+       "pass_probability_p95": 0.9999999986955747,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.4499450259473163,
+       "pass_probability_median": 1.0,
+       "pass_probability_p05": 0.9999999999999777,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      }
+     },
+     "0.1": {
+      "all_eligible": {
+       "expected_survived_at_projection": 3.9351270930827025,
+       "pass_probability_median": 0.9999979214587711,
+       "pass_probability_p05": 0.9937277780109058,
+       "pass_probability_p95": 0.9999999999981718,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.136897253284646,
+       "pass_probability_median": 0.9999999999999999,
+       "pass_probability_p05": 0.9999999999999994,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      }
+     },
+     "0.15": {
+      "all_eligible": {
+       "expected_survived_at_projection": 3.169775676635925,
+       "pass_probability_median": 0.9999999516477214,
+       "pass_probability_p05": 0.9996033731068786,
+       "pass_probability_p95": 0.9999999999999927,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.929761421581853,
+       "pass_probability_median": 0.9999999999999998,
+       "pass_probability_p05": 0.9999999999999994,
+       "pass_probability_p95": 1.0,
+       "reading": "route"
+      }
+     },
+     "0.2": {
+      "all_eligible": {
+       "expected_survived_at_projection": 2.6289843195295615,
+       "pass_probability_median": 0.9999999974822538,
+       "pass_probability_p05": 0.9999061827986301,
+       "pass_probability_p95": 0.9999999999999996,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.7724602005477375,
+       "pass_probability_median": 0.9999999999999998,
+       "pass_probability_p05": 0.9999999999999994,
+       "pass_probability_p95": 1.0,
+       "reading": "route"
+      }
+     },
+     "0.3": {
+      "all_eligible": {
+       "expected_survived_at_projection": 1.8752139001346408,
+       "pass_probability_median": 0.9999999999969473,
+       "pass_probability_p05": 0.9999986766787798,
+       "pass_probability_p95": 1.0000000000000009,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.5411023102776192,
+       "pass_probability_median": 1.0,
+       "pass_probability_p05": 0.9999999999999998,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      }
+     }
+    },
+    "prior": {
+     "0.0027": {
+      "all_eligible": {
+       "expected_survived_at_projection": 14.661739070869253,
+       "pass_probability_median": 0.03492025707120067,
+       "pass_probability_p05": 9.97579911831307e-05,
+       "pass_probability_p95": 0.57858538153504,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 4.370573103462133,
+       "pass_probability_median": 0.9999982678435946,
+       "pass_probability_p05": 0.9850004522760759,
+       "pass_probability_p95": 0.9999999999993624,
+       "reading": "route"
+      }
+     },
+     "0.00814607": {
+      "all_eligible": {
+       "expected_survived_at_projection": 11.143928887054235,
+       "pass_probability_median": 0.38536505640069174,
+       "pass_probability_p05": 0.015808835093090945,
+       "pass_probability_p95": 0.9471768103865682,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 3.3856532686568026,
+       "pass_probability_median": 0.9999999949190107,
+       "pass_probability_p05": 0.9997129387051514,
+       "pass_probability_p95": 0.9999999999999997,
+       "reading": "route"
+      }
+     },
+     "0.01": {
+      "all_eligible": {
+       "expected_survived_at_projection": 10.526774279490416,
+       "pass_probability_median": 0.547877550796319,
+       "pass_probability_p05": 0.03560842151849882,
+       "pass_probability_p95": 0.9660359878858794,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 3.210342890048602,
+       "pass_probability_median": 0.9999999988938775,
+       "pass_probability_p05": 0.9997529315070701,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      }
+     },
+     "0.025": {
+      "all_eligible": {
+       "expected_survived_at_projection": 7.906710107000566,
+       "pass_probability_median": 0.9087037980182053,
+       "pass_probability_p05": 0.317957018795601,
+       "pass_probability_p95": 0.9993532638797248,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 2.4559080332243504,
+       "pass_probability_median": 0.9999999999989078,
+       "pass_probability_p05": 0.9999960110469407,
+       "pass_probability_p95": 1.0,
+       "reading": "route"
+      }
+     },
+     "0.03": {
+      "all_eligible": {
+       "expected_survived_at_projection": 7.412499887412685,
+       "pass_probability_median": 0.9562701273727126,
+       "pass_probability_p05": 0.4453682622146361,
+       "pass_probability_p95": 0.999739426677524,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 2.3111127279720183,
+       "pass_probability_median": 0.999999999999795,
+       "pass_probability_p05": 0.9999976962931135,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      }
+     },
+     "0.05": {
+      "all_eligible": {
+       "expected_survived_at_projection": 6.076600361530986,
+       "pass_probability_median": 0.995046781751293,
+       "pass_probability_p05": 0.7877297154697619,
+       "pass_probability_p95": 0.9999911853510156,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.9135388430396114,
+       "pass_probability_median": 0.999999999999999,
+       "pass_probability_p05": 0.9999999610966498,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      }
+     },
+     "0.1": {
+      "all_eligible": {
+       "expected_survived_at_projection": 4.380314982510081,
+       "pass_probability_median": 0.9999230745592436,
+       "pass_probability_p05": 0.9769943609251056,
+       "pass_probability_p95": 0.9999999878302668,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.3898488990101452,
+       "pass_probability_median": 1.0,
+       "pass_probability_p05": 0.9999999999371295,
+       "pass_probability_p95": 1.0000000000000007,
+       "reading": "route"
+      }
+     },
+     "0.15": {
+      "all_eligible": {
+       "expected_survived_at_projection": 3.450875163277107,
+       "pass_probability_median": 0.9999977567195667,
+       "pass_probability_p05": 0.9979053687737475,
+       "pass_probability_p95": 0.9999999999450123,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.0907715188582445,
+       "pass_probability_median": 0.9999999999999997,
+       "pass_probability_p05": 0.9999999999994804,
+       "pass_probability_p95": 1.0,
+       "reading": "route"
+      }
+     },
+     "0.2": {
+      "all_eligible": {
+       "expected_survived_at_projection": 2.820069505944762,
+       "pass_probability_median": 0.9999999223485468,
+       "pass_probability_p05": 0.9997908689960121,
+       "pass_probability_p95": 0.9999999999993214,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.8825865109293752,
+       "pass_probability_median": 1.0000000000000004,
+       "pass_probability_p05": 0.9999999999999859,
+       "pass_probability_p95": 1.0000000000000009,
+       "reading": "route"
+      }
+     },
+     "0.3": {
+      "all_eligible": {
+       "expected_survived_at_projection": 1.973723895044028,
+       "pass_probability_median": 0.9999999997694461,
+       "pass_probability_p05": 0.9999974995768274,
+       "pass_probability_p95": 0.9999999999999993,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.5986822570807844,
+       "pass_probability_median": 1.0000000000000002,
+       "pass_probability_p05": 0.9999999999999998,
+       "pass_probability_p95": 1.0000000000000007,
+       "reading": "route"
+      }
+     }
+    }
+   },
+   "survived_by_the_battery": 13,
+   "valid": true,
+   "zero_survivors": false
+  },
+  "EB2": {
+   "attempted": 100,
+   "c1_prime_projection": 184,
+   "d1_allowance": 10,
+   "eligible": 92,
+   "eligible_without_a_distance": 0,
+   "generation_failures": 0,
+   "readings": {
+    "box": {
+     "0.0027": {
+      "all_eligible": {
+       "expected_survived_at_projection": 40.179246884433425,
+       "pass_probability_median": 7.663535752398648e-16,
+       "pass_probability_p05": 5.175353321183752e-21,
+       "pass_probability_p95": 3.324334334004093e-11,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 9.830575377469355,
+       "pass_probability_median": 0.6644406342956035,
+       "pass_probability_p05": 0.05985185680324121,
+       "pass_probability_p95": 0.998806689693369,
+       "reading": "unresolved"
+      }
+     },
+     "0.00814607": {
+      "all_eligible": {
+       "expected_survived_at_projection": 30.540776912548342,
+       "pass_probability_median": 9.441466760256286e-09,
+       "pass_probability_p05": 4.600291055624055e-12,
+       "pass_probability_p95": 5.174659064857687e-06,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 7.555274217164899,
+       "pass_probability_median": 0.9481858973464397,
+       "pass_probability_p05": 0.43636769603017317,
+       "pass_probability_p95": 0.9999768192506822,
+       "reading": "unresolved"
+      }
+     },
+     "0.01": {
+      "all_eligible": {
+       "expected_survived_at_projection": 28.71782075967914,
+       "pass_probability_median": 1.2381299352852757e-07,
+       "pass_probability_p05": 1.5312552295365534e-10,
+       "pass_probability_p95": 5.1407279417383285e-05,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 7.1157939942346555,
+       "pass_probability_median": 0.9664968217659977,
+       "pass_probability_p05": 0.521802678896542,
+       "pass_probability_p95": 0.9999668017163689,
+       "reading": "route"
+      }
+     },
+     "0.025": {
+      "all_eligible": {
+       "expected_survived_at_projection": 20.599061171599644,
+       "pass_probability_median": 0.001109333262464706,
+       "pass_probability_p05": 2.4855019355580952e-05,
+       "pass_probability_p95": 0.025216397821405043,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 5.1407997217435915,
+       "pass_probability_median": 0.9988645231929882,
+       "pass_probability_p05": 0.9272664762275766,
+       "pass_probability_p95": 0.9999999032859407,
+       "reading": "route"
+      }
+     },
+     "0.03": {
+      "all_eligible": {
+       "expected_survived_at_projection": 19.014127092477462,
+       "pass_probability_median": 0.003943564830155782,
+       "pass_probability_p05": 0.00012317970125151674,
+       "pass_probability_p95": 0.059030527718709154,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 4.753366224636043,
+       "pass_probability_median": 0.9995200731014101,
+       "pass_probability_p05": 0.9554478157911991,
+       "pass_probability_p95": 0.9999999700290413,
+       "reading": "route"
+      }
+     },
+     "0.05": {
+      "all_eligible": {
+       "expected_survived_at_projection": 14.697178519359158,
+       "pass_probability_median": 0.08568726159583723,
+       "pass_probability_p05": 0.010740273174611415,
+       "pass_probability_p95": 0.3641076910823959,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 3.6968875287415237,
+       "pass_probability_median": 0.9999801379569921,
+       "pass_probability_p05": 0.994507452061081,
+       "pass_probability_p95": 0.9999999994947285,
+       "reading": "route"
+      }
+     },
+     "0.1": {
+      "all_eligible": {
+       "expected_survived_at_projection": 9.313648798934196,
+       "pass_probability_median": 0.6852924294886586,
+       "pass_probability_p05": 0.3666735505642782,
+       "pass_probability_p95": 0.922433996313049,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 2.376324992194794,
+       "pass_probability_median": 0.9999999252500302,
+       "pass_probability_p05": 0.9999057416205195,
+       "pass_probability_p95": 0.9999999999994442,
+       "reading": "route"
+      }
+     },
+     "0.15": {
+      "all_eligible": {
+       "expected_survived_at_projection": 6.549855658509258,
+       "pass_probability_median": 0.9521655708026493,
+       "pass_probability_p05": 0.8148644665686543,
+       "pass_probability_p95": 0.9934284292473693,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.6941605041300198,
+       "pass_probability_median": 0.9999999991582726,
+       "pass_probability_p05": 0.9999979822210379,
+       "pass_probability_p95": 0.999999999999999,
+       "reading": "route"
+      }
+     },
+     "0.2": {
+      "all_eligible": {
+       "expected_survived_at_projection": 4.81861470644664,
+       "pass_probability_median": 0.9950143225389163,
+       "pass_probability_p05": 0.964872142849951,
+       "pass_probability_p95": 0.9995910928976895,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.2630472878438566,
+       "pass_probability_median": 0.9999999999858633,
+       "pass_probability_p05": 0.9999999393033705,
+       "pass_probability_p95": 0.9999999999999998,
+       "reading": "route"
+      }
+     },
+     "0.3": {
+      "all_eligible": {
+       "expected_survived_at_projection": 2.768602988601982,
+       "pass_probability_median": 0.9999595562692407,
+       "pass_probability_p05": 0.9994904199077953,
+       "pass_probability_p95": 0.9999988132643202,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.7447051133148014,
+       "pass_probability_median": 0.9999999999999903,
+       "pass_probability_p05": 0.9999999998518079,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      }
+     }
+    },
+    "known": {
+     "0.0027": {
+      "all_eligible": {
+       "expected_survived_at_projection": 10.437193488593334,
+       "pass_probability_median": 0.5284942911524257,
+       "pass_probability_p05": 0.11196033498849012,
+       "pass_probability_p95": 0.9442331729271323,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 3.903088968491079,
+       "pass_probability_median": 0.999996788323736,
+       "pass_probability_p05": 0.9916243423879274,
+       "pass_probability_p95": 0.9999999999999993,
+       "reading": "route"
+      }
+     },
+     "0.00814607": {
+      "all_eligible": {
+       "expected_survived_at_projection": 6.978155974693895,
+       "pass_probability_median": 0.9505327371807935,
+       "pass_probability_p05": 0.6985595755609121,
+       "pass_probability_p95": 0.998309578147216,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 2.5608385089523327,
+       "pass_probability_median": 0.9999999869743188,
+       "pass_probability_p05": 0.9998404127425758,
+       "pass_probability_p95": 1.0,
+       "reading": "route"
+      }
+     },
+     "0.01": {
+      "all_eligible": {
+       "expected_survived_at_projection": 6.37644136137958,
+       "pass_probability_median": 0.9739307394351912,
+       "pass_probability_p05": 0.7852974421438551,
+       "pass_probability_p95": 0.9993420346477533,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 2.3268052299429045,
+       "pass_probability_median": 0.999999997798648,
+       "pass_probability_p05": 0.9999267417990084,
+       "pass_probability_p95": 1.0,
+       "reading": "route"
+      }
+     },
+     "0.025": {
+      "all_eligible": {
+       "expected_survived_at_projection": 3.9255611440470197,
+       "pass_probability_median": 0.9995926484961245,
+       "pass_probability_p05": 0.9895979978795102,
+       "pass_probability_p95": 0.9999973423022205,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.3828880360701574,
+       "pass_probability_median": 0.9999999999953926,
+       "pass_probability_p05": 0.9999997217204333,
+       "pass_probability_p95": 1.0,
+       "reading": "route"
+      }
+     },
+     "0.03": {
+      "all_eligible": {
+       "expected_survived_at_projection": 3.494469621655682,
+       "pass_probability_median": 0.9998635488114196,
+       "pass_probability_p05": 0.9965080675058033,
+       "pass_probability_p95": 0.9999990272489521,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.2197507972305373,
+       "pass_probability_median": 0.999999999998983,
+       "pass_probability_p05": 0.999999891059561,
+       "pass_probability_p95": 0.9999999999999999,
+       "reading": "route"
+      }
+     },
+     "0.05": {
+      "all_eligible": {
+       "expected_survived_at_projection": 2.4080419056509683,
+       "pass_probability_median": 0.9999968358127657,
+       "pass_probability_p05": 0.9998341340899959,
+       "pass_probability_p95": 0.9999999879789004,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.8153343871184461,
+       "pass_probability_median": 0.9999999999999907,
+       "pass_probability_p05": 0.9999999992132463,
+       "pass_probability_p95": 1.0,
+       "reading": "route"
+      }
+     },
+     "0.1": {
+      "all_eligible": {
+       "expected_survived_at_projection": 1.2544125596120033,
+       "pass_probability_median": 0.9999999968993913,
+       "pass_probability_p05": 0.9999997545005569,
+       "pass_probability_p95": 0.9999999999958377,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.4020440749120213,
+       "pass_probability_median": 1.0,
+       "pass_probability_p05": 0.9999999999994502,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      }
+     },
+     "0.15": {
+      "all_eligible": {
+       "expected_survived_at_projection": 0.7634809908201535,
+       "pass_probability_median": 0.9999999999876414,
+       "pass_probability_p05": 0.9999999983403346,
+       "pass_probability_p95": 0.9999999999999929,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.23464624555125488,
+       "pass_probability_median": 1.0,
+       "pass_probability_p05": 0.9999999999999993,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      }
+     },
+     "0.2": {
+      "all_eligible": {
+       "expected_survived_at_projection": 0.4975003641332473,
+       "pass_probability_median": 0.9999999999998932,
+       "pass_probability_p05": 0.99999999998407,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.1475076463955607,
+       "pass_probability_median": 1.0,
+       "pass_probability_p05": 0.9999999999999996,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      }
+     },
+     "0.3": {
+      "all_eligible": {
+       "expected_survived_at_projection": 0.2319826018285954,
+       "pass_probability_median": 1.0000000000000004,
+       "pass_probability_p05": 0.9999999999999967,
+       "pass_probability_p95": 1.0000000000000013,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.06458411683146847,
+       "pass_probability_median": 1.0,
+       "pass_probability_p05": 0.9999999999999997,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      }
+     }
+    },
+    "prior": {
+     "0.0027": {
+      "all_eligible": {
+       "expected_survived_at_projection": 20.77981141303275,
+       "pass_probability_median": 0.0005460577715238484,
+       "pass_probability_p05": 4.14699682493965e-06,
+       "pass_probability_p95": 0.022306618987673787,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 7.018957351697583,
+       "pass_probability_median": 0.9707075601269661,
+       "pass_probability_p05": 0.6043408703965087,
+       "pass_probability_p95": 0.9999858265355271,
+       "reading": "route"
+      }
+     },
+     "0.00814607": {
+      "all_eligible": {
+       "expected_survived_at_projection": 14.446841453365225,
+       "pass_probability_median": 0.09088879890392773,
+       "pass_probability_p05": 0.006669149539087755,
+       "pass_probability_p95": 0.4583980964092333,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 4.897830030295072,
+       "pass_probability_median": 0.999118859082228,
+       "pass_probability_p05": 0.9490675423387306,
+       "pass_probability_p95": 0.9999999654542219,
+       "reading": "route"
+      }
+     },
+     "0.01": {
+      "all_eligible": {
+       "expected_survived_at_projection": 13.327566898287868,
+       "pass_probability_median": 0.1733911416482788,
+       "pass_probability_p05": 0.021853638863751412,
+       "pass_probability_p95": 0.5841920745749923,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 4.513182279395236,
+       "pass_probability_median": 0.9996266022188773,
+       "pass_probability_p05": 0.9667471054991069,
+       "pass_probability_p95": 0.999999988982888,
+       "reading": "route"
+      }
+     },
+     "0.025": {
+      "all_eligible": {
+       "expected_survived_at_projection": 8.666143034298116,
+       "pass_probability_median": 0.7788365366412113,
+       "pass_probability_p05": 0.422420337559833,
+       "pass_probability_p95": 0.9682431686275872,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 2.8969367062055937,
+       "pass_probability_median": 0.9999973696688698,
+       "pass_probability_p05": 0.9993222511470552,
+       "pass_probability_p95": 0.9999999999650471,
+       "reading": "route"
+      }
+     },
+     "0.03": {
+      "all_eligible": {
+       "expected_survived_at_projection": 7.821482007262625,
+       "pass_probability_median": 0.8677465198174964,
+       "pass_probability_p05": 0.5641898310217865,
+       "pass_probability_p95": 0.9868019437696091,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 2.603611471876263,
+       "pass_probability_median": 0.9999991321161571,
+       "pass_probability_p05": 0.9997218514751539,
+       "pass_probability_p95": 0.9999999999986603,
+       "reading": "route"
+      }
+     },
+     "0.05": {
+      "all_eligible": {
+       "expected_survived_at_projection": 5.6396330188232,
+       "pass_probability_median": 0.9853232532127157,
+       "pass_probability_p05": 0.9022488009829248,
+       "pass_probability_p95": 0.999014621558458,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.8494479154000036,
+       "pass_probability_median": 0.999999981680934,
+       "pass_probability_p05": 0.9999913058142139,
+       "pass_probability_p95": 0.9999999999999784,
+       "reading": "route"
+      }
+     },
+     "0.1": {
+      "all_eligible": {
+       "expected_survived_at_projection": 3.190000453527447,
+       "pass_probability_median": 0.9998967372835232,
+       "pass_probability_p05": 0.9981492642860835,
+       "pass_probability_p95": 0.9999977788065355,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.0165657536110784,
+       "pass_probability_median": 0.999999999983461,
+       "pass_probability_p05": 0.9999999858795974,
+       "pass_probability_p95": 0.9999999999999998,
+       "reading": "route"
+      }
+     },
+     "0.15": {
+      "all_eligible": {
+       "expected_survived_at_projection": 2.0701171162704544,
+       "pass_probability_median": 0.999998937997749,
+       "pass_probability_p05": 0.9999623793563334,
+       "pass_probability_p95": 0.9999999858616456,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.6453085596220771,
+       "pass_probability_median": 0.9999999999999631,
+       "pass_probability_p05": 0.9999999999178245,
+       "pass_probability_p95": 1.0,
+       "reading": "route"
+      }
+     },
+     "0.2": {
+      "all_eligible": {
+       "expected_survived_at_projection": 1.426275685625085,
+       "pass_probability_median": 0.9999999785111083,
+       "pass_probability_p05": 0.9999988096079281,
+       "pass_probability_p95": 0.9999999998352742,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.4364469352795831,
+       "pass_probability_median": 0.9999999999999999,
+       "pass_probability_p05": 0.9999999999990832,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      }
+     },
+     "0.3": {
+      "all_eligible": {
+       "expected_survived_at_projection": 0.7346379746348353,
+       "pass_probability_median": 0.9999999999882616,
+       "pass_probability_p05": 0.9999999988034136,
+       "pass_probability_p95": 0.9999999999999497,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.21788253187078319,
+       "pass_probability_median": 0.9999999999999994,
+       "pass_probability_p05": 0.9999999999999989,
+       "pass_probability_p95": 0.9999999999999998,
+       "reading": "route"
+      }
+     }
+    }
+   },
+   "survived_by_the_battery": 11,
+   "valid": true,
+   "zero_survivors": false
+  }
+ },
+ "fingerprint": "d68f0b735017e376",
+ "generator": "c1 v1 on set A's seeds",
+ "label": "v0.5.5 R1, D1-P: D1's SURVIVED-denial price curve (development; an oracle surrogate with a nominal score; decides nothing by itself; never a draft)",
+ "method_status": "not_validated",
+ "per_exit_primary": {
+  "inconclusive_if_d2_d4_met": {
+   "all_eligible": {
+    "EB1": "route",
+    "EB2": "route"
+   },
+   "survivors": {
+    "EB1": "route",
+    "EB2": "route"
+   }
+  },
+  "weakened": {
+   "all_eligible": {
+    "EB1": "route",
+    "EB2": "route"
+   },
+   "survivors": {
+    "EB1": "route",
+    "EB2": "route"
+   }
+  }
+ },
+ "primary_reading": "prior",
+ "scenarios": {
+  "fatal_strict_budget_less_reference_scenario": 0.008146067415730339,
+  "fatal_strict_budget_scenario": 0.025,
+  "weakened_battery_unit_scenario": 0.1
+ },
+ "scenarios_primary": {
+  "fatal_strict_budget_less_reference_scenario": {
+   "all_eligible": {
+    "EB1": "unresolved",
+    "EB2": "unresolved"
+   },
+   "survivors": {
+    "EB1": "route",
+    "EB2": "route"
+   }
+  },
+  "fatal_strict_budget_scenario": {
+   "all_eligible": {
+    "EB1": "unresolved",
+    "EB2": "unresolved"
+   },
+   "survivors": {
+    "EB1": "route",
+    "EB2": "route"
+   }
+  },
+  "weakened_battery_unit_scenario": {
+   "all_eligible": {
+    "EB1": "route",
+    "EB2": "route"
+   },
+   "survivors": {
+    "EB1": "route",
+    "EB2": "route"
+   }
+  }
+ },
+ "set": "bridge",
+ "set_A_record_sha256": "d2dc7e07230f90ed84b1c1778c37636122e60feb198512741a1293116511dda3",
+ "stops": []
+}

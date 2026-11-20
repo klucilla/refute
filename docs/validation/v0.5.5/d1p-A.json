@@ -1,0 +1,1103 @@
+{
+ "code_identity": {
+  "digest": "103c41f496530ff71a25596db465ea83ff5c717c6b4a676bd8a41be0cf90f0a8",
+  "files": {
+   "calibration/v0.4/claim.yaml": "95acddf2667f8f225d16511f187ca45f317294bf298340678b98b9eb03172cf3",
+   "docs/plans/v0.5.5-charter-amendment-1.md": "c9bea0fd746949f7f01a73e4a0f7ce113c9a880ffe92af872b06c524f9107c77",
+   "docs/plans/v0.5.5-charter.md": "aab4ec2ff085db76e8f486ba2ab557cac0294f6db38b44c33085e29098cc5246",
+   "docs/plans/v0.5.5-r1-designs-revision-1.md": "aff01c25f1de8b67efccc2ebe1760f93aca706c55f76ce17162d6eaca11ccf4e",
+   "docs/plans/v0.5.5-r1-designs.md": "1013a88e9075f3a5cc16b18b623b0c1929c9e92c2883f30436ee55ec9a8ba9eb",
+   "docs/validation/v0.5.1/feasibility/d1_routes.py": "16304b368743aac7fe3ba43b53478ad3e7baa4dcc843a592f42ff6e9420ccfcd",
+   "docs/validation/v0.5.1/feasibility/forecast.py": "2e666b4269016c0df2cbb0fdb8dcf493fba7b90ad601c1002bc555e93e5fd31a",
+   "docs/validation/v0.5.2/stage2/budgeted.py": "557e82ae2e79d6661a875220b84e209ea961171fb83b3fe5c9839221e927874f",
+   "docs/validation/v0.5.2/stage2/driver.py": "90ad1700b935b900d1ae4c74842197cb1de710b1159369fa0ebcf9040af12bf8",
+   "docs/validation/v0.5.3/stageB/d1_bound.py": "a222f5709ea8c9b418e53bdb0c9ed4a24570dcf1e568b5a0c3e9dd9fba266636",
+   "docs/validation/v0.5.3/stageB/ledger_b.py": "173eeee95956d786a520373e3b52619bc6651ff0d5be032b2765257d3e31e1fd",
+   "docs/validation/v0.5.4/budgeted_v3.py": "0c79dc8ff595c063e432e4ffe6c5463cb20bcbc74eec12f04d08390a5b824229",
+   "docs/validation/v0.5.5/d1p_price.py": "f2d754c2acf27c65d69f418d05adb9ab08ab03b9e7f55799bdd3c3b8726cd0f4",
+   "docs/validation/v0.5.5/generator_v2.py": "4a42c26b641df1890624315e46f640cdd3d300d804694644e62bb50b350bf723",
+   "docs/validation/v0.5.5/ledger_v055.py": "65e65400357b5866f27cc83c8a7858fb404ee9af39cb9460737d24cf7fcd0a17",
+   "docs/validation/v0.5.5/r1_common.py": "0157b43e6f695011868592a9cefc51ef59bee00b32c93d9ce5e60b6311ea223e"
+  },
+  "sha256": "29b780e0fcd497f227e119a72344ae900b43522b0fe053c044d5c6e458155ca4",
+  "src_code_hash": "e1a89af9784a51baad9479044c0c678664104e571e4434e287519cc1e08d0cab"
+ },
+ "cpu_hours": 4.6763,
+ "design": "docs/plans/v0.5.5-r1-designs.md (D1-P)",
+ "errors": [],
+ "exit_prices": {
+  "inconclusive_if_d2_d4_met": 0.05,
+  "weakened": 0.05
+ },
+ "families": {
+  "EB1": {
+   "attempted": 200,
+   "c1_prime_projection": 196,
+   "d1_allowance": 11,
+   "eligible": 196,
+   "eligible_without_a_distance": 0,
+   "generation_failures": 1,
+   "readings": {
+    "box": {
+     "0.0027": {
+      "all_eligible": {
+       "expected_survived_at_projection": 34.355275416838076,
+       "pass_probability_median": 3.4177304524847394e-15,
+       "pass_probability_p05": 3.322561222572283e-23,
+       "pass_probability_p95": 4.083206122342927e-09,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 10.963998832080541,
+       "pass_probability_median": 0.6686573205446178,
+       "pass_probability_p05": 0.00857762890387178,
+       "pass_probability_p95": 0.9999605783154302,
+       "reading": "unresolved"
+      }
+     },
+     "0.00814607": {
+      "all_eligible": {
+       "expected_survived_at_projection": 28.00815970372161,
+       "pass_probability_median": 2.778257350097438e-09,
+       "pass_probability_p05": 7.254865517461525e-15,
+       "pass_probability_p95": 4.280632383057212e-05,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 9.276258154885749,
+       "pass_probability_median": 0.9298845413087471,
+       "pass_probability_p05": 0.07984866943346244,
+       "pass_probability_p95": 0.9999974007972826,
+       "reading": "unresolved"
+      }
+     },
+     "0.01": {
+      "all_eligible": {
+       "expected_survived_at_projection": 26.81307721088321,
+       "pass_probability_median": 2.4786482814400373e-08,
+       "pass_probability_p05": 1.557127531546012e-13,
+       "pass_probability_p95": 0.00022151407669837247,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 8.948178511645615,
+       "pass_probability_median": 0.95811909792265,
+       "pass_probability_p05": 0.17980283071609032,
+       "pass_probability_p95": 0.9999987131271685,
+       "reading": "unresolved"
+      }
+     },
+     "0.025": {
+      "all_eligible": {
+       "expected_survived_at_projection": 21.396262199464854,
+       "pass_probability_median": 0.00016304021866671948,
+       "pass_probability_p05": 4.083559519163599e-08,
+       "pass_probability_p95": 0.03452146719960675,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 7.41319397366783,
+       "pass_probability_median": 0.9969714122744104,
+       "pass_probability_p05": 0.5221675115715196,
+       "pass_probability_p95": 0.9999999964123135,
+       "reading": "route"
+      }
+     },
+     "0.03": {
+      "all_eligible": {
+       "expected_survived_at_projection": 20.302019069270145,
+       "pass_probability_median": 0.0005979037197227025,
+       "pass_probability_p05": 2.279064915457738e-07,
+       "pass_probability_p95": 0.07122500002613784,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 7.092352161387296,
+       "pass_probability_median": 0.9983127627321537,
+       "pass_probability_p05": 0.676043538632067,
+       "pass_probability_p95": 0.9999999988748162,
+       "reading": "route"
+      }
+     },
+     "0.05": {
+      "all_eligible": {
+       "expected_survived_at_projection": 17.204601713699628,
+       "pass_probability_median": 0.01647153967783338,
+       "pass_probability_p05": 7.308498785416539e-05,
+       "pass_probability_p95": 0.3383849691150365,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 6.160960236406063,
+       "pass_probability_median": 0.9998561932255047,
+       "pass_probability_p05": 0.8562649228389275,
+       "pass_probability_p95": 0.999999999980684,
+       "reading": "route"
+      }
+     },
+     "0.1": {
+      "all_eligible": {
+       "expected_survived_at_projection": 12.928529886597707,
+       "pass_probability_median": 0.31675178175732255,
+       "pass_probability_p05": 0.02725835126066985,
+       "pass_probability_p95": 0.8674274546430087,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 4.808771087464152,
+       "pass_probability_median": 0.9999991441266821,
+       "pass_probability_p05": 0.9887162351877372,
+       "pass_probability_p95": 0.9999999999999925,
+       "reading": "route"
+      }
+     },
+     "0.15": {
+      "all_eligible": {
+       "expected_survived_at_projection": 10.397394369734553,
+       "pass_probability_median": 0.6828842519329466,
+       "pass_probability_p05": 0.16675989317951032,
+       "pass_probability_p95": 0.9783004358104458,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 3.964503886194323,
+       "pass_probability_median": 0.9999999805274009,
+       "pass_probability_p05": 0.9990101485970557,
+       "pass_probability_p95": 0.9999999999999997,
+       "reading": "route"
+      }
+     },
+     "0.2": {
+      "all_eligible": {
+       "expected_survived_at_projection": 8.598750054979988,
+       "pass_probability_median": 0.9109293451511343,
+       "pass_probability_p05": 0.49209789799102915,
+       "pass_probability_p95": 0.9974140430772194,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 3.3412620109598143,
+       "pass_probability_median": 0.9999999993432556,
+       "pass_probability_p05": 0.9998709237229365,
+       "pass_probability_p95": 1.0,
+       "reading": "route"
+      }
+     },
+     "0.3": {
+      "all_eligible": {
+       "expected_survived_at_projection": 6.087090505075282,
+       "pass_probability_median": 0.9954972946640626,
+       "pass_probability_p05": 0.8969111884602626,
+       "pass_probability_p95": 0.9999736713844575,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 2.4340957654657713,
+       "pass_probability_median": 0.9999999999991493,
+       "pass_probability_p05": 0.9999979961607414,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      }
+     }
+    },
+    "known": {
+     "0.0027": {
+      "all_eligible": {
+       "expected_survived_at_projection": 13.544579625360198,
+       "pass_probability_median": 0.1765702036310463,
+       "pass_probability_p05": 0.0008761645515972563,
+       "pass_probability_p95": 0.8709243789981113,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 2.891290467155998,
+       "pass_probability_median": 0.9999999999999992,
+       "pass_probability_p05": 0.9999981567206189,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      }
+     },
+     "0.00814607": {
+      "all_eligible": {
+       "expected_survived_at_projection": 10.595800113965277,
+       "pass_probability_median": 0.6971112139415474,
+       "pass_probability_p05": 0.06434007590797744,
+       "pass_probability_p95": 0.994613820201549,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 2.284196431732754,
+       "pass_probability_median": 1.0,
+       "pass_probability_p05": 0.9999999934470689,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      }
+     },
+     "0.01": {
+      "all_eligible": {
+       "expected_survived_at_projection": 10.074961895940728,
+       "pass_probability_median": 0.8133982832309156,
+       "pass_probability_p05": 0.09102678388610645,
+       "pass_probability_p95": 0.9985627080036596,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 2.179712605476774,
+       "pass_probability_median": 0.9999999999999997,
+       "pass_probability_p05": 0.9999999988238021,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      }
+     },
+     "0.025": {
+      "all_eligible": {
+       "expected_survived_at_projection": 7.82911919253208,
+       "pass_probability_median": 0.9839029142100473,
+       "pass_probability_p05": 0.5083463709835644,
+       "pass_probability_p95": 0.9999871184457422,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.7344825575611555,
+       "pass_probability_median": 0.9999999999999998,
+       "pass_probability_p05": 0.9999999999975692,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      }
+     },
+     "0.03": {
+      "all_eligible": {
+       "expected_survived_at_projection": 7.394779475109944,
+       "pass_probability_median": 0.9915671061699932,
+       "pass_probability_p05": 0.6078834753725705,
+       "pass_probability_p95": 0.9999973302426013,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.648338503768879,
+       "pass_probability_median": 0.9999999999999999,
+       "pass_probability_p05": 0.9999999999993749,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      }
+     },
+     "0.05": {
+      "all_eligible": {
+       "expected_survived_at_projection": 6.191833310740588,
+       "pass_probability_median": 0.9993587010177235,
+       "pass_probability_p05": 0.8860843082699318,
+       "pass_probability_p95": 0.9999999464261901,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.4067159178941377,
+       "pass_probability_median": 1.0000000000000002,
+       "pass_probability_p05": 0.9999999999999982,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      }
+     },
+     "0.1": {
+      "all_eligible": {
+       "expected_survived_at_projection": 4.578092613556461,
+       "pass_probability_median": 0.9999924389867638,
+       "pass_probability_p05": 0.9907483767430945,
+       "pass_probability_p95": 0.9999999999624725,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.0689996064952425,
+       "pass_probability_median": 0.9999999999999998,
+       "pass_probability_p05": 0.9999999999999993,
+       "pass_probability_p95": 1.0,
+       "reading": "route"
+      }
+     },
+     "0.15": {
+      "all_eligible": {
+       "expected_survived_at_projection": 3.6401176884445077,
+       "pass_probability_median": 0.9999999366626073,
+       "pass_probability_p05": 0.9993855093257159,
+       "pass_probability_p95": 0.9999999999999164,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.8622446949723626,
+       "pass_probability_median": 0.9999999999999998,
+       "pass_probability_p05": 0.9999999999999994,
+       "pass_probability_p95": 1.0,
+       "reading": "route"
+      }
+     },
+     "0.2": {
+      "all_eligible": {
+       "expected_survived_at_projection": 2.9799739656259483,
+       "pass_probability_median": 0.9999999981753669,
+       "pass_probability_p05": 0.9999366382711661,
+       "pass_probability_p95": 0.9999999999999993,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.7115099669503226,
+       "pass_probability_median": 0.9999999999999999,
+       "pass_probability_p05": 0.9999999999999996,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      }
+     },
+     "0.3": {
+      "all_eligible": {
+       "expected_survived_at_projection": 2.068540646237479,
+       "pass_probability_median": 0.999999999995128,
+       "pass_probability_p05": 0.9999995583332121,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.49665999812751443,
+       "pass_probability_median": 0.9999999999999999,
+       "pass_probability_p05": 0.9999999999999996,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      }
+     }
+    },
+    "prior": {
+     "0.0027": {
+      "all_eligible": {
+       "expected_survived_at_projection": 20.07518256643563,
+       "pass_probability_median": 0.0007055552281884454,
+       "pass_probability_p05": 1.4063531715031497e-07,
+       "pass_probability_p95": 0.09002996274346345,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 6.280418714931072,
+       "pass_probability_median": 0.9997398424501116,
+       "pass_probability_p05": 0.8307771946237796,
+       "pass_probability_p95": 0.9999999988904568,
+       "reading": "route"
+      }
+     },
+     "0.00814607": {
+      "all_eligible": {
+       "expected_survived_at_projection": 15.27397032983234,
+       "pass_probability_median": 0.06555005642026987,
+       "pass_probability_p05": 0.0003878639294605833,
+       "pass_probability_p95": 0.5971528561692439,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 4.889571445819946,
+       "pass_probability_median": 0.9999980216682858,
+       "pass_probability_p05": 0.9863289863988056,
+       "pass_probability_p95": 0.9999999999992174,
+       "reading": "route"
+      }
+     },
+     "0.01": {
+      "all_eligible": {
+       "expected_survived_at_projection": 14.42918955654662,
+       "pass_probability_median": 0.11360857548480031,
+       "pass_probability_p05": 0.0013201208213237767,
+       "pass_probability_p95": 0.7300505393601278,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 4.63525255994077,
+       "pass_probability_median": 0.9999991760273546,
+       "pass_probability_p05": 0.9933148144352394,
+       "pass_probability_p95": 0.9999999999999035,
+       "reading": "route"
+      }
+     },
+     "0.025": {
+      "all_eligible": {
+       "expected_survived_at_projection": 10.818328485070191,
+       "pass_probability_median": 0.6291571586016522,
+       "pass_probability_p05": 0.09036789541877793,
+       "pass_probability_p95": 0.9854012391172197,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 3.51161433767832,
+       "pass_probability_median": 0.999999998700869,
+       "pass_probability_p05": 0.9998433738396781,
+       "pass_probability_p95": 0.9999999999999999,
+       "reading": "route"
+      }
+     },
+     "0.03": {
+      "all_eligible": {
+       "expected_survived_at_projection": 10.13028475841495,
+       "pass_probability_median": 0.7551536495987459,
+       "pass_probability_p05": 0.1547588155908201,
+       "pass_probability_p95": 0.992551212316176,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 3.290668393588278,
+       "pass_probability_median": 0.9999999994640514,
+       "pass_probability_p05": 0.9999228323904804,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      }
+     },
+     "0.05": {
+      "all_eligible": {
+       "expected_survived_at_projection": 8.25461985712235,
+       "pass_probability_median": 0.9488697841877427,
+       "pass_probability_p05": 0.4832605581569606,
+       "pass_probability_p95": 0.9995912538863118,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 2.6779706120328948,
+       "pass_probability_median": 0.9999999999974347,
+       "pass_probability_p05": 0.9999956832005932,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      }
+     },
+     "0.1": {
+      "all_eligible": {
+       "expected_survived_at_projection": 5.838002682671735,
+       "pass_probability_median": 0.9986339202846201,
+       "pass_probability_p05": 0.918636131737991,
+       "pass_probability_p95": 0.9999983056091156,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.8708452420812545,
+       "pass_probability_median": 0.9999999999999996,
+       "pass_probability_p05": 0.9999999908103442,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      }
+     },
+     "0.15": {
+      "all_eligible": {
+       "expected_survived_at_projection": 4.504493251478773,
+       "pass_probability_median": 0.9999509622969667,
+       "pass_probability_p05": 0.9907217273037083,
+       "pass_probability_p95": 0.9999999868513885,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.4216955795127935,
+       "pass_probability_median": 0.9999999999999997,
+       "pass_probability_p05": 0.999999999939267,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      }
+     },
+     "0.2": {
+      "all_eligible": {
+       "expected_survived_at_projection": 3.603543039226781,
+       "pass_probability_median": 0.9999972871609732,
+       "pass_probability_p05": 0.9991171792780866,
+       "pass_probability_p95": 0.99999999970941,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.1194799985972022,
+       "pass_probability_median": 0.9999999999999999,
+       "pass_probability_p05": 0.9999999999978961,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      }
+     },
+     "0.3": {
+      "all_eligible": {
+       "expected_survived_at_projection": 2.4159071788313473,
+       "pass_probability_median": 0.9999999944599742,
+       "pass_probability_p05": 0.9999860886962161,
+       "pass_probability_p95": 0.999999999999881,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.7268324550129455,
+       "pass_probability_median": 0.9999999999999997,
+       "pass_probability_p05": 0.9999999999999987,
+       "pass_probability_p95": 1.0,
+       "reading": "route"
+      }
+     }
+    }
+   },
+   "survived_by_the_battery": 29,
+   "valid": true,
+   "zero_survivors": false
+  },
+  "EB2": {
+   "attempted": 200,
+   "c1_prime_projection": 184,
+   "d1_allowance": 10,
+   "eligible": 184,
+   "eligible_without_a_distance": 0,
+   "generation_failures": 0,
+   "readings": {
+    "box": {
+     "0.0027": {
+      "all_eligible": {
+       "expected_survived_at_projection": 35.95996266260997,
+       "pass_probability_median": 8.407499120801193e-13,
+       "pass_probability_p05": 2.3972463783663164e-17,
+       "pass_probability_p95": 4.653520538356318e-09,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 8.036175450157366,
+       "pass_probability_median": 0.912389167006917,
+       "pass_probability_p05": 0.31759035921502854,
+       "pass_probability_p95": 0.9996596157495446,
+       "reading": "unresolved"
+      }
+     },
+     "0.00814607": {
+      "all_eligible": {
+       "expected_survived_at_projection": 26.763926848087202,
+       "pass_probability_median": 8.054732099989322e-07,
+       "pass_probability_p05": 9.379570745166199e-10,
+       "pass_probability_p95": 0.00020581584525150646,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 5.792882084754842,
+       "pass_probability_median": 0.9951442993459788,
+       "pass_probability_p05": 0.812426248173207,
+       "pass_probability_p95": 0.9999984614963018,
+       "reading": "route"
+      }
+     },
+     "0.01": {
+      "all_eligible": {
+       "expected_survived_at_projection": 25.07026417013721,
+       "pass_probability_median": 7.569213368850405e-06,
+       "pass_probability_p05": 1.5532381119591006e-08,
+       "pass_probability_p95": 0.0013017321410201375,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 5.381324318192779,
+       "pass_probability_median": 0.997893714787512,
+       "pass_probability_p05": 0.9144968198247883,
+       "pass_probability_p95": 0.9999996506983682,
+       "reading": "route"
+      }
+     },
+     "0.025": {
+      "all_eligible": {
+       "expected_survived_at_projection": 17.69595035558615,
+       "pass_probability_median": 0.011075063493727614,
+       "pass_probability_p05": 0.00032745496962897355,
+       "pass_probability_p95": 0.12356385293334297,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 3.6187055183732557,
+       "pass_probability_median": 0.9999719711420255,
+       "pass_probability_p05": 0.994964222419355,
+       "pass_probability_p95": 0.9999999992413716,
+       "reading": "route"
+      }
+     },
+     "0.03": {
+      "all_eligible": {
+       "expected_survived_at_projection": 16.287323483922698,
+       "pass_probability_median": 0.029353034565315506,
+       "pass_probability_p05": 0.0016846232625380253,
+       "pass_probability_p95": 0.209113630593608,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 3.2905822823483377,
+       "pass_probability_median": 0.9999923985380368,
+       "pass_probability_p05": 0.998143193231376,
+       "pass_probability_p95": 0.9999999997819812,
+       "reading": "route"
+      }
+     },
+     "0.05": {
+      "all_eligible": {
+       "expected_survived_at_projection": 12.4990957870534,
+       "pass_probability_median": 0.2601241767861228,
+       "pass_probability_p05": 0.0494295534060369,
+       "pass_probability_p95": 0.6507330874226223,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 2.429077036509286,
+       "pass_probability_median": 0.999999780090148,
+       "pass_probability_p05": 0.9999049922125125,
+       "pass_probability_p95": 0.9999999999990931,
+       "reading": "route"
+      }
+     },
+     "0.1": {
+      "all_eligible": {
+       "expected_survived_at_projection": 7.867954000092074,
+       "pass_probability_median": 0.8669381487323069,
+       "pass_probability_p05": 0.5731705148325037,
+       "pass_probability_p95": 0.9811978482540856,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.4324078484927802,
+       "pass_probability_median": 0.9999999997123379,
+       "pass_probability_p05": 0.9999995818839158,
+       "pass_probability_p95": 0.9999999999999993,
+       "reading": "route"
+      }
+     },
+     "0.15": {
+      "all_eligible": {
+       "expected_survived_at_projection": 5.525922954158896,
+       "pass_probability_median": 0.9867482075588907,
+       "pass_probability_p05": 0.9142750528635264,
+       "pass_probability_p95": 0.9990694582757472,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.9613614854841999,
+       "pass_probability_median": 0.9999999999982145,
+       "pass_probability_p05": 0.9999999967884912,
+       "pass_probability_p95": 0.9999999999999999,
+       "reading": "route"
+      }
+     },
+     "0.2": {
+      "all_eligible": {
+       "expected_survived_at_projection": 4.068730598081514,
+       "pass_probability_median": 0.9988769371947004,
+       "pass_probability_p05": 0.9881360865015784,
+       "pass_probability_p95": 0.999964155068048,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.6831575234635321,
+       "pass_probability_median": 0.9999999999999862,
+       "pass_probability_p05": 0.9999999999231284,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      }
+     },
+     "0.3": {
+      "all_eligible": {
+       "expected_survived_at_projection": 2.3492080139969067,
+       "pass_probability_median": 0.9999953813397096,
+       "pass_probability_p05": 0.9998762661142587,
+       "pass_probability_p95": 0.9999998909253598,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.37354298435736655,
+       "pass_probability_median": 1.0,
+       "pass_probability_p05": 0.999999999999959,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      }
+     }
+    },
+    "known": {
+     "0.0027": {
+      "all_eligible": {
+       "expected_survived_at_projection": 9.623396541813655,
+       "pass_probability_median": 0.694330510793657,
+       "pass_probability_p05": 0.09747481426607583,
+       "pass_probability_p95": 0.9899208852262192,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 2.0934357218643735,
+       "pass_probability_median": 0.9999999999998468,
+       "pass_probability_p05": 0.9999989214266332,
+       "pass_probability_p95": 0.9999999999999999,
+       "reading": "route"
+      }
+     },
+     "0.00814607": {
+      "all_eligible": {
+       "expected_survived_at_projection": 6.962360579801896,
+       "pass_probability_median": 0.9688048610554876,
+       "pass_probability_p05": 0.6157413175384797,
+       "pass_probability_p95": 0.9999124665692771,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.3415085379164937,
+       "pass_probability_median": 0.9999999999999999,
+       "pass_probability_p05": 0.9999999935939726,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      }
+     },
+     "0.01": {
+      "all_eligible": {
+       "expected_survived_at_projection": 6.490782801277508,
+       "pass_probability_median": 0.9837009940458761,
+       "pass_probability_p05": 0.6971387524348943,
+       "pass_probability_p95": 0.9999626077139641,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.2139999331509737,
+       "pass_probability_median": 1.0,
+       "pass_probability_p05": 0.9999999985275422,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      }
+     },
+     "0.025": {
+      "all_eligible": {
+       "expected_survived_at_projection": 4.491275781870019,
+       "pass_probability_median": 0.9997022191745759,
+       "pass_probability_p05": 0.9708513150404242,
+       "pass_probability_p95": 0.999999808190587,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.7096260030783577,
+       "pass_probability_median": 0.9999999999999998,
+       "pass_probability_p05": 0.9999999999994645,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      }
+     },
+     "0.03": {
+      "all_eligible": {
+       "expected_survived_at_projection": 4.118095772998963,
+       "pass_probability_median": 0.9998872878532261,
+       "pass_probability_p05": 0.9878104500868848,
+       "pass_probability_p95": 0.9999999648191552,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.6240298560483207,
+       "pass_probability_median": 1.0,
+       "pass_probability_p05": 0.9999999999993819,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      }
+     },
+     "0.05": {
+      "all_eligible": {
+       "expected_survived_at_projection": 3.1265838563551713,
+       "pass_probability_median": 0.9999973044453381,
+       "pass_probability_p05": 0.9987936614017778,
+       "pass_probability_p95": 0.9999999996609181,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.4138594407678099,
+       "pass_probability_median": 0.9999999999999998,
+       "pass_probability_p05": 0.999999999999999,
+       "pass_probability_p95": 1.0,
+       "reading": "route"
+      }
+     },
+     "0.1": {
+      "all_eligible": {
+       "expected_survived_at_projection": 1.9367434403718526,
+       "pass_probability_median": 0.9999999944741521,
+       "pass_probability_p05": 0.9999909959495674,
+       "pass_probability_p95": 0.9999999999998895,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.2022135210836825,
+       "pass_probability_median": 1.0000000000000002,
+       "pass_probability_p05": 0.9999999999999998,
+       "pass_probability_p95": 1.0000000000000007,
+       "reading": "route"
+      }
+     },
+     "0.15": {
+      "all_eligible": {
+       "expected_survived_at_projection": 1.344533294253956,
+       "pass_probability_median": 0.9999999999653308,
+       "pass_probability_p05": 0.9999998648030878,
+       "pass_probability_p95": 0.9999999999999989,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.11749984427136852,
+       "pass_probability_median": 0.9999999999999998,
+       "pass_probability_p05": 0.9999999999999994,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      }
+     },
+     "0.2": {
+      "all_eligible": {
+       "expected_survived_at_projection": 0.9799374038465402,
+       "pass_probability_median": 0.9999999999994053,
+       "pass_probability_p05": 0.9999999958386917,
+       "pass_probability_p95": 1.0,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.07367286627367609,
+       "pass_probability_median": 1.0,
+       "pass_probability_p05": 0.9999999999999998,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      }
+     },
+     "0.3": {
+      "all_eligible": {
+       "expected_survived_at_projection": 0.5550301923820555,
+       "pass_probability_median": 0.9999999999999984,
+       "pass_probability_p05": 0.9999999999950635,
+       "pass_probability_p95": 0.9999999999999996,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.032167996533584486,
+       "pass_probability_median": 0.9999999999999997,
+       "pass_probability_p05": 0.9999999999999993,
+       "pass_probability_p95": 1.0,
+       "reading": "route"
+      }
+     }
+    },
+    "prior": {
+     "0.0027": {
+      "all_eligible": {
+       "expected_survived_at_projection": 17.732800398839498,
+       "pass_probability_median": 0.006709538409861477,
+       "pass_probability_p05": 6.286477814227098e-05,
+       "pass_probability_p95": 0.12984714889191828,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 4.132274309749633,
+       "pass_probability_median": 0.9999752428391782,
+       "pass_probability_p05": 0.9840562017611202,
+       "pass_probability_p95": 0.9999999998677236,
+       "reading": "route"
+      }
+     },
+     "0.00814607": {
+      "all_eligible": {
+       "expected_survived_at_projection": 12.291882704148403,
+       "pass_probability_median": 0.2602724837347928,
+       "pass_probability_p05": 0.028780317428419886,
+       "pass_probability_p95": 0.7497745596810571,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 2.7625033949292463,
+       "pass_probability_median": 0.9999998798510402,
+       "pass_probability_p05": 0.9996717335908405,
+       "pass_probability_p95": 0.9999999999999634,
+       "reading": "route"
+      }
+     },
+     "0.01": {
+      "all_eligible": {
+       "expected_survived_at_projection": 11.35875062487446,
+       "pass_probability_median": 0.38357971313579947,
+       "pass_probability_p05": 0.05828204398749795,
+       "pass_probability_p95": 0.8543407630839241,
+       "reading": "unresolved"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 2.527861738248309,
+       "pass_probability_median": 0.9999999782860984,
+       "pass_probability_p05": 0.9998795318283809,
+       "pass_probability_p95": 0.9999999999999911,
+       "reading": "route"
+      }
+     },
+     "0.025": {
+      "all_eligible": {
+       "expected_survived_at_projection": 7.530864680140848,
+       "pass_probability_median": 0.9131572085794727,
+       "pass_probability_p05": 0.5811320844801887,
+       "pass_probability_p95": 0.9941112004381192,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.5816057301370927,
+       "pass_probability_median": 0.9999999999763045,
+       "pass_probability_p05": 0.9999995558766588,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      }
+     },
+     "0.03": {
+      "all_eligible": {
+       "expected_survived_at_projection": 6.842142632116371,
+       "pass_probability_median": 0.9570566533781342,
+       "pass_probability_p05": 0.6982320886964095,
+       "pass_probability_p95": 0.9981935900298271,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 1.416206496614484,
+       "pass_probability_median": 0.99999999999442,
+       "pass_probability_p05": 0.9999998267051284,
+       "pass_probability_p95": 0.9999999999999998,
+       "reading": "route"
+      }
+     },
+     "0.05": {
+      "all_eligible": {
+       "expected_survived_at_projection": 5.056935664596494,
+       "pass_probability_median": 0.9963150570926441,
+       "pass_probability_p05": 0.9385101534177075,
+       "pass_probability_p95": 0.9999493467326879,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.9989311322722254,
+       "pass_probability_median": 0.9999999999999699,
+       "pass_probability_p05": 0.9999999979519385,
+       "pass_probability_p95": 1.0000000000000002,
+       "reading": "route"
+      }
+     },
+     "0.1": {
+      "all_eligible": {
+       "expected_survived_at_projection": 3.010795872001805,
+       "pass_probability_median": 0.9999799965259036,
+       "pass_probability_p05": 0.9990626178230086,
+       "pass_probability_p95": 0.9999998911236175,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.5496666049453629,
+       "pass_probability_median": 1.0,
+       "pass_probability_p05": 0.9999999999987091,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      }
+     },
+     "0.15": {
+      "all_eligible": {
+       "expected_survived_at_projection": 2.0381880070903393,
+       "pass_probability_median": 0.9999997647516154,
+       "pass_probability_p05": 0.9999754340424843,
+       "pass_probability_p95": 0.9999999995180662,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.3520145277177077,
+       "pass_probability_median": 1.0,
+       "pass_probability_p05": 0.999999999999997,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      }
+     },
+     "0.2": {
+      "all_eligible": {
+       "expected_survived_at_projection": 1.457504539054184,
+       "pass_probability_median": 0.9999999951084382,
+       "pass_probability_p05": 0.9999992450039518,
+       "pass_probability_p95": 0.9999999999954717,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.24081864463709846,
+       "pass_probability_median": 1.0,
+       "pass_probability_p05": 0.9999999999999997,
+       "pass_probability_p95": 1.0000000000000004,
+       "reading": "route"
+      }
+     },
+     "0.3": {
+      "all_eligible": {
+       "expected_survived_at_projection": 0.8018967158479756,
+       "pass_probability_median": 0.9999999999961215,
+       "pass_probability_p05": 0.9999999981698199,
+       "pass_probability_p95": 0.9999999999999988,
+       "reading": "route"
+      },
+      "survivors": {
+       "expected_survived_at_projection": 0.12342184049775207,
+       "pass_probability_median": 1.0,
+       "pass_probability_p05": 0.9999999999999997,
+       "pass_probability_p95": 1.0000000000000007,
+       "reading": "route"
+      }
+     }
+    }
+   },
+   "survived_by_the_battery": 28,
+   "valid": true,
+   "zero_survivors": false
+  }
+ },
+ "fingerprint": "fbe4462c4122c4ae",
+ "futile_after_A": true,
+ "generator": "c1-v2 (v0.5.5)",
+ "label": "v0.5.5 R1, D1-P: D1's SURVIVED-denial price curve (development; an oracle surrogate with a nominal score; decides nothing by itself; never a draft)",
+ "method_status": "not_validated",
+ "outcome_per_exit": {
+  "inconclusive_if_d2_d4_met": "unresolved",
+  "weakened": "unresolved"
+ },
+ "per_exit_primary": {
+  "inconclusive_if_d2_d4_met": {
+   "all_eligible": {
+    "EB1": "unresolved",
+    "EB2": "route"
+   },
+   "survivors": {
+    "EB1": "route",
+    "EB2": "route"
+   }
+  },
+  "weakened": {
+   "all_eligible": {
+    "EB1": "unresolved",
+    "EB2": "route"
+   },
+   "survivors": {
+    "EB1": "route",
+    "EB2": "route"
+   }
+  }
+ },
+ "primary_reading": "prior",
+ "scenarios": {
+  "fatal_strict_budget_less_reference_scenario": 0.008146067415730339,
+  "fatal_strict_budget_scenario": 0.025,
+  "weakened_battery_unit_scenario": 0.1
+ },
+ "scenarios_primary": {
+  "fatal_strict_budget_less_reference_scenario": {
+   "all_eligible": {
+    "EB1": "unresolved",
+    "EB2": "unresolved"
+   },
+   "survivors": {
+    "EB1": "route",
+    "EB2": "route"
+   }
+  },
+  "fatal_strict_budget_scenario": {
+   "all_eligible": {
+    "EB1": "unresolved",
+    "EB2": "route"
+   },
+   "survivors": {
+    "EB1": "route",
+    "EB2": "route"
+   }
+  },
+  "weakened_battery_unit_scenario": {
+   "all_eligible": {
+    "EB1": "route",
+    "EB2": "route"
+   },
+   "survivors": {
+    "EB1": "route",
+    "EB2": "route"
+   }
+  }
+ },
+ "set": "A",
+ "stops": []
+}
