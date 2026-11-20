@@ -575,7 +575,7 @@ If you use Refute, please cite it via [CITATION.cff](CITATION.cff) (GitHub's "Ci
 
 The releases are archived on Zenodo. The concept DOI
 [10.5281/zenodo.23301000](https://doi.org/10.5281/zenodo.23301000) covers all versions;
-version 0.4.0 is
+version 0.5.0 is [10.5281/zenodo.24397840](https://doi.org/10.5281/zenodo.24397840), and version 0.4.0 is
 [10.5281/zenodo.23905113](https://doi.org/10.5281/zenodo.23905113).
 
 The v0.4 pilot's data have their own records: the five stage-2 dossiers,

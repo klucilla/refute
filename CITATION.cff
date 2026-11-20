@@ -14,8 +14,11 @@ identifiers:
     value: 10.5281/zenodo.23301000
     description: "Concept DOI: all versions of Refute on Zenodo."
   - type: doi
+    value: 10.5281/zenodo.24397840
+    description: "Version DOI of Refute 0.5.0 on Zenodo."
+  - type: doi
     value: 10.5281/zenodo.23905113
-    description: "Version DOI of Refute 0.4.0 on Zenodo (the 0.5.0 version DOI is added after its record is published)."
+    description: "Version DOI of Refute 0.4.0 on Zenodo."
 license: Apache-2.0
 repository-code: "https://github.com/klucilla/refute"
 url: "https://github.com/klucilla/refute"

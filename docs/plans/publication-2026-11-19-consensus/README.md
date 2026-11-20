@@ -122,3 +122,23 @@ Codex confirmed:
 - The paragraph of `metadata-changes.md` is accurate.
 
 No correction was needed.
+
+## The final review of the release drafts before they were applied (2026-11-20)
+
+Codex's final round on the release drafts, step 2.1 of the day's script (the maintainer's decision of 2026-11-16, 21:40, item 1c, and of 2026-11-20, item 3). Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [pub-final-round-1-answer.md](pub-final-round-1-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `28ebb77b7d40d5f35d5ce4db183d6790d84f38ae31f3ef18aaaa4eb653aa36db` |
+
+The tokens are cumulative over the conversation `pub-final`:
+
+- round 1: 1,622,989 input (1,490,816 cached) and 10,722 output;
+
+The conversation counts **142,895** review tokens (the last round's uncached input plus output).
+
+Codex compared the drafts with its rounds of 2026-11-16. The only changes were the date 2026-11-20 and the record of the postponement. It found that:
+- every statement, number and link holds at HEAD 200aea0;
+- the maintainer's requirements are met.
+
+The drafts were then applied to main in commit f3a36e6.
