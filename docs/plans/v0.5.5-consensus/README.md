@@ -154,3 +154,23 @@ Applied as Codex wrote them (no divergence; two rounds):
 - Round 1's correction (commit `9f3dc54`): the record holds the reserve before and after; a repeat writes nothing and requires exactly one record with the expected fields (no other top-level field), the reserve equal to the record's after less any later transfer that took from it, and both lines; any divergence is a STOP with no write. The procedure posted on #218 before the run carries the prohibition of `lv.declare()` and its callers, and the clarification that the slack does not get around a line restriction or a resume's cap, and that raising D2-F's 16.3 needs a new review of the adapter.
 - Round 2's optional test (the later transfer as D2-F's funding really writes it, the sum of the allocations kept) is applied; the step is unchanged by it. Its other remark is recorded: "the main record's fields are exact; the later reconciliation uses the debits recorded by the authorized steps" (fields inside `reserve_hours` are not checked for extras).
 - **The step was applied to the real ledger on 2026-11-21 at 13:22 UTC** (`r1_t2ae_2` 3.1 to 3.55; the reserve 20.3 to 19.85), after the procedure on #218.
+
+## G1, third pass: the check of path B (R2 on paper) with T3b's preparation
+
+Codex's one round on the maintainer's decisions of 2026-11-21 (13:30) at G1 (#218): path B, R2 on paper, with T3b's preparation beside it, checked against the plan's section 7, the charter (d) and amendment 1 (f); three rounds only if he held that a pause was mandatory. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [r2choice-round-1-answer.md](r2choice-round-1-answer.md) | gpt-6.1-sol, high | items 1 to 4 `SURVIVED`; **path B survives; a pause is not mandatory now**; the motivation corrected (a futile check is not a demonstrated floor); five operational corrections for the bundle and the lines, and four conditions for T3b's preparation | `5a4ed71b25f46bcd5c20944e10b271742c539a04f580daaf45da63f2d2263d72` |
+
+The tokens are cumulative over the conversation `r2choice`:
+
+- round 1: 472,810 input (402,560 cached) and 4,020 output;
+
+The conversation counts **74,270** review tokens (the last round's uncached input plus output).
+
+Applied as Codex wrote them (no divergence; one round):
+- **The motivation, corrected** (his text): "R1 did not establish a route by its checks' frozen criteria. D2-F was futile and did not demonstrate a floor at D2's ceiling; T2a-E was empirically limited for the class examined. The prospective route stays open." The comparison of 14 against 13 is with D2-F's route threshold (which keeps room for the estimators), not D2's total ceiling of losses; the upper count includes unknowns, and neither count is shown to be unavoidable losses.
+- **The bundle** carries no part of the questions draft (it cites results): the arguments document, cut at its disclosure section, carries the questions; amendment 1 (f) applies in full (allowlist, manifest before the review, no clone, history or network; a contaminated bundle voids the review).
+- Both aggregations side by side for every future number of D2, D4 and T2a; the test suite's exception produces no number of the new version before the freeze; the two lines are counted without moving any cost incurred to get around a stop.
+- **T3b's preparation:** the recount of the frozen frame kept apart from any updated frame; the frame, domain, threshold and readings fixed before the data they read (amendment 1 (e)10); each fact with its source, version and effective reading date; ExoFOP's data use unconfirmed where no applicable document is found. The preparation does not meet the standard of charter (c) and amendment 1 (e) by itself and closes nothing.

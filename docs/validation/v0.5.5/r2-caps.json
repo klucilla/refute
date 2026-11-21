@@ -1,0 +1,30 @@
+{
+ "line": {
+  "caps": {
+   "review_tokens": 1000000,
+   "agent_days": 5.0,
+   "cpu_hours_new_version": 0.0
+  },
+  "stop_fraction": 0.8,
+  "opened_utc": "2026-11-21T16:40:42",
+  "counts": "Codex conversations named r2*; agent-days since opened_utc; no CPU for the new version (the test suite only)",
+  "decision": "the maintainer's decisions of 2026-11-21 (13:30) at G1, item 1 (#218)"
+ },
+ "entries": [
+  {
+   "utc": "2026-11-21T16:40:54Z",
+   "step": "r2 opening",
+   "review_tokens": {
+    "conversations": {},
+    "r2": 0
+   },
+   "agent_days_wall": 0.0,
+   "agent_days_active": 0.0,
+   "cpu_hours_new_version": 0.0,
+   "reserved": {
+    "agent_days": 0.5,
+    "review_tokens": 300000
+   }
+  }
+ ]
+}

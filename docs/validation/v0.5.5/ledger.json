@@ -99,6 +99,17 @@
    "utc": "2026-11-21T14:55:47Z"
   }
  ],
+ "r2_line": {
+  "caps": {
+   "agent_days": 5.0,
+   "cpu_hours_new_version": 0.0,
+   "review_tokens": 1000000
+  },
+  "counts": "Codex conversations named r2*; agent-days since opened_utc; no CPU for the new version (the test suite only)",
+  "decision": "the maintainer's decisions of 2026-11-21 (13:30) at G1, item 1 (#218)",
+  "opened_utc": "2026-11-21T16:40:42",
+  "stop_fraction": 0.8
+ },
  "sections": {
   "v055": {
    "parts": {

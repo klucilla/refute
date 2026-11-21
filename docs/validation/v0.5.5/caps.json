@@ -485,6 +485,31 @@
     "review_tokens": 0,
     "disk_bytes": 0
    }
+  },
+  {
+   "utc": "2026-11-21T16:40:48Z",
+   "step": "r2: r2 opening",
+   "codex_tokens": {
+    "conversations": {
+     "d2fa": 133284,
+     "facts": 168755,
+     "g1": 198496,
+     "g1r": 92113,
+     "night": 223534,
+     "r0r1": 395037,
+     "t2s": 92743
+    },
+    "phase": 1303962
+   },
+   "agent_days_wall": 2.75,
+   "agent_days_active": 1.01,
+   "cpu_hours": 14.85,
+   "disk_bytes": 15755190,
+   "reserved": {
+    "agent_days": 0.5,
+    "review_tokens": 300000,
+    "disk_bytes": 0
+   }
   }
  ]
 }
