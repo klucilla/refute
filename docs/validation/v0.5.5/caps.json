@@ -563,6 +563,60 @@
     "review_tokens": 250000,
     "disk_bytes": 0
    }
+  },
+  {
+   "utc": "2026-11-21T17:04:16Z",
+   "step": "r2: r2 arguments round 3",
+   "codex_tokens": {
+    "conversations": {
+     "d2fa": 133284,
+     "facts": 168755,
+     "g1": 198496,
+     "g1r": 92113,
+     "night": 223534,
+     "r0r1": 395037,
+     "r2args": 206624,
+     "r2choice": 74270,
+     "t2s": 92743
+    },
+    "phase": 1584856
+   },
+   "agent_days_wall": 2.8,
+   "agent_days_active": 1.06,
+   "cpu_hours": 14.854,
+   "disk_bytes": 16983252,
+   "reserved": {
+    "agent_days": 0.3,
+    "review_tokens": 250000,
+    "disk_bytes": 0
+   }
+  },
+  {
+   "utc": "2026-11-21T17:06:13Z",
+   "step": "r2: r2 stop",
+   "codex_tokens": {
+    "conversations": {
+     "d2fa": 133284,
+     "facts": 168755,
+     "g1": 198496,
+     "g1r": 92113,
+     "night": 223534,
+     "r0r1": 395037,
+     "r2args": 231665,
+     "r2choice": 74270,
+     "t2s": 92743
+    },
+    "phase": 1609897
+   },
+   "agent_days_wall": 2.8,
+   "agent_days_active": 1.06,
+   "cpu_hours": 14.854,
+   "disk_bytes": 17331024,
+   "reserved": {
+    "agent_days": 0.0,
+    "review_tokens": 0,
+    "disk_bytes": 0
+   }
   }
  ]
 }

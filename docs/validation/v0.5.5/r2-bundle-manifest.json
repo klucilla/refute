@@ -1,0 +1,74 @@
+{
+ "builder": "docs/validation/v0.5.5/r2_bundle.py",
+ "builder_sha256": "8f0813766b56d096024b6b130c564646fffc1773bfd8b3ed028fd1a535d543b6",
+ "built_utc": "2026-11-21T17:05:45Z",
+ "excluded": "the disclosure section; every forecast, count and record of v0.5 to v0.5.5 (R1 included); the questions draft; the plan; the reports; the ledger; the consensus",
+ "files": {
+  "arguments.md": "4abf4395ecb5ab2a151c3041f648531c30fd0d96486f925a30b25a9783a88ce9",
+  "code-semantics.md": "3dcd34eeb845431179e368d220c70bc06fb143e95e9767cb499d91d920f4ae94",
+  "frozen-rules/src/refute/core/sensitivity.py": "bf3a5345cb51ed83815e37746717e86aae37342266fa4f31a6ddb61053700989",
+  "frozen-rules/src/refute/core/verdict.py": "6fc551878d4b79bb2af4cdb19ef2171e8988a32ea1319bf5774db78a99aa85e6",
+  "frozen-rules/src/refute/packs/tess/battery_v5.py": "ac0d234f102d9e074db0cc2cd005a5aee9c7bee8b9f2ddaed77cde9fdcca5b51",
+  "frozen-rules/src/refute/packs/tess/battery_v51.py": "386904b6f1cb0f8180f27e43a882a7b9f8f6bdcd9cc15f107d24e3c2ee4b51e4",
+  "frozen-rules/src/refute/packs/tess/battery_v51_diff.py": "bf58eeaadbad42fdab27f1fd8a8ecc22b2884e2d2beb479bdb1fd4b1ab8a8159",
+  "frozen-rules/src/refute/packs/tess/battery_v52.py": "455ff322c7ffa56a148569e3ac6a3337a8b21acaf807a7dc7b58a6065e7966a4",
+  "frozen-rules/src/refute/packs/tess/params.py": "889d84801922ddc346a162277c7528a1eb6ab37da9eac438936dcf9856675291",
+  "frozen-rules/src/refute/packs/tess/pipeline.py": "12914cc2e213eb219041dce0b60e5e70a5cb27aef9e8eb46665dd21b246fc9e5",
+  "frozen-rules/src/refute/packs/tess/pipeline_v52.py": "6fe04ba4731415f9d413d4375137fd2a74c1732fddf4b3abf11b7cde854db5a9",
+  "frozen-rules/src/refute/packs/tess/power.py": "7fcb98eae28f2f3bf8678a2e0ce9a948c37fc722eba810e3e0f02c7680db61d3"
+ },
+ "label": "v0.5.5 R2: the blind review's bundle (charter (d)3; amendment 1 (f))",
+ "method_status": "not_validated",
+ "reviewer": "not launched by this script; the maintainer's adviser launches the blind review, read only, with no clone, no history and no network",
+ "sources": {
+  "arguments.md": {
+   "cut_at": "## Disclosure: results known when this was written",
+   "from": "docs/plans/v0.5.5-r2-arguments.md",
+   "source_sha256": "1bb5dc8a745b242a099b3955dffbfb9387e7b2c879eed35dd1833abd32d93d14"
+  },
+  "code-semantics.md": {
+   "from": "docs/plans/v0.5.5-r2-code-semantics.md",
+   "source_sha256": "3dcd34eeb845431179e368d220c70bc06fb143e95e9767cb499d91d920f4ae94"
+  },
+  "frozen-rules/src/refute/core/sensitivity.py": {
+   "from": "src/refute/core/sensitivity.py",
+   "source_sha256": "bf3a5345cb51ed83815e37746717e86aae37342266fa4f31a6ddb61053700989"
+  },
+  "frozen-rules/src/refute/core/verdict.py": {
+   "from": "src/refute/core/verdict.py",
+   "source_sha256": "6fc551878d4b79bb2af4cdb19ef2171e8988a32ea1319bf5774db78a99aa85e6"
+  },
+  "frozen-rules/src/refute/packs/tess/battery_v5.py": {
+   "from": "src/refute/packs/tess/battery_v5.py",
+   "source_sha256": "ac0d234f102d9e074db0cc2cd005a5aee9c7bee8b9f2ddaed77cde9fdcca5b51"
+  },
+  "frozen-rules/src/refute/packs/tess/battery_v51.py": {
+   "from": "src/refute/packs/tess/battery_v51.py",
+   "source_sha256": "386904b6f1cb0f8180f27e43a882a7b9f8f6bdcd9cc15f107d24e3c2ee4b51e4"
+  },
+  "frozen-rules/src/refute/packs/tess/battery_v51_diff.py": {
+   "from": "src/refute/packs/tess/battery_v51_diff.py",
+   "source_sha256": "bf58eeaadbad42fdab27f1fd8a8ecc22b2884e2d2beb479bdb1fd4b1ab8a8159"
+  },
+  "frozen-rules/src/refute/packs/tess/battery_v52.py": {
+   "from": "src/refute/packs/tess/battery_v52.py",
+   "source_sha256": "455ff322c7ffa56a148569e3ac6a3337a8b21acaf807a7dc7b58a6065e7966a4"
+  },
+  "frozen-rules/src/refute/packs/tess/params.py": {
+   "from": "src/refute/packs/tess/params.py",
+   "source_sha256": "889d84801922ddc346a162277c7528a1eb6ab37da9eac438936dcf9856675291"
+  },
+  "frozen-rules/src/refute/packs/tess/pipeline.py": {
+   "from": "src/refute/packs/tess/pipeline.py",
+   "source_sha256": "12914cc2e213eb219041dce0b60e5e70a5cb27aef9e8eb46665dd21b246fc9e5"
+  },
+  "frozen-rules/src/refute/packs/tess/pipeline_v52.py": {
+   "from": "src/refute/packs/tess/pipeline_v52.py",
+   "source_sha256": "6fe04ba4731415f9d413d4375137fd2a74c1732fddf4b3abf11b7cde854db5a9"
+  },
+  "frozen-rules/src/refute/packs/tess/power.py": {
+   "from": "src/refute/packs/tess/power.py",
+   "source_sha256": "7fcb98eae28f2f3bf8678a2e0ce9a948c37fc722eba810e3e0f02c7680db61d3"
+  }
+ }
+}

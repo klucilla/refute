@@ -60,6 +60,42 @@
     "agent_days": 0.3,
     "review_tokens": 250000
    }
+  },
+  {
+   "utc": "2026-11-21T17:04:22Z",
+   "step": "r2 arguments round 3",
+   "review_tokens": {
+    "conversations": {
+     "r2args": 206624,
+     "r2choice": 74270
+    },
+    "r2": 280894
+   },
+   "agent_days_wall": 0.05,
+   "agent_days_active": 0.05,
+   "cpu_hours_new_version": 0.0,
+   "reserved": {
+    "agent_days": 0.3,
+    "review_tokens": 250000
+   }
+  },
+  {
+   "utc": "2026-11-21T17:06:19Z",
+   "step": "r2 stop",
+   "review_tokens": {
+    "conversations": {
+     "r2args": 231665,
+     "r2choice": 74270
+    },
+    "r2": 305935
+   },
+   "agent_days_wall": 0.05,
+   "agent_days_active": 0.05,
+   "cpu_hours_new_version": 0.0,
+   "reserved": {
+    "agent_days": 0.0,
+    "review_tokens": 0
+   }
   }
  ]
 }

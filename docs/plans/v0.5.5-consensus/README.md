@@ -174,3 +174,25 @@ Applied as Codex wrote them (no divergence; one round):
 - **The bundle** carries no part of the questions draft (it cites results): the arguments document, cut at its disclosure section, carries the questions; amendment 1 (f) applies in full (allowlist, manifest before the review, no clone, history or network; a contaminated bundle voids the review).
 - Both aggregations side by side for every future number of D2, D4 and T2a; the test suite's exception produces no number of the new version before the freeze; the two lines are counted without moving any cost incurred to get around a stop.
 - **T3b's preparation:** the recount of the frozen frame kept apart from any updated frame; the frame, domain, threshold and readings fixed before the data they read (amendment 1 (e)10); each fact with its source, version and effective reading date; ExoFOP's data use unconfirmed where no applicable document is found. The preparation does not meet the standard of charter (c) and amendment 1 (e) by itself and closes nothing.
+
+## R2 on paper: the arguments, the code semantics and the blind bundle's builder
+
+Codex's review of R2's arguments document for logic and number leakage, of the code semantics and of the blind bundle's builder (the maintainer's decisions of 2026-11-21, 13:30, items 3 and 4; #218), up to 3 rounds. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [r2args-round-1-answer.md](r2args-round-1-answer.md) | gpt-6.1-sol, high | leakage, B1, dependencies and the builder `REFUTED`; B2, B3 and the operational proposals `WEAKENED`; retrospective references before the disclosure; B1 (e) not a mere preservation of evidence (Codex recommended (a) as primary); B2 over-stated; B3.3 a rule change to declare; the bundle lacking the code semantics; `check` leaving nested manifests out; **not ready** | `e5986c8689a3d610fb4150a9dccbb6c4ac16ec542507617a195510668b11c65a` |
+| 2 | [r2args-round-2-answer.md](r2args-round-2-answer.md) | gpt-6.1-sol, high | items 1 to 5 `SURVIVED`; dependencies and the bundle `WEAKENED`; the builder `SURVIVED` static inspection; two blockers in the semantics (the emitted severities; the sinusoid's joint fit and certificate); **not ready** | `83d612d815eb9f378b5c5e41c995312cb6514d6e5e425f37e4e4381a2df979cb` |
+| 3 | [r2args-round-3-answer.md](r2args-round-3-answer.md) | gpt-6.1-sol, high | every item `SURVIVED`; **no blocker; the arguments cut at the disclosure, the semantics and the builder are ready for the single build of the blind bundle**; three remarks (no build confirmed by Codex; the model-dependent alternatives stay conditional; the build uses the reviewed bytes) | `ce72a046b81818478b2b0fae2e8a9d3e5e053dc9e5f32412bb50470b40dd044a` |
+
+The tokens are cumulative over the conversation `r2args`:
+
+- round 1: 1,904,654 input (1,773,952 cached) and 14,925 output;
+- round 2: 3,633,775 input (3,450,368 cached) and 23,217 output;
+- round 3: 4,320,999 input (4,115,200 cached) and 25,866 output;
+
+The conversation counts **231,665** review tokens (the last round's uncached input plus output).
+
+Applied as Codex wrote them (the divergence on B1 settled by the conservative option in round 1: **B1's proposed primary is (a), the current rule**, with (e) registered beside it; B2's primary is (a); B3.2 keeps Fréchet without a derived and reviewed model):
+- **The bundle was built once on 2026-11-21 at 17:05 UTC** from the reviewed bytes (commit `55e32fd`): 12 files (the arguments cut at the disclosure, the code semantics and ten source files of the frozen rules); the manifest `docs/validation/v0.5.5/r2-bundle-manifest.json` written before the files and before any review; `check` passed (12 files, the delivered manifest equal); the arguments' final bytes read in context (no disclosure section, no result). **No reviewer was launched**: the blind review is the maintainer's adviser's, read only.
+- The arguments and the semantics are proposals and descriptions; nothing is decided, frozen or locked (R2's design decisions and the freezing are a stop that is not delegated).
