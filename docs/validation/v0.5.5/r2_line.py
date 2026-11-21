@@ -9,10 +9,11 @@ are, and R2's work counts on both lines (the conservative side).
 any R2 work: its caps, its opening time and the decision. It touches no part and no charge.
 
 **What counts:**
-- tokens: the Codex conversations whose name starts with ``r2`` (their events under
-  ``.cache/v055/codex/``, ``<name>-r<round>-events.jsonl``), each counted by its last round's
-  uncached input plus output, as every phase counts them (``lv.codex_tokens``); they also count
-  on v0.5.5's line, which reads the same folder;
+- tokens: the Codex conversations whose name starts with ``r2``, each counted by its last round's
+  uncached input plus output, as every phase counts them (``lv.codex_tokens``). Since the
+  maintainer's decisions of 2026-11-21 (15:20), item 4, their events live in
+  ``.cache/v055/r2/codex/`` and **count only on R2's line**; v0.5.5's line is reported with and
+  without them (``both_lines``);
 - agent-days: Claude's session transcripts since the line opened, wall clock over 8-hour days
   (an upper bound), with the active time recorded (``.cache/v052/tools/agent_time.py``);
 - CPU: none is allowed for the new version; a step that would need it is a STOP.
@@ -80,9 +81,29 @@ def _line() -> dict:
     return line
 
 
+CODEX_EVENTS = lv.ROOT / ".cache/v055/r2/codex"  # R2's own folder (decisions of 15:20, item 4)
+
+
 def tokens() -> dict:
-    per = {c: n for c, n in lv.codex_tokens()["conversations"].items() if c.startswith(PREFIX)}
+    """R2's Codex conversations, from their own folder, counted as ``lv.codex_tokens`` counts
+    (each conversation's last round: uncached input plus output). Since the maintainer's
+    decisions of 2026-11-21 (15:20), item 4, they count **only** on R2's line: their events live
+    apart from v0.5.5's folder, so ``lv.codex_tokens`` no longer sees them."""
+    saved = lv.CODEX_EVENTS
+    lv.CODEX_EVENTS = CODEX_EVENTS
+    try:
+        per = dict(lv.codex_tokens()["conversations"])
+    finally:
+        lv.CODEX_EVENTS = saved
+    per = {c: n for c, n in per.items() if c.startswith(PREFIX)}
     return {"conversations": per, "r2": sum(per.values())}
+
+
+def both_lines() -> dict:
+    """v0.5.5's review tokens without R2 (its own folder) and with R2 (the two summed)."""
+    v055 = lv.codex_tokens()["phase"]
+    r2 = tokens()["r2"]
+    return {"v055_without_r2": v055, "r2": r2, "v055_with_r2": v055 + r2}
 
 
 def agent_days(since: str) -> tuple[float, float]:
@@ -109,6 +130,7 @@ def check(step: str, reserve_days: float, reserve_tokens: int) -> dict:
         "utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "step": step,
         "review_tokens": tok,
+        "v055_lines": both_lines(),
         "agent_days_wall": round(wall, 3),
         "agent_days_active": round(active, 3),
         "cpu_hours_new_version": 0.0,

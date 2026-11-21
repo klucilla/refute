@@ -36,11 +36,14 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
-OUT = ROOT / ".cache/v055/r2/bundle"
-MANIFEST = ROOT / "docs/validation/v0.5.5/r2-bundle-manifest.json"
+# the second bundle (the decisions of 2026-11-21, 15:20); the first one keeps its folder and its
+# manifest (``.cache/v055/r2/bundle``, ``r2-bundle-manifest.json``)
+OUT = ROOT / ".cache/v055/r2/bundle-2"
+MANIFEST = ROOT / "docs/validation/v0.5.5/r2-bundle-2-manifest.json"
 ARGUMENTS = "docs/plans/v0.5.5-r2-arguments.md"
 DISCLOSURE = "## Disclosure: results known when this was written"
 SEMANTICS = "docs/plans/v0.5.5-r2-code-semantics.md"
+TARGETS = "docs/plans/v0.5.5-r2-targets.md"
 FROZEN_RULES = (
     "src/refute/core/verdict.py",
     "src/refute/core/sensitivity.py",
@@ -52,6 +55,13 @@ FROZEN_RULES = (
     "src/refute/packs/tess/battery_v51.py",
     "src/refute/packs/tess/battery_v51_diff.py",
     "src/refute/packs/tess/battery_v52.py",
+    # added after the first blind review (its item 9)
+    "src/refute/packs/tess/battery.py",
+    "src/refute/packs/tess/centroid_v5.py",
+    "src/refute/packs/tess/ebcatalog.py",
+    "src/refute/packs/tess/calib05/c1.py",
+    "src/refute/packs/tess/calib05/c2.py",
+    "src/refute/packs/tess/calib05/values.py",
 )
 LEAKS = (
     r"d2f-A",
@@ -70,11 +80,18 @@ LEAKS = (
     # retrospective references (Codex, r2args round 1)
     r"was the limit",
     r"lacked power",
-    r"in the record",
     r"objections in the record",
     r"route, if any",
     r"\bround 3\b",
     r"\bI1\b|\bI4\b",
+    # directional text (the first blind review, section 0)
+    r"\|\s*Helps\s*\|",
+    r"relevant to D2",
+    r"serves D2",
+    r"purpose and also the risk",
+    r"eases the power certificate",
+    r"planets with only warning-class gaps",
+    r"motivated R2",
 )
 
 
@@ -100,7 +117,11 @@ def leaks(name: str, data: bytes) -> list[str]:
 
 
 def contents() -> dict[str, bytes]:
-    files = {"arguments.md": arguments_cut(), "code-semantics.md": (ROOT / SEMANTICS).read_bytes()}
+    files = {
+        "arguments.md": arguments_cut(),
+        "code-semantics.md": (ROOT / SEMANTICS).read_bytes(),
+        "targets.md": (ROOT / TARGETS).read_bytes(),
+    }
     for rel in FROZEN_RULES:
         files["frozen-rules/" + rel] = (ROOT / rel).read_bytes()
     return files
@@ -129,6 +150,10 @@ def build() -> dict:
             "code-semantics.md": {
                 "from": SEMANTICS,
                 "source_sha256": _sha((ROOT / SEMANTICS).read_bytes()),
+            },
+            "targets.md": {
+                "from": TARGETS,
+                "source_sha256": _sha((ROOT / TARGETS).read_bytes()),
             },
             **{
                 "frozen-rules/" + rel: {

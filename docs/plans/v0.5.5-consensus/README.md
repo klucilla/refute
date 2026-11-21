@@ -196,3 +196,37 @@ The conversation counts **231,665** review tokens (the last round's uncached inp
 Applied as Codex wrote them (the divergence on B1 settled by the conservative option in round 1: **B1's proposed primary is (a), the current rule**, with (e) registered beside it; B2's primary is (a); B3.2 keeps Fréchet without a derived and reviewed model):
 - **The bundle was built once on 2026-11-21 at 17:05 UTC** from the reviewed bytes (commit `55e32fd`): 12 files (the arguments cut at the disclosure, the code semantics and ten source files of the frozen rules); the manifest `docs/validation/v0.5.5/r2-bundle-manifest.json` written before the files and before any review; `check` passed (12 files, the delivered manifest equal); the arguments' final bytes read in context (no disclosure section, no result). **No reviewer was launched**: the blind review is the maintainer's adviser's, read only.
 - The arguments and the semantics are proposals and descriptions; nothing is decided, frozen or locked (R2's design decisions and the freezing are a stop that is not delegated).
+
+## T3b: whether the TOI table's use for a count is confirmed
+
+Codex's one-question check under the maintainer's decisions of 2026-11-21 (15:20), item 5 (#218): whether, by the recorded sources, the NASA Exoplanet Archive's TOI table (`tfopwg_disp`) may be used for T3b's count of an updated frame. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [r2t3b-round-1-answer.md](r2t3b-round-1-answer.md) | gpt-6.1-sol, high | **NOT CONFIRMED** for the count: the Archive's table is public but derives from ExoFOP's TOI list; whether `tfopwg_disp` is "data supplied by other users" stays open; what would settle it is the TFOP Working Group Publication Policy, or an explicit confirmation from TFOP or NExScI | `df853a16c9275914f055ee3e908052f3567e082cfd838286631c086895d88417` |
+
+The tokens are cumulative over the conversation `r2t3b`:
+
+- round 1: 126,059 input (105,728 cached) and 845 output;
+
+The conversation counts **21,176** review tokens (the last round's uncached input plus output).
+
+Applied (the conservative option of the decision):
+- The TFOP Working Group Publication Policy (version 21, 12 July 2026) was then read through an extraction tool: nothing found on the dispositions or on public TOI data (not confirmed by a full human reading). The question stays **not confirmed**; an explicit confirmation from TFOP or NExScI is a human step, the maintainer's.
+- **The updated frame's count did not run.** A draft of T3b's availability record was prepared instead (`docs/plans/v0.5.5-t3b-availability-record-DRAFT.md`), a draft only; the record is a stop that is not delegated.
+
+## The first blind review of R2's bundle
+
+The maintainer's decisions of 2026-11-21 (15:20), item 0 (#218): the blind review, round 1,
+launched by the maintainer's adviser (one fresh session of Claude Fable 5.2, read only, only the
+bundle's 12 files rebuilt from git at `55e32fd0` and checked against
+`docs/validation/v0.5.5/r2-bundle-manifest.json`; 230,327 tokens, outside Codex's lines). Stored
+unchanged; the received file's SHA-256 was checked before the commit.
+
+| Round | File | Reviewer | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [r2-blind-review-1.md](r2-blind-review-1.md) | Claude Fable 5.2, launched by the adviser | `WEAKENED`: no contamination by numbers; directional text to remove; ten changes required before the freeze (its section 5) | `bc66ef18d98b583fd563e6e3fc73938fb8159383a5585fa7920621d28d3d5beb` |
+
+The ten changes are applied in the revised arguments (the decisions' item 1), checked by Codex
+(conversation r2rev) before the second bundle is built.
+

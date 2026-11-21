@@ -26,6 +26,7 @@ def bundle(tmp_path, monkeypatch):
     (tmp_path / "docs/plans").mkdir(parents=True)
     _arguments(tmp_path, "the arguments")
     (tmp_path / "docs/plans/v0.5.5-r2-code-semantics.md").write_text("the semantics\n", "utf-8")
+    (tmp_path / "docs/plans/v0.5.5-r2-targets.md").write_text("the targets\n", "utf-8")
     return b
 
 
@@ -41,12 +42,13 @@ def test_the_bundle_is_cut_at_the_disclosure_and_hashed_first(bundle, tmp_path):
     assert set(manifest["files"]) == {
         "arguments.md",
         "code-semantics.md",
+        "targets.md",
         "frozen-rules/src/rule.py",
     }
     assert (tmp_path / "bundle/MANIFEST.json").read_bytes() == (
         tmp_path / "manifest.json"
     ).read_bytes()
-    assert bundle.check() == {"files": 3, "ok": True}
+    assert bundle.check() == {"files": 4, "ok": True}
     with pytest.raises(SystemExit, match="built once"):
         bundle.build()
 
@@ -94,6 +96,9 @@ def test_a_leak_in_the_semantics_refuses_the_build(bundle, tmp_path):
         "14 against 13 in each",
         "where the sub-check lacked power",
         "the objections in the record",
+        "| Helps | D2 |",
+        "it serves D2 and T2a",
+        "which is the purpose and also the risk",
     ],
 )
 def test_a_leak_before_the_disclosure_refuses_the_build(bundle, tmp_path, body):

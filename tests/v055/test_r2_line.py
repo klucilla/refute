@@ -79,6 +79,27 @@ def test_only_r2_conversations_count(ledger, monkeypatch):
     assert r2.tokens() == {"conversations": {"r2args": 100, "r2x": 20}, "r2": 120}
 
 
+def _events(folder, name, inp, cached, out):
+    folder.mkdir(parents=True, exist_ok=True)
+    usage = {"input_tokens": inp, "cached_input_tokens": cached, "output_tokens": out}
+    (folder / f"{name}-r1-events.jsonl").write_text(
+        json.dumps({"type": "turn.completed", "usage": usage}) + "\n", "utf-8"
+    )
+
+
+def test_r2_conversations_count_only_on_r2_s_line(tmp_path, monkeypatch):
+    # the maintainer's decisions of 2026-11-21 (15:20), item 4: R2's events live apart
+    v055, r2dir = tmp_path / "codex", tmp_path / "r2codex"
+    _events(v055, "g1", 1000, 400, 50)  # 650
+    _events(r2dir, "r2args", 300, 100, 20)  # 220
+    monkeypatch.setattr(lv, "CODEX_EVENTS", v055)
+    monkeypatch.setattr(r2, "CODEX_EVENTS", r2dir)
+    assert r2.tokens() == {"conversations": {"r2args": 220}, "r2": 220}
+    assert lv.codex_tokens()["phase"] == 650
+    assert r2.both_lines() == {"v055_without_r2": 650, "r2": 220, "v055_with_r2": 870}
+    assert lv.CODEX_EVENTS == v055  # restored after the count
+
+
 @pytest.mark.parametrize(
     "tokens, wall, reserve_days, reserve_tokens, match",
     [

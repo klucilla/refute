@@ -1,0 +1,5 @@
+**NÃO CONFIRMADO para a contagem da T3b.** Pelo item 5 da decisão das 15h20, a contagem fica sem rodar.
+
+A tabela do Archive é pública, mas deriva da lista de TOIs do ExoFOP. Os registros deixam em aberto se `tfopwg_disp` se enquadra em “data supplied by other users”. Usar apenas metadados e publicar só o total reduz o escopo, mas não resolve essa dúvida. [Registro de termos do Archive](C:/Projetos/refute/docs/plans/sources/v0.5.5-archive-toi-terms-2026-11-21.md:39) · [Desenho da T3b, seção 3](C:/Projetos/refute/docs/plans/v0.5.5-t3b-preparation.md:64)
+
+**Para confirmar**, falta ler a *TFOP Working Group Publication Policy* e verificar se ela esclarece o uso da disposição pública republicada pelo Archive em uma contagem agregada. Se a política não esclarecer esse ponto, falta uma confirmação explícita do TFOP ou do NExScI. [Registro da política do ExoFOP](C:/Projetos/refute/docs/plans/sources/v0.5.4-exofop-data-use-policy-2026-11-12.md:41)
