@@ -853,6 +853,7 @@ Tracking: #218. Plan (an agent's proposal, stored unchanged; it decides nothing)
 [docs/plans/v0.5.5-r1-designs.md](docs/plans/v0.5.5-r1-designs.md). Amendment 1 to the charter
 (from the independent review): [docs/plans/v0.5.5-charter-amendment-1.md](docs/plans/v0.5.5-charter-amendment-1.md).
 The report at the gate G1: [docs/plans/v0.5.5-g1-report.md](docs/plans/v0.5.5-g1-report.md).
+The second report at the gate G1: [docs/plans/v0.5.5-g1-report-2.md](docs/plans/v0.5.5-g1-report-2.md).
 
 **Opened on 2026-11-20** by the maintainer's decision of that day (15:40, #218), which resumed
 the v0.5 line through a new change of approach. **The advance rule is not amended, and no phase

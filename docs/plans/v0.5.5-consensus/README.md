@@ -112,3 +112,24 @@ Applied as Codex wrote them (no divergence; one round):
 - **The runner is released** at the reviewed bytes (SHA-256 `7f125394...5769`); its bytes stay unchanged from the first dispatch on, comments and docstring included.
 - The two optional test improvements (the interruption with the attempt persisted before a correct JSON; the wrapper's deduction checked exactly with a deterministic process clock, and exactly zero when the inner charge is larger) are applied in `tests/v055/test_r1_fixed_cap.py`; the runner is unchanged by them.
 - The release does not certify future operating conditions nor pass any STOP.
+
+## Path A at G1: D2-F's fixed-cap adapter
+
+Codex's review of the fixed-cap adapter for D2-F's set A (`docs/validation/v0.5.5/d2f_fixed_cap.py`; the maintainer's decisions of 2026-11-21 at G1, item 2; #218): no budgeted_v3, the T2a-E runner's protections, the funding of 14.2 CPU-h from D1-P set B and 2.1 from the reserve (16.3 CPU-h, 4 workers), up to 3 rounds. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [d2fa-round-1-answer.md](d2fa-round-1-answer.md) | gpt-6.1-sol, high | 1, 3, 5 `SURVIVED`; 2 `REFUTED` (the receipt was saved before the wrapper's charge, with no operational closing after it); 4, 6 `WEAKENED` (the funding in two writes; the claim about `lv.declare()`'s callers incorrect; no test of a failed wrapper charge); **not released** | `3ba37f09e5303d2331b72146faac40a119bd6bdf7620936e4a7e2657691dcb00` |
+| 2 | [d2fa-round-2-answer.md](d2fa-round-2-answer.md) | gpt-6.1-sol, high | items 1 to 5 `SURVIVED`; no blocker; **the adapter is released** for set A at its reviewed bytes (SHA-256 `7b980a25685df9f4b0e632b61786a598db061acda289d4f653670cbd342cd374`), 16.3 CPU-h, 4 workers, 1,200 s per shard; one optional test, applied; D2-F not dispatched in this session (the stop at G1) | `757bcdc5ab8511b045ff01d63c268a76eaf393dd765f9972d6178925100cbcce` |
+
+The tokens are cumulative over the conversation `d2fa`:
+
+- round 1: 823,060 input (722,176 cached) and 9,352 output;
+- round 2: 1,218,355 input (1,097,728 cached) and 12,657 output;
+
+The conversation counts **133,284** review tokens (the last round's uncached input plus output).
+
+Applied as Codex wrote them (no divergence; two rounds):
+- Round 1's corrections (commit `ab5e7e7`): the operational closing `d2f-A-closing.json`, written once only after the wrapper's charge, bound to the record, the attempt, the identity, the receipt and the wrapper's charge, with the state `final` or `stopped`; `check_closed` and the `accept` command require `final`; the funding in one atomic write; the corrected docstring on `lv.declare()`'s callers; the tests asked.
+- Round 2's optional test (the wrapper's charge persisted, then the charges' room STOP: no closing, `accept` refuses) is applied; the adapter is unchanged by it.
+- **The adapter is released at its reviewed bytes, which stay unchanged from the first dispatch on. D2-F was not dispatched**: T2a-E's stage 2 was refused by its margin before D2-F's turn, a request for money beyond the authorized, and the decisions' item 6 stops at G1 on such a request. The release is kept for the maintainer's decision.

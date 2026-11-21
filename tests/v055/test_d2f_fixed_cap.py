@@ -336,6 +336,20 @@ def test_a_failed_wrapper_charge_leaves_no_closing(ledger, monkeypatch):
         ad.summarize()  # no automatic repair: the maintainer's reconciliation
 
 
+def test_a_wrapper_charge_that_passes_the_room_leaves_no_closing(ledger, monkeypatch):
+    # Codex, d2fa round 2: the wrapper's charge is persisted, then lv.charge stops because the
+    # charges passed their room: no closing, and the operational entry refuses
+    ad.run()
+    monkeypatch.setattr(d2f, "summarize", _inner(ledger))
+    budgeted.charge("big", lv.CHARGES_ROOM, "a charge that fills the room")
+    with pytest.raises(SystemExit, match="passed their room"):
+        ad.summarize()
+    assert len(_wrapper_charges()) == 1  # persisted before the STOP
+    assert not (ledger / "d2f-A-closing.json").exists()
+    with pytest.raises(SystemExit, match="is missing"):
+        ad.accept()
+
+
 def test_a_closing_that_does_not_bind_its_charges_is_refused(ledger, monkeypatch):
     ad.run()
     monkeypatch.setattr(d2f, "summarize", _inner(ledger))
