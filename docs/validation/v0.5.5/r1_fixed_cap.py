@@ -4,8 +4,11 @@ maintainer's decision of 2026-11-20, 21:00, items 1 and 3). ``method_status: not
 **Status: not released.** Codex's three rounds (``docs/plans/v0.5.5-consensus/``, conversation
 ``g1``) left three items pending: the proof that a recovered summary's charge belongs to that
 attempt, the wrapper's charge on an exception, and stage 2's margin against the effective cap.
-By the most conservative option, nothing ran through this runner. It is kept for the maintainer's
-decision at G1.
+By the most conservative option, nothing ran through this runner. At G1 (2026-11-21) the
+maintainer's adviser chose path A: the three items are applied here in Codex's text (the closing
+receipt, ``_check_receipt``; the wrapper's charge in ``finally``; ``check_margin`` against the
+effective cap), with round 3's tests 4 to 6, for a new Codex review (conversation ``g1r``, up to
+three rounds). Nothing runs through this runner before Codex releases it.
 
 **Why.** v0.5.4's ``budgeted_v3`` projects a part from a checkpoint of its first shards and then
 caps it at 1.5 times that projection. On heterogeneous shards a checkpoint of a few shards
@@ -48,7 +51,8 @@ allocation. The dispatch is refused when the necessary reserve does not fit."
   finished completion record bound to it by SHA-256, the scientific identity and the futility
   rule; its projection is revised on measured data before it runs (the mean CPU of stage 1's 51
   injections times 51, ``stage2_projection``, superseding the planning 2.1 CPU-h), and the run is
-  refused unless the protected cap is at least 1.3 times it.
+  refused unless the **effective** cap (the one given to the driver, after every restriction) is
+  at least 1.3 times it, checked under the lock before the start and written to the ledger.
 
 Usage (from the project root, through ``launch_detached.py`` for a run):
 ``r1_fixed_cap.py t2ae-1c run`` then ``t2ae-1c summarize``; ``t2ae-2 run`` then
@@ -60,6 +64,7 @@ from __future__ import annotations
 import datetime as dt
 import hashlib
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -126,6 +131,20 @@ def operational_identity(part, fingerprint, rows, allocation, workers, shard_lim
     }
 
 
+def effective_cap(row: dict, workers: int, shard_limit: float, line_cap: float | None) -> float:
+    """The cap given to the driver, after every restriction: the allocation's protected cap, the
+    line's cumulative cap (``line_cap``) and, on a resume, the cap recorded before (never
+    raised). No room is a STOP."""
+    cap = protected_cap(row["allocation_hours"], workers, shard_limit)
+    if line_cap is not None:
+        cap = min(cap, line_cap)
+    if "cap_hours" in row:  # a resume never raises the cap recorded before
+        cap = min(cap, row["cap_hours"])
+    if cap <= 0:
+        raise SystemExit("no room under the caps: a STOP")
+    return cap
+
+
 # --- the driver with the fixed cap ----------------------------------------------------------------
 
 
@@ -139,13 +158,16 @@ def execute_fixed(
     workers: int,
     shard_limit: float,
     line_cap: float | None = None,
+    expected_cap: float | None = None,
     **kwargs,
 ) -> str:
     """v0.5.2's driver with a protected cap fixed by the allocation, for the whole part: no
     checkpoint and no projection. "The effective cap is the smaller of the allocation's protected
     cap and the cumulative cap the line allows (``line_cap``, from ``lv.hard_cap``). A resume
     never raises the cap recorded before" (Codex, g1 round 2). Every charge, crash charges
-    included, counts in the part, the line and the total."""
+    included, counts in the part, the line and the total. ``expected_cap``: the effective cap a
+    caller checked before recording the start (stage 2's margin); a different cap here is a
+    STOP, so the cap checked is the cap given to the driver (Codex, g1 round 3)."""
     ledger = budgeted.load()
     gates = budgeted._open_gates(ledger, section, part)
     if gates:
@@ -168,13 +190,12 @@ def execute_fixed(
     )
     if row.get("operational_identity") not in (None, op):
         raise SystemExit(f"{section}/{part}: the runner or its settings changed: refused")
-    cap = protected_cap(row["allocation_hours"], workers, shard_limit)
-    if line_cap is not None:
-        cap = min(cap, line_cap)
-    if "cap_hours" in row:  # a resume never raises the cap recorded before
-        cap = min(cap, row["cap_hours"])
-    if cap <= 0:
-        raise SystemExit(f"{section}/{part}: no room under the caps: a STOP")
+    cap = effective_cap(row, workers, shard_limit, line_cap)
+    if expected_cap is not None and abs(cap - expected_cap) > 1e-12:
+        raise SystemExit(
+            f"{section}/{part}: the effective cap {cap} differs from the one checked before the "
+            f"start ({expected_cap}): a STOP"
+        )
     row.update(identity=identity, driver=MARK, operational_identity=op, cap_hours=cap)
     row["cap_basis"] = (
         "fixed by the allocation, protected for one crash charge, the poll margin and the "
@@ -263,9 +284,46 @@ def declare_fixed(extra: dict[str, float]) -> None:
         budgeted.declare(lv.SECTION, merged)
 
 
-def guarded_fixed(part: str, out: Path, rows: list, fp: str, step: str, reserve_bytes: int) -> str:
-    """One lock over the whole run: the identity and resume checks, the caps, the start's record
-    and the driver (as ``lv.guarded_run``, without its declaration)."""
+def check_margin(part: str, cap: float, projection: dict) -> None:
+    """Under the caller's lock and before the start is recorded (Codex, g1 round 3): "The
+    projection is a planning extrapolation based on the CPU of stage 1's 51 finished shards,
+    with no guarantee of representativeness or of future cost. The dispatch requires an
+    effective cap, after every restriction, of at least 1.3 times that projection." The
+    projection, its basis and the effective cap are written to the ledger before the dispatch.
+    This is not the 1.5-times-projection stop rule, which is not reintroduced."""
+    need = CAP_MARGIN * projection["projection_hours"]
+    book = budgeted.load()
+    row = budgeted._row(book, lv.SECTION, part)
+    row.setdefault("margin_checks", []).append(
+        {
+            "utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "basis": projection["basis"],
+            "projection_hours": projection["projection_hours"],
+            "effective_cap_hours": cap,
+            "margin_needed_hours": need,
+            "fits": cap >= need,
+        }
+    )
+    budgeted.save(book)
+    if cap < need:
+        raise SystemExit(
+            f"{part}: the effective cap {cap:.6f} is below {CAP_MARGIN} times the projection "
+            f"({need:.6f}): a STOP"
+        )
+
+
+def guarded_fixed(
+    part: str,
+    out: Path,
+    rows: list,
+    fp: str,
+    step: str,
+    reserve_bytes: int,
+    projection: dict | None = None,
+) -> str:
+    """One lock over the whole run: the identity and resume checks, the caps, the effective cap
+    (and, with ``projection``, its margin), the start's record and the driver (as
+    ``lv.guarded_run``, without its declaration)."""
     lv.assert_bound()
     workers = WORKERS[part]
     if workers > rc.workers_now(dt.datetime.now(rc.BRT)):
@@ -274,6 +332,10 @@ def guarded_fixed(part: str, out: Path, rows: list, fp: str, step: str, reserve_
         lv.check_run(part, fp, rows)
         lv.check_caps(step, 0.5, 300_000, reserve_bytes)
         line_cap = lv.hard_cap(part, workers, SHARD_LIMIT)  # a STOP if no room is left
+        row = budgeted._row(budgeted.load(), lv.SECTION, part)
+        cap = effective_cap(row, workers, SHARD_LIMIT, line_cap)
+        if projection is not None:
+            check_margin(part, cap, projection)
         earlier = lv.record_start(part, fp, rows)
         kind = "the pre-approved resume" if earlier else "a first run"
         print(f"{part}: {len(rows)} shards; {workers} workers; {kind}", flush=True)
@@ -287,6 +349,7 @@ def guarded_fixed(part: str, out: Path, rows: list, fp: str, step: str, reserve_
             workers,
             SHARD_LIMIT,
             line_cap=line_cap,
+            expected_cap=cap,
             pin=rc.pin()[:workers],
             pause_at=rc.NO_PAUSE,
         )
@@ -378,7 +441,7 @@ def merged_stage1_records() -> tuple[list, dict]:
     return recs, split
 
 
-def _completion_doc(split: dict, recovered: bool) -> dict:
+def _completion_doc(split: dict, recovered: bool, receipt: dict) -> dict:
     return {
         "label": "v0.5.5 R1, T2a-E: stage 1 completed in a new part with a fixed cap (the "
         "maintainer's decision of 2026-11-20, 21:00, item 1)",
@@ -389,6 +452,7 @@ def _completion_doc(split: dict, recovered: bool) -> dict:
         "runner": "docs/validation/v0.5.5/r1_fixed_cap.py",
         "runner_sha256": own_sha256(),
         "written_after_a_recovery": recovered,
+        "closing_receipt": receipt,
         "note": "The scientific modules and their frozen files are unchanged; the operational "
         "runner is new and has an identity of its own; the summary used the declared combined "
         "reader. t2ae-1.json's cpu_hours counts the stopped part only; both parts and the total "
@@ -398,6 +462,9 @@ def _completion_doc(split: dict, recovered: bool) -> dict:
 
 
 SUMMARY_CHARGE_PREFIX = "t2ae_summarize_1_"  # t2ae_census.summarize's charge for stage 1
+ATTEMPTS = "summary_attempts"  # the ledger's list of the completion summary's attempts
+RECEIPTS = "closing_receipts"  # the ledger's list of their closing receipts
+WRAPPER_CHARGE_PREFIX = "t2ae_completion_summary_"  # the wrapper's own charge
 
 
 def _expected_stage1_fields(recs: list) -> dict:
@@ -416,70 +483,183 @@ def _expected_stage1_fields(recs: list) -> dict:
     return out
 
 
+def _summary_charges(book: dict) -> dict[str, float]:
+    """The stage-1 summary's charges on file, by name. A historical one (an earlier, refused
+    summary) is kept and never removed."""
+    return {
+        c["name"]: c["hours"]
+        for c in book.get("charges", [])
+        if c["name"].startswith(SUMMARY_CHARGE_PREFIX)
+    }
+
+
+def _open_attempt() -> dict:
+    """Under the ledger's lock, before the inner summary runs: the attempt's record, with the
+    stage-1 summary charges already on file and the completion part's operational identity."""
+    book = budgeted.load()
+    stamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
+    attempt = {
+        "attempt": f"t2ae-1c-summary-{stamp}-pid{os.getpid()}-{len(book.get(ATTEMPTS, []))}",
+        "utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "prior_summary_charges": sorted(_summary_charges(book)),
+        "operational_identity": budgeted._row(book, lv.SECTION, COMPLETION_PART)[
+            "operational_identity"
+        ],
+        "runner_sha256": own_sha256(),
+    }
+    book.setdefault(ATTEMPTS, []).append(attempt)
+    budgeted.save(book)
+    return attempt
+
+
+def _new_summary_charges(attempt: dict) -> dict[str, float]:
+    """The stage-1 summary charges that were not on file when the attempt opened. Under the
+    ledger's lock no other process charges (``lv.charge`` takes the same lock), so these are the
+    inner summary's."""
+    now = _summary_charges(budgeted.load())
+    return {n: h for n, h in now.items() if n not in attempt["prior_summary_charges"]}
+
+
+def _write_receipt(attempt: dict, stage1: Path) -> dict:
+    """The closing receipt (Codex, g1 round 3): the attempt, its specific charge, the summary's
+    SHA-256 and the operational identity, persisted before the final record."""
+    new = _new_summary_charges(attempt)
+    if len(new) != 1:
+        raise SystemExit(
+            f"{len(new)} new charges of the stage-1 summary in this attempt: the binding is "
+            "uncertain; a STOP for the maintainer's reconciliation"
+        )
+    if not stage1.exists():
+        raise SystemExit("the inner summary ended without t2ae-1.json: a STOP")
+    ((name, hours),) = new.items()
+    receipt = {
+        "attempt": attempt["attempt"],
+        "charge_name": name,
+        "charge_hours": hours,
+        "summary_sha256": hashlib.sha256(stage1.read_bytes()).hexdigest(),
+        "operational_identity": attempt["operational_identity"],
+        "runner_sha256": own_sha256(),
+        "utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    }
+    book = budgeted.load()
+    book.setdefault(RECEIPTS, []).append(receipt)
+    budgeted.save(book)
+    return receipt
+
+
+def _check_receipt(stage1: Path) -> dict:
+    """A recovery's proof (Codex, g1 round 3): "The recovery requires proof of the charge of the
+    attempt that produced this summary, bound to its SHA-256 and to the operational identity.
+    The number of charges with a prefix is not that proof. A missing or uncertain binding causes
+    a STOP." Exactly one receipt bound to this summary's SHA-256; its attempt on file, opened
+    before its charge; its charge on file with the same hours; the same operational identity
+    and runner."""
+    book = budgeted.load()
+    digest = hashlib.sha256(stage1.read_bytes()).hexdigest()
+    bound = [r for r in book.get(RECEIPTS, []) if r.get("summary_sha256") == digest]
+    if len(bound) != 1:
+        raise SystemExit(
+            f"{len(bound)} closing receipts bound to t2ae-1.json's SHA-256: the charge of the "
+            "attempt that produced it is not proven; a STOP for the maintainer's reconciliation"
+        )
+    receipt = bound[0]
+    attempts = {a["attempt"]: a for a in book.get(ATTEMPTS, [])}
+    attempt = attempts.get(receipt.get("attempt"))
+    op = budgeted._row(book, lv.SECTION, COMPLETION_PART).get("operational_identity")
+    charges = _summary_charges(book)
+    name = receipt.get("charge_name")
+    proven = (
+        attempt is not None
+        and receipt.get("operational_identity") == op == attempt["operational_identity"]
+        and receipt.get("runner_sha256") == own_sha256() == attempt["runner_sha256"]
+        and name in charges
+        and charges[name] == receipt.get("charge_hours")
+        and name not in attempt["prior_summary_charges"]
+    )
+    if not proven:
+        raise SystemExit(
+            "the closing receipt does not bind the attempt, its charge and the operational "
+            "identity: a STOP for the maintainer's reconciliation"
+        )
+    return receipt
+
+
 def t2ae_1c_summarize() -> None:
     """Under the ledger's lock (Codex, g1 round 2): "the final record's existence is checked
     under the same lock that guards its publication; a final record is never overwritten". The
-    caps and the charges' room are checked on both paths. Without ``t2ae-1.json``: the merged
-    records go to ``t2ae_census``'s own summary (its caps, its charge), with the combined reader
-    for that call only. With it (an interruption between the two records): "the recovery keeps
-    the caps' checks and the summary's accounting; a JSON's existence does not pass a STOP nor
-    prove a charge done; uncertain earlier accounting prevents the final publication": exactly
-    one charge of the stage-1 summary on file, the charges within their room, and the record's
-    code identity and decisive fields equal to their recomputation. The wrapper's own CPU is
-    charged apart; the completion record (``state: final``) is written last."""
-    started = time.process_time()
-    inner = 0.0
+    caps and the charges' room are checked on both paths.
+
+    Without ``t2ae-1.json``: the attempt is recorded (with the summary charges already on file),
+    the merged records go to ``t2ae_census``'s own summary (its caps, its charge) with the
+    combined reader for that call only, and the closing receipt binds the attempt, its new
+    charge, the summary's SHA-256 and the operational identity.
+
+    With it (an interruption before the final record): the recovery needs that receipt
+    (``_check_receipt``); counting charges by prefix proves nothing; a missing or uncertain
+    binding is a STOP; the historical charge is never removed. The record's code identity and
+    decisive fields must equal their recomputation.
+
+    The wrapper's own work is charged in ``finally``, under the lock, on every path, refusals
+    and exceptions included (Codex, g1 round 3): "The wrapper's additional work is accounted
+    also in attempts refused or interrupted by an exception. Only consumption provably charged
+    by the inner summary is deducted. Any STOP prevents the final publication." The completion
+    record (``state: final``) is written only after a normal end and the wrapper's charge."""
     with lv.Exclusive("t2ae completion summary"):
-        if COMPLETION_RECORD.exists():
-            raise SystemExit(f"{COMPLETION_RECORD.name} exists: the record is written once")
-        lv.check_caps("t2ae completion summary", reserve_days=0.05, reserve_tokens=0)
-        if lv.charges_left() < 0.02:
-            raise SystemExit("too little of the charges' room left for the summary: a STOP")
-        recs, split = merged_stage1_records()
-        stage1 = HERE / "t2ae-1.json"
-        recovered = stage1.exists()
-        if recovered:
-            charges = [
-                c
+        started = time.process_time()
+        attempt = None
+        try:
+            if COMPLETION_RECORD.exists():
+                raise SystemExit(f"{COMPLETION_RECORD.name} exists: the record is written once")
+            lv.check_caps("t2ae completion summary", reserve_days=0.05, reserve_tokens=0)
+            if lv.charges_left() < 0.02:
+                raise SystemExit("too little of the charges' room left for the summary: a STOP")
+            recs, split = merged_stage1_records()
+            stage1 = HERE / "t2ae-1.json"
+            recovered = stage1.exists()
+            if recovered:
+                receipt = _check_receipt(stage1)
+                if lv.charges_left() < 0:
+                    raise SystemExit("the charges passed their room: a STOP")
+                first = json.loads(stage1.read_text("utf-8"))
+                if first.get("code_identity", {}).get("digest") != te.code_identity()["digest"]:
+                    raise SystemExit("t2ae-1.json holds another code identity: refused")
+                want = _expected_stage1_fields(recs)
+                got = {k: first.get(k) for k in want}
+                if got != want or ("outcome" in first) != ("outcome" in want):
+                    raise SystemExit("t2ae-1.json's decisive fields differ from the merged records")
+            else:
+
+                def merged_reader(stage: str) -> list:
+                    if stage != "1":
+                        raise SystemExit(f"the combined reader serves stage 1 only, not {stage}")
+                    return recs
+
+                attempt = _open_attempt()
+                original = te._records
+                te._records = merged_reader
+                try:
+                    te.summarize("1")  # its caps, its charge; a STOP propagates
+                finally:
+                    te._records = original
+                receipt = _write_receipt(attempt, stage1)
+            doc = _completion_doc(split, recovered, receipt)
+        finally:
+            inner = 0.0
+            if attempt is not None:  # only what the inner summary provably charged
+                inner = sum(_new_summary_charges(attempt).values()) * 3600.0
+            used = max(0.0, time.process_time() - started - inner)
+            n = sum(
+                1
                 for c in budgeted.load().get("charges", [])
-                if c["name"].startswith(SUMMARY_CHARGE_PREFIX)
-            ]
-            if len(charges) != 1:
-                raise SystemExit(
-                    f"{len(charges)} charges of the stage-1 summary on file: its accounting is "
-                    "uncertain; the maintainer's"
-                )
-            if lv.charges_left() < 0:
-                raise SystemExit("the charges passed their room: a STOP")
-            first = json.loads(stage1.read_text("utf-8"))
-            if first.get("code_identity", {}).get("digest") != te.code_identity()["digest"]:
-                raise SystemExit("t2ae-1.json holds another code identity: refused")
-            want = _expected_stage1_fields(recs)
-            got = {k: first.get(k) for k in want}
-            if got != want or ("outcome" in first) != ("outcome" in want):
-                raise SystemExit("t2ae-1.json's decisive fields differ from the merged records")
-        else:
-
-            def merged_reader(stage: str) -> list:
-                if stage != "1":
-                    raise SystemExit(f"the combined reader serves stage 1 only, not {stage}")
-                return recs
-
-            original = te._records
-            te._records = merged_reader
-            t0 = time.process_time()
-            try:
-                te.summarize("1")  # its caps, its charge; a STOP propagates
-            finally:
-                te._records = original
-                inner = time.process_time() - t0
-        doc = _completion_doc(split, recovered)
-        used = time.process_time() - started - inner
-        lv.charge(
-            f"t2ae_completion_summary_{time.strftime('%Y%m%dT%H%M%SZ', time.gmtime())}",
-            used / 3600.0,
-            f"r1_fixed_cap.t2ae_1c_summarize, apart from t2ae_census.summarize: {used:.1f} s",
-        )
+                if c["name"].startswith(WRAPPER_CHARGE_PREFIX)
+            )
+            stamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
+            lv.charge(
+                f"{WRAPPER_CHARGE_PREFIX}{stamp}_{n:03d}",  # unique under the lock
+                used / 3600.0,
+                f"r1_fixed_cap.t2ae_1c_summarize, apart from t2ae_census.summarize's own charge: "
+                f"{used:.1f} s",
+            )
         COMPLETION_RECORD.write_text(
             json.dumps(doc, indent=1, sort_keys=True) + "\n", "utf-8", newline="\n"
         )
@@ -507,8 +687,8 @@ def stage2_projection(rows: list) -> dict:
     """Stage 2's projection, revised on measured data and recorded before stage 2 runs (Codex,
     g1 round 2): the mean CPU of stage 1's 51 finished injections (their sidecars, in both
     folders) times stage 2's injections. The earlier planning projection (2.1 CPU-h, from step 6's
-    replay) is superseded by this measured one, and the run is refused unless the protected cap
-    is at least 1.3 times it."""
+    replay) is superseded by this measured one. The margin is checked against the **effective**
+    cap under the lock, before the start (``check_margin``; Codex, g1 round 3)."""
     r1, fp1, out = _stage1()
     done_a = stopped_done(r1, fp1, out)
     todo = completion_rows(r1, done_a)
@@ -516,17 +696,12 @@ def stage2_projection(rows: list) -> dict:
     cpu = [d["cpu_seconds"] for d in (*done_a.values(), *done_b.values())]
     if len(cpu) != len(r1):
         raise SystemExit("stage 1's measured costs are incomplete: stage 2 refused")
-    projection = sum(cpu) / len(cpu) * len(rows) / 3600.0
-    part = te.part("2")
-    allocation = budgeted._row(budgeted.load(), lv.SECTION, part)["allocation_hours"]
-    cap = protected_cap(allocation, WORKERS[part], SHARD_LIMIT)
+    mean = sum(cpu) / len(cpu)
     return {
-        "basis": "the mean CPU of stage 1's 51 injections (sidecars) times stage 2's injections",
-        "stage_1_mean_cpu_seconds": sum(cpu) / len(cpu),
-        "projection_hours": projection,
-        "protected_cap_hours": cap,
-        "margin_needed_hours": CAP_MARGIN * projection,
-        "fits": cap >= CAP_MARGIN * projection,
+        "basis": f"the mean CPU of stage 1's {len(cpu)} finished injections (their sidecars, "
+        f"{mean:.3f} s) times stage 2's {len(rows)} injections; a planning extrapolation",
+        "stage_1_mean_cpu_seconds": mean,
+        "projection_hours": mean * len(rows) / 3600.0,
     }
 
 
@@ -538,10 +713,14 @@ def t2ae_2_run() -> None:
     fp = te.fingerprint(rows)
     proj = stage2_projection(rows)
     print(json.dumps(proj, indent=1), flush=True)
-    if not proj["fits"]:
-        raise SystemExit("the protected cap is below 1.3 times the measured projection: STOP")
     state = guarded_fixed(
-        te.part("2"), te.OUT / fp, rows, fp, "t2ae run 2 (fixed cap)", len(rows) * 400_000 + 5e7
+        te.part("2"),
+        te.OUT / fp,
+        rows,
+        fp,
+        "t2ae run 2 (fixed cap)",
+        len(rows) * 400_000 + 50_000_000,
+        projection=proj,
     )
     print(state, flush=True)
     lv.check_caps("t2ae after the run 2", 0.0, 0)

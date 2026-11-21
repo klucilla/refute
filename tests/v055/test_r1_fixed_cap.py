@@ -135,13 +135,48 @@ def test_the_protected_cap():
     assert fc.protected_cap(3.1, fc.WORKERS["r1_t2ae_2"], 600.0) > 2.1
 
 
-def test_the_line_s_cap_applies_when_smaller_and_a_resume_never_raises_it(ledger):
+def test_the_line_s_cap_applies_when_smaller(ledger):
     line = 0.01  # 36 s: smaller than the protected cap of the allocation
     state = fc.execute_fixed(SECTION, "p", ledger / "a", quick, SHARDS, "fp", 2, LIMIT,
                              line_cap=line, **KW)  # fmt: skip
     assert Exact.caps == [pytest.approx(line)]
     assert state.startswith("stopped")
     assert _row()["cap_hours"] == pytest.approx(line)
+
+
+class Crash(Exact):
+    """The first batch stores two shards, leaves its charge open (no workers alive) and the
+    controller dies; later batches are ``Exact``'s."""
+
+    crashed = False
+
+    def _batch(self, todo, workers, spent_hours):
+        if Crash.crashed:
+            return super()._batch(todo, workers, spent_hours)
+        Crash.crashed = True
+        for sid, arg in todo[:2]:
+            self._store(sid, arg, self.fn(arg), COST[sid], workers)
+        self._write_charge("b00000.json", 2.0, 2.0, workers, False, {})
+        raise RuntimeError("the controller died")
+
+
+def test_a_real_resume_never_raises_the_cap(ledger, monkeypatch):
+    # an eligible resume: no stop on file, the same identity, the open batch reconciled with its
+    # crash charge; the first run's smaller line cap stays although the line allows more now
+    monkeypatch.setattr(driver, "Run", Crash)
+    Crash.crashed = False
+    with pytest.raises(RuntimeError, match="died"):
+        fc.execute_fixed(SECTION, "p", ledger / "a", quick, SHARDS, "fp", 2, LIMIT,
+                         line_cap=0.05, **KW)  # fmt: skip
+    assert _row()["cap_hours"] == pytest.approx(0.05)
+    assert "unresolved_stop" not in _row()
+    state = fc.execute_fixed(SECTION, "p", ledger / "a", quick, SHARDS, "fp", 2, LIMIT, **KW)
+    assert Exact.caps == [pytest.approx(0.05), pytest.approx(0.05)]
+    assert _row()["cap_hours"] == pytest.approx(0.05)
+    charge = json.loads((ledger / "a" / "charges" / "b00000.json").read_text("utf-8"))
+    assert charge["closed"] and charge["reconciled_after_a_crash"]
+    assert charge["seconds"] == pytest.approx(2.0 + 2 * (LIMIT + driver.CHARGE_SECONDS))
+    assert state.startswith("stopped")  # 513 s do not fit 180 s
 
 
 def test_a_fixed_cap_runs_heterogeneous_shards_with_no_checkpoint(ledger):
@@ -306,13 +341,28 @@ def pub(stage1, monkeypatch, tmp_path):
     return folder
 
 
-def _interrupted_summary(pub, charges=1, **change):
-    """t2ae-1.json as the frozen summary writes it, then an interruption before the record."""
+HISTORICAL = "t2ae_summarize_1_20261120T235128Z"  # the refused summary's charge on file
+
+
+def _summary_doc(**change) -> str:
     recs, _ = fc.merged_stage1_records()
-    doc = {"code_identity": {"digest": "d"}, **fc._expected_stage1_fields(recs), **change}
-    (pub / "t2ae-1.json").write_text(json.dumps(doc), "utf-8")
-    for k in range(charges):
-        budgeted.charge(f"{fc.SUMMARY_CHARGE_PREFIX}{k}", 0.001, "the frozen summary")
+    return json.dumps({"code_identity": {"digest": "d"}, **fc._expected_stage1_fields(recs),
+                       **change})  # fmt: skip
+
+
+def _interrupted_summary(pub, receipt=True, **change):
+    """The normal path's records up to an interruption: the attempt, the inner summary's
+    t2ae-1.json and its own charge, then (with ``receipt``) the closing receipt; the final
+    record is not written."""
+    attempt = fc._open_attempt()
+    (pub / "t2ae-1.json").write_text(_summary_doc(**change), "utf-8")
+    budgeted.charge(f"{fc.SUMMARY_CHARGE_PREFIX}new", 0.001, "the frozen summary")
+    if receipt:
+        fc._write_receipt(attempt, pub / "t2ae-1.json")
+
+
+def _wrapper_charges() -> list:
+    return [c for c in budgeted.load()["charges"] if c["name"].startswith(fc.WRAPPER_CHARGE_PREFIX)]
 
 
 def test_the_summary_publishes_and_recovers_once(pub, monkeypatch):
@@ -320,11 +370,13 @@ def test_the_summary_publishes_and_recovers_once(pub, monkeypatch):
     fc.t2ae_1c_summarize()
     comp = json.loads((pub / "t2ae-1-completion.json").read_text("utf-8"))
     assert comp["written_after_a_recovery"] is True and comp["state"] == "final"
-    assert any(c["name"].startswith("t2ae_completion_summary_") for c in budgeted.load()["charges"])
+    assert comp["closing_receipt"]["charge_name"] == f"{fc.SUMMARY_CHARGE_PREFIX}new"
+    assert len(_wrapper_charges()) == 1
     want = hashlib.sha256((pub / "t2ae-1.json").read_bytes()).hexdigest()
-    assert comp["stage_1_record_sha256"] == want
+    assert comp["stage_1_record_sha256"] == want == comp["closing_receipt"]["summary_sha256"]
     with pytest.raises(SystemExit, match="written once"):
         fc.t2ae_1c_summarize()
+    assert len(_wrapper_charges()) == 2  # the refusal's work is charged too
     # stage 2 is bound to both records
     monkeypatch.setattr(fc.te, "_first_stage", lambda: {"_sha256": want, "futile_after_1": False})
     assert fc.check_stage1_published()["futile_after_1"] is False
@@ -333,21 +385,55 @@ def test_the_summary_publishes_and_recovers_once(pub, monkeypatch):
         fc.check_stage1_published()
 
 
+def test_a_historical_charge_never_proves_a_recovered_summary(pub):
+    # Codex, g1 round 3: one old charge on file, a new and correct t2ae-1.json, and an
+    # interruption before the new charge: the publication is refused; the old charge is kept
+    budgeted.charge(HISTORICAL, 0.0009461806, "the refused summary of 2026-11-20")
+    (pub / "t2ae-1.json").write_text(_summary_doc(), "utf-8")
+    with pytest.raises(SystemExit, match="not proven"):
+        fc.t2ae_1c_summarize()
+    assert not (pub / "t2ae-1-completion.json").exists()
+    assert any(c["name"] == HISTORICAL for c in budgeted.load()["charges"])
+    assert len(_wrapper_charges()) == 1
+
+
+def _break_charge(book):
+    for c in book["charges"]:
+        if c["name"] == f"{fc.SUMMARY_CHARGE_PREFIX}new":
+            c["hours"] = 0.002
+
+
+def _other_identity(book):
+    book[fc.RECEIPTS][-1]["operational_identity"] = {"runner_sha256": "other"}
+
+
+def _drop_attempt(book):
+    book[fc.ATTEMPTS] = []
+
+
 @pytest.mark.parametrize(
-    "charges, change, match",
+    "receipt, change, edit, match",
     [
-        (0, {}, "accounting is uncertain"),
-        (2, {}, "accounting is uncertain"),
-        (1, {"counts": {"injections": 1}}, "decisive fields differ"),
-        (1, {"futile_after_1": None}, "decisive fields differ"),
-        (1, {"stage": "2"}, "decisive fields differ"),
+        (False, {}, None, "not proven"),  # the attempt and its charge, no receipt
+        (True, {}, _break_charge, "does not bind"),
+        (True, {}, _other_identity, "does not bind"),
+        (True, {}, _drop_attempt, "does not bind"),
+        (True, {"counts": {"injections": 1}}, None, "decisive fields differ"),
+        (True, {"futile_after_1": None}, None, "decisive fields differ"),
+        (True, {"stage": "2"}, None, "decisive fields differ"),
     ],
 )
-def test_a_recovery_is_refused_without_certain_accounting_or_fields(pub, charges, change, match):
-    _interrupted_summary(pub, charges=charges, **change)
+def test_a_recovery_is_refused_without_a_bound_receipt_or_fields(pub, receipt, change, edit, match):
+    budgeted.charge(HISTORICAL, 0.0009461806, "the refused summary of 2026-11-20")
+    _interrupted_summary(pub, receipt=receipt, **change)
+    if edit is not None:
+        book = budgeted.load()
+        edit(book)
+        budgeted.save(book)
     with pytest.raises(SystemExit, match=match):
         fc.t2ae_1c_summarize()
     assert not (pub / "t2ae-1-completion.json").exists()
+    assert len(_wrapper_charges()) == 1
 
 
 def test_a_recovery_after_the_charges_passed_their_room_is_refused(pub):
@@ -372,6 +458,133 @@ def test_a_record_that_appears_before_the_lock_is_never_overwritten(pub, monkeyp
     with pytest.raises(SystemExit, match="written once"):
         fc.t2ae_1c_summarize()
     assert (pub / "t2ae-1-completion.json").read_text("utf-8") == "{}"
+
+
+def _inner(pub, hours=0.001, fail=None, write=True):
+    """A stand-in for t2ae_census.summarize: the record and its own charge, then ``fail``."""
+
+    def summarize(stage):
+        assert stage == "1" and len(fc.te._records("1")) == 10  # the combined reader
+        if write:
+            (pub / "t2ae-1.json").write_text(_summary_doc(), "utf-8")
+        budgeted.charge(f"{fc.SUMMARY_CHARGE_PREFIX}inner", hours, "the frozen summary")
+        if fail is not None:
+            raise SystemExit(fail)
+
+    return summarize
+
+
+def test_the_normal_path_binds_the_new_charge_not_the_historical_one(pub, monkeypatch):
+    budgeted.charge(HISTORICAL, 0.0009461806, "the refused summary of 2026-11-20")
+    monkeypatch.setattr(fc.te, "summarize", _inner(pub))
+    fc.t2ae_1c_summarize()
+    comp = json.loads((pub / "t2ae-1-completion.json").read_text("utf-8"))
+    assert comp["written_after_a_recovery"] is False
+    receipt = comp["closing_receipt"]
+    assert receipt["charge_name"] == f"{fc.SUMMARY_CHARGE_PREFIX}inner"
+    assert receipt["summary_sha256"] == comp["stage_1_record_sha256"]
+    assert receipt["operational_identity"] == comp["completion_operational_identity"]
+    book = budgeted.load()
+    assert book[fc.ATTEMPTS][-1]["prior_summary_charges"] == [HISTORICAL]
+    assert book[fc.RECEIPTS] == [receipt]
+    assert any(c["name"] == HISTORICAL for c in book["charges"])  # never removed
+    assert len(_wrapper_charges()) == 1
+
+
+def test_the_wrapper_is_charged_after_an_exception_and_nothing_is_published(pub, monkeypatch):
+    # the inner summary charges its own work and then stops: the wrapper is still charged, under
+    # the lock, and nothing is published
+    monkeypatch.setattr(fc.te, "summarize", _inner(pub, hours=1e-6, fail="an inner STOP"))
+    with pytest.raises(SystemExit, match="an inner STOP"):
+        fc.t2ae_1c_summarize()
+    assert not (pub / "t2ae-1-completion.json").exists()
+    book = budgeted.load()
+    assert len(_wrapper_charges()) == 1 and _wrapper_charges()[0]["hours"] >= 0.0
+    assert fc.RECEIPTS not in book and len(book[fc.ATTEMPTS]) == 1
+    # the record the inner summary left is not proven by the charge it made before stopping
+    monkeypatch.setattr(fc.te, "summarize", lambda stage: pytest.fail("not called on recovery"))
+    with pytest.raises(SystemExit, match="not proven"):
+        fc.t2ae_1c_summarize()
+    assert not (pub / "t2ae-1-completion.json").exists()
+    assert len(_wrapper_charges()) == 2
+
+
+def test_the_wrapper_deducts_only_the_inner_charge(pub, monkeypatch):
+    # the deduction is the attempt's new inner charge only (never the historical one); an inner
+    # charge larger than the wrapper's whole time leaves a charge of zero, never less
+    budgeted.charge(HISTORICAL, 0.0009461806, "the refused summary of 2026-11-20")
+    monkeypatch.setattr(fc.te, "summarize", _inner(pub, hours=1.0e-3, fail="stop"))
+    with pytest.raises(SystemExit):
+        fc.t2ae_1c_summarize()
+    assert _wrapper_charges()[0]["hours"] >= 0.0
+    attempt = budgeted.load()[fc.ATTEMPTS][-1]
+    assert fc._new_summary_charges(attempt) == {f"{fc.SUMMARY_CHARGE_PREFIX}inner": 1.0e-3}
+
+
+def test_two_new_charges_in_one_attempt_are_a_stop(pub, monkeypatch):
+    def twice(stage):
+        _inner(pub)(stage)
+        budgeted.charge(f"{fc.SUMMARY_CHARGE_PREFIX}again", 0.001, "a second charge")
+
+    monkeypatch.setattr(fc.te, "summarize", twice)
+    with pytest.raises(SystemExit, match="binding is uncertain"):
+        fc.t2ae_1c_summarize()
+    assert not (pub / "t2ae-1-completion.json").exists()
+    assert len(_wrapper_charges()) == 1
+
+
+# --- stage 2: the margin against the effective cap (test 6) ---------------------------------------
+
+
+@pytest.fixture
+def stage2(ledger, monkeypatch):
+    monkeypatch.setattr(fc, "WORKERS", {fc.COMPLETION_PART: 2, "r1_t2ae_2": 2})
+    monkeypatch.setattr(fc, "SHARD_LIMIT", LIMIT)
+    monkeypatch.setattr(fc.te, "shard", quick)
+    monkeypatch.setattr(lv, "check_caps", lambda *a, **k: {})
+    monkeypatch.setattr(driver, "check_controller_placement", lambda: None)
+    budgeted.declare(
+        SECTION, {"p": 0.2, "small": 0.05, "old": 0.2, "r1_t2ae_2": 0.2, "r1_reserve": 9.8}
+    )
+    return ledger
+
+
+def _proj(hours):
+    return {"basis": "synthetic", "projection_hours": hours}
+
+
+def test_stage_2_is_refused_when_only_the_protected_cap_fits_the_margin(stage2, monkeypatch):
+    protected = fc.protected_cap(0.2, 2, LIMIT)  # about 0.17 CPU-h
+    projection = protected / 1.5  # 1.3 times it fits the protected cap
+    assert protected >= fc.CAP_MARGIN * projection
+    monkeypatch.setattr(lv, "hard_cap", lambda *a: projection)  # the line allows less
+    with pytest.raises(SystemExit, match="below 1.3 times the projection"):
+        fc.guarded_fixed("r1_t2ae_2", stage2 / "s2", SHARDS, "fp", "s2", 0, _proj(projection))
+    book = budgeted.load()
+    row = book["sections"][SECTION]["parts"]["r1_t2ae_2"]
+    check = row["margin_checks"][-1]
+    assert check["fits"] is False and check["effective_cap_hours"] == pytest.approx(projection)
+    assert check["basis"] == "synthetic"
+    assert "r1_t2ae_2" not in book.get("starts", {})  # refused before the start's record
+    assert Exact.caps == []
+
+
+def test_stage_2_runs_with_the_cap_it_checked(stage2, monkeypatch):
+    protected = fc.protected_cap(0.2, 2, LIMIT)
+    monkeypatch.setattr(lv, "hard_cap", lambda *a: 1.0)  # the line allows more
+    projection = 513 / 3600 / fc.CAP_MARGIN  # the synthetic stage's whole cost fits
+    state = fc.guarded_fixed("r1_t2ae_2", stage2 / "s2", SHARDS, "fp", "s2", 0, _proj(projection))
+    assert state == "complete"
+    row = budgeted.load()["sections"][SECTION]["parts"]["r1_t2ae_2"]
+    assert row["margin_checks"][-1]["effective_cap_hours"] == pytest.approx(protected)
+    assert Exact.caps == [pytest.approx(protected)]  # the cap checked is the driver's
+
+
+def test_a_cap_that_changes_after_the_check_is_a_stop(ledger):
+    with pytest.raises(SystemExit, match="differs from the one checked"):
+        fc.execute_fixed(SECTION, "p", ledger / "a", quick, SHARDS, "fp", 2, LIMIT,
+                         expected_cap=0.01, **KW)  # fmt: skip
+    assert Exact.caps == []
 
 
 def test_stage_2_needs_the_completion_record(ledger, monkeypatch, tmp_path):
