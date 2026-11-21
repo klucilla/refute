@@ -230,3 +230,26 @@ unchanged; the received file's SHA-256 was checked before the commit.
 The ten changes are applied in the revised arguments (the decisions' item 1), checked by Codex
 (conversation r2rev) before the second bundle is built.
 
+## R2 after the first blind review: the revised arguments and the second bundle
+
+Codex's review of the arguments revised by the first blind review's ten items, the targets' definitions, the code semantics and the second bundle's builder (the maintainer's decisions of 2026-11-21, 15:20, items 1 to 3; #218), up to 3 rounds, on R2's line. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [r2rev-round-1-answer.md](r2rev-round-1-answer.md) | gpt-6.1-sol, high | items 1, 2, 6 and 10 `SURVIVED`; 4, 5, 7, 8 `WEAKENED`; 3 and 9 `REFUTED` (600 pairs do not give 80 % power and the exact interval was unspecified; directional text left; a historical acceptance outcome in `values.py`); **not ready** | `1b0e0407d31efd9e360727c5543844464047394ff713bdd63b420dd3c9c90234` |
+| 2 | [r2rev-round-2-answer.md](r2rev-round-2-answer.md) | gpt-6.1-sol, high | the targets, B2, the confirmation and the earlier remarks `SURVIVED`; the power guarantee and the bundle `REFUTED` (the observed-discordance cut capped the power near 52 %; the manifest republished the removed text); VN `WEAKENED`; **not ready** | `80a6a5027ab1362ee90eae843b130b945a44ad2034cc0418bcc5d331879bf6a0` |
+| 3 | [r2rev-round-3-answer.md](r2rev-round-3-answer.md) | gpt-6.1-sol, high | every item `SURVIVED`; **the second bundle can be built once; B3.3 goes to the second blind review as a conditional decisive candidate**; one editorial remark on VN's third kind | `7defab53d0dadd4c0e73dcb2b85385f88aba8a11bcf251c4a98082b1e4662ac9` |
+
+The tokens are cumulative over the conversation `r2rev`:
+
+- round 1: 918,180 input (825,216 cached) and 12,866 output;
+- round 2: 1,417,441 input (1,294,976 cached) and 19,927 output;
+- round 3: 1,847,670 input (1,710,848 cached) and 23,660 output;
+
+The conversation counts **160,482** review tokens (the last round's uncached input plus output).
+
+Applied as Codex wrote them (no divergence left after round 3):
+- **The second bundle was built once on 2026-11-21 at 18:45:20 UTC** from the reviewed bytes (commit `5bbd8b3`): 19 files in `.cache/v055/r2/bundle-2/` (the arguments cut at the disclosure, the code semantics, the targets' definitions and sixteen source files of the frozen rules, `calib05/values.py` as a declared review copy); its manifest `docs/validation/v0.5.5/r2-bundle-2-manifest.json` checked for leaks and written before the files; `check` passed (19 files). **No reviewer was launched**: the second blind review is the adviser's, with a new session. The first bundle keeps its folder and manifest.
+- **Before the freeze** (Codex, round 3): the exact test's ordering fixed, the valid size demonstrated for 80 % power over the design range, and the same power criterion applied to T2b.
+- **Pending for the freeze, not applied** (to keep the bundle on the reviewed bytes): Codex's editorial remark that VN's third kind is better described as "a multi-harmonic profile with fixed relative phases" (under C1's sine convention, its phases give a shifted, symmetric sum of cosines; still a non-sinusoidal periodic control).
+- If the second blind review leaves any condition of B3.3 open, the current branch stays decisive and the evidence split is a reported-only variant.

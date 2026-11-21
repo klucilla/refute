@@ -617,6 +617,106 @@
     "review_tokens": 0,
     "disk_bytes": 0
    }
+  },
+  {
+   "utc": "2026-11-21T18:30:18Z",
+   "step": "r2: r2 revision round 1",
+   "codex_tokens": {
+    "conversations": {
+     "d2fa": 133284,
+     "facts": 168755,
+     "g1": 198496,
+     "g1r": 92113,
+     "night": 223534,
+     "r0r1": 395037,
+     "t2s": 92743
+    },
+    "phase": 1303962
+   },
+   "agent_days_wall": 2.98,
+   "agent_days_active": 1.16,
+   "cpu_hours": 14.854,
+   "disk_bytes": 17405927,
+   "reserved": {
+    "agent_days": 0.3,
+    "review_tokens": 300000,
+    "disk_bytes": 0
+   }
+  },
+  {
+   "utc": "2026-11-21T18:38:37Z",
+   "step": "r2: r2 revision round 2",
+   "codex_tokens": {
+    "conversations": {
+     "d2fa": 133284,
+     "facts": 168755,
+     "g1": 198496,
+     "g1r": 92113,
+     "night": 223534,
+     "r0r1": 395037,
+     "t2s": 92743
+    },
+    "phase": 1303962
+   },
+   "agent_days_wall": 3.0,
+   "agent_days_active": 1.17,
+   "cpu_hours": 14.854,
+   "disk_bytes": 17823776,
+   "reserved": {
+    "agent_days": 0.3,
+    "review_tokens": 250000,
+    "disk_bytes": 0
+   }
+  },
+  {
+   "utc": "2026-11-21T18:43:33Z",
+   "step": "r2: r2 revision round 3",
+   "codex_tokens": {
+    "conversations": {
+     "d2fa": 133284,
+     "facts": 168755,
+     "g1": 198496,
+     "g1r": 92113,
+     "night": 223534,
+     "r0r1": 395037,
+     "t2s": 92743
+    },
+    "phase": 1303962
+   },
+   "agent_days_wall": 3.0,
+   "agent_days_active": 1.18,
+   "cpu_hours": 14.854,
+   "disk_bytes": 18001653,
+   "reserved": {
+    "agent_days": 0.3,
+    "review_tokens": 250000,
+    "disk_bytes": 0
+   }
+  },
+  {
+   "utc": "2026-11-21T18:45:42Z",
+   "step": "r2: r2 second stop",
+   "codex_tokens": {
+    "conversations": {
+     "d2fa": 133284,
+     "facts": 168755,
+     "g1": 198496,
+     "g1r": 92113,
+     "night": 223534,
+     "r0r1": 395037,
+     "t2s": 92743
+    },
+    "phase": 1303962
+   },
+   "agent_days_wall": 3.01,
+   "agent_days_active": 1.19,
+   "cpu_hours": 14.854,
+   "disk_bytes": 18448129,
+   "reserved": {
+    "agent_days": 0.0,
+    "review_tokens": 0,
+    "disk_bytes": 0
+   }
   }
  ]
 }
