@@ -860,7 +860,8 @@ R2 on paper, the second stop with the second blind bundle ready: [docs/plans/v0.
 R2's closing record (closed without a freeze): [docs/plans/v0.5.5-r2-closing-record.md](docs/plans/v0.5.5-r2-closing-record.md).
 
 **Paused on 2026-11-21, not approved** (the maintainer's decision of 2026-11-21, 18:30, #218;
-[the v0.5 line's pause record](docs/plans/v0.5.5-v05-line-pause-record.md)). No exit criterion is
+[the v0.5 line's pause record](docs/plans/v0.5.5-v05-line-pause-record.md);
+[its corrections](docs/plans/v0.5.5-v05-line-pause-record-corrections.md)). No exit criterion is
 ticked.
 
 **Opened on 2026-11-20** by the maintainer's decision of that day (15:40, #218), which resumed

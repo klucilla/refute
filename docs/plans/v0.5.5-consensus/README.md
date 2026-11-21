@@ -306,3 +306,21 @@ The tokens are cumulative over the conversation `pause`:
 The conversation counts **52,318** review tokens (the last round's uncached input plus output).
 
 Applied: round 1's section 7 item (the draft's paragraph restored byte for byte under the title 'What the draft asked the maintainer to decide'), the rounding note and the header sentence; round 2's item by a note under trigger 4 that keeps the adopted wording and points to R1's frozen design (revision 1, section 3; `d1p_exit_outcome`), and a pointer under trigger 3 to v0.5.4's pause record. Not applied, by the conservative option (they would change a resuming trigger's wording beyond the three corrections the maintainer authorized): the D1 wording 'whose D1-P price reads "route" in all eight cells across two new seed sets for a decisive exit' and the T2a wording 'or a noise model of the background series, in a new design frozen before its data, under which at least 82 of the 102 class-(i) injections are valid by all of step 6's requirements'; both are the maintainer's decision (#218). No other round follows.
+
+## The pause record's corrections (triggers 3 and 4)
+
+Codex's round on the corrections the maintainer accepted on 2026-11-21 (20:00), item 1 (#218): the new record docs/plans/v0.5.5-v05-line-pause-record-corrections.md (the two wordings Codex proposed in rounds 1 to 3, the reason, the pointers) and the ROADMAP's pointer on v0.5.5's line; the adopted record unchanged. Within the token allowance of the 18:30 decision, item 3 (the ledger's cap_exceptions, 'pause-final-codex-round'). Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 4 | [pause-round-4-answer.md](pause-round-4-answer.md) | gpt-6.1-sol, high | **WEAKENED**: no blocking item of content (both wordings and their sources check; the adopted record is byte-identical to b654d88); two remarks of textual scope: keep trigger 3's closing parenthesis with its pointer, and drop the date after the ROADMAP's new link | `2e60dbe07f0319ab505fdaadfa3dc427eb60776774011f4fdce65c2e432a117c` |
+| 5 | [pause-round-5-answer.md](pause-round-5-answer.md) | gpt-6.1-sol, high | **SURVIVED**: both remarks applied; no correction pending | `1dd3777fcaeddacff022fca03a7a512fde57424056b669a610ee0d18c2d722e5` |
+
+The tokens are cumulative over the conversation `pause`:
+
+- round 4: 261,563 input (219,648 cached) and 4,084 output;
+- round 5: 164,413 input (139,648 cached) and 1,834 output;
+
+The conversation counts **26,599** review tokens (the last round's uncached input plus output).
+
+Applied: round 4's two remarks (trigger 3's parenthesis restored with the pointer to v0.5.4's pause record; the ROADMAP's diff reduced to the pointer). No other round follows.
