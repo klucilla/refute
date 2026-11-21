@@ -128,10 +128,78 @@ def test_the_line_is_checked(ledger):
         st.apply("t2ae2")
 
 
-def test_a_step_on_file_that_no_longer_matches_is_a_stop(ledger):
+def _restore_reserve(book):
+    book["sections"][SECTION]["parts"]["r1_reserve"]["allocation_hours"] += 0.45
+
+
+def _tamper_record(book):
+    book["transfers"][0]["from"] = {"r1_reserve": 0.40}
+
+
+def _tamper_reserve_record(book):
+    book["transfers"][0]["reserve_hours"]["after"] = 20.3
+
+
+def _duplicate(book):
+    book["transfers"].append(dict(book["transfers"][0]))
+
+
+def _pass_the_line(book):
+    book["sections"][SECTION]["parts"]["big"] = {"allocation_hours": 40.0}
+
+
+def _target_back(book):
+    book["sections"][SECTION]["parts"]["r1_t2ae_2"]["allocation_hours"] = 3.1
+
+
+def _extra_field(book):
+    book["transfers"][0]["note"] = "x"
+
+
+@pytest.mark.parametrize(
+    "edit",
+    [_restore_reserve, _tamper_record, _tamper_reserve_record, _duplicate, _pass_the_line,
+     _target_back, _extra_field],
+)  # fmt: skip
+def test_a_step_on_file_that_no_longer_matches_is_a_stop_with_no_write(ledger, edit):
+    # Codex, t2s round 1: the target kept at 3.55 (but for _target_back), the repeat refuses
     st.apply("t2ae2")
     book = budgeted.load()
-    book["sections"][SECTION]["parts"]["r1_t2ae_2"]["allocation_hours"] = 3.1
+    edit(book)
+    budgeted.save(book)
+    before = (ledger / "ledger.json").read_bytes()
+    with pytest.raises(SystemExit, match="does not match"):
+        st.apply("t2ae2")
+    assert (ledger / "ledger.json").read_bytes() == before
+
+
+def test_an_intact_repeat_writes_nothing(ledger, monkeypatch):
+    first = st.apply("t2ae2")
+    assert first["reserve_hours"] == {"before": 20.3, "after": 19.85}
+    before = (ledger / "ledger.json").read_bytes()
+    assert st.apply("t2ae2") == first
+    assert (ledger / "ledger.json").read_bytes() == before
+
+
+def test_a_later_transfer_from_the_reserve_is_accounted_on_repeat(ledger):
+    # a later demonstrable transfer (as D2-F's funding records it) takes 2.1 from the reserve
+    first = st.apply("t2ae2")
+    book = budgeted.load()
+    book["sections"][SECTION]["parts"]["r1_reserve"]["allocation_hours"] = 17.75
+    book["transfers"].append({"to": "r1_d2f_a", "from": {"r1_d1p_b": 14.2, "r1_reserve": 2.1}})
+    budgeted.save(book)
+    assert st.apply("t2ae2") == first
+    book = budgeted.load()
+    book["sections"][SECTION]["parts"]["r1_reserve"]["allocation_hours"] = 18.0
     budgeted.save(book)
     with pytest.raises(SystemExit, match="does not match"):
         st.apply("t2ae2")
+
+
+def test_an_archived_attempt_is_refused(ledger):
+    book = budgeted.load()
+    book["sections"][SECTION]["parts"]["r1_t2ae_2"]["attempts"] = [{"spent_hours": 0.0}]
+    budgeted.save(book)
+    with pytest.raises(SystemExit, match="ran or started"):
+        st.apply("t2ae2")
+    assert "transfers" not in budgeted.load()
