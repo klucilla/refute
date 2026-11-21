@@ -133,3 +133,24 @@ Applied as Codex wrote them (no divergence; two rounds):
 - Round 1's corrections (commit `ab5e7e7`): the operational closing `d2f-A-closing.json`, written once only after the wrapper's charge, bound to the record, the attempt, the identity, the receipt and the wrapper's charge, with the state `final` or `stopped`; `check_closed` and the `accept` command require `final`; the funding in one atomic write; the corrected docstring on `lv.declare()`'s callers; the tests asked.
 - Round 2's optional test (the wrapper's charge persisted, then the charges' room STOP: no closing, `accept` refuses) is applied; the adapter is unchanged by it.
 - **The adapter is released at its reviewed bytes, which stay unchanged from the first dispatch on. D2-F was not dispatched**: T2a-E's stage 2 was refused by its margin before D2-F's turn, a request for money beyond the authorized, and the decisions' item 6 stops at G1 on such a request. The release is kept for the maintainer's decision.
+
+## Path A2 at G1: the ledger step that raises T2a-E stage 2's allocation
+
+Codex's review of `docs/validation/v0.5.5/r1_allocation_step.py` (the maintainer's decisions of 2026-11-21, 10:00, at G1, item 1; #218): part `r1_t2ae_2` from 3.1 to 3.55 CPU-h, 0.45 from the reserve, before its first start, in one atomic write, up to 3 rounds. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [t2s-round-1-answer.md](t2s-round-1-answer.md) | gpt-6.1-sol, high | 2, 3, 5 `SURVIVED`; 1, 4 `WEAKENED` (a repeated call checked only that a record existed and the target was 3.55; a reserve restored by mistake passed); **not released** | `a0e00ee03095d653919ac7d9527bead82d4161546c12639686f0ad6f208b4604` |
+| 2 | [t2s-round-2-answer.md](t2s-round-2-answer.md) | gpt-6.1-sol, high | items 1 to 4 `SURVIVED`; no blocker; **the step is released** for the real ledger at its reviewed bytes (SHA-256 `4dd68bdfac2cf6bdee600a776a2707b2a71455794aafdc8c63cf977584702d72`); two optional improvements, one test applied | `24a5cc906d12f3c73e42f378aa2f5f86f237579d2318db61638378afcbcc4a1d` |
+
+The tokens are cumulative over the conversation `t2s`:
+
+- round 1: 523,649 input (451,200 cached) and 5,762 output;
+- round 2: 913,652 input (829,568 cached) and 8,659 output;
+
+The conversation counts **92,743** review tokens (the last round's uncached input plus output).
+
+Applied as Codex wrote them (no divergence; two rounds):
+- Round 1's correction (commit `9f3dc54`): the record holds the reserve before and after; a repeat writes nothing and requires exactly one record with the expected fields (no other top-level field), the reserve equal to the record's after less any later transfer that took from it, and both lines; any divergence is a STOP with no write. The procedure posted on #218 before the run carries the prohibition of `lv.declare()` and its callers, and the clarification that the slack does not get around a line restriction or a resume's cap, and that raising D2-F's 16.3 needs a new review of the adapter.
+- Round 2's optional test (the later transfer as D2-F's funding really writes it, the sum of the allocations kept) is applied; the step is unchanged by it. Its other remark is recorded: "the main record's fields are exact; the later reconciliation uses the debits recorded by the authorized steps" (fields inside `reserve_hours` are not checked for extras).
+- **The step was applied to the real ledger on 2026-11-21 at 13:22 UTC** (`r1_t2ae_2` 3.1 to 3.55; the reserve 20.3 to 19.85), after the procedure on #218.

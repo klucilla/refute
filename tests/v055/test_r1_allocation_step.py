@@ -183,14 +183,28 @@ def test_an_intact_repeat_writes_nothing(ledger, monkeypatch):
 
 def test_a_later_transfer_from_the_reserve_is_accounted_on_repeat(ledger):
     # a later demonstrable transfer (as D2-F's funding records it) takes 2.1 from the reserve
+    # (Codex, t2s round 2: the funding as it really is, the sum of the allocations kept)
+    book = budgeted.load()
+    parts = book["sections"][SECTION]["parts"]
+    parts["r1_d1p_b"] = {"allocation_hours": 14.2}
+    parts["r1_d2f_a"] = {"allocation_hours": 0.0}
+    parts["r1_reserve"]["allocation_hours"] = 20.3 - 14.2  # the line holds with D1-P B
+    budgeted.save(book)
     first = st.apply("t2ae2")
     book = budgeted.load()
-    book["sections"][SECTION]["parts"]["r1_reserve"]["allocation_hours"] = 17.75
+    parts = book["sections"][SECTION]["parts"]
+    total = sum(r["allocation_hours"] for r in parts.values())
+    parts["r1_d1p_b"]["allocation_hours"] = 0.0
+    parts["r1_d2f_a"]["allocation_hours"] = 16.3
+    parts["r1_reserve"]["allocation_hours"] = round(
+        parts["r1_reserve"]["allocation_hours"] - 2.1, 6
+    )
+    assert sum(r["allocation_hours"] for r in parts.values()) == pytest.approx(total)
     book["transfers"].append({"to": "r1_d2f_a", "from": {"r1_d1p_b": 14.2, "r1_reserve": 2.1}})
     budgeted.save(book)
     assert st.apply("t2ae2") == first
     book = budgeted.load()
-    book["sections"][SECTION]["parts"]["r1_reserve"]["allocation_hours"] = 18.0
+    book["sections"][SECTION]["parts"]["r1_reserve"]["allocation_hours"] += 0.25
     budgeted.save(book)
     with pytest.raises(SystemExit, match="does not match"):
         st.apply("t2ae2")
