@@ -220,6 +220,121 @@
     "review_tokens": 0,
     "disk_bytes": 0
    }
+  },
+  {
+   "utc": "2026-11-21T11:37:35Z",
+   "step": "t2ae completion of stage 1",
+   "codex_tokens": {
+    "conversations": {
+     "facts": 168755,
+     "g1": 198496,
+     "g1r": 92113,
+     "night": 223534,
+     "r0r1": 395037
+    },
+    "phase": 1077935
+   },
+   "agent_days_wall": 2.11,
+   "agent_days_active": 0.7,
+   "cpu_hours": 8.779,
+   "disk_bytes": 12660979,
+   "reserved": {
+    "agent_days": 0.5,
+    "review_tokens": 300000,
+    "disk_bytes": 55600000
+   }
+  },
+  {
+   "utc": "2026-11-21T11:56:37Z",
+   "step": "t2ae after the completion of stage 1",
+   "codex_tokens": {
+    "conversations": {
+     "facts": 168755,
+     "g1": 198496,
+     "g1r": 92113,
+     "night": 223534,
+     "r0r1": 395037
+    },
+    "phase": 1077935
+   },
+   "agent_days_wall": 2.15,
+   "agent_days_active": 0.74,
+   "cpu_hours": 9.669,
+   "disk_bytes": 13130971,
+   "reserved": {
+    "agent_days": 0.0,
+    "review_tokens": 0,
+    "disk_bytes": 0
+   }
+  },
+  {
+   "utc": "2026-11-21T11:56:52Z",
+   "step": "t2ae completion summary",
+   "codex_tokens": {
+    "conversations": {
+     "facts": 168755,
+     "g1": 198496,
+     "g1r": 92113,
+     "night": 223534,
+     "r0r1": 395037
+    },
+    "phase": 1077935
+   },
+   "agent_days_wall": 2.16,
+   "agent_days_active": 0.74,
+   "cpu_hours": 9.669,
+   "disk_bytes": 13131483,
+   "reserved": {
+    "agent_days": 0.05,
+    "review_tokens": 0,
+    "disk_bytes": 0
+   }
+  },
+  {
+   "utc": "2026-11-21T11:57:08Z",
+   "step": "t2ae summarize 1",
+   "codex_tokens": {
+    "conversations": {
+     "facts": 168755,
+     "g1": 198496,
+     "g1r": 92113,
+     "night": 223534,
+     "r0r1": 395037
+    },
+    "phase": 1077935
+   },
+   "agent_days_wall": 2.16,
+   "agent_days_active": 0.74,
+   "cpu_hours": 9.669,
+   "disk_bytes": 13152631,
+   "reserved": {
+    "agent_days": 0.05,
+    "review_tokens": 0,
+    "disk_bytes": 0
+   }
+  },
+  {
+   "utc": "2026-11-21T11:58:41Z",
+   "step": "t2ae run 2 (fixed cap)",
+   "codex_tokens": {
+    "conversations": {
+     "facts": 168755,
+     "g1": 198496,
+     "g1r": 92113,
+     "night": 223534,
+     "r0r1": 395037
+    },
+    "phase": 1077935
+   },
+   "agent_days_wall": 2.16,
+   "agent_days_active": 0.74,
+   "cpu_hours": 9.669,
+   "disk_bytes": 13161709,
+   "reserved": {
+    "agent_days": 0.5,
+    "review_tokens": 300000,
+    "disk_bytes": 70400000
+   }
   }
  ]
 }

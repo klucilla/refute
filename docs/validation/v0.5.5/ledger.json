@@ -34,6 +34,35 @@
    "basis": "t2ae_census.summarize 1: process time 3.4 s",
    "hours": 0.0009461805555555556,
    "name": "t2ae_summarize_1_20261120T235128Z"
+  },
+  {
+   "basis": "t2ae_census.summarize 1: process time 0.9 s",
+   "hours": 0.00023871527777777777,
+   "name": "t2ae_summarize_1_20261121T115714Z"
+  },
+  {
+   "basis": "r1_fixed_cap.t2ae_1c_summarize, apart from t2ae_census.summarize's own charge: 2.6 s",
+   "hours": 0.0007335069444444444,
+   "name": "t2ae_completion_summary_20261121T115714Z_000"
+  }
+ ],
+ "closing_receipts": [
+  {
+   "attempt": "t2ae-1c-summary-20261121T115703Z-pid44620-0",
+   "charge_hours": 0.00023871527777777777,
+   "charge_name": "t2ae_summarize_1_20261121T115714Z",
+   "operational_identity": {
+    "allocation_hours": 1.5,
+    "fingerprint": "20c9aefffa4007f4",
+    "part": "r1_t2ae_1c",
+    "rows_sha256": "1f6ada8ced19da0f1babfdfc01971ec52df4309a0d8a2e217016bd24b08d970f",
+    "runner_sha256": "7f125394cc5898941d508c5d1fcc3119e31ee1bf6aba02e10a1385756bd65769",
+    "shard_limit_seconds": 600.0,
+    "workers": 3
+   },
+   "runner_sha256": "7f125394cc5898941d508c5d1fcc3119e31ee1bf6aba02e10a1385756bd65769",
+   "summary_sha256": "4fb22edf2c56604e20883b5f5d3e6c3d1966691979ce433f95d8f4c79953a11e",
+   "utc": "2026-11-21T11:57:14Z"
   }
  ],
  "sections": {
@@ -67,7 +96,7 @@
      "allocation_hours": 0.0
     },
     "r1_reserve": {
-     "allocation_hours": 21.8
+     "allocation_hours": 20.3
     },
     "r1_t2ae_1": {
      "allocation_hours": 3.1,
@@ -79,8 +108,39 @@
      "spent_hours": 1.5339192708333333,
      "unresolved_stop": "over the cap: the workers were ended"
     },
+    "r1_t2ae_1c": {
+     "allocation_hours": 1.5,
+     "cap_basis": "fixed by the allocation, protected for one crash charge, the poll margin and the watchdog's 1.10; no checkpoint or projection (the maintainer's decision of 2026-11-20, 21:00, item 3)",
+     "cap_hours": 0.8935606060606059,
+     "completed_fixed": {
+      "spent_hours": 0.8894878472222222,
+      "utc": "2026-11-21T11:56:31Z"
+     },
+     "driver": "fixed-cap",
+     "identity": "0fbe5ea89e8bde78",
+     "operational_identity": {
+      "allocation_hours": 1.5,
+      "fingerprint": "20c9aefffa4007f4",
+      "part": "r1_t2ae_1c",
+      "rows_sha256": "1f6ada8ced19da0f1babfdfc01971ec52df4309a0d8a2e217016bd24b08d970f",
+      "runner_sha256": "7f125394cc5898941d508c5d1fcc3119e31ee1bf6aba02e10a1385756bd65769",
+      "shard_limit_seconds": 600.0,
+      "workers": 3
+     },
+     "spent_hours": 0.8894878472222222
+    },
     "r1_t2ae_2": {
-     "allocation_hours": 3.1
+     "allocation_hours": 3.1,
+     "margin_checks": [
+      {
+       "basis": "the mean CPU of stage 1's 51 finished injections (their sidecars, 140.272 s) times stage 2's 51 injections; a planning extrapolation",
+       "effective_cap_hours": 2.1914141414141413,
+       "fits": false,
+       "margin_needed_hours": 2.583338107638889,
+       "projection_hours": 1.9871831597222223,
+       "utc": "2026-11-21T11:58:41Z"
+      }
+     ]
     }
    }
   }
@@ -106,6 +166,32 @@
     "resume": false,
     "utc": "2026-11-20T23:40:18Z"
    }
+  ],
+  "r1_t2ae_1c": [
+   {
+    "identity": "0fbe5ea89e8bde78",
+    "resume": false,
+    "utc": "2026-11-21T11:37:35Z"
+   }
   ]
- }
+ },
+ "summary_attempts": [
+  {
+   "attempt": "t2ae-1c-summary-20261121T115703Z-pid44620-0",
+   "operational_identity": {
+    "allocation_hours": 1.5,
+    "fingerprint": "20c9aefffa4007f4",
+    "part": "r1_t2ae_1c",
+    "rows_sha256": "1f6ada8ced19da0f1babfdfc01971ec52df4309a0d8a2e217016bd24b08d970f",
+    "runner_sha256": "7f125394cc5898941d508c5d1fcc3119e31ee1bf6aba02e10a1385756bd65769",
+    "shard_limit_seconds": 600.0,
+    "workers": 3
+   },
+   "prior_summary_charges": [
+    "t2ae_summarize_1_20261120T235128Z"
+   ],
+   "runner_sha256": "7f125394cc5898941d508c5d1fcc3119e31ee1bf6aba02e10a1385756bd65769",
+   "utc": "2026-11-21T11:57:03Z"
+  }
+ ]
 }
