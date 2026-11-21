@@ -39,6 +39,12 @@ frozen closure, and is never imported by a check.
   missing or uncertain binding is a STOP; no historical charge is removed.
 - **The wrapper's charge** in ``finally``, under the lock, on every path, deducting only the
   attempt's new inner charge.
+- **The operational closing** (Codex, d2fa round 1; the runner's final record has the same
+  place): ``d2f-A-closing.json``, written once and only after the wrapper's charge succeeded,
+  binds the record's SHA-256, the attempt, the identity, the receipt and the wrapper's charge,
+  with the summary's state (``final``, or ``stopped`` when ``d2f_floor`` ended in a STOP after
+  writing its record). The operational acceptance (``check_closed``, the ``accept`` command)
+  requires it with the state ``final``; its absence or inconsistency is a STOP.
 
 **The projection** for the margin: 10.4 CPU-h, the designs' price (about 0.052 CPU-h per planet,
 200 planets; "the pilot timed one D2-F planet but its line was cut from the output"), an
@@ -47,7 +53,8 @@ protected cap of 16.3 CPU-h is about 13.585 CPU-h, at least 1.3 x 10.4 = 13.52.
 
 Usage (from the project root, through ``launch_detached.py``):
 ``.venv/Scripts/python.exe -B docs/validation/v0.5.5/d2f_fixed_cap.py run`` then ``summarize``;
-``check`` is read only (the fingerprint through the frozen-list guard, the caps, the ledger).
+``check`` is read only (the fingerprint through the frozen-list guard, the caps, the ledger);
+``accept`` is read only (the operational acceptance of set A's record).
 """
 
 from __future__ import annotations
@@ -87,6 +94,7 @@ PROJECTION = {
     "projection_hours": 10.4,
 }
 RECORD = HERE / f"d2f-{SET}.json"  # written by d2f_floor's own summary
+CLOSING = HERE / f"d2f-{SET}-closing.json"  # the operational closing, after every charge
 D1P_A = HERE / "d1p-A.json"
 SUMMARY_CHARGE_PREFIX = f"d2f_summarize_{SET}_"  # d2f_floor.summarize's charge
 WRAPPER_CHARGE_PREFIX = f"d2f_fixed_summary_{SET}_"  # this wrapper's own charge
@@ -188,7 +196,12 @@ def fund() -> None:
     """Under the ledger's lock: D1-P set B's 14.2 CPU-h and 2.1 from the reserve to D2-F's set A,
     once. Refused unless D1-P's set A record holds its futility rule (set B refused), neither
     part ever ran, and the allocations with the charges' room stay inside the 64 CPU-h line. A
-    repeated call with the transfer already made changes nothing."""
+    repeated call with the transfer already made changes nothing. **One atomic write** holds the
+    new allocations and the transfer's record (Codex, d2fa round 1): neither part ever ran, so
+    no attempt is archived. **After the funding, ``lv.declare()``, its command line and the
+    earlier scripts that call it (``i4_diagnosis.py``, ``pilot_costs.py``, ``t2ae_geometry.py``)
+    are not run**: they would restore the earlier table; a ledger found otherwise is reconciled
+    by the maintainer, never restored automatically."""
     lv.assert_bound()
     with lv.Exclusive("d2f funding"):
         book = budgeted.load()
@@ -215,8 +228,10 @@ def fund() -> None:
             raise SystemExit("the reserve cannot fund the part: the maintainer's")
         if sum(merged.values()) + max(lv._charges(), lv.CHARGES_ROOM) > lv.LINE_HOURS + 1e-9:
             raise SystemExit("the allocations and the charges' room pass the 64 CPU-h line")
-        budgeted.declare(lv.SECTION, merged)
-        book = budgeted.load()
+        if sum(merged.values()) > budgeted.LINES[lv.SECTION] + 1e-9:  # budgeted.declare's check
+            raise SystemExit(f"{lv.SECTION}: the allocations pass the budget line")
+        for part in (SOURCE, PART, "r1_reserve"):  # none ran: nothing to archive
+            rows[part]["allocation_hours"] = merged[part]
         book.setdefault("transfers", []).append(
             {
                 "utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
@@ -463,32 +478,36 @@ def check_receipt() -> dict:
 
 def summarize() -> None:
     """Under the ledger's lock: the accounted completion, then ``d2f_floor``'s own summary (its
-    caps, its charge, its stops, its write-once record), then the closing receipt. The receipt is
-    written whenever the record now exists, also when the summary ends in a STOP after writing
-    it (its stops are facts of the record), and the STOP then propagates. The wrapper's own work
-    is charged in ``finally`` on every path. If set A is not futile, set B needs money beyond the
-    authorized: a STOP with that request."""
+    caps, its charge, its stops, its write-once record), then the internal receipt, then the
+    wrapper's charge in ``finally`` (on every path), and **only after that charge succeeded** the
+    operational closing (Codex, d2fa round 1): "Preserve d2f-A.json and the internal receipt as
+    evidence. Persist a separate operational closing only after the wrapper's successful charge,
+    binding the record's SHA, the attempt, the identity, the receipt and the wrapper's charge.
+    Record the summary's state explicitly. The operational acceptance requires that closing; its
+    absence or inconsistency causes a STOP. A scientific STOP stays recorded and propagated, with
+    no publication of success."
+
+    The receipt is written whenever the record now exists, also when ``d2f_floor`` ends in a STOP
+    after writing it (its stops are facts of the record); the closing then has the state
+    ``stopped``, never ``final``, and the STOP propagates. If set A is not futile, set B needs
+    money beyond the authorized: a STOP with that request, after the closing."""
     lv.assert_bound()
     with lv.Exclusive(f"d2f summary {SET} (fixed cap)"):
         started = time.process_time()
-        attempt = None
+        attempt = receipt = inner_exc = None
         try:
-            if RECORD.exists():
-                raise SystemExit(f"{RECORD.name} exists: the record is written once")
+            if RECORD.exists() or CLOSING.exists():
+                raise SystemExit(f"{RECORD.name} or {CLOSING.name} exists: written once")
             rows, fp, out = _set_a()
             run_ = driver.Run(out, d2f.shard, rows, fp, 1.0, 1, max_shard_seconds=SHARD_LIMIT)
             check_completed(lv.SECTION, PART, run_, fp, rows)
             attempt = _open_attempt()
-            inner_exc = None
             try:
                 d2f.summarize(SET)
-            except BaseException as exc:  # noqa: BLE001 - re-raised after the receipt
+            except BaseException as exc:  # noqa: BLE001 - re-raised after the closing
                 inner_exc = exc
             if RECORD.exists():
-                _write_receipt(attempt)
-            if inner_exc is not None:
-                raise inner_exc
-            doc = json.loads(RECORD.read_text("utf-8"))
+                receipt = _write_receipt(attempt)
         finally:
             inner = 0.0
             if attempt is not None:  # only what the inner summary provably charged
@@ -500,17 +519,80 @@ def summarize() -> None:
                 if c["name"].startswith(WRAPPER_CHARGE_PREFIX)
             )
             stamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
+            wrapper_name = f"{WRAPPER_CHARGE_PREFIX}{stamp}_{n:03d}"  # unique under the lock
             lv.charge(
-                f"{WRAPPER_CHARGE_PREFIX}{stamp}_{n:03d}",
+                wrapper_name,
                 used / 3600.0,
                 f"d2f_fixed_cap.summarize, apart from d2f_floor.summarize's own charge: "
                 f"{used:.1f} s",
             )
-    if doc.get("futile_after_A") is False:
+        # reached only after a normal end of the block above and the wrapper's charge
+        if receipt is None:
+            if inner_exc is not None:
+                raise inner_exc  # no record: nothing to close
+            raise SystemExit("d2f_floor's summary ended without its record: a STOP")
+        closing = {
+            "label": "v0.5.5 R1, D2-F set A: the operational closing of the fixed-cap summary",
+            "method_status": "not_validated",
+            "state": "final" if inner_exc is None else "stopped",
+            "stop": None if inner_exc is None else str(inner_exc),
+            "record": RECORD.name,
+            "record_sha256": receipt["summary_sha256"],
+            "attempt": attempt["attempt"],
+            "operational_identity": attempt["operational_identity"],
+            "adapter_sha256": own_sha256(),
+            "receipt": receipt,
+            "wrapper_charge": {"name": wrapper_name, "hours": used / 3600.0},
+            "utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        }
+        with CLOSING.open("x", encoding="utf-8", newline="\n") as fh:  # written once
+            fh.write(json.dumps(closing, indent=1, sort_keys=True) + "\n")
+    if inner_exc is not None:
+        raise inner_exc
+    if json.loads(RECORD.read_text("utf-8")).get("futile_after_A") is False:
         raise SystemExit(
             "set A is not futile: set B needs about "
             f"{ALLOCATION:.1f} CPU-h beyond what is authorized; STOP with the request"
         )
+
+
+def check_closed() -> dict:
+    """The operational acceptance of set A's record: the closing on file, bound to the record's
+    SHA-256, to a receipt that ``check_receipt`` proves, to the same attempt and operational
+    identity, to this adapter, and to the wrapper's charge on file with the same hours; its state
+    ``final`` (a closing ``stopped`` is a recorded STOP, never a success). Any absence or
+    inconsistency is a STOP for the maintainer's reconciliation."""
+    if not CLOSING.exists():
+        raise SystemExit(f"{CLOSING.name} is missing: the record is not closed; a STOP")
+    closing = json.loads(CLOSING.read_text("utf-8"))
+    receipt = check_receipt()
+    book = budgeted.load()
+    charges = {c["name"]: c["hours"] for c in book.get("charges", [])}
+    wrapper = closing.get("wrapper_charge") or {}
+    bound = (
+        closing.get("record_sha256") == hashlib.sha256(RECORD.read_bytes()).hexdigest()
+        and closing.get("receipt") == receipt
+        and closing.get("attempt") == receipt["attempt"]
+        and closing.get("operational_identity") == receipt["operational_identity"]
+        and closing.get("adapter_sha256") == own_sha256()
+        and wrapper.get("name") in charges
+        and charges[wrapper["name"]] == wrapper.get("hours")
+    )
+    if not bound:
+        raise SystemExit(f"{CLOSING.name} does not bind the record and its charges: a STOP")
+    if closing.get("state") != "final":
+        raise SystemExit(f"set A's summary is closed in a STOP ({closing.get('stop')}): a STOP")
+    return closing
+
+
+def accept() -> None:
+    """The operational entry that accepts set A's record (read only): ``check_closed``, then the
+    record's futility reading as it came out."""
+    lv.assert_bound()
+    closing = check_closed()
+    doc = json.loads(RECORD.read_text("utf-8"))
+    shown = {k: doc.get(k) for k in ("futile_after_A", "outcome_per_variant", "stops")}
+    print(json.dumps({"closing": closing["utc"], **shown}, indent=1, sort_keys=True))
 
 
 def check() -> None:
@@ -542,11 +624,12 @@ def check() -> None:
         "ledger_allocations": {p: r["allocation_hours"] for p, r in parts.items()},
         "d1p_a_futile": json.loads(D1P_A.read_text("utf-8")).get("futile_after_A"),
         "record_exists": RECORD.exists(),
+        "closing_exists": CLOSING.exists(),
     }
     print(json.dumps(report, indent=1, sort_keys=True))
 
 
-COMMANDS = {"run": run, "summarize": summarize, "check": check}
+COMMANDS = {"run": run, "summarize": summarize, "check": check, "accept": accept}
 
 
 if __name__ == "__main__":

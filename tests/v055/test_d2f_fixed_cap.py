@@ -114,6 +114,7 @@ def ledger(tmp_path, monkeypatch):
     monkeypatch.setattr(ad, "SHARD_LIMIT", LIMIT)
     monkeypatch.setattr(ad, "PROJECTION", {"basis": "synthetic", "projection_hours": 0.1})
     monkeypatch.setattr(ad, "RECORD", tmp_path / "d2f-A.json")
+    monkeypatch.setattr(ad, "CLOSING", tmp_path / "d2f-A-closing.json")
     monkeypatch.setattr(ad, "D1P_A", tmp_path / "d1p-A.json")
     (tmp_path / "d1p-A.json").write_text(json.dumps({"futile_after_A": True}), "utf-8")
     Exact.caps = []
@@ -150,8 +151,18 @@ def test_the_authorized_funding_fits_four_workers_and_not_ten():
 # --- the funding --------------------------------------------------------------------------------
 
 
-def test_the_funding_moves_d1p_b_and_the_reserve_once(ledger):
+def test_the_funding_moves_d1p_b_and_the_reserve_once(ledger, monkeypatch):
+    saves = []
+    save = lv._atomic_save
+
+    def counted(book):
+        saves.append(1)
+        save(book)
+
+    monkeypatch.setattr(lv, "_atomic_save", counted)  # assert_bound compares the two
+    monkeypatch.setattr(budgeted, "save", counted)
     ad.fund()
+    assert len(saves) == 1  # the allocations and the transfer's record in one write
     parts = _parts()
     assert parts["r1_d2f_a"]["allocation_hours"] == pytest.approx(16.3)
     assert parts["r1_d1p_b"]["allocation_hours"] == 0.0
@@ -236,6 +247,11 @@ def test_a_real_resume_never_raises_the_cap(ledger, monkeypatch):
         ad.run()  # the pre-approved resume: the cap recorded before stays
     assert Exact.caps == [pytest.approx(0.05), pytest.approx(0.05)]
     assert budgeted.load()["starts"]["r1_d2f_a"][-1]["resume"] is True
+    # the open batch was closed by the reconciliation with exactly one crash charge added, the
+    # earlier consumption kept (Codex, d2fa round 1)
+    charge = json.loads((ledger / "d2f" / "fp" / "charges" / "b00000.json").read_text("utf-8"))
+    assert charge["closed"] and charge["reconciled_after_a_crash"]
+    assert charge["seconds"] == pytest.approx(2.0 + 2 * (LIMIT + driver.CHARGE_SECONDS))
 
 
 def test_a_changed_adapter_is_refused(ledger, monkeypatch):
@@ -280,9 +296,55 @@ def test_the_summary_binds_its_charge_and_charges_the_wrapper(ledger, monkeypatc
     assert book[ad.ATTEMPTS][-1]["prior_summary_charges"] == [HISTORICAL]
     assert any(c["name"] == HISTORICAL for c in book["charges"])  # never removed
     assert len(_wrapper_charges()) == 1
+    closing = ad.check_closed()
+    assert closing["state"] == "final" and closing["receipt"] == receipt
+    assert closing["wrapper_charge"] == {
+        "name": _wrapper_charges()[0]["name"],
+        "hours": _wrapper_charges()[0]["hours"],
+    }
+    ad.accept()
     with pytest.raises(SystemExit, match="written once"):
         ad.summarize()
     assert len(_wrapper_charges()) == 2  # the refusal's work is charged too
+    assert ad.check_closed() == closing
+
+
+def test_a_failed_wrapper_charge_leaves_no_closing(ledger, monkeypatch):
+    # Codex, d2fa round 1: the record, its charge and the receipt are saved, then the wrapper's
+    # charge fails before it persists: a STOP, no valid closing, and the operational entry refuses
+    ad.run()
+    monkeypatch.setattr(d2f, "summarize", _inner(ledger))
+    charge = lv.charge
+
+    def fails(name, hours, basis):
+        if name.startswith(ad.WRAPPER_CHARGE_PREFIX):
+            raise SystemExit("the wrapper's charge failed")
+        return charge(name, hours, basis)
+
+    monkeypatch.setattr(lv, "charge", fails)
+    with pytest.raises(SystemExit, match="the wrapper's charge failed"):
+        ad.summarize()
+    assert not (ledger / "d2f-A-closing.json").exists()
+    assert ad.check_receipt()["charge_name"].endswith("inner")  # the evidence is kept
+    assert _wrapper_charges() == []
+    with pytest.raises(SystemExit, match="is missing"):
+        ad.check_closed()
+    with pytest.raises(SystemExit, match="is missing"):
+        ad.accept()
+    monkeypatch.setattr(lv, "charge", charge)
+    with pytest.raises(SystemExit, match="written once"):
+        ad.summarize()  # no automatic repair: the maintainer's reconciliation
+
+
+def test_a_closing_that_does_not_bind_its_charges_is_refused(ledger, monkeypatch):
+    ad.run()
+    monkeypatch.setattr(d2f, "summarize", _inner(ledger))
+    ad.summarize()
+    closing = json.loads((ledger / "d2f-A-closing.json").read_text("utf-8"))
+    closing["wrapper_charge"]["hours"] += 1.0
+    (ledger / "d2f-A-closing.json").write_text(json.dumps(closing), "utf-8")
+    with pytest.raises(SystemExit, match="does not bind"):
+        ad.check_closed()
 
 
 def test_a_set_a_that_is_not_futile_stops_with_the_request(ledger, monkeypatch):
@@ -291,6 +353,7 @@ def test_a_set_a_that_is_not_futile_stops_with_the_request(ledger, monkeypatch):
     with pytest.raises(SystemExit, match="set B needs .* beyond what is authorized"):
         ad.summarize()
     assert ad.check_receipt()["charge_name"].endswith("inner")
+    assert ad.check_closed()["state"] == "final"  # the record is closed; set B is the STOP
 
 
 def test_a_stop_after_the_record_still_binds_it_and_propagates(ledger, monkeypatch):
@@ -300,6 +363,10 @@ def test_a_stop_after_the_record_still_binds_it_and_propagates(ledger, monkeypat
         ad.summarize()
     assert ad.check_receipt()["charge_name"].endswith("inner")
     assert len(_wrapper_charges()) == 1
+    closing = json.loads((ledger / "d2f-A-closing.json").read_text("utf-8"))
+    assert closing["state"] == "stopped" and "STOP for the maintainer: x" in closing["stop"]
+    with pytest.raises(SystemExit, match="closed in a STOP"):
+        ad.check_closed()  # never a success
 
 
 def test_an_exception_before_the_record_charges_the_wrapper_only(ledger, monkeypatch):
@@ -315,6 +382,7 @@ def test_an_exception_before_the_record_charges_the_wrapper_only(ledger, monkeyp
     with pytest.raises(SystemExit, match="an inner STOP"):
         ad.summarize()
     assert not (ledger / "d2f-A.json").exists()
+    assert not (ledger / "d2f-A-closing.json").exists()
     assert ad.RECEIPTS not in budgeted.load()
     assert _wrapper_charges()[0]["hours"] == pytest.approx((10.0 - 3.6) / 3600.0)
 
