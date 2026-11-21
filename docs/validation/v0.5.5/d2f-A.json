@@ -1,0 +1,126 @@
+{
+ "code_identity": {
+  "digest": "cc023ea47500816efa4d5a8b543cba6c0e2c53b11d16199b421a9a946fc12d2b",
+  "files": {
+   "calibration/v0.4/claim.yaml": "95acddf2667f8f225d16511f187ca45f317294bf298340678b98b9eb03172cf3",
+   "docs/plans/v0.5.5-charter-amendment-1.md": "c9bea0fd746949f7f01a73e4a0f7ce113c9a880ffe92af872b06c524f9107c77",
+   "docs/plans/v0.5.5-charter.md": "aab4ec2ff085db76e8f486ba2ab557cac0294f6db38b44c33085e29098cc5246",
+   "docs/plans/v0.5.5-r1-designs-revision-1.md": "aff01c25f1de8b67efccc2ebe1760f93aca706c55f76ce17162d6eaca11ccf4e",
+   "docs/plans/v0.5.5-r1-designs.md": "1013a88e9075f3a5cc16b18b623b0c1929c9e92c2883f30436ee55ec9a8ba9eb",
+   "docs/validation/v0.5.1/feasibility/forecast.py": "2e666b4269016c0df2cbb0fdb8dcf493fba7b90ad601c1002bc555e93e5fd31a",
+   "docs/validation/v0.5.2/stage2/budgeted.py": "557e82ae2e79d6661a875220b84e209ea961171fb83b3fe5c9839221e927874f",
+   "docs/validation/v0.5.2/stage2/driver.py": "90ad1700b935b900d1ae4c74842197cb1de710b1159369fa0ebcf9040af12bf8",
+   "docs/validation/v0.5.2/stage2/forecast_t2a.py": "ee4b43399ae706504576325f9c62988ca62f7f49b6ab9e20d2d6d037af6e7149",
+   "docs/validation/v0.5.2/stage2/forecast_v4.py": "4667a36fb99ef8028f214db202a315ef1c2de9347beda5bb8028dad5c31151bb",
+   "docs/validation/v0.5.3/stageA/d2_bounds.py": "026451bdc0c8dea89a676d8b9ef8abe3271aa5ae282ebdbdb1f77fc10744d8d1",
+   "docs/validation/v0.5.3/stageA/ledger_a.py": "164d8ac7a4ab872dc3a01b1a96e8f59c14eaa9584cbc7ac1e9e1b776b25e0943",
+   "docs/validation/v0.5.3/stageB/b1-composition.json": "edcc822178a3aa52caab0e6f0d685f57ca5c795b481141c9b5f0fe66d7dd349d",
+   "docs/validation/v0.5.3/stageB/b1_b14.py": "a467d22f7b6493d3992bfa102364713bd9e848fd993c7466356542f1caf15108",
+   "docs/validation/v0.5.3/stageB/b1_blockers_decisive.py": "4856496f7f4dbe6812a55e3407c84a63547cdcf764e909ce4d39348c46194b31",
+   "docs/validation/v0.5.3/stageB/b1_d2d4_rest.py": "c51746e7280666e8813e7f890e1a6e6595997816fddb64a7a4ab9364efa1c06b",
+   "docs/validation/v0.5.3/stageB/b1_data.py": "0d5cf7b7a98a96deb0c0836e8b7ffb0d1bbb71bf347c629a02e74c0a233021f3",
+   "docs/validation/v0.5.3/stageB/b1_forecast.py": "31bbd65ce5c8310f8c4f5aadc352acf75aaa00e8b7c99191000aca1b74466377",
+   "docs/validation/v0.5.3/stageB/battery_b1.py": "f74ee19d9c3675be7ccf8ca2611e9f3cc73ecd17226bbe9a7f0ba7088f5d3a34",
+   "docs/validation/v0.5.3/stageB/ledger_b.py": "173eeee95956d786a520373e3b52619bc6651ff0d5be032b2765257d3e31e1fd",
+   "docs/validation/v0.5.4/budgeted_v3.py": "0c79dc8ff595c063e432e4ffe6c5463cb20bcbc74eec12f04d08390a5b824229",
+   "docs/validation/v0.5.4/i1_diagnose.py": "1a9b18e84edd7ba3a64c26da766cbcbfd5b6b53052fe205894f5e37d732b6a1e",
+   "docs/validation/v0.5.4/i4_bound.py": "1bbf6150c01b25d7b04f3ce890d81eb0d93d6dcfd40610f322428bc45f02a00c",
+   "docs/validation/v0.5.4/i4_rest.py": "b0f1388b9c9eb48cc865e94f57992e95baa17bfac52da57464d3181dbcc7f3c3",
+   "docs/validation/v0.5.4/i4_rest2.py": "272e202617d0acc47f99facbd918c05466684d20e79a1c9c1ac3696859f6ac7b",
+   "docs/validation/v0.5.4/ledger_i.py": "88aceadda09c260806d7af6ec95ae0c75b30494dec055e8575aee2da124838b2",
+   "docs/validation/v0.5.4/step7_sinusoid.py": "2e94451b26c3a50516c88dc462bf8273a3baeb28d18be71ed118245378989610",
+   "docs/validation/v0.5.5/d2f_floor.py": "9ccbf023fb34f879387a199556c66743d93115366c775eb5f07b5dfc3c3cdc07",
+   "docs/validation/v0.5.5/generator_v2.py": "4a42c26b641df1890624315e46f640cdd3d300d804694644e62bb50b350bf723",
+   "docs/validation/v0.5.5/i4_fix.py": "ea6e5ccd21d65f3ebed6a3821325f980cd04117e9429b768c65201c440700197",
+   "docs/validation/v0.5.5/ledger_v055.py": "65e65400357b5866f27cc83c8a7858fb404ee9af39cb9460737d24cf7fcd0a17",
+   "docs/validation/v0.5.5/r1_common.py": "0157b43e6f695011868592a9cefc51ef59bee00b32c93d9ce5e60b6311ea223e"
+  },
+  "sha256": "215b6f2436af78bdbef59c52c38ab461182a2474c2229b3a9d61effa57944656",
+  "src_code_hash": "e1a89af9784a51baad9479044c0c678664104e571e4434e287519cc1e08d0cab"
+ },
+ "counts": {
+  "attempted": 200,
+  "categories": {
+   "DATA": {
+    "true": 1,
+    "unknown": 0
+   },
+   "INFO": {
+    "true": 3,
+    "unknown": 0
+   },
+   "RULE": {
+    "true": 0,
+    "unknown": 0
+   },
+   "RULE_3": {
+    "true": 0,
+    "unknown": 0
+   },
+   "SIN_F": {
+    "true": 9,
+    "unknown": 4
+   },
+   "SIN_J": {
+    "true": 10,
+    "unknown": 3
+   }
+  },
+  "eligible": 182,
+  "errors": [],
+  "floors": {
+   "current": [
+    10,
+    14
+   ],
+   "variant_2_joint": [
+    11,
+    14
+   ],
+   "variant_3_evidence": [
+    10,
+    14
+   ],
+   "variant_4_combined": [
+    11,
+    14
+   ]
+  },
+  "generation_failures": 1,
+  "i4_bound": {
+   "convergence_failures_by_i4": 22,
+   "invalid_after_the_fix": 0,
+   "invalid_by_i4": 22,
+   "powers_of_invalid_bounds": [],
+   "reasons_after_the_fix": [],
+   "valid_after_the_fix": 22
+  },
+  "route_fraction_fixed": 0.07865168539325842,
+  "route_fraction_own_unit": 0.07593530065440178,
+  "unknown_rate_per_variant": {
+   "current": 0.02197802197802198,
+   "variant_2_joint": 0.016483516483516484,
+   "variant_3_evidence": 0.02197802197802198,
+   "variant_4_combined": 0.016483516483516484
+  },
+  "v04_kept": 178,
+  "version_5_kept": 135
+ },
+ "cpu_hours": 3.6369,
+ "design": "docs/plans/v0.5.5-r1-designs.md (D2-F, the redesign)",
+ "futile_after_A": true,
+ "label": "v0.5.5 R1, D2-F (redesigned): D2's rule counts at the oracle on new planets (C1 version 2), four variants; decides nothing by itself; never a draft; no variant is adopted by it",
+ "method_status": "not_validated",
+ "note": "These counts diagnose certificate limitations and observed blockers. They are not demonstrated lower bounds on unavoidable retention losses.",
+ "outcome_per_variant": {
+  "current": "unresolved",
+  "variant_2_joint": "unresolved",
+  "variant_3_evidence": "unresolved",
+  "variant_4_combined": "unresolved"
+ },
+ "set": "A",
+ "stops": [],
+ "threshold": {
+  "route": "the upper count against the stricter of 14/178 and the population's own unit (r1_common.d2f_route_fraction)"
+ }
+}

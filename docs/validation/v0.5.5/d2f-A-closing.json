@@ -1,0 +1,43 @@
+{
+ "adapter_sha256": "7b980a25685df9f4b0e632b61786a598db061acda289d4f653670cbd342cd374",
+ "attempt": "d2f-A-summary-20261121T145540Z-pid41752-1",
+ "label": "v0.5.5 R1, D2-F set A: the operational closing of the fixed-cap summary",
+ "method_status": "not_validated",
+ "operational_identity": {
+  "adapter_sha256": "7b980a25685df9f4b0e632b61786a598db061acda289d4f653670cbd342cd374",
+  "allocation_hours": 16.3,
+  "fingerprint": "f54c2a3b069717fb",
+  "part": "r1_d2f_a",
+  "rows_sha256": "d3ab9c9e5e35e3ae4e57a36e8e2b54132ab523533f4bbb2d443e22f623ef4465",
+  "shard_limit_seconds": 1200.0,
+  "workers": 4
+ },
+ "receipt": {
+  "adapter_sha256": "7b980a25685df9f4b0e632b61786a598db061acda289d4f653670cbd342cd374",
+  "attempt": "d2f-A-summary-20261121T145540Z-pid41752-1",
+  "charge_hours": 0.00034288194444444443,
+  "charge_name": "d2f_summarize_A_20261121T145547Z",
+  "operational_identity": {
+   "adapter_sha256": "7b980a25685df9f4b0e632b61786a598db061acda289d4f653670cbd342cd374",
+   "allocation_hours": 16.3,
+   "fingerprint": "f54c2a3b069717fb",
+   "part": "r1_d2f_a",
+   "rows_sha256": "d3ab9c9e5e35e3ae4e57a36e8e2b54132ab523533f4bbb2d443e22f623ef4465",
+   "shard_limit_seconds": 1200.0,
+   "workers": 4
+  },
+  "part": "r1_d2f_a",
+  "record": "d2f-A.json",
+  "summary_sha256": "17b7886989fa9fbf2fa70f27cd1dcc3c3864acc479bac75582876892399a7941",
+  "utc": "2026-11-21T14:55:47Z"
+ },
+ "record": "d2f-A.json",
+ "record_sha256": "17b7886989fa9fbf2fa70f27cd1dcc3c3864acc479bac75582876892399a7941",
+ "state": "final",
+ "stop": null,
+ "utc": "2026-11-21T14:55:47Z",
+ "wrapper_charge": {
+  "hours": 0.0001953125,
+  "name": "d2f_fixed_summary_A_20261121T145547Z_000"
+ }
+}

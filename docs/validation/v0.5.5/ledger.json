@@ -44,6 +44,21 @@
    "basis": "r1_fixed_cap.t2ae_1c_summarize, apart from t2ae_census.summarize's own charge: 2.6 s",
    "hours": 0.0007335069444444444,
    "name": "t2ae_completion_summary_20261121T115714Z_000"
+  },
+  {
+   "basis": "t2ae_census.summarize 2: process time 4.6 s",
+   "hours": 0.0012717013888888888,
+   "name": "t2ae_summarize_2_20261121T135054Z"
+  },
+  {
+   "basis": "d2f_floor.summarize A: process time 1.2 s",
+   "hours": 0.00034288194444444443,
+   "name": "d2f_summarize_A_20261121T145547Z"
+  },
+  {
+   "basis": "d2f_fixed_cap.summarize, apart from d2f_floor.summarize's own charge: 0.7 s",
+   "hours": 0.0001953125,
+   "name": "d2f_fixed_summary_A_20261121T145547Z_000"
   }
  ],
  "closing_receipts": [
@@ -63,6 +78,25 @@
    "runner_sha256": "7f125394cc5898941d508c5d1fcc3119e31ee1bf6aba02e10a1385756bd65769",
    "summary_sha256": "4fb22edf2c56604e20883b5f5d3e6c3d1966691979ce433f95d8f4c79953a11e",
    "utc": "2026-11-21T11:57:14Z"
+  },
+  {
+   "adapter_sha256": "7b980a25685df9f4b0e632b61786a598db061acda289d4f653670cbd342cd374",
+   "attempt": "d2f-A-summary-20261121T145540Z-pid41752-1",
+   "charge_hours": 0.00034288194444444443,
+   "charge_name": "d2f_summarize_A_20261121T145547Z",
+   "operational_identity": {
+    "adapter_sha256": "7b980a25685df9f4b0e632b61786a598db061acda289d4f653670cbd342cd374",
+    "allocation_hours": 16.3,
+    "fingerprint": "f54c2a3b069717fb",
+    "part": "r1_d2f_a",
+    "rows_sha256": "d3ab9c9e5e35e3ae4e57a36e8e2b54132ab523533f4bbb2d443e22f623ef4465",
+    "shard_limit_seconds": 1200.0,
+    "workers": 4
+   },
+   "part": "r1_d2f_a",
+   "record": "d2f-A.json",
+   "summary_sha256": "17b7886989fa9fbf2fa70f27cd1dcc3c3864acc479bac75582876892399a7941",
+   "utc": "2026-11-21T14:55:47Z"
   }
  ],
  "sections": {
@@ -78,7 +112,7 @@
      "spent_hours": 4.676293402777778
     },
     "r1_d1p_b": {
-     "allocation_hours": 14.2
+     "allocation_hours": 0.0
     },
     "r1_d1p_bridge": {
      "allocation_hours": 7.1,
@@ -90,13 +124,41 @@
      "spent_hours": 2.2991145833333335
     },
     "r1_d2f_a": {
-     "allocation_hours": 0.0
+     "allocation_hours": 16.3,
+     "cap_basis": "fixed by the allocation, protected for one crash charge, the poll margin and the watchdog's 1.10; no checkpoint or projection rule (the maintainer's decisions of 2026-11-21 at G1, item 2 (#218))",
+     "cap_hours": 13.585353535353534,
+     "completed_fixed": {
+      "spent_hours": 3.636888020833333,
+      "utc": "2026-11-21T14:55:22Z"
+     },
+     "driver": "fixed-cap",
+     "identity": "5b78dac1e5ff61ec",
+     "margin_checks": [
+      {
+       "basis": "the designs' price: about 0.052 CPU-h per planet times 200 planets (docs/plans/v0.5.5-r1-designs-revision-1.md, section 2); an estimate without an auditable measurement",
+       "effective_cap_hours": 13.585353535353534,
+       "fits": true,
+       "margin_needed_hours": 13.520000000000001,
+       "projection_hours": 10.4,
+       "utc": "2026-11-21T13:51:28Z"
+      }
+     ],
+     "operational_identity": {
+      "adapter_sha256": "7b980a25685df9f4b0e632b61786a598db061acda289d4f653670cbd342cd374",
+      "allocation_hours": 16.3,
+      "fingerprint": "f54c2a3b069717fb",
+      "part": "r1_d2f_a",
+      "rows_sha256": "d3ab9c9e5e35e3ae4e57a36e8e2b54132ab523533f4bbb2d443e22f623ef4465",
+      "shard_limit_seconds": 1200.0,
+      "workers": 4
+     },
+     "spent_hours": 3.636888020833333
     },
     "r1_d2f_b": {
      "allocation_hours": 0.0
     },
     "r1_reserve": {
-     "allocation_hours": 20.3
+     "allocation_hours": 17.75
     },
     "r1_t2ae_1": {
      "allocation_hours": 3.1,
@@ -130,7 +192,15 @@
      "spent_hours": 0.8894878472222222
     },
     "r1_t2ae_2": {
-     "allocation_hours": 3.1,
+     "allocation_hours": 3.55,
+     "cap_basis": "fixed by the allocation, protected for one crash charge, the poll margin and the watchdog's 1.10; no checkpoint or projection (the maintainer's decision of 2026-11-20, 21:00, item 3)",
+     "cap_hours": 2.60050505050505,
+     "completed_fixed": {
+      "spent_hours": 1.5422395833333333,
+      "utc": "2026-11-21T13:49:50Z"
+     },
+     "driver": "fixed-cap",
+     "identity": "a4528b07c0ed13ac",
      "margin_checks": [
       {
        "basis": "the mean CPU of stage 1's 51 finished injections (their sidecars, 140.272 s) times stage 2's 51 injections; a planning extrapolation",
@@ -139,8 +209,26 @@
        "margin_needed_hours": 2.583338107638889,
        "projection_hours": 1.9871831597222223,
        "utc": "2026-11-21T11:58:41Z"
+      },
+      {
+       "basis": "the mean CPU of stage 1's 51 finished injections (their sidecars, 140.272 s) times stage 2's 51 injections; a planning extrapolation",
+       "effective_cap_hours": 2.60050505050505,
+       "fits": true,
+       "margin_needed_hours": 2.583338107638889,
+       "projection_hours": 1.9871831597222223,
+       "utc": "2026-11-21T13:23:02Z"
       }
-     ]
+     ],
+     "operational_identity": {
+      "allocation_hours": 3.55,
+      "fingerprint": "d9c8dae7060f8d59",
+      "part": "r1_t2ae_2",
+      "rows_sha256": "f6774fd16cc84001a765c2506eb276944f59662983ed84545539243ffd66d966",
+      "runner_sha256": "7f125394cc5898941d508c5d1fcc3119e31ee1bf6aba02e10a1385756bd65769",
+      "shard_limit_seconds": 600.0,
+      "workers": 4
+     },
+     "spent_hours": 1.5422395833333333
     }
    }
   }
@@ -160,6 +248,13 @@
     "utc": "2026-11-20T23:11:32Z"
    }
   ],
+  "r1_d2f_a": [
+   {
+    "identity": "5b78dac1e5ff61ec",
+    "resume": false,
+    "utc": "2026-11-21T13:51:28Z"
+   }
+  ],
   "r1_t2ae_1": [
    {
     "identity": "eeb944db6f2c6224",
@@ -172,6 +267,13 @@
     "identity": "0fbe5ea89e8bde78",
     "resume": false,
     "utc": "2026-11-21T11:37:35Z"
+   }
+  ],
+  "r1_t2ae_2": [
+   {
+    "identity": "a4528b07c0ed13ac",
+    "resume": false,
+    "utc": "2026-11-21T13:23:02Z"
    }
   ]
  },
@@ -192,6 +294,54 @@
    ],
    "runner_sha256": "7f125394cc5898941d508c5d1fcc3119e31ee1bf6aba02e10a1385756bd65769",
    "utc": "2026-11-21T11:57:03Z"
+  },
+  {
+   "adapter_sha256": "7b980a25685df9f4b0e632b61786a598db061acda289d4f653670cbd342cd374",
+   "attempt": "d2f-A-summary-20261121T145540Z-pid41752-1",
+   "operational_identity": {
+    "adapter_sha256": "7b980a25685df9f4b0e632b61786a598db061acda289d4f653670cbd342cd374",
+    "allocation_hours": 16.3,
+    "fingerprint": "f54c2a3b069717fb",
+    "part": "r1_d2f_a",
+    "rows_sha256": "d3ab9c9e5e35e3ae4e57a36e8e2b54132ab523533f4bbb2d443e22f623ef4465",
+    "shard_limit_seconds": 1200.0,
+    "workers": 4
+   },
+   "part": "r1_d2f_a",
+   "prior_summary_charges": [],
+   "utc": "2026-11-21T14:55:40Z"
+  }
+ ],
+ "transfers": [
+  {
+   "allocation_hours": {
+    "after": 3.55,
+    "before": 3.1
+   },
+   "decision": "the maintainer's decisions of 2026-11-21 (10:00) at G1, item 1 (#218)",
+   "from": {
+    "r1_reserve": 0.45
+   },
+   "reason": "the runner refused stage 2 by its margin: effective cap 2.1914 against 1.3 x 1.9872 = 2.5833; the minimum allocation for 4 workers is 3.5311",
+   "reserve_hours": {
+    "after": 19.85,
+    "before": 20.3
+   },
+   "script_sha256": "4dd68bdfac2cf6bdee600a776a2707b2a71455794aafdc8c63cf977584702d72",
+   "step": "t2ae2",
+   "to": "r1_t2ae_2",
+   "utc": "2026-11-21T13:22:24Z"
+  },
+  {
+   "adapter_sha256": "7b980a25685df9f4b0e632b61786a598db061acda289d4f653670cbd342cd374",
+   "allocation_hours": 16.3,
+   "decision": "the maintainer's decisions of 2026-11-21 at G1, item 2 (#218)",
+   "from": {
+    "r1_d1p_b": 14.2,
+    "r1_reserve": 2.1
+   },
+   "to": "r1_d2f_a",
+   "utc": "2026-11-21T13:51:22Z"
   }
  ]
 }
