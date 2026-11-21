@@ -93,3 +93,22 @@ Settled by the most conservative option at the end of round 3 (the maintainer's 
 - **T2a-E's completion and stage 2 do not run.** The runner (`docs/validation/v0.5.5/r1_fixed_cap.py`) stays unreleased: pending are the proof that a recovered summary's charge belongs to that attempt, the wrapper's charge on an exception, and stage 2's margin against the effective cap. Stage 1's stop at its cap stays on file, with every consumption recorded.
 - **D2-F is not run**, recorded as "D2-F not run: authorized funding insufficient; fixed-cap adapter pending", with Codex's text: no demonstrated implausibility of route under the rule (e)1, no infeasibility conclusion on D2.
 - The maintainer's advisor's reason for D2-F (0.114 as a ceiling; at most 9 per set) was refuted on its facts; the not-run outcome stands on the funding.
+
+## Path A at G1: the fixed-cap runner's three pending items
+
+Codex's review of the fixed-cap runner after the three pending items of the g1 conversation's round 3 were applied in his text (the maintainer's decisions of 2026-11-21 at G1, item 1; #218): the closing receipt, the wrapper's charge in finally, stage 2's margin against the effective cap, and round 3's tests 4 to 6 (commit 09e729b), up to 3 rounds. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [g1r-round-1-answer.md](g1r-round-1-answer.md) | gpt-6.1-sol, high | items 1 to 5 `SURVIVED`; no blocker; **the runner is released** for T2a-E's completion (`r1_t2ae_1c`, 14 injections, 1.5 CPU-h, 3 workers) and, after a valid stage-1 publication, no futility and the effective margin with the 51 measured costs, for stage 2 (`r1_t2ae_2`, 51 injections, 3.1 CPU-h, 4 workers); reviewed SHA-256 `7f125394cc5898941d508c5d1fcc3119e31ee1bf6aba02e10a1385756bd65769`; two optional test improvements, applied | `c635d7e8166a12c016ed66117665c110d1809d24e243120e20f68f2ba9f598b2` |
+
+The tokens are cumulative over the conversation `g1r`:
+
+- round 1: 616,815 input (531,328 cached) and 6,626 output;
+
+The conversation counts **92,113** review tokens (the last round's uncached input plus output).
+
+Applied as Codex wrote them (no divergence; one round):
+- **The runner is released** at the reviewed bytes (SHA-256 `7f125394...5769`); its bytes stay unchanged from the first dispatch on, comments and docstring included.
+- The two optional test improvements (the interruption with the attempt persisted before a correct JSON; the wrapper's deduction checked exactly with a deterministic process clock, and exactly zero when the inner charge is larger) are applied in `tests/v055/test_r1_fixed_cap.py`; the runner is unchanged by them.
+- The release does not certify future operating conditions nor pass any STOP.

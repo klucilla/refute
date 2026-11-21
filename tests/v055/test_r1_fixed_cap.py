@@ -389,11 +389,16 @@ def test_a_historical_charge_never_proves_a_recovered_summary(pub):
     # Codex, g1 round 3: one old charge on file, a new and correct t2ae-1.json, and an
     # interruption before the new charge: the publication is refused; the old charge is kept
     budgeted.charge(HISTORICAL, 0.0009461806, "the refused summary of 2026-11-20")
+    with lv.Exclusive("an attempt opened before the interruption"):  # Codex, g1r round 1
+        attempt = fc._open_attempt()
     (pub / "t2ae-1.json").write_text(_summary_doc(), "utf-8")
     with pytest.raises(SystemExit, match="not proven"):
         fc.t2ae_1c_summarize()
     assert not (pub / "t2ae-1-completion.json").exists()
-    assert any(c["name"] == HISTORICAL for c in budgeted.load()["charges"])
+    book = budgeted.load()
+    assert any(c["name"] == HISTORICAL for c in book["charges"])
+    assert book[fc.ATTEMPTS] == [attempt] and attempt["prior_summary_charges"] == [HISTORICAL]
+    assert fc.RECEIPTS not in book
     assert len(_wrapper_charges()) == 1
 
 
@@ -460,14 +465,14 @@ def test_a_record_that_appears_before_the_lock_is_never_overwritten(pub, monkeyp
     assert (pub / "t2ae-1-completion.json").read_text("utf-8") == "{}"
 
 
-def _inner(pub, hours=0.001, fail=None, write=True):
+def _inner(pub, hours=0.001, fail=None, write=True, name="inner"):
     """A stand-in for t2ae_census.summarize: the record and its own charge, then ``fail``."""
 
     def summarize(stage):
         assert stage == "1" and len(fc.te._records("1")) == 10  # the combined reader
         if write:
             (pub / "t2ae-1.json").write_text(_summary_doc(), "utf-8")
-        budgeted.charge(f"{fc.SUMMARY_CHARGE_PREFIX}inner", hours, "the frozen summary")
+        budgeted.charge(f"{fc.SUMMARY_CHARGE_PREFIX}{name}", hours, "the frozen summary")
         if fail is not None:
             raise SystemExit(fail)
 
@@ -513,12 +518,22 @@ def test_the_wrapper_deducts_only_the_inner_charge(pub, monkeypatch):
     # the deduction is the attempt's new inner charge only (never the historical one); an inner
     # charge larger than the wrapper's whole time leaves a charge of zero, never less
     budgeted.charge(HISTORICAL, 0.0009461806, "the refused summary of 2026-11-20")
-    monkeypatch.setattr(fc.te, "summarize", _inner(pub, hours=1.0e-3, fail="stop"))
+    clock = iter([100.0])  # a deterministic process clock: 10 s for the wrapper's whole call
+    monkeypatch.setattr(fc.time, "process_time", lambda: next(clock, 110.0))
+    monkeypatch.setattr(fc.te, "summarize", _inner(pub, hours=1.0e-3, fail="stop"))  # 3.6 s
     with pytest.raises(SystemExit):
         fc.t2ae_1c_summarize()
-    assert _wrapper_charges()[0]["hours"] >= 0.0
+    assert _wrapper_charges()[0]["hours"] == pytest.approx((10.0 - 3.6) / 3600.0)
     attempt = budgeted.load()[fc.ATTEMPTS][-1]
     assert fc._new_summary_charges(attempt) == {f"{fc.SUMMARY_CHARGE_PREFIX}inner": 1.0e-3}
+    # an inner charge larger than the whole call leaves exactly zero
+    (pub / "t2ae-1.json").unlink()
+    clock = iter([200.0])
+    monkeypatch.setattr(fc.time, "process_time", lambda: next(clock, 201.0))
+    monkeypatch.setattr(fc.te, "summarize", _inner(pub, hours=1.0, fail="stop", name="big"))
+    with pytest.raises(SystemExit):
+        fc.t2ae_1c_summarize()
+    assert _wrapper_charges()[1]["hours"] == 0.0
 
 
 def test_two_new_charges_in_one_attempt_are_a_stop(pub, monkeypatch):
