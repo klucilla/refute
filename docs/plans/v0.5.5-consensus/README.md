@@ -287,3 +287,22 @@ combination is behaviour-identical to the frozen battery); the review's items 8 
 B3.3's promotion would need, and its blockers 2 to 7 are lessons for any future version
 ([`../v0.5.5-r2-closing-record.md`](../v0.5.5-r2-closing-record.md)).
 
+## The v0.5 line paused: the adopted pause record checked
+
+Codex's final round under the maintainer's decisions of 2026-11-21 (18:30), item 3 (#218): the adopted pause record (docs/plans/v0.5.5-v05-line-pause-record.md) checked against its draft, the cited records and the ledger (numbers, citations, and that no rule, target, lock or verdict changes), with the ROADMAP's change of item 2. Up to three rounds; authorized to pass 80 % of v0.5.5's token line by up to 150,000 tokens (the ledger's cap_exceptions, 'pause-final-codex-round'). Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [pause-round-1-answer.md](pause-round-1-answer.md) | gpt-6.1-sol, high | **WEAKENED**: two blocking items (section 7 rewritten beyond the three corrections; trigger 4's wording asks for eight D1-P cells on one new seed set while the frozen design counts them across two sets) and three remarks (rounding, the T2a noise-model wording, the header's sentence on sources) | `15f535508ec997d31242444167a3196edbb89baa15f68603649481ee7c3d6623` |
+| 2 | [pause-round-2-answer.md](pause-round-2-answer.md) | gpt-6.1-sol, high | **WEAKENED**: section 7 restored as history, rounding note and header applied; keeping trigger 4's adopted wording and taking the correction to the maintainer is acceptable, but the record still presented that trigger as verifiable while it diverges from the design | `e8661c1917ddeab6cb4eee43cdee06bbbc0ec759c809b322ff884ab83e1e380a` |
+| 3 | [pause-round-3-answer.md](pause-round-3-answer.md) | gpt-6.1-sol, high | **SURVIVED**: no blocking item; the note under trigger 4 resolves round 2's item; remarks: the D1 and T2a wordings proposed for the maintainer's decision | `ae65aece6bb2ab47eb2b62164a2b3346b1406b9c59e49a1894d3f4ea9fad79d6` |
+
+The tokens are cumulative over the conversation `pause`:
+
+- round 1: 582,961 input (499,328 cached) and 9,422 output;
+- round 2: 370,332 input (327,168 cached) and 4,222 output;
+- round 3: 429,766 input (382,848 cached) and 5,400 output;
+
+The conversation counts **52,318** review tokens (the last round's uncached input plus output).
+
+Applied: round 1's section 7 item (the draft's paragraph restored byte for byte under the title 'What the draft asked the maintainer to decide'), the rounding note and the header sentence; round 2's item by a note under trigger 4 that keeps the adopted wording and points to R1's frozen design (revision 1, section 3; `d1p_exit_outcome`), and a pointer under trigger 3 to v0.5.4's pause record. Not applied, by the conservative option (they would change a resuming trigger's wording beyond the three corrections the maintainer authorized): the D1 wording 'whose D1-P price reads "route" in all eight cells across two new seed sets for a decisive exit' and the T2a wording 'or a noise model of the background series, in a new design frozen before its data, under which at least 82 of the 102 class-(i) injections are valid by all of step 6's requirements'; both are the maintainer's decision (#218). No other round follows.

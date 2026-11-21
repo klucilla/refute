@@ -1,4 +1,17 @@
 {
+ "cap_exceptions": [
+  {
+   "allowance_tokens": 150000,
+   "cap": "v0.5.5's review tokens (stop at 80 % of 3.0 M)",
+   "decision": "the maintainer's decisions of 2026-11-21 (18:30), item 3 (#218)",
+   "name": "pause-final-codex-round",
+   "recorded_utc": "2026-11-21T21:37:01Z",
+   "scope": "one final Codex round (conversation 'pause', up to 3 rounds if not SURVIVED) checking the adopted pause record; no other round after it",
+   "tokens_before": {
+    "v055_without_r2": 1303962
+   }
+  }
+ ],
  "charges": [
   {
    "basis": "i4_diagnosis.py: process time 8.1 s",

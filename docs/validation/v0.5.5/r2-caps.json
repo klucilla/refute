@@ -246,6 +246,32 @@
     "agent_days": 0.0,
     "review_tokens": 0
    }
+  },
+  {
+   "utc": "2026-11-21T21:47:53Z",
+   "step": "final reading at the v0.5 line's pause",
+   "review_tokens": {
+    "conversations": {
+     "r2args": 231665,
+     "r2choice": 74270,
+     "r2method": 77079,
+     "r2rev": 160482,
+     "r2t3b": 21176
+    },
+    "r2": 564672
+   },
+   "v055_lines": {
+    "v055_without_r2": 1356280,
+    "r2": 564672,
+    "v055_with_r2": 1920952
+   },
+   "agent_days_wall": 0.637,
+   "agent_days_active": 0.38,
+   "cpu_hours_new_version": 0.0,
+   "reserved": {
+    "agent_days": 0.0,
+    "review_tokens": 0
+   }
   }
  ]
 }
