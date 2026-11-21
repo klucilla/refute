@@ -59,6 +59,11 @@
    "basis": "d2f_fixed_cap.summarize, apart from d2f_floor.summarize's own charge: 0.7 s",
    "hours": 0.0001953125,
    "name": "d2f_fixed_summary_A_20261121T145547Z_000"
+  },
+  {
+   "basis": "t3b_recount.py: process time 14.2 s",
+   "hours": 0.0039453125,
+   "name": "t3b_recount_20261121T165938Z"
   }
  ],
  "closing_receipts": [

@@ -102,9 +102,39 @@ def sources() -> dict:
                 }
             for k, v in node.items():
                 walk(v, f"{path}.{k}" if path else k)
+        elif isinstance(node, list):  # the fix of 2026-11-21: lists were not traversed
+            for i, v in enumerate(node):
+                walk(v, f"{path}[{i}]")
 
     walk(inputs)
     return out
+
+
+SOURCES = HERE / "t3b-recount-sources.json"
+
+
+def write_sources() -> None:
+    """A correction as a new record (``t3b-recount.json`` keeps its bytes): its
+    ``frozen_inputs`` field came out empty because ``sources`` did not traverse lists. This
+    record lists each frozen input's source, retrieval date and SHA-256 from v0.5's inputs.json,
+    with no new query, bound to the recount record by its SHA-256."""
+    if SOURCES.exists():
+        raise SystemExit(f"{SOURCES.name} exists: written once")
+    found = sources()
+    if not found:
+        raise SystemExit("no source found in inputs.json: STOP")
+    doc = {
+        "label": "v0.5.5 T3b: the recount's frozen inputs, a correction record",
+        "method_status": "not_validated",
+        "corrects": "t3b-recount.json, its empty frozen_inputs field (a script defect: lists "
+        "were not traversed); that record keeps its bytes",
+        "recount_record_sha256": hashlib.sha256(OUT.read_bytes()).hexdigest(),
+        "inputs_json_sha256": hashlib.sha256(tc.FROZEN.read_bytes()).hexdigest(),
+        "frozen_inputs": found,
+        "written_utc": tc._utc(),
+    }
+    SOURCES.write_text(json.dumps(doc, indent=1, sort_keys=True) + "\n", "utf-8", newline="\n")
+    print(json.dumps(found, indent=1))
 
 
 def main() -> None:
@@ -200,4 +230,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    if sys.argv[1:] == ["sources"]:
+        write_sources()
+    else:
+        main()

@@ -1,0 +1,35 @@
+{
+ "corrects": "t3b-recount.json, its empty frozen_inputs field (a script defect: lists were not traversed); that record keeps its bytes",
+ "frozen_inputs": {
+  "files[0]": {
+   "retrieved_utc": "2026-11-04T13:07:18Z",
+   "sha256": "8bd500899538e0e4e2e96b2169b1d6c2c423f2593e02c0a71fc3f427baa305c1",
+   "url": "https://tess.mit.edu/public/target_lists/target_lists.html"
+  },
+  "files[1]": {
+   "retrieved_utc": "2026-11-04T13:07:51Z",
+   "sha256": "942957e3cab82800fb08911d6d83b3e6f524cbc1b475b49be8179234b3c0a99d",
+   "url": "https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=csv"
+  },
+  "files[2]": {
+   "retrieved_utc": "2026-11-04T13:07:54Z",
+   "sha256": "bb9e29d46336e6a6934bf1a65f07d44d517f49df2ff3dab41f3df31c323fd5a5",
+   "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2Chostname%2Ctic_id%2Ctran_flag%2Csy_pnum%2Cpl_orbper%2Cpl_orbpererr1%2Cpl_tranmid%2Cpl_trandep%2Cpl_trandur%2Csy_tmag%2Cra%2Cdec+from+pscomppars&format=csv"
+  },
+  "files[3]": {
+   "retrieved_utc": "2026-11-04T13:07:54Z",
+   "sha256": "61cb8749ce2ebf87d3fdf495af888b2f803064c67a23c117f742b85598f5a323",
+   "url": "https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/258/16/tess-ebs&-out=TIC,m_TIC,RAJ2000,DEJ2000,Per&-out.max=unlimited"
+  },
+  "files[4]": {
+   "retrieved_utc": "2026-11-04T13:08:02Z",
+   "sha256": "5183528b8984d16b305b1fb3ce62b96cf7160961f9a59b0cbb85497e5454c3df",
+   "url": "https://github.com/klucilla/refute/releases/download/v0.2.0/gaia_dr3_vari_eclipsing_binary.csv"
+  }
+ },
+ "inputs_json_sha256": "8404740f73a2974862c9fba8040f7171ccb1b62e92543853274d2268f0f64f96",
+ "label": "v0.5.5 T3b: the recount's frozen inputs, a correction record",
+ "method_status": "not_validated",
+ "recount_record_sha256": "41b5cf68c38e267347d78b8a2d4afb3bd0c1c528be370602ffe700845ea22c58",
+ "written_utc": "2026-11-21T17:00:02Z"
+}
