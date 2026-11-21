@@ -23,10 +23,11 @@ draft (it cites results), the plan, the reports, the ledger and the consensus an
 **The leak check** (a guard, not a proof of blinding; the final bytes are also read in context
 before the bundle is released): the bundle is refused if its argument file still holds the
 disclosure heading, or if any bundled file matches a pattern of results or retrospective
-reference (record file names, R1's checks, forecast terms, known phrases). The source files are
-bundled byte for byte; they are the frozen rules themselves. ``check`` compares the delivered
-manifest with the recorded one, and every file in the bundle (only the manifest's exact path left
-out) with the manifest.
+reference (record file names, R1's checks, forecast terms, known phrases); **the manifest
+itself is checked before its first write**. The source files are bundled byte for byte, except
+the review copy declared in the manifest; they are the frozen rules themselves. ``check``
+compares the delivered manifest with the recorded one, and every file in the bundle (only the
+manifest's exact path left out) with the manifest.
 
 Usage: ``.venv/Scripts/python.exe -B docs/validation/v0.5.5/r2_bundle.py build`` (refuses an
 existing bundle), ``... check`` (re-hashes the bundle against the manifest).
@@ -175,7 +176,8 @@ def build() -> dict:
             "arguments.md": {
                 "from": ARGUMENTS,
                 "source_sha256": _sha((ROOT / ARGUMENTS).read_bytes()),
-                "cut_at": DISCLOSURE,
+                "cut_at": "the heading of the arguments' last section (charter (d)6); that "
+                "section and everything after it are left out",
             },
             "code-semantics.md": {
                 "from": SEMANTICS,
@@ -191,10 +193,10 @@ def build() -> dict:
                     "source_sha256": _sha((ROOT / rel).read_bytes()),
                     **(
                         {
-                            "review_copy": "one comment replaced (a historical acceptance "
-                            "outcome left out); the frozen source unchanged",
-                            "replaced": REVIEW_COPIES[rel][0],
-                            "by": REVIEW_COPIES[rel][1],
+                            # Codex, r2rev round 2: the removed text is not republished here
+                            "review_copy": "the comment immediately before V05_DECISIVE is "
+                            "replaced in the review copy; the frozen source is unchanged",
+                            "delivered_sha256": _sha(files["frozen-rules/" + rel]),
                         }
                         if rel in REVIEW_COPIES
                         else {}
@@ -204,14 +206,16 @@ def build() -> dict:
             },
         },
         "files": {name: _sha(data) for name, data in sorted(files.items())},
-        "excluded": "the disclosure section; every forecast, count and record of v0.5 to v0.5.5 "
-        "(R1 included); the questions draft; the plan; the reports; the ledger; the consensus",
+        "excluded": "the disclosure section; every prediction, count and record of the earlier "
+        "versions; the questions draft; the plan; the reports; the ledger; the consensus",
         "reviewer": "not launched by this script; the maintainer's adviser launches the blind "
         "review, read only, with no clone, no history and no network",
     }
-    MANIFEST.write_text(
-        json.dumps(manifest, indent=1, sort_keys=True) + "\n", "utf-8", newline="\n"
-    )
+    text = json.dumps(manifest, indent=1, sort_keys=True) + "\n"
+    found = leaks("MANIFEST.json", text.encode("utf-8"))  # before the first write
+    if found:
+        raise SystemExit("the manifest would leak: " + "; ".join(found))
+    MANIFEST.write_text(text, "utf-8", newline="\n")
     for name, data in files.items():
         path = OUT / name
         path.parent.mkdir(parents=True, exist_ok=True)

@@ -123,8 +123,21 @@ def test_a_review_copy_replaces_its_text_and_is_declared(bundle, tmp_path, monke
     )
     assert (tmp_path / "src/rule.py").read_text("utf-8") == "def rule():\n    return 1\n"
     src = manifest["sources"]["frozen-rules/src/rule.py"]
-    assert src["replaced"] == "return 1" and src["by"] == "return 2" and "review_copy" in src
+    assert "review_copy" in src and "replaced" not in src and "by" not in src
+    # the removed text appears in neither delivered artefact (Codex, r2rev round 2)
+    assert "return 1" not in (tmp_path / "bundle/MANIFEST.json").read_text("utf-8")
+    assert "return 1" not in (tmp_path / "bundle/frozen-rules/src/rule.py").read_text("utf-8")
+    assert src["delivered_sha256"] == manifest["files"]["frozen-rules/src/rule.py"]
     assert bundle.check()["ok"]
+
+
+def test_a_manifest_that_would_leak_is_refused_before_any_write(bundle, tmp_path, monkeypatch):
+    monkeypatch.setattr(bundle, "ARGUMENTS", "docs/plans/v0.5.5-r2-arguments.md")
+    monkeypatch.setattr(bundle, "TARGETS", "docs/plans/d2f-A-targets.md")  # a leaking source name
+    (tmp_path / "docs/plans/d2f-A-targets.md").write_text("targets\n", "utf-8")
+    with pytest.raises(SystemExit, match="manifest would leak"):
+        bundle.build()
+    assert not (tmp_path / "manifest.json").exists() and not (tmp_path / "bundle").exists()
 
 
 def test_a_review_copy_whose_text_is_missing_is_refused(bundle, monkeypatch):
@@ -143,7 +156,6 @@ def test_two_disclosure_headings_are_refused(bundle, tmp_path):
 def test_the_manifest_records_the_sources(bundle, tmp_path):
     manifest = bundle.build()
     src = manifest["sources"]["arguments.md"]
-    assert src["from"] == "docs/plans/v0.5.5-r2-arguments.md" and src["cut_at"].startswith(
-        "## Disc"
-    )
+    assert src["from"] == "docs/plans/v0.5.5-r2-arguments.md"
+    assert "last section" in src["cut_at"] and "Disclosure" not in src["cut_at"]
     assert json.loads((tmp_path / "manifest.json").read_text("utf-8"))["files"] == manifest["files"]
