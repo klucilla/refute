@@ -114,6 +114,25 @@ def test_a_leak_in_a_frozen_rule_refuses_the_build(bundle, tmp_path):
         bundle.build()
 
 
+def test_a_review_copy_replaces_its_text_and_is_declared(bundle, tmp_path, monkeypatch):
+    # Codex, r2rev round 1: a comment stating a historical outcome is replaced in the copy only
+    monkeypatch.setattr(bundle, "REVIEW_COPIES", {"src/rule.py": ("return 1", "return 2")})
+    manifest = bundle.build()
+    assert (tmp_path / "bundle/frozen-rules/src/rule.py").read_text("utf-8") == (
+        "def rule():\n    return 2\n"
+    )
+    assert (tmp_path / "src/rule.py").read_text("utf-8") == "def rule():\n    return 1\n"
+    src = manifest["sources"]["frozen-rules/src/rule.py"]
+    assert src["replaced"] == "return 1" and src["by"] == "return 2" and "review_copy" in src
+    assert bundle.check()["ok"]
+
+
+def test_a_review_copy_whose_text_is_missing_is_refused(bundle, monkeypatch):
+    monkeypatch.setattr(bundle, "REVIEW_COPIES", {"src/rule.py": ("absent text", "x")})
+    with pytest.raises(SystemExit, match="not found once"):
+        bundle.build()
+
+
 def test_two_disclosure_headings_are_refused(bundle, tmp_path):
     text = "# A\n\n## Disclosure: results known when this was written\n\nx\n" * 2
     (tmp_path / "docs/plans/v0.5.5-r2-arguments.md").write_text(text, "utf-8")

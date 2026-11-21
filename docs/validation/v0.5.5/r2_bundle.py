@@ -1,16 +1,22 @@
 """v0.5.5 R2: the blind review's bundle (#218; the maintainer's decisions of 2026-11-21, 13:30,
 item 4; charter (d)3; amendment 1 (f)). ``method_status: not_validated``.
 
-Builds the bundle **from an allowlist only** into ``.cache/v055/r2/bundle/`` and writes its SHA-256
-manifest **before any review** (``docs/validation/v0.5.5/r2-bundle-manifest.json``). It launches no
-reviewer: the blind review is launched by the maintainer's adviser, read only.
+Builds the **second** bundle (the maintainer's decisions of 2026-11-21, 15:20) **from an allowlist
+only** into ``.cache/v055/r2/bundle-2/`` and writes its SHA-256 manifest **before any review**
+(``docs/validation/v0.5.5/r2-bundle-2-manifest.json``); the first bundle keeps its folder and its
+manifest. It launches no reviewer: the blind review is launched by the maintainer's adviser, read
+only, with a new session.
 
 **What goes in** (the decisions' item 4): the design questions, the proposed rules and the
 arguments, carried by ``docs/plans/v0.5.5-r2-arguments.md`` **cut at its disclosure section**
 (that section and everything after it are left out); the code's semantics,
-``docs/plans/v0.5.5-r2-code-semantics.md``; and the frozen rules, as the source files that define
-them (the aggregation, the coverage and sensitivity rules, the registry, the parameters, the test
-lists and the tests that the questions touch). **What stays out:**
+``docs/plans/v0.5.5-r2-code-semantics.md``; the targets defined without counts,
+``docs/plans/v0.5.5-r2-targets.md``; and the frozen rules, as the source files that define them
+(the aggregation, the coverage and sensitivity rules, the registry, the parameters, the test lists,
+the tests that the questions touch, and how C1's and C2's targets are counted). **A review copy**
+replaces one comment of ``calib05/values.py`` that states a historical acceptance outcome
+(``REVIEW_COPIES``); the manifest declares the transformation, the source's hash and the delivered
+hash; the frozen source is not changed. **What stays out:**
 the disclosure section, every forecast, every record of R1 and of v0.5 to v0.5.5, the questions
 draft (it cites results), the plan, the reports, the ledger and the consensus answers.
 
@@ -92,7 +98,24 @@ LEAKS = (
     r"eases the power certificate",
     r"planets with only warning-class gaps",
     r"motivated R2",
+    r"moves to SURVIVED",
+    r"every ambiguous-sinusoid case",
+    r"acceptance failed",
+    r"whose acceptance",
 )
+
+
+# review copies: the frozen source is kept; the delivered copy replaces an exact text (Codex,
+# r2rev round 1: values.py's comment states which tests' acceptance failed)
+REVIEW_COPIES = {
+    "src/refute/packs/tess/calib05/values.py": (
+        "# The roles of the v0.5 battery (the acceptance README and the S2 decisions): every v0.4 "
+        "decisive\n# test except centroid_shift (in a v0.5 plan it is the per-sector centroid, not "
+        "accepted), plus the\n# accepted v0.5 tests; diagnostic: the tests whose acceptance "
+        "failed, and the holdout.\n",
+        "# The roles of the tests in the v0.5 battery.\n",
+    ),
+}
 
 
 def _sha(data: bytes) -> str:
@@ -123,7 +146,14 @@ def contents() -> dict[str, bytes]:
         "targets.md": (ROOT / TARGETS).read_bytes(),
     }
     for rel in FROZEN_RULES:
-        files["frozen-rules/" + rel] = (ROOT / rel).read_bytes()
+        data = (ROOT / rel).read_bytes()
+        if rel in REVIEW_COPIES:
+            old, new = REVIEW_COPIES[rel]
+            text = data.decode("utf-8")
+            if text.count(old) != 1:
+                raise SystemExit(f"{rel}: the review copy's text is not found once: refused")
+            data = text.replace(old, new).encode("utf-8")
+        files["frozen-rules/" + rel] = data
     return files
 
 
@@ -159,6 +189,16 @@ def build() -> dict:
                 "frozen-rules/" + rel: {
                     "from": rel,
                     "source_sha256": _sha((ROOT / rel).read_bytes()),
+                    **(
+                        {
+                            "review_copy": "one comment replaced (a historical acceptance "
+                            "outcome left out); the frozen source unchanged",
+                            "replaced": REVIEW_COPIES[rel][0],
+                            "by": REVIEW_COPIES[rel][1],
+                        }
+                        if rel in REVIEW_COPIES
+                        else {}
+                    ),
                 }
                 for rel in FROZEN_RULES
             },
