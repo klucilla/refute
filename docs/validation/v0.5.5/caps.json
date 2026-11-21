@@ -198,6 +198,28 @@
     "review_tokens": 0,
     "disk_bytes": 0
    }
+  },
+  {
+   "utc": "2026-11-21T00:39:37Z",
+   "step": "g1 report",
+   "codex_tokens": {
+    "conversations": {
+     "facts": 168755,
+     "g1": 198496,
+     "night": 223534,
+     "r0r1": 395037
+    },
+    "phase": 985822
+   },
+   "agent_days_wall": 0.75,
+   "agent_days_active": 0.55,
+   "cpu_hours": 8.779,
+   "disk_bytes": 7038043,
+   "reserved": {
+    "agent_days": 0.0,
+    "review_tokens": 0,
+    "disk_bytes": 0
+   }
   }
  ]
 }

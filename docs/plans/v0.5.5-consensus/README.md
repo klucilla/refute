@@ -70,3 +70,26 @@ Applied as Codex wrote them, with the conservative option wherever one was offer
 - **The lock:** acquisition, release and recovery under an operating-system guard; a recovered lock's identity is checked again just before its removal, recorded after it; a release removes only its own instance; files opened in binary mode.
 - **D1-P:** the eight cells (two views, sets A and B, EB1 and EB2) are required, and incomplete coverage is INCONCLUSIVE; the bridge compares the same 100 indices under version 1 and version 2 side by side.
 - **The texts:** the decision-value figures rectified as conditional estimates (the record kept as written); the provenance disclosures; the amendment's joint ceilings and qualified directions; the bridge summary's cost (three blocks, about 432 CPU-s).
+
+## The 21:00 decision: T2a-E's completion with a fixed cap, D2-F's reason, the projection's lesson
+
+Codex's review of the maintainer's decision of 2026-11-20 (21:00) on R1's stop (#218, comment 7053729723): the fixed-cap runner for T2a-E's stage-1 completion and stage 2 (items 1 and 3), and the maintainer's advisor's reason for not running D2-F (item 2), up to 3 rounds. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [g1-round-1-answer.md](g1-round-1-answer.md) | gpt-6.1-sol, high | the runner `REFUTED` (the crash charge can pass the allocation; no operational identity before the dispatch; no accounted completion before the assembly); 1c `SURVIVED`; 1b, 1d, 1e, 1f `WEAKENED`; D2-F's reason `REFUTED` (0.114 is a conditional estimate, not a ceiling; route allows up to 14 per set and 18 pooled, not 9 per set); Codex held that D2-F set A should run | `c0607bbba186fbcb368cfc46eed1c937dda5c1201a35b7cce3567907c86aec37` |
+| 2 | [g1-round-2-answer.md](g1-round-2-answer.md) | gpt-6.1-sol, high | 1b, 1c `SURVIVED`; 1a, 1d, 1e, 1f `WEAKENED`; D2-F not run `WEAKENED`: it survives now by insufficient authorized funding (at most 12.9 CPU-h of cap from 14.2 against 13.52 needed) and a pending adapter, not by the decision-value rule; Codex withdrew its round-1 position on running set A | `330a10329bfd123259b3c19f864e5f068a75d1ec303c89c4365c0578d63e8888` |
+| 3 | [g1-round-3-answer.md](g1-round-3-answer.md) | gpt-6.1-sol, high | 1a, 1b, 1c `SURVIVED`; 1d `REFUTED` (an old summary charge can be taken as proof of a recovered attempt's charge; the wrapper is not charged on an exception); 1e, 1f `WEAKENED` (stage 2's margin checked against the protected cap, not the effective one); D2-F not run `SURVIVED` with the agreed text; **the runner is not released after the three rounds** | `d5a071abf824510c4d1d68069c0860df1b180705f4643ac177bb035e635ab943` |
+
+The tokens are cumulative over the conversation `g1`:
+
+- round 1: 742,962 input (623,104 cached) and 11,109 output;
+- round 2: 1,326,484 input (1,178,368 cached) and 20,727 output;
+- round 3: 1,862,171 input (1,691,648 cached) and 27,973 output;
+
+The conversation counts **198,496** review tokens (the last round's uncached input plus output).
+
+Settled by the most conservative option at the end of round 3 (the maintainer's rule):
+- **T2a-E's completion and stage 2 do not run.** The runner (`docs/validation/v0.5.5/r1_fixed_cap.py`) stays unreleased: pending are the proof that a recovered summary's charge belongs to that attempt, the wrapper's charge on an exception, and stage 2's margin against the effective cap. Stage 1's stop at its cap stays on file, with every consumption recorded.
+- **D2-F is not run**, recorded as "D2-F not run: authorized funding insufficient; fixed-cap adapter pending", with Codex's text: no demonstrated implausibility of route under the rule (e)1, no infeasibility conclusion on D2.
+- The maintainer's advisor's reason for D2-F (0.114 as a ceiling; at most 9 per set) was refuted on its facts; the not-run outcome stands on the funding.
