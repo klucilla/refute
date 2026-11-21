@@ -195,6 +195,57 @@
     "agent_days": 0.0,
     "review_tokens": 0
    }
+  },
+  {
+   "utc": "2026-11-21T19:53:01Z",
+   "step": "r2 method route",
+   "review_tokens": {
+    "conversations": {
+     "r2args": 231665,
+     "r2choice": 74270,
+     "r2rev": 160482,
+     "r2t3b": 21176
+    },
+    "r2": 487593
+   },
+   "v055_lines": {
+    "v055_without_r2": 1303962,
+    "r2": 487593,
+    "v055_with_r2": 1791555
+   },
+   "agent_days_wall": 0.4,
+   "agent_days_active": 0.26,
+   "cpu_hours_new_version": 0.0,
+   "reserved": {
+    "agent_days": 0.3,
+    "review_tokens": 200000
+   }
+  },
+  {
+   "utc": "2026-11-21T19:56:31Z",
+   "step": "r2 closing stop",
+   "review_tokens": {
+    "conversations": {
+     "r2args": 231665,
+     "r2choice": 74270,
+     "r2method": 77079,
+     "r2rev": 160482,
+     "r2t3b": 21176
+    },
+    "r2": 564672
+   },
+   "v055_lines": {
+    "v055_without_r2": 1303962,
+    "r2": 564672,
+    "v055_with_r2": 1868634
+   },
+   "agent_days_wall": 0.412,
+   "agent_days_active": 0.27,
+   "cpu_hours_new_version": 0.0,
+   "reserved": {
+    "agent_days": 0.0,
+    "review_tokens": 0
+   }
   }
  ]
 }

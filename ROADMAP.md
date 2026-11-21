@@ -857,6 +857,7 @@ The second report at the gate G1: [docs/plans/v0.5.5-g1-report-2.md](docs/plans/
 The third report at the gate G1: [docs/plans/v0.5.5-g1-report-3.md](docs/plans/v0.5.5-g1-report-3.md).
 R2 on paper, the stop with the blind bundle ready: [docs/plans/v0.5.5-r2-paper-stop.md](docs/plans/v0.5.5-r2-paper-stop.md).
 R2 on paper, the second stop with the second blind bundle ready: [docs/plans/v0.5.5-r2-paper-stop-2.md](docs/plans/v0.5.5-r2-paper-stop-2.md).
+R2's closing record (closed without a freeze): [docs/plans/v0.5.5-r2-closing-record.md](docs/plans/v0.5.5-r2-closing-record.md).
 
 **Opened on 2026-11-20** by the maintainer's decision of that day (15:40, #218), which resumed
 the v0.5 line through a new change of approach. **The advance rule is not amended, and no phase

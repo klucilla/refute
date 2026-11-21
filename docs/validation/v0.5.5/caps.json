@@ -717,6 +717,56 @@
     "review_tokens": 0,
     "disk_bytes": 0
    }
+  },
+  {
+   "utc": "2026-11-21T19:52:56Z",
+   "step": "r2: r2 method route",
+   "codex_tokens": {
+    "conversations": {
+     "d2fa": 133284,
+     "facts": 168755,
+     "g1": 198496,
+     "g1r": 92113,
+     "night": 223534,
+     "r0r1": 395037,
+     "t2s": 92743
+    },
+    "phase": 1303962
+   },
+   "agent_days_wall": 3.15,
+   "agent_days_active": 1.27,
+   "cpu_hours": 14.854,
+   "disk_bytes": 18457443,
+   "reserved": {
+    "agent_days": 0.3,
+    "review_tokens": 200000,
+    "disk_bytes": 0
+   }
+  },
+  {
+   "utc": "2026-11-21T19:56:25Z",
+   "step": "r2: r2 closing stop",
+   "codex_tokens": {
+    "conversations": {
+     "d2fa": 133284,
+     "facts": 168755,
+     "g1": 198496,
+     "g1r": 92113,
+     "night": 223534,
+     "r0r1": 395037,
+     "t2s": 92743
+    },
+    "phase": 1303962
+   },
+   "agent_days_wall": 3.16,
+   "agent_days_active": 1.28,
+   "cpu_hours": 14.854,
+   "disk_bytes": 18920630,
+   "reserved": {
+    "agent_days": 0.0,
+    "review_tokens": 0,
+    "disk_bytes": 0
+   }
   }
  ]
 }

@@ -253,3 +253,37 @@ Applied as Codex wrote them (no divergence left after round 3):
 - **Before the freeze** (Codex, round 3): the exact test's ordering fixed, the valid size demonstrated for 80 % power over the design range, and the same power criterion applied to T2b.
 - **Pending for the freeze, not applied** (to keep the bundle on the reviewed bytes): Codex's editorial remark that VN's third kind is better described as "a multi-harmonic profile with fixed relative phases" (under C1's sine convention, its phases give a shifted, symmetric sum of cosines; still a non-sinusoidal periodic control).
 - If the second blind review leaves any condition of B3.3 open, the current branch stays decisive and the evidence split is a reported-only variant.
+
+## R2 closed: is there a method route with decision value?
+
+Codex's one round under the maintainer's decisions of 2026-11-21 (17:15), item 2 (#218): is there any method route (a better computation of the same rule, without loosening what a verdict asserts) for D1, D2 or T2a, with decision value by the evidence already recorded (D1-P, D2-F in the four variants, T2a-E, the ledger of floors and margins)? Records read only; no new number. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [r2method-round-1-answer.md](r2method-round-1-answer.md) | gpt-6.1-sol, high | **NO METHOD ROUTE WITH DEMONSTRATED DECISION VALUE**: the joint probability (SIN_J), a better `odd_even` estimator, a better estimate of the background error (T2a), a better computation of D1's separation, each `SEM` (without demonstrated value); B3.3 (RULE_3) is a rule variant, also without | `42d6f82880dafde7882d732846136afd1d0aed54e11a3543b1100a96f7186d96` |
+
+The tokens are cumulative over the conversation `r2method`:
+
+- round 1: 719,454 input (647,936 cached) and 5,561 output;
+
+The conversation counts **77,079** review tokens (the last round's uncached input plus output).
+
+Applied (the decision's item 2): no method route with demonstrated decision value was found, so **nothing was built** and the work went on to item 3, the draft of the v0.5 line's pause record (`docs/plans/v0.5.5-v05-line-pause-record-DRAFT.md`), a draft only; pausing the line is the maintainer's.
+
+## The second blind review of R2's bundle
+
+The maintainer's decisions of 2026-11-21 (17:15), item 0 (#218): the blind review, round 2,
+launched by the maintainer's adviser (a NEW session of Claude Fable 5.2, not the first reviewer,
+read only, only the 19 files of bundle 2 rebuilt by `r2_bundle.py` from git at `621a14f5` and
+checked against `docs/validation/v0.5.5/r2-bundle-2-manifest.json`, 19 of 19 equal; 209,751 tokens,
+outside Codex's lines). Stored unchanged; the received file's SHA-256 was checked before the commit.
+
+| Round | File | Reviewer | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 2 | [r2-blind-review-2.md](r2-blind-review-2.md) | Claude Fable 5.2, a new session, launched by the adviser | `WEAKENED`: no contamination (three soft leaks); B3.3 a variant only (its conditions not met); the paired rule and T2b not decidable as written; seven blockers before any freeze | `ff6d49a9ea1e94013dc3276f4e58c69047b357d20fad1be565cde6a8a54fcbcb` |
+
+Settled by the maintainer's decisions of 17:15: **R2 closes without a freeze** (the principled
+combination is behaviour-identical to the frozen battery); the review's items 8 and 9 are what
+B3.3's promotion would need, and its blockers 2 to 7 are lessons for any future version
+([`../v0.5.5-r2-closing-record.md`](../v0.5.5-r2-closing-record.md)).
+
