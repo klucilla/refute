@@ -20,10 +20,35 @@ HERE = Path(__file__).resolve().parents[2] / "docs/validation/v0.5.5"
 if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
-spec = importlib.util.spec_from_file_location("r1_fixed_cap_under_test", HERE / "r1_fixed_cap.py")
-fc = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(fc)
-budgeted, driver, lv, te = fc.budgeted, fc.driver, fc.lv, fc.te
+STAGE2 = Path(__file__).resolve().parents[2] / "docs/validation/v0.5.2/stage2"
+if str(STAGE2) not in sys.path:
+    sys.path.insert(0, str(STAGE2))
+import budgeted  # noqa: E402  (v0.5.2's, unbound: importing it changes nothing)
+import driver  # noqa: E402
+
+BOUND = ("LEDGER", "LINES", "HARD_MAXIMUM", "SPENT_BEFORE", "save")
+fc = lv = te = None  # set by the ``runner`` fixture
+
+
+@pytest.fixture(autouse=True)
+def runner(monkeypatch):
+    """The runner is loaded inside a test, never at collection: importing it binds ``budgeted``
+    to v0.5.5's ledger (through ``ledger_v055``), which other test files that run earlier in the
+    session must not see. ``budgeted``'s bound attributes are restored after each test."""
+    global fc, lv, te
+    for name in BOUND:
+        monkeypatch.setattr(budgeted, name, getattr(budgeted, name))
+    if fc is None:
+        spec = importlib.util.spec_from_file_location(
+            "r1_fixed_cap_under_test", HERE / "r1_fixed_cap.py"
+        )
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        fc = module
+    assert fc.budgeted is budgeted and fc.driver is driver
+    lv, te = fc.lv, fc.te
+    return fc
+
 
 SECTION = "v055"
 # heterogeneous shards: the first three cheap, the rest dear (the case a checkpoint misjudges)
