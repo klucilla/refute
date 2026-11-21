@@ -25,6 +25,7 @@ def bundle(tmp_path, monkeypatch):
     (tmp_path / "src/rule.py").write_text("def rule():\n    return 1\n", "utf-8")
     (tmp_path / "docs/plans").mkdir(parents=True)
     _arguments(tmp_path, "the arguments")
+    (tmp_path / "docs/plans/v0.5.5-r2-code-semantics.md").write_text("the semantics\n", "utf-8")
     return b
 
 
@@ -37,11 +38,15 @@ def test_the_bundle_is_cut_at_the_disclosure_and_hashed_first(bundle, tmp_path):
     manifest = bundle.build()
     cut = (tmp_path / "bundle/arguments.md").read_text("utf-8")
     assert "the arguments" in cut and "Disclosure" not in cut and "98" not in cut
-    assert set(manifest["files"]) == {"arguments.md", "frozen-rules/src/rule.py"}
+    assert set(manifest["files"]) == {
+        "arguments.md",
+        "code-semantics.md",
+        "frozen-rules/src/rule.py",
+    }
     assert (tmp_path / "bundle/MANIFEST.json").read_bytes() == (
         tmp_path / "manifest.json"
     ).read_bytes()
-    assert bundle.check() == {"files": 2, "ok": True}
+    assert bundle.check() == {"files": 3, "ok": True}
     with pytest.raises(SystemExit, match="built once"):
         bundle.build()
 
@@ -56,9 +61,40 @@ def test_a_changed_bundle_fails_its_check(bundle, tmp_path):
         bundle.check()
 
 
+def test_a_nested_manifest_name_is_not_hidden_and_the_delivered_manifest_is_checked(
+    bundle, tmp_path
+):
+    # Codex, r2args round 1: only the exact path of the delivered manifest is left out
+    bundle.build()
+    (tmp_path / "bundle/sub").mkdir()
+    (tmp_path / "bundle/sub/MANIFEST.json").write_text("extra content", "utf-8")
+    with pytest.raises(SystemExit, match="differs from its manifest"):
+        bundle.check()
+    (tmp_path / "bundle/sub/MANIFEST.json").unlink()
+    assert bundle.check()["ok"]
+    (tmp_path / "bundle/MANIFEST.json").write_text("{}", "utf-8")
+    with pytest.raises(SystemExit, match="delivered manifest differs"):
+        bundle.check()
+
+
+def test_a_leak_in_the_semantics_refuses_the_build(bundle, tmp_path):
+    (tmp_path / "docs/plans/v0.5.5-r2-code-semantics.md").write_text(
+        "where Frechet was the limit", "utf-8"
+    )
+    with pytest.raises(SystemExit, match="would leak"):
+        bundle.build()
+
+
 @pytest.mark.parametrize(
     "body",
-    ["as d2f-A.json showed", "T2a-E read it", "the forecasts say", "14 against 13 in each"],
+    [
+        "as d2f-A.json showed",
+        "T2a-E read it",
+        "the forecasts say",
+        "14 against 13 in each",
+        "where the sub-check lacked power",
+        "the objections in the record",
+    ],
 )
 def test_a_leak_before_the_disclosure_refuses_the_build(bundle, tmp_path, body):
     _arguments(tmp_path, body)

@@ -5,18 +5,22 @@ Builds the bundle **from an allowlist only** into ``.cache/v055/r2/bundle/`` and
 manifest **before any review** (``docs/validation/v0.5.5/r2-bundle-manifest.json``). It launches no
 reviewer: the blind review is launched by the maintainer's adviser, read only.
 
-**What goes in** (the decisions' item 4): the design questions, the code's semantics, the
-proposed rules and the arguments, all carried by ``docs/plans/v0.5.5-r2-arguments.md`` **cut at
-its disclosure section** (that section and everything after it are left out); and the frozen
-rules, as the source files that define them (the verdict aggregation, the battery's test table and
-severities, the background block, the sinusoid test and the power policy). **What stays out:**
+**What goes in** (the decisions' item 4): the design questions, the proposed rules and the
+arguments, carried by ``docs/plans/v0.5.5-r2-arguments.md`` **cut at its disclosure section**
+(that section and everything after it are left out); the code's semantics,
+``docs/plans/v0.5.5-r2-code-semantics.md``; and the frozen rules, as the source files that define
+them (the aggregation, the coverage and sensitivity rules, the registry, the parameters, the test
+lists and the tests that the questions touch). **What stays out:**
 the disclosure section, every forecast, every record of R1 and of v0.5 to v0.5.5, the questions
 draft (it cites results), the plan, the reports, the ledger and the consensus answers.
 
-**The leak check** (a guard, not a proof): the bundle is refused if its argument file still holds
-the disclosure heading, or if any bundled file names a record of results (a list of patterns:
-record file names, R1's checks, the plan's forecast terms). The source files are bundled byte for
-byte; they are the frozen rules themselves.
+**The leak check** (a guard, not a proof of blinding; the final bytes are also read in context
+before the bundle is released): the bundle is refused if its argument file still holds the
+disclosure heading, or if any bundled file matches a pattern of results or retrospective
+reference (record file names, R1's checks, forecast terms, known phrases). The source files are
+bundled byte for byte; they are the frozen rules themselves. ``check`` compares the delivered
+manifest with the recorded one, and every file in the bundle (only the manifest's exact path left
+out) with the manifest.
 
 Usage: ``.venv/Scripts/python.exe -B docs/validation/v0.5.5/r2_bundle.py build`` (refuses an
 existing bundle), ``... check`` (re-hashes the bundle against the manifest).
@@ -36,12 +40,18 @@ OUT = ROOT / ".cache/v055/r2/bundle"
 MANIFEST = ROOT / "docs/validation/v0.5.5/r2-bundle-manifest.json"
 ARGUMENTS = "docs/plans/v0.5.5-r2-arguments.md"
 DISCLOSURE = "## Disclosure: results known when this was written"
+SEMANTICS = "docs/plans/v0.5.5-r2-code-semantics.md"
 FROZEN_RULES = (
     "src/refute/core/verdict.py",
+    "src/refute/core/sensitivity.py",
+    "src/refute/packs/tess/params.py",
     "src/refute/packs/tess/pipeline.py",
+    "src/refute/packs/tess/pipeline_v52.py",
+    "src/refute/packs/tess/power.py",
+    "src/refute/packs/tess/battery_v5.py",
+    "src/refute/packs/tess/battery_v51.py",
     "src/refute/packs/tess/battery_v51_diff.py",
     "src/refute/packs/tess/battery_v52.py",
-    "src/refute/packs/tess/power.py",
 )
 LEAKS = (
     r"d2f-A",
@@ -57,6 +67,14 @@ LEAKS = (
     r"98 (kept )?against 97",
     r"14 against 13",
     r"empirically limited",
+    # retrospective references (Codex, r2args round 1)
+    r"was the limit",
+    r"lacked power",
+    r"in the record",
+    r"objections in the record",
+    r"route, if any",
+    r"\bround 3\b",
+    r"\bI1\b|\bI4\b",
 )
 
 
@@ -82,7 +100,7 @@ def leaks(name: str, data: bytes) -> list[str]:
 
 
 def contents() -> dict[str, bytes]:
-    files = {"arguments.md": arguments_cut()}
+    files = {"arguments.md": arguments_cut(), "code-semantics.md": (ROOT / SEMANTICS).read_bytes()}
     for rel in FROZEN_RULES:
         files["frozen-rules/" + rel] = (ROOT / rel).read_bytes()
     return files
@@ -107,6 +125,10 @@ def build() -> dict:
                 "from": ARGUMENTS,
                 "source_sha256": _sha((ROOT / ARGUMENTS).read_bytes()),
                 "cut_at": DISCLOSURE,
+            },
+            "code-semantics.md": {
+                "from": SEMANTICS,
+                "source_sha256": _sha((ROOT / SEMANTICS).read_bytes()),
             },
             **{
                 "frozen-rules/" + rel: {
@@ -136,10 +158,12 @@ def build() -> dict:
 def check() -> dict:
     """Every bundled file against the manifest, and no file outside it."""
     manifest = json.loads(MANIFEST.read_text("utf-8"))
+    if (OUT / "MANIFEST.json").read_bytes() != MANIFEST.read_bytes():
+        raise SystemExit("the delivered manifest differs: a STOP")
     on_disk = {
         p.relative_to(OUT).as_posix(): _sha(p.read_bytes())
         for p in OUT.rglob("*")
-        if p.is_file() and p.name != "MANIFEST.json"
+        if p.is_file() and p != OUT / "MANIFEST.json"  # only the exact path is left out
     }
     if on_disk != manifest["files"]:
         raise SystemExit("the bundle differs from its manifest: a STOP")
