@@ -324,3 +324,23 @@ The tokens are cumulative over the conversation `pause`:
 The conversation counts **26,599** review tokens (the last round's uncached input plus output).
 
 Applied: round 4's two remarks (trigger 3's parenthesis restored with the pointer to v0.5.4's pause record; the ROADMAP's diff reduced to the pointer). No other round follows.
+
+## The relaunch: the amendment, CLAUDE.md, the token-ledger fix and v0.5.6's plan
+
+Codex's review of the implementation of the maintainer's decision of 2026-11-21 (21:00, #218), the relaunch of Refute: the amendment to the advance rule in ROADMAP.md and CLAUDE.md, the v0.5 line closed with declared limits, the two modes and the process diet in CLAUDE.md, the fix of `ledger_v055.codex_tokens` with its synthetic test, and v0.5.6's plan with its sources record. The maintainer's decisions were not reopened. Up to three rounds (a rule change), each resuming one conversation (`-Thread`). Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [relaunch-round-1-answer.md](relaunch-round-1-answer.md) | gpt-6.1-sol, high | **WEAKENED**: six blocking items: the general rules still contradicted the applied closing (precedence of the amendment); the ledger fix changes an R1 frozen file (`ledger_v055.py`, in R1's recorded identities); the parser turned a missing or conflicting thread id into an exact-looking total; leakage between parts A and B (split by TOI, no exclusion of prior exposure); doors and the exit criterion admitted different decisions on the same data; the NExScI reply's scope narrower than the planned comparison, and the TOI ephemerides' reuse left open | `3db8054cefdcdb9286af696e910ff412fe9433dc999421894cd63185ea1f70f5` |
+| 2 | [relaunch-round-2-answer.md](relaunch-round-2-answer.md) | gpt-6.1-sol, high | **WEAKENED**: four of six resolved; two left in the plan: door 1 could never apply its zero-rate rule and door 2 could pick a warning instead of the fatal FAIL; the SPOC fallback depended on a period of undefined origin and eligibility counted observed transits | `d97bd62e81b4abab4d7e2eda8ba41747b4e60b277b268fdd15eb303940526ae6` |
+| 3 | [relaunch-round-3-answer.md](relaunch-round-3-answer.md) | gpt-6.1-sol, high | **SURVIVED**: no blocking item; remarks: part A's approval and the check of the SPOC CSV's columns stay pending for the run | `d4c6da4f805022f15532184938eccde4980f7d87af30dde720e5eac91c2f99d4` |
+
+The tokens are cumulative over the conversation `relaunch`:
+
+- round 1: 891,970 input (804,736 cached) and 11,092 output;
+- round 2: 1,475,288 input (1,366,016 cached) and 16,163 output;
+- round 3: 1,865,377 input (1,744,512 cached) and 18,241 output;
+
+The conversation counts **139,106** review tokens (the last round's uncached input plus output).
+
+Applied: every blocking item and remark of rounds 1 and 2 (the precedence sentences in ROADMAP.md and CLAUDE.md; the note on R1's frozen file in v0.5.5's section; the parser's contract and its tests; the frame frozen before any light curve, the split by TIC, the exclusion of prior exposure, the freeze before the drand draw and the disjointness check; the doors' denominators, minimums and causes; B incomplete leaves the criterion open; `tfopwg_disp` only for the use NExScI's reply covers; the ephemeris source recorded before part A's approval, with the SPOC fallback only on approved inputs; eligibility by predicted transits; the cost wording). The token count of this conversation is the sum over its one thread (resumed).

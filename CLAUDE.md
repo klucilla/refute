@@ -14,8 +14,17 @@ ROADMAP.md is the single source of truth for phases. Before planning any work:
 2. Plan and build ONLY the current phase. Never pull in work from future phases.
 3. A phase is done only when its exit criteria are met with evidence and an
    independent review returns `SURVIVED` (or `WEAKENED` with issues tracked).
-4. When a phase closes, update "Current phase" in ROADMAP.md and tick its
-   exit criteria, in the same commit.
+   For advancement from 2026-11-21 on, apply the amendment below.
+4. When a phase closes, update "Current phase" in ROADMAP.md and tick only the
+   exit criteria met with evidence, in the same commit.
+
+**Amendment of 2026-11-21 (the maintainer's decision, #218).** A phase may advance when the
+previous phase (a) met its exit criteria, or (b) has an infeasibility record, or (c) closed with
+declared limits: its failed targets are listed, its battery carries a limits label (for v0.5:
+'WEAKENED; does not meet D1, D2, D4, T2a'), and every later result that uses that battery carries
+the label. (c) relaxes no target and changes no verdict. This amendment was adopted with the
+results of v0.5 to v0.5.5 known. *(It applies from 2026-11-21 on; the advance rule in ROADMAP.md
+carries the same text.)*
 
 ## Core principle
 
@@ -24,6 +33,26 @@ ROADMAP.md is the single source of truth for phases. Before planning any work:
 A claim is never "proven". It only survives, or it doesn't. No LLM output is
 ever the final verdict. Verdicts come only from deterministic, versioned,
 reproducible code.
+
+**Explore freely, conclude strictly** (the maintainer's decision of 2026-11-21, #218). Exploring
+may change the point of view as often as needed, under light rules; concluding keeps the full
+rigour. No earlier verdict changes.
+
+## Exploratory and confirmatory work
+
+- **Exploratory:** quick, cheap, logged. Outputs are labelled "exploratory": they are never
+  verdicts, never "candidates" in a public claim, and never submitted. Any public target may be
+  looked at, with the choice and its reason logged. Codex: one round.
+- **Confirmatory:** what exploration picks is confirmed only on targets or data not used to pick
+  it, or prospectively, under a lock and pre-registration as below. Codex: up to three rounds.
+  A blind review only for rule changes.
+
+**Process diet** (from 2026-11-21):
+- Codex: one round by default, up to three for a lock, a verdict or a rule change. Each later
+  round resumes the same conversation (`codex_affinity.ps1 -Thread <id>`).
+- A caps ledger only for runs above 5 CPU-h.
+- Decision blocks and records stay short.
+- The rules on safety, privacy, the machine, deletion and dependencies below do not change.
 
 ## Two modes, one engine
 

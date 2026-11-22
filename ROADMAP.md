@@ -7,7 +7,8 @@ Agents working in this repo must read it before planning any work.
 
 - **One phase at a time.** Each phase is planned and built in its own session.
   Never plan or build work from a future phase.
-- **Every phase ends with a gate.** The next phase starts only when:
+- **Every phase ends with a gate.** The next phase starts only when *(for advancement from
+  2026-11-21 on, the amendment to the advance rule below applies)*:
   1. All exit criteria of the current phase are met, with evidence.
   2. An independent review (fresh, read-only session) returns `SURVIVED`,
      or `WEAKENED` with every issue tracked as a GitHub issue.
@@ -24,6 +25,13 @@ Agents working in this repo must read it before planning any work.
   three correction rounds without success, the maintainer decides between a change of approach,
   an infeasibility record, or a pause. *(Clarified by the maintainer on 2026-11-05: every
   declared target that does not PASS needs its own infeasibility record.)*
+- **Amendment of 2026-11-21 (the maintainer's decision, #218).** A phase may advance when the
+  previous phase (a) met its exit criteria, or (b) has an infeasibility record, or (c) closed with
+  declared limits: its failed targets are listed, its battery carries a limits label (for v0.5:
+  'WEAKENED; does not meet D1, D2, D4, T2a'), and every later result that uses that battery
+  carries the label. (c) relaxes no target and changes no verdict. This amendment was adopted with
+  the results of v0.5 to v0.5.5 known. *(Dated: it applies from 2026-11-21 on, and the rule above
+  stays as it was for every earlier phase.)*
 
 ## Cross-cutting principles
 
@@ -40,17 +48,19 @@ how later work is done.
 
 ## Current phase
 
-**None open: the v0.5 line is paused** (the maintainer's decision of 2026-11-21, 18:30, #218;
-[pause record](docs/plans/v0.5.5-v05-line-pause-record.md)). v0.5.5 Core resolution is **paused on
-2026-11-21, not approved** (see [the section below](#v055-core-resolution-change-of-approach-after-the-pause)).
+**v0.5.6 Apply with declared limits** (opened on 2026-11-21 by the maintainer's decision of 21:00,
+#218, which relaunched Refute under "Explore freely, conclude strictly"; see
+[the section below](#v056-apply-with-declared-limits)).
 
-- **What the pause means.** No target is relaxed, none is declared infeasible, and no verdict
-  changes. v0.5 stays `WEAKENED`, and every failed target of v0.5 stays outstanding (D1 for EB1 and
-  EB2, D2, D4, T2a). No exit criterion of any v0.5 correction phase, nor of v0.5.5, is ticked. The
-  advance rule is not amended.
-- **Per target,** the pause record gives the state, the evidence, why no route is left and the
-  verifiable triggers for resuming.
-- **Resuming** is the maintainer's decision only. The pause of 2026-11-13 and its record
+- **The v0.5 line is closed with declared limits** (the amendment of 2026-11-21 to the advance
+  rule, case (c)). Its failed targets stay listed and unmet: D1 (EB1 and EB2), D2, D4 and T2a. Its
+  battery carries the limits label **'WEAKENED; does not meet D1, D2, D4, T2a'**, and every later
+  result that uses it carries the label. v0.5 stays `WEAKENED`; no target is relaxed and no
+  verdict changes. No exit criterion of any v0.5 correction phase, nor of v0.5.5, is ticked.
+- **The pause ends with this relaunch.** The pause of 2026-11-21 stays as history: its
+  [record](docs/plans/v0.5.5-v05-line-pause-record.md), its
+  [corrections](docs/plans/v0.5.5-v05-line-pause-record-corrections.md) and its triggers. T3b's
+  trigger (NExScI's answer, until 2026-12-05) still holds. The pause of 2026-11-13 and its record
   ([pause record](docs/validation/v0.5.4/pause-record.md),
   [pause-record corrections](docs/validation/v0.5.4/pause-record-corrections.md)) remain historical.
 
@@ -864,9 +874,18 @@ R2's closing record (closed without a freeze): [docs/plans/v0.5.5-r2-closing-rec
 [its corrections](docs/plans/v0.5.5-v05-line-pause-record-corrections.md)). No exit criterion is
 ticked.
 
+**The v0.5 line closed with declared limits on 2026-11-21** (the maintainer's decision of 21:00,
+#218: the amendment to the advance rule, case (c)), which ended the pause. Limits label: 'WEAKENED;
+does not meet D1, D2, D4, T2a'. The next phase is v0.5.6.
+
+**Note on R1's frozen files.** The 21:00 token-accounting update changes an R1 frozen file
+(`docs/validation/v0.5.5/ledger_v055.py`, whose SHA-256 R1's records carry). Verify historical R1
+records at their recorded commits; keep their recorded hashes and figures.
+
 **Opened on 2026-11-20** by the maintainer's decision of that day (15:40, #218), which resumed
 the v0.5 line through a new change of approach. **The advance rule is not amended, and no phase
-advances.** It is not a correction round: there is no new battery, no acceptance and no draw.
+advances** (as decided on 2026-11-20; the rule was amended later, on 2026-11-21, see "How phases
+work"). It is not a correction round: there is no new battery, no acceptance and no draw.
 
 **Why.** The pause left every failed target outstanding, and two conventions that decide whether
 D1 can PASS or be shown infeasible were never fixed: the price on the planet side of denying
@@ -903,12 +922,42 @@ The phase stops at 80 % of any cap.
 
 ---
 
+## v0.5.6 Apply with declared limits
+
+Tracking: #218. Opened on 2026-11-21 by the maintainer's decision of 21:00 (the relaunch). Plan:
+[docs/plans/v0.5.6-plan.md](docs/plans/v0.5.6-plan.md); open sources:
+[docs/plans/sources/v0.5.6-open-sources-2026-11-21.md](docs/plans/sources/v0.5.6-open-sources-2026-11-21.md).
+
+Apply the v0.5 battery, unchanged and with its limits label ('WEAKENED; does not meet D1, D2, D4,
+T2a'), to public TOIs. Explore first (part A, exploratory: outputs are never verdicts), then
+confirm what exploration picks on targets it did not use, under a lock (part B, confirmatory).
+Nothing depends on `tfopwg_disp` until NExScI answers. `method_status: not_validated`.
+
+**Exit criteria** (detail in the plan)
+- [ ] Part A ran on the set and within the cost the maintainer approved; the frame, the split by
+      TIC and the draw were committed before any light curve was read; every output carries its
+      coverage, "exploratory" and the limits label.
+- [ ] An exploratory report is committed, with each pre-written "door" marked found or not found.
+- [ ] Either a part B claim was locked before its targets were read, ran once and its verdict is
+      reported as it came, or no door was found and the phase closes with declared limits. A door
+      found whose part B cannot be locked or run is reported as incomplete, and this criterion
+      stays open.
+- [ ] A public report is drafted for the maintainer's approval, with the limits label and v0.5's
+      failed targets in view.
+- [ ] Codex's review (up to three rounds, one conversation) and a gate review.
+
+**Stops that stay the maintainer's:** running part A (its set and cost), drand rounds and locks,
+any change in `src/`, public text and deploys, third-party code, dependencies.
+
+---
+
 ## v0.6 Variable stars pack
 
 *(Numbered v0.5 until 2026-11-03; renumbered by the consensus of 2026-11-03 under the
 maintainer's delegation.)*
 
-*(Starts only under the advance rule of 2026-11-05: after the current line of work succeeds.)*
+*(Starts only under the advance rule of 2026-11-05, as amended on 2026-11-21: after the current
+line of work meets its exit criteria, has an infeasibility record, or closes with declared limits.)*
 
 Reuse TESS data to find and classify variable stars.
 
@@ -924,7 +973,8 @@ Reuse TESS data to find and classify variable stars.
 *(Numbered v0.6 until 2026-11-03; renumbered by the consensus of 2026-11-03 under the
 maintainer's delegation.)*
 
-*(Starts only under the advance rule of 2026-11-05: after the current line of work succeeds.)*
+*(Starts only under the advance rule of 2026-11-05, as amended on 2026-11-21: after the current
+line of work meets its exit criteria, has an infeasibility record, or closes with declared limits.)*
 
 The purest form of refutation: counterexample search.
 
@@ -940,7 +990,8 @@ The purest form of refutation: counterexample search.
 *(Numbered v0.7 until 2026-11-03; renumbered by the consensus of 2026-11-03 under the
 maintainer's delegation.)*
 
-*(Starts only under the advance rule of 2026-11-05: after the current line of work succeeds.)*
+*(Starts only under the advance rule of 2026-11-05, as amended on 2026-11-21: after the current
+line of work meets its exit criteria, has an infeasibility record, or closes with declared limits.)*
 
 Volunteer computing.
 
@@ -959,7 +1010,8 @@ Volunteer computing.
 
 ## v1.0 Stable
 
-*(Starts only under the advance rule of 2026-11-05: after the current line of work succeeds.)*
+*(Starts only under the advance rule of 2026-11-05, as amended on 2026-11-21: after the current
+line of work meets its exit criteria, has an infeasibility record, or closes with declared limits.)*
 
 - Stable claim spec and lock format, with a compatibility statement for PRML.
 - Pack SDK, templates and documentation site.

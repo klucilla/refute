@@ -9,8 +9,8 @@ are, and R2's work counts on both lines (the conservative side).
 any R2 work: its caps, its opening time and the decision. It touches no part and no charge.
 
 **What counts:**
-- tokens: the Codex conversations whose name starts with ``r2``, each counted by its last round's
-  uncached input plus output, as every phase counts them (``lv.codex_tokens``). Since the
+- tokens: the Codex conversations whose name starts with ``r2``, each counted by summing the last
+  completed round's net usage for each distinct thread (``lv.codex_tokens``). Since the
   maintainer's decisions of 2026-11-21 (15:20), item 4, their events live in
   ``.cache/v055/r2/codex/`` and **count only on R2's line**; v0.5.5's line is reported with and
   without them (``both_lines``);
@@ -86,7 +86,7 @@ CODEX_EVENTS = lv.ROOT / ".cache/v055/r2/codex"  # R2's own folder (decisions of
 
 def tokens() -> dict:
     """R2's Codex conversations, from their own folder, counted as ``lv.codex_tokens`` counts
-    (each conversation's last round: uncached input plus output). Since the maintainer's
+    (the last completed round's net usage for each distinct thread). Since the maintainer's
     decisions of 2026-11-21 (15:20), item 4, they count **only** on R2's line: their events live
     apart from v0.5.5's folder, so ``lv.codex_tokens`` no longer sees them."""
     saved = lv.CODEX_EVENTS
