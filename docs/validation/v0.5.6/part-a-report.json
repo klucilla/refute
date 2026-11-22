@@ -1,0 +1,1108 @@
+{
+ "label": "v0.5.6 part A: exploratory report",
+ "mode": "exploratory",
+ "limits_label": "WEAKENED; does not meet D1, D2, D4, T2a",
+ "method_status": "not_validated",
+ "draw_sha256": "db48e736c9b519bf8863e6e5126f17585a48e804ad42ccea738c6fef3973b72d",
+ "report_code_sha256": "5e259cf8eaa4e279c389124169047f10bdd77a634f0418382fa1f7028ed434fb",
+ "records": 240,
+ "cpu_hours": 5.4855,
+ "bytes": 81748146240,
+ "ledger_batches": 5,
+ "arms": {
+  "planet": {
+   "records": 120,
+   "status": {
+    "OK": 120
+   },
+   "coverage_losses": 0,
+   "with_nonzero_coverage": {
+    "n": 120,
+    "counts": {
+     "SURVIVED": 13,
+     "WEAKENED": 16,
+     "REFUTED": 9,
+     "INCONCLUSIVE": 82
+    },
+    "rates": {
+     "SURVIVED": 0.10833333333333334,
+     "WEAKENED": 0.13333333333333333,
+     "REFUTED": 0.075,
+     "INCONCLUSIVE": 0.6833333333333333
+    }
+   },
+   "outcome_reasons": {
+    "could not be decided: systematics": 18,
+    "could not be decided: aperture_depth, systematics": 14,
+    "every test passed": 13,
+    "warning failure in: nearby_contamination": 12,
+    "gate test 'snr' is FAIL: no significant signal to attack": 11,
+    "could not be decided: odd_even, aperture_depth, systematics, sinusoid": 7,
+    "could not be decided: odd_even, aperture_depth, systematics": 6,
+    "fatal failure in: odd_even": 4,
+    "could not be decided: systematics, sinusoid": 4,
+    "could not be decided: plausibility, systematics": 3,
+    "could not be decided: aperture_depth, sinusoid": 3,
+    "could not be decided: aperture_depth, systematics, sinusoid": 3
+   },
+   "identity": {
+    "ok_records": 120,
+    "matched": 87,
+    "factor": {
+     "1.0": 91,
+     "None": 24,
+     "0.5": 2,
+     "2.0": 3
+    },
+    "outcomes_when_matched": {
+     "SURVIVED": 11,
+     "WEAKENED": 16,
+     "REFUTED": 1,
+     "INCONCLUSIVE": 59
+    }
+   }
+  },
+  "open": {
+   "records": 120,
+   "status": {
+    "OK": 119,
+    "ERROR": 1
+   },
+   "coverage_losses": 1,
+   "with_nonzero_coverage": {
+    "n": 119,
+    "counts": {
+     "SURVIVED": 4,
+     "WEAKENED": 15,
+     "REFUTED": 9,
+     "INCONCLUSIVE": 91
+    },
+    "rates": {
+     "SURVIVED": 0.03361344537815126,
+     "WEAKENED": 0.12605042016806722,
+     "REFUTED": 0.07563025210084033,
+     "INCONCLUSIVE": 0.7647058823529411
+    }
+   },
+   "outcome_reasons": {
+    "could not be decided: plausibility, systematics": 13,
+    "could not be decided: plausibility": 13,
+    "could not be decided: systematics": 11,
+    "gate test 'snr' is FAIL: no significant signal to attack": 10,
+    "warning failure in: nearby_contamination": 10,
+    "could not be decided: aperture_depth, systematics": 6,
+    "could not be decided: odd_even, aperture_depth, systematics": 5,
+    "could not be decided: plausibility, aperture_depth, systematics": 5,
+    "could not be decided: aperture_depth, systematics, sinusoid": 5,
+    "every test passed": 4,
+    "could not be decided: odd_even, aperture_depth, systematics, sinusoid": 4,
+    "could not be decided: aperture_depth": 4
+   },
+   "identity": {
+    "ok_records": 119,
+    "matched": 90,
+    "factor": {
+     "1.0": 98,
+     "None": 20,
+     "2.0": 1
+    },
+    "outcomes_when_matched": {
+     "SURVIVED": 4,
+     "WEAKENED": 14,
+     "REFUTED": 7,
+     "INCONCLUSIVE": 65
+    }
+   }
+  }
+ },
+ "doors": {
+  "1_subgroup": {
+   "found": false,
+   "rows": [
+    {
+     "property": "TOI depth (ppm)",
+     "cut": "median group 1 of 2",
+     "range": [
+      -Infinity,
+      2276.5
+     ],
+     "subgroup": {
+      "n": 60,
+      "counts": {
+       "SURVIVED": 3,
+       "WEAKENED": 4,
+       "REFUTED": 4,
+       "INCONCLUSIVE": 49
+      },
+      "rates": {
+       "SURVIVED": 0.05,
+       "WEAKENED": 0.06666666666666667,
+       "REFUTED": 0.06666666666666667,
+       "INCONCLUSIVE": 0.8166666666666667
+      }
+     },
+     "rest": {
+      "n": 60,
+      "counts": {
+       "SURVIVED": 10,
+       "WEAKENED": 12,
+       "REFUTED": 5,
+       "INCONCLUSIVE": 33
+      },
+      "rates": {
+       "SURVIVED": 0.16666666666666666,
+       "WEAKENED": 0.2,
+       "REFUTED": 0.08333333333333333,
+       "INCONCLUSIVE": 0.55
+      }
+     },
+     "qualifies": false
+    },
+    {
+     "property": "TOI depth (ppm)",
+     "cut": "median group 2 of 2",
+     "range": [
+      2276.5,
+      Infinity
+     ],
+     "subgroup": {
+      "n": 60,
+      "counts": {
+       "SURVIVED": 10,
+       "WEAKENED": 12,
+       "REFUTED": 5,
+       "INCONCLUSIVE": 33
+      },
+      "rates": {
+       "SURVIVED": 0.16666666666666666,
+       "WEAKENED": 0.2,
+       "REFUTED": 0.08333333333333333,
+       "INCONCLUSIVE": 0.55
+      }
+     },
+     "rest": {
+      "n": 60,
+      "counts": {
+       "SURVIVED": 3,
+       "WEAKENED": 4,
+       "REFUTED": 4,
+       "INCONCLUSIVE": 49
+      },
+      "rates": {
+       "SURVIVED": 0.05,
+       "WEAKENED": 0.06666666666666667,
+       "REFUTED": 0.06666666666666667,
+       "INCONCLUSIVE": 0.8166666666666667
+      }
+     },
+     "qualifies": false
+    },
+    {
+     "property": "TOI depth (ppm)",
+     "cut": "tertile group 1 of 3",
+     "range": [
+      -Infinity,
+      1110.3092116666667
+     ],
+     "subgroup": {
+      "n": 40,
+      "counts": {
+       "SURVIVED": 2,
+       "WEAKENED": 2,
+       "REFUTED": 3,
+       "INCONCLUSIVE": 33
+      },
+      "rates": {
+       "SURVIVED": 0.05,
+       "WEAKENED": 0.05,
+       "REFUTED": 0.075,
+       "INCONCLUSIVE": 0.825
+      }
+     },
+     "rest": {
+      "n": 80,
+      "counts": {
+       "SURVIVED": 11,
+       "WEAKENED": 14,
+       "REFUTED": 6,
+       "INCONCLUSIVE": 49
+      },
+      "rates": {
+       "SURVIVED": 0.1375,
+       "WEAKENED": 0.175,
+       "REFUTED": 0.075,
+       "INCONCLUSIVE": 0.6125
+      }
+     },
+     "qualifies": false
+    },
+    {
+     "property": "TOI depth (ppm)",
+     "cut": "tertile group 2 of 3",
+     "range": [
+      1110.3092116666667,
+      6120.483069499999
+     ],
+     "subgroup": {
+      "n": 40,
+      "counts": {
+       "SURVIVED": 3,
+       "WEAKENED": 4,
+       "REFUTED": 3,
+       "INCONCLUSIVE": 30
+      },
+      "rates": {
+       "SURVIVED": 0.075,
+       "WEAKENED": 0.1,
+       "REFUTED": 0.075,
+       "INCONCLUSIVE": 0.75
+      }
+     },
+     "rest": {
+      "n": 80,
+      "counts": {
+       "SURVIVED": 10,
+       "WEAKENED": 12,
+       "REFUTED": 6,
+       "INCONCLUSIVE": 52
+      },
+      "rates": {
+       "SURVIVED": 0.125,
+       "WEAKENED": 0.15,
+       "REFUTED": 0.075,
+       "INCONCLUSIVE": 0.65
+      }
+     },
+     "qualifies": false
+    },
+    {
+     "property": "TOI depth (ppm)",
+     "cut": "tertile group 3 of 3",
+     "range": [
+      6120.483069499999,
+      Infinity
+     ],
+     "subgroup": {
+      "n": 40,
+      "counts": {
+       "SURVIVED": 8,
+       "WEAKENED": 10,
+       "REFUTED": 3,
+       "INCONCLUSIVE": 19
+      },
+      "rates": {
+       "SURVIVED": 0.2,
+       "WEAKENED": 0.25,
+       "REFUTED": 0.075,
+       "INCONCLUSIVE": 0.475
+      }
+     },
+     "rest": {
+      "n": 80,
+      "counts": {
+       "SURVIVED": 5,
+       "WEAKENED": 6,
+       "REFUTED": 6,
+       "INCONCLUSIVE": 63
+      },
+      "rates": {
+       "SURVIVED": 0.0625,
+       "WEAKENED": 0.075,
+       "REFUTED": 0.075,
+       "INCONCLUSIVE": 0.7875
+      }
+     },
+     "qualifies": false
+    },
+    {
+     "property": "TESS magnitude",
+     "cut": "median group 1 of 2",
+     "range": [
+      -Infinity,
+      10.65355
+     ],
+     "subgroup": {
+      "n": 60,
+      "counts": {
+       "SURVIVED": 5,
+       "WEAKENED": 8,
+       "REFUTED": 4,
+       "INCONCLUSIVE": 43
+      },
+      "rates": {
+       "SURVIVED": 0.08333333333333333,
+       "WEAKENED": 0.13333333333333333,
+       "REFUTED": 0.06666666666666667,
+       "INCONCLUSIVE": 0.7166666666666667
+      }
+     },
+     "rest": {
+      "n": 60,
+      "counts": {
+       "SURVIVED": 8,
+       "WEAKENED": 8,
+       "REFUTED": 5,
+       "INCONCLUSIVE": 39
+      },
+      "rates": {
+       "SURVIVED": 0.13333333333333333,
+       "WEAKENED": 0.13333333333333333,
+       "REFUTED": 0.08333333333333333,
+       "INCONCLUSIVE": 0.65
+      }
+     },
+     "qualifies": false
+    },
+    {
+     "property": "TESS magnitude",
+     "cut": "median group 2 of 2",
+     "range": [
+      10.65355,
+      Infinity
+     ],
+     "subgroup": {
+      "n": 60,
+      "counts": {
+       "SURVIVED": 8,
+       "WEAKENED": 8,
+       "REFUTED": 5,
+       "INCONCLUSIVE": 39
+      },
+      "rates": {
+       "SURVIVED": 0.13333333333333333,
+       "WEAKENED": 0.13333333333333333,
+       "REFUTED": 0.08333333333333333,
+       "INCONCLUSIVE": 0.65
+      }
+     },
+     "rest": {
+      "n": 60,
+      "counts": {
+       "SURVIVED": 5,
+       "WEAKENED": 8,
+       "REFUTED": 4,
+       "INCONCLUSIVE": 43
+      },
+      "rates": {
+       "SURVIVED": 0.08333333333333333,
+       "WEAKENED": 0.13333333333333333,
+       "REFUTED": 0.06666666666666667,
+       "INCONCLUSIVE": 0.7166666666666667
+      }
+     },
+     "qualifies": false
+    },
+    {
+     "property": "TESS magnitude",
+     "cut": "tertile group 1 of 3",
+     "range": [
+      -Infinity,
+      9.990036666666667
+     ],
+     "subgroup": {
+      "n": 40,
+      "counts": {
+       "SURVIVED": 3,
+       "WEAKENED": 4,
+       "REFUTED": 3,
+       "INCONCLUSIVE": 30
+      },
+      "rates": {
+       "SURVIVED": 0.075,
+       "WEAKENED": 0.1,
+       "REFUTED": 0.075,
+       "INCONCLUSIVE": 0.75
+      }
+     },
+     "rest": {
+      "n": 80,
+      "counts": {
+       "SURVIVED": 10,
+       "WEAKENED": 12,
+       "REFUTED": 6,
+       "INCONCLUSIVE": 52
+      },
+      "rates": {
+       "SURVIVED": 0.125,
+       "WEAKENED": 0.15,
+       "REFUTED": 0.075,
+       "INCONCLUSIVE": 0.65
+      }
+     },
+     "qualifies": false
+    },
+    {
+     "property": "TESS magnitude",
+     "cut": "tertile group 2 of 3",
+     "range": [
+      9.990036666666667,
+      11.327766666666667
+     ],
+     "subgroup": {
+      "n": 40,
+      "counts": {
+       "SURVIVED": 6,
+       "WEAKENED": 4,
+       "REFUTED": 3,
+       "INCONCLUSIVE": 27
+      },
+      "rates": {
+       "SURVIVED": 0.15,
+       "WEAKENED": 0.1,
+       "REFUTED": 0.075,
+       "INCONCLUSIVE": 0.675
+      }
+     },
+     "rest": {
+      "n": 80,
+      "counts": {
+       "SURVIVED": 7,
+       "WEAKENED": 12,
+       "REFUTED": 6,
+       "INCONCLUSIVE": 55
+      },
+      "rates": {
+       "SURVIVED": 0.0875,
+       "WEAKENED": 0.15,
+       "REFUTED": 0.075,
+       "INCONCLUSIVE": 0.6875
+      }
+     },
+     "qualifies": false
+    },
+    {
+     "property": "TESS magnitude",
+     "cut": "tertile group 3 of 3",
+     "range": [
+      11.327766666666667,
+      Infinity
+     ],
+     "subgroup": {
+      "n": 40,
+      "counts": {
+       "SURVIVED": 4,
+       "WEAKENED": 8,
+       "REFUTED": 3,
+       "INCONCLUSIVE": 25
+      },
+      "rates": {
+       "SURVIVED": 0.1,
+       "WEAKENED": 0.2,
+       "REFUTED": 0.075,
+       "INCONCLUSIVE": 0.625
+      }
+     },
+     "rest": {
+      "n": 80,
+      "counts": {
+       "SURVIVED": 9,
+       "WEAKENED": 8,
+       "REFUTED": 6,
+       "INCONCLUSIVE": 57
+      },
+      "rates": {
+       "SURVIVED": 0.1125,
+       "WEAKENED": 0.1,
+       "REFUTED": 0.075,
+       "INCONCLUSIVE": 0.7125
+      }
+     },
+     "qualifies": false
+    },
+    {
+     "property": "predicted transits",
+     "cut": "median group 1 of 2",
+     "range": [
+      -Infinity,
+      20.0
+     ],
+     "subgroup": {
+      "n": 62,
+      "counts": {
+       "SURVIVED": 4,
+       "WEAKENED": 3,
+       "REFUTED": 7,
+       "INCONCLUSIVE": 48
+      },
+      "rates": {
+       "SURVIVED": 0.06451612903225806,
+       "WEAKENED": 0.04838709677419355,
+       "REFUTED": 0.11290322580645161,
+       "INCONCLUSIVE": 0.7741935483870968
+      }
+     },
+     "rest": {
+      "n": 58,
+      "counts": {
+       "SURVIVED": 9,
+       "WEAKENED": 13,
+       "REFUTED": 2,
+       "INCONCLUSIVE": 34
+      },
+      "rates": {
+       "SURVIVED": 0.15517241379310345,
+       "WEAKENED": 0.22413793103448276,
+       "REFUTED": 0.034482758620689655,
+       "INCONCLUSIVE": 0.5862068965517241
+      }
+     },
+     "qualifies": false
+    },
+    {
+     "property": "predicted transits",
+     "cut": "median group 2 of 2",
+     "range": [
+      20.0,
+      Infinity
+     ],
+     "subgroup": {
+      "n": 58,
+      "counts": {
+       "SURVIVED": 9,
+       "WEAKENED": 13,
+       "REFUTED": 2,
+       "INCONCLUSIVE": 34
+      },
+      "rates": {
+       "SURVIVED": 0.15517241379310345,
+       "WEAKENED": 0.22413793103448276,
+       "REFUTED": 0.034482758620689655,
+       "INCONCLUSIVE": 0.5862068965517241
+      }
+     },
+     "rest": {
+      "n": 62,
+      "counts": {
+       "SURVIVED": 4,
+       "WEAKENED": 3,
+       "REFUTED": 7,
+       "INCONCLUSIVE": 48
+      },
+      "rates": {
+       "SURVIVED": 0.06451612903225806,
+       "WEAKENED": 0.04838709677419355,
+       "REFUTED": 0.11290322580645161,
+       "INCONCLUSIVE": 0.7741935483870968
+      }
+     },
+     "qualifies": false
+    },
+    {
+     "property": "predicted transits",
+     "cut": "tertile group 1 of 3",
+     "range": [
+      -Infinity,
+      12.666666666666666
+     ],
+     "subgroup": {
+      "n": 40,
+      "counts": {
+       "SURVIVED": 2,
+       "WEAKENED": 2,
+       "REFUTED": 5,
+       "INCONCLUSIVE": 31
+      },
+      "rates": {
+       "SURVIVED": 0.05,
+       "WEAKENED": 0.05,
+       "REFUTED": 0.125,
+       "INCONCLUSIVE": 0.775
+      }
+     },
+     "rest": {
+      "n": 80,
+      "counts": {
+       "SURVIVED": 11,
+       "WEAKENED": 14,
+       "REFUTED": 4,
+       "INCONCLUSIVE": 51
+      },
+      "rates": {
+       "SURVIVED": 0.1375,
+       "WEAKENED": 0.175,
+       "REFUTED": 0.05,
+       "INCONCLUSIVE": 0.6375
+      }
+     },
+     "qualifies": false
+    },
+    {
+     "property": "predicted transits",
+     "cut": "tertile group 2 of 3",
+     "range": [
+      12.666666666666666,
+      35.0
+     ],
+     "subgroup": {
+      "n": 41,
+      "counts": {
+       "SURVIVED": 4,
+       "WEAKENED": 2,
+       "REFUTED": 3,
+       "INCONCLUSIVE": 32
+      },
+      "rates": {
+       "SURVIVED": 0.0975609756097561,
+       "WEAKENED": 0.04878048780487805,
+       "REFUTED": 0.07317073170731707,
+       "INCONCLUSIVE": 0.7804878048780488
+      }
+     },
+     "rest": {
+      "n": 79,
+      "counts": {
+       "SURVIVED": 9,
+       "WEAKENED": 14,
+       "REFUTED": 6,
+       "INCONCLUSIVE": 50
+      },
+      "rates": {
+       "SURVIVED": 0.11392405063291139,
+       "WEAKENED": 0.17721518987341772,
+       "REFUTED": 0.0759493670886076,
+       "INCONCLUSIVE": 0.6329113924050633
+      }
+     },
+     "qualifies": false
+    },
+    {
+     "property": "predicted transits",
+     "cut": "tertile group 3 of 3",
+     "range": [
+      35.0,
+      Infinity
+     ],
+     "subgroup": {
+      "n": 39,
+      "counts": {
+       "SURVIVED": 7,
+       "WEAKENED": 12,
+       "REFUTED": 1,
+       "INCONCLUSIVE": 19
+      },
+      "rates": {
+       "SURVIVED": 0.1794871794871795,
+       "WEAKENED": 0.3076923076923077,
+       "REFUTED": 0.02564102564102564,
+       "INCONCLUSIVE": 0.48717948717948717
+      }
+     },
+     "rest": {
+      "n": 81,
+      "counts": {
+       "SURVIVED": 6,
+       "WEAKENED": 4,
+       "REFUTED": 8,
+       "INCONCLUSIVE": 63
+      },
+      "rates": {
+       "SURVIVED": 0.07407407407407407,
+       "WEAKENED": 0.04938271604938271,
+       "REFUTED": 0.09876543209876543,
+       "INCONCLUSIVE": 0.7777777777777778
+      }
+     },
+     "qualifies": false
+    },
+    {
+     "property": "listed sectors",
+     "cut": "median group 1 of 2",
+     "range": [
+      -Infinity,
+      4.5
+     ],
+     "subgroup": {
+      "n": 60,
+      "counts": {
+       "SURVIVED": 5,
+       "WEAKENED": 4,
+       "REFUTED": 5,
+       "INCONCLUSIVE": 46
+      },
+      "rates": {
+       "SURVIVED": 0.08333333333333333,
+       "WEAKENED": 0.06666666666666667,
+       "REFUTED": 0.08333333333333333,
+       "INCONCLUSIVE": 0.7666666666666667
+      }
+     },
+     "rest": {
+      "n": 60,
+      "counts": {
+       "SURVIVED": 8,
+       "WEAKENED": 12,
+       "REFUTED": 4,
+       "INCONCLUSIVE": 36
+      },
+      "rates": {
+       "SURVIVED": 0.13333333333333333,
+       "WEAKENED": 0.2,
+       "REFUTED": 0.06666666666666667,
+       "INCONCLUSIVE": 0.6
+      }
+     },
+     "qualifies": false
+    },
+    {
+     "property": "listed sectors",
+     "cut": "median group 2 of 2",
+     "range": [
+      4.5,
+      Infinity
+     ],
+     "subgroup": {
+      "n": 60,
+      "counts": {
+       "SURVIVED": 8,
+       "WEAKENED": 12,
+       "REFUTED": 4,
+       "INCONCLUSIVE": 36
+      },
+      "rates": {
+       "SURVIVED": 0.13333333333333333,
+       "WEAKENED": 0.2,
+       "REFUTED": 0.06666666666666667,
+       "INCONCLUSIVE": 0.6
+      }
+     },
+     "rest": {
+      "n": 60,
+      "counts": {
+       "SURVIVED": 5,
+       "WEAKENED": 4,
+       "REFUTED": 5,
+       "INCONCLUSIVE": 46
+      },
+      "rates": {
+       "SURVIVED": 0.08333333333333333,
+       "WEAKENED": 0.06666666666666667,
+       "REFUTED": 0.08333333333333333,
+       "INCONCLUSIVE": 0.7666666666666667
+      }
+     },
+     "qualifies": false
+    },
+    {
+     "property": "listed sectors",
+     "cut": "tertile group 1 of 3",
+     "range": [
+      -Infinity,
+      3.0
+     ],
+     "subgroup": {
+      "n": 47,
+      "counts": {
+       "SURVIVED": 5,
+       "WEAKENED": 3,
+       "REFUTED": 5,
+       "INCONCLUSIVE": 34
+      },
+      "rates": {
+       "SURVIVED": 0.10638297872340426,
+       "WEAKENED": 0.06382978723404255,
+       "REFUTED": 0.10638297872340426,
+       "INCONCLUSIVE": 0.723404255319149
+      }
+     },
+     "rest": {
+      "n": 73,
+      "counts": {
+       "SURVIVED": 8,
+       "WEAKENED": 13,
+       "REFUTED": 4,
+       "INCONCLUSIVE": 48
+      },
+      "rates": {
+       "SURVIVED": 0.1095890410958904,
+       "WEAKENED": 0.1780821917808219,
+       "REFUTED": 0.0547945205479452,
+       "INCONCLUSIVE": 0.6575342465753424
+      }
+     },
+     "qualifies": false
+    },
+    {
+     "property": "listed sectors",
+     "cut": "tertile group 2 of 3",
+     "range": [
+      3.0,
+      6.0
+     ],
+     "subgroup": {
+      "n": 39,
+      "counts": {
+       "SURVIVED": 3,
+       "WEAKENED": 8,
+       "REFUTED": 1,
+       "INCONCLUSIVE": 27
+      },
+      "rates": {
+       "SURVIVED": 0.07692307692307693,
+       "WEAKENED": 0.20512820512820512,
+       "REFUTED": 0.02564102564102564,
+       "INCONCLUSIVE": 0.6923076923076923
+      }
+     },
+     "rest": {
+      "n": 81,
+      "counts": {
+       "SURVIVED": 10,
+       "WEAKENED": 8,
+       "REFUTED": 8,
+       "INCONCLUSIVE": 55
+      },
+      "rates": {
+       "SURVIVED": 0.12345679012345678,
+       "WEAKENED": 0.09876543209876543,
+       "REFUTED": 0.09876543209876543,
+       "INCONCLUSIVE": 0.6790123456790124
+      }
+     },
+     "qualifies": false
+    },
+    {
+     "property": "listed sectors",
+     "cut": "tertile group 3 of 3",
+     "range": [
+      6.0,
+      Infinity
+     ],
+     "subgroup": {
+      "n": 34,
+      "counts": {
+       "SURVIVED": 5,
+       "WEAKENED": 5,
+       "REFUTED": 3,
+       "INCONCLUSIVE": 21
+      },
+      "rates": {
+       "SURVIVED": 0.14705882352941177,
+       "WEAKENED": 0.14705882352941177,
+       "REFUTED": 0.08823529411764706,
+       "INCONCLUSIVE": 0.6176470588235294
+      }
+     },
+     "rest": {
+      "n": 86,
+      "counts": {
+       "SURVIVED": 8,
+       "WEAKENED": 11,
+       "REFUTED": 6,
+       "INCONCLUSIVE": 61
+      },
+      "rates": {
+       "SURVIVED": 0.09302325581395349,
+       "WEAKENED": 0.12790697674418605,
+       "REFUTED": 0.06976744186046512,
+       "INCONCLUSIVE": 0.7093023255813954
+      }
+     },
+     "qualifies": false
+    }
+   ]
+  },
+  "2_systematic_disagreement": {
+   "refuted": 9,
+   "first_fatal_fail": {
+    "odd_even": 4,
+    "period_alias": 4,
+    "aperture_depth": 1
+   },
+   "largest": "odd_even",
+   "largest_count": 4,
+   "tie": true,
+   "found": false
+  },
+  "3_dominant_cause": {
+   "tests": [
+    {
+     "test": "aperture_depth",
+     "inconclusive": 57,
+     "largest_cause": "PASS refused: insufficient sensitivity: large-to-core depth ratio # ratio not detectable (# < #) (depth does not grow with the aperture (ratio #, # sigma; transit detected at # sigma))",
+     "largest_count": 35,
+     "tie": false,
+     "qualifies": true,
+     "causes": {
+      "PASS refused: insufficient sensitivity: large-to-core depth ratio # ratio not detectable (# < #) (depth does not grow with the aperture (ratio #, # sigma; transit detected at # sigma))": 35,
+      "the transit is not detected in the pixel photometry (core # sigma, large # sigma, both < #): the depths cannot be compared": 22
+     }
+    },
+    {
+     "test": "centroid_shift",
+     "inconclusive": 80,
+     "largest_cause": "qualification failed: # of # sector(s) do not qualify",
+     "largest_count": 42,
+     "tie": false,
+     "qualifies": true,
+     "causes": {
+      "qualification failed: # of # sector(s) do not qualify": 42,
+      "sectors disagree (heterogeneity p = #)": 17,
+      "single sector": 13,
+      "PASS refused: insufficient sensitivity: source offset # arcsec not detectable (# < #) (transit source consistent with the target (offset # arcsec, # sigma, # sectors); a PASS does not exclude unresolved blends closer than # arcsec)": 8
+     }
+    },
+    {
+     "test": "edge_events",
+     "inconclusive": 14,
+     "largest_cause": "no measured event",
+     "largest_count": 14,
+     "tie": false,
+     "qualifies": true,
+     "causes": {
+      "no measured event": 14
+     }
+    },
+    {
+     "test": "event_consistency",
+     "inconclusive": 58,
+     "largest_cause": "PASS refused: insufficient sensitivity: one event off the common depth by a full depth # ppm not detectable (# < #) (per-event depths: chi# # for # dof, p = #)",
+     "largest_count": 39,
+     "tie": false,
+     "qualifies": true,
+     "causes": {
+      "PASS refused: insufficient sensitivity: one event off the common depth by a full depth # ppm not detectable (# < #) (per-event depths: chi# # for # dof, p = #)": 39,
+      "only # measured event(s)": 19
+     }
+    },
+    {
+     "test": "odd_even",
+     "inconclusive": 33,
+     "largest_cause": "not enough transits: # even, # odd",
+     "largest_count": 20,
+     "tie": false,
+     "qualifies": true,
+     "causes": {
+      "not enough transits: # even, # odd": 20,
+      "PASS refused: insufficient sensitivity: odd/even depth difference # ppm not detectable (# < #) (odd/even depth difference # sigma (<= #))": 13
+     }
+    },
+    {
+     "test": "period_alias",
+     "inconclusive": 3,
+     "largest_cause": "PASS refused: insufficient sensitivity: sinusoid at the candidate's period, peak to trough = depth # ppm not detectable (# < #) (the dip needs a transit on top of a sinusoid (BIC gain #, # in-transit cadences); not near a known systematic period)",
+     "largest_count": 3,
+     "tie": false,
+     "qualifies": false,
+     "causes": {
+      "PASS refused: insufficient sensitivity: sinusoid at the candidate's period, peak to trough = depth # ppm not detectable (# < #) (the dip needs a transit on top of a sinusoid (BIC gain #, # in-transit cadences); not near a known systematic period)": 3
+     }
+    },
+    {
+     "test": "plausibility",
+     "inconclusive": 8,
+     "largest_cause": "TIC stellar radius has no uncertainty; reliability cannot be assessed",
+     "largest_count": 7,
+     "tie": false,
+     "qualifies": false,
+     "causes": {
+      "TIC stellar radius has no uncertainty; reliability cannot be assessed": 7,
+      "no TIC stellar radius available": 1
+     }
+    },
+    {
+     "test": "secondary_eclipse",
+     "inconclusive": 15,
+     "largest_cause": "no data covers phase #",
+     "largest_count": 14,
+     "tie": false,
+     "qualifies": true,
+     "causes": {
+      "no data covers phase #": 14,
+      "PASS refused: insufficient sensitivity: secondary dip # ppm not detectable (# < #) (no significant dip or brightening at phase # (# sigma))": 1
+     }
+    },
+    {
+     "test": "single_event",
+     "inconclusive": 19,
+     "largest_cause": "only # measured event(s)",
+     "largest_count": 19,
+     "tie": false,
+     "qualifies": true,
+     "causes": {
+      "only # measured event(s)": 19
+     }
+    },
+    {
+     "test": "sinusoid",
+     "inconclusive": 41,
+     "largest_cause": "period # d is outside the test's domain (< # d)",
+     "largest_count": 25,
+     "tie": false,
+     "qualifies": true,
+     "causes": {
+      "period # d is outside the test's domain (< # d)": 25,
+      "too few out-of-transit cadences for the fit": 13,
+      "PASS refused: insufficient sensitivity: sinusoid semi-amplitude # ppm not detectable (# < #) (no significant sinusoid at P/#, P or #P)": 3
+     }
+    },
+    {
+     "test": "systematics",
+     "inconclusive": 80,
+     "largest_cause": "PASS refused: insufficient sensitivity: background rise in transit # fraction of the depth not detectable (# < #) (no problem in # sub-checks: momentum dumps (# in the quality column), SAP versus PDCSAP, background)",
+     "largest_count": 41,
+     "tie": false,
+     "qualifies": true,
+     "causes": {
+      "PASS refused: insufficient sensitivity: background rise in transit # fraction of the depth not detectable (# < #) (no problem in # sub-checks: momentum dumps (# in the quality column), SAP versus PDCSAP, background)": 41,
+      "PASS refused: insufficient sensitivity: SAP relative depth difference # fraction not detectable (# < #) (no problem in # sub-checks: momentum dumps (# in the quality column), SAP versus PDCSAP, background)": 34,
+      "sub-check(s) could not run (momentum_dumps: only # transit(s) with data (< #))": 4,
+      "sub-check(s) could not run (background: the SAP depth is not positive)": 1
+     }
+    }
+   ],
+   "found": true
+  },
+  "found": [
+   "3 (a dominant cause)"
+  ],
+  "proceeds_to_part_b": "3 (a dominant cause)"
+ },
+ "open_arm_by_disposition_descriptive": {
+  "APC": {
+   "records": 7,
+   "with_nonzero_coverage": {
+    "SURVIVED": 0,
+    "WEAKENED": 0,
+    "REFUTED": 1,
+    "INCONCLUSIVE": 6
+   }
+  },
+  "CP": {
+   "records": 1,
+   "with_nonzero_coverage": {
+    "SURVIVED": 0,
+    "WEAKENED": 0,
+    "REFUTED": 0,
+    "INCONCLUSIVE": 1
+   }
+  },
+  "FP": {
+   "records": 21,
+   "with_nonzero_coverage": {
+    "SURVIVED": 0,
+    "WEAKENED": 2,
+    "REFUTED": 5,
+    "INCONCLUSIVE": 14
+   }
+  },
+  "KP": {
+   "records": 11,
+   "with_nonzero_coverage": {
+    "SURVIVED": 2,
+    "WEAKENED": 2,
+    "REFUTED": 0,
+    "INCONCLUSIVE": 7
+   }
+  },
+  "PC": {
+   "records": 80,
+   "with_nonzero_coverage": {
+    "SURVIVED": 2,
+    "WEAKENED": 11,
+    "REFUTED": 3,
+    "INCONCLUSIVE": 63
+   }
+  }
+ },
+ "acknowledgment": "This research has made use of the Exoplanet Follow-up Observation Program (ExoFOP; DOI: 10.26134/ExoFOP5) website, which is operated by the California Institute of Technology, under contract with the National Aeronautics and Space Administration under the Exoplanet Exploration Program."
+}
