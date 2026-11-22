@@ -439,3 +439,21 @@ The conversation counts **246,281** review tokens (the last round's uncached inp
 3. **Any failure recorded in a batch makes the terminal state's kind `other`,** whatever cap was also reached. The evaluation then refuses, and the maintainer decides. A failure to read the light-curve manifest goes through the same path as a record failure.
 
 The lock waits for the maintainer.
+
+## v0.5.6 part B: round 4 (the maintainer's exception), before the lock
+
+The maintainer's decision of 2026-11-22 (14:30), item 1 (#218), allowed one round 4 as a recorded exception, in the same conversation (`partb`). Its scope was closed to round 3's three fixes and the new drand rule of item 2 (commit 39caa34). Codex CLI 0.167.0-alpha.3.2, model gpt-6.2-sol, effort high; it answered in Portuguese, and the answer is stored unchanged.
+
+| Round | File | Reviewed | Verdicts | SHA-256 |
+|---|---|---|---|---|
+| 4 | [partb-round-4-answer.md](partb-round-4-answer.md) | 0935c30, 39caa34 | A SURVIVED, B WEAKENED, C REFUTED; four blocking items | `b4132b82d5e7c87f306d90171cce393395359402b2fad512bf37ed024a036521` |
+
+Round 4 used 9,381,208 input tokens (9,130,752 cached) and 43,250 output tokens, both cumulative over the conversation. The conversation now counts **293,706** review tokens: the last round's uncached input plus its output.
+
+**The four blocking items:**
+1. The documented relock cannot run. `lock_commit()` finds the commit that first added the lock file, not the one that published the current lock.
+2. A new round can be written into a locked claim without proof that the sealed round has expired. `check` reads the round without verifying the lock. One test also refuses the legitimate state between `--drand-round auto` and the lock.
+3. A listing's sector may be a boolean, because `bool` is a subtype of `int` in Python.
+4. A failure already recorded still allows a terminal state `complete` on a resumed run. The evaluation refuses that ledger anyway.
+
+**By the decision (item 3), round 4 is not SURVIVED, so the claim is not locked.** The work stops for the maintainer. Nothing was locked or drawn.
