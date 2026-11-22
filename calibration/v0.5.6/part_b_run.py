@@ -13,8 +13,16 @@ the battery chain of ``run_one`` is unchanged):
 - every record and deletion record carries ``mode: confirmatory`` and the claim's id;
 - one step, ``run``: it refuses unless the lock verifies (``refute verify``: PASS), the draw
   validates (``part_b_draw.validate_draw``: this lock, the replayed order, the recounted reasons,
-  the strata, disjointness from part A) and its status is ``complete`` or ``short``. There is no
-  pilot.
+  the strata, disjointness from part A), is published (committed, equal to ``HEAD`` and on
+  ``origin/main``) and its status is ``complete`` or ``short``. There is no pilot;
+- **bindings:** every record, and every batch of the ledger, carries the SHA-256 of the lock and
+  of the draw; each record also carries the light curves the adapter's manifest lists when the
+  record is written (``light_curve_manifest``). A resumed run refuses records of another lock,
+  draw or target;
+- **a terminal state:** after the last batch drains, the ledger gets ``terminal`` (``complete``,
+  or ``stopped`` with its kind: ``cap_cpu``, ``cap_disk``, ``window`` when every remaining
+  target's estimated duration exceeds the batch window, or ``other``) and the unrecorded targets.
+  A ledger with a terminal state is never run again without the maintainer's approval.
 
 **The caps as enforced** (part A's mechanism, unchanged): a target is admitted only if the CPU
 charged, plus the estimates of the targets in flight and its own, stays under 15 CPU-h, and only
@@ -72,6 +80,9 @@ CAP_CPU_HOURS = 15.0
 CLAIM_ID = "tess-v0.5.6-part-b-fp-agreement"
 LOCK = HERE / "claim.lock.json"
 STRATA = ("planet", "fp")
+LOCK_SHA: str | None = None  # set by targets(), in the parent
+DRAW_SHA: str | None = None
+CAP_STOPS = ("the cap of", "the disk peak passed")
 CAP_DISK_BYTES = 20e9
 ADMIT_DISK_BYTES = 18e9
 RESERVE_PER_SECTOR = 101_220_480 + 4_164_480
@@ -130,11 +141,14 @@ def _draw_module():
 
 def targets() -> list[dict]:
     draw = json.loads(DRAW.read_text("utf-8"))
-    problems = _draw_module().validate_draw(draw)
+    dm = _draw_module()
+    problems = dm.validate_draw(draw) + dm.published(DRAW)
     if problems:
-        raise SystemExit(f"the draw does not validate: {problems}")
+        raise SystemExit(f"the draw does not validate, or is not published: {problems}")
     if draw.get("status") not in ("complete", "short"):
         raise SystemExit("the draw is incomplete: the claim is evaluated without a run")
+    global LOCK_SHA, DRAW_SHA
+    LOCK_SHA, DRAW_SHA = sha256(LOCK.read_bytes()), sha256(DRAW.read_bytes())
     out = []
     for arm in STRATA:
         for rank, c in enumerate(draw["arms"][arm]["chosen"]):
@@ -571,10 +585,25 @@ def charge_interruption() -> dict | None:
     return entry
 
 
+def _lc_manifest(tic_id: int) -> list[dict]:
+    """The light curves the adapter's manifest lists for the target, read when its record is
+    written (the record then binds them; the evaluation reads them from the record)."""
+    from refute.packs.tess.adapter import manifest_path
+
+    path = manifest_path(DATA, tic_id)
+    if not path.exists():
+        return []
+    files = json.loads(path.read_text("utf-8")).get("files", [])
+    keys = ("name", "path", "sector", "bytes", "sha256")
+    return [{k: f.get(k) for k in keys} for f in files]
+
+
 def _finish(rec: dict) -> str | None:
     """Write a target's record, read it back, then release its pixel files; a failure is
     returned as a STOP reason."""
     RECORDS.mkdir(parents=True, exist_ok=True)
+    rec = {**rec, "lock_sha256": LOCK_SHA, "draw_sha256": DRAW_SHA,
+           "light_curve_manifest": _lc_manifest(int(rec["tic_id"]))}  # fmt: skip
     try:
         _write_json(RECORDS / f"{rec['target_key']}.json", rec)
     except Exception as exc:  # noqa: BLE001 - stops the run
@@ -715,6 +744,8 @@ def run_batch(selection: list[dict], label: str) -> str | None:
             "simultaneous_downloads": k,
             "claim_sha256": sha256(claim_text),
             "code_sha256": sha256(Path(__file__).read_bytes()),
+            "lock_sha256": LOCK_SHA,
+            "draw_sha256": DRAW_SHA,
             "recorded_in_batch": recorded,
             "records": done,
             "cpu_hours_spent": round(spent, 4),
@@ -761,6 +792,15 @@ def main(step: str) -> None:
     if result.status.value != "PASS":
         raise SystemExit(f"the lock does not verify: {result.status.value} {result.messages}")
     all_targets = targets()
+    if "terminal" in _ledger():
+        raise SystemExit("the run has ended (the ledger's terminal state); a rerun needs the "
+                         "maintainer's approval, recorded first on an issue")  # fmt: skip
+    keys = {t["key"] for t in all_targets}
+    for r in _records():
+        if (r.get("lock_sha256"), r.get("draw_sha256")) != (LOCK_SHA, DRAW_SHA) or (
+            r.get("target_key") not in keys
+        ):
+            raise SystemExit(f"{r.get('target_key')}: a record of another lock, draw or target")
     charged = charge_interruption()
     if charged:
         print("interruption charged:", json.dumps(charged), flush=True)
@@ -776,12 +816,60 @@ def main(step: str) -> None:
     )
     _save_ledger(ledger)
     print("pixel files released before the batches:", released, flush=True)
-    while any(not (RECORDS / f"{t['key']}.json").exists() for t in all_targets):
+    while True:
+        todo = [t for t in all_targets if not (RECORDS / f"{t['key']}.json").exists()]
+        if not todo:
+            terminal("complete", None, [])
+            print("all targets recorded", json.dumps(_totals()), flush=True)
+            return
         stop = run_batch(all_targets, "run")
         if stop:
-            print("STOP:", stop, flush=True)
+            todo = [t for t in all_targets if not (RECORDS / f"{t['key']}.json").exists()]
+            kind = terminal("stopped", stop, todo)
+            print("STOP:", stop, kind, flush=True)
             raise SystemExit(2)
-    print("all targets recorded", json.dumps(_totals()), flush=True)
+
+
+def stop_kind(stop: str, todo: list[dict]) -> str:
+    """Why the run stopped: ``cap_cpu``, ``cap_disk``, ``window`` (every remaining target's
+    estimated duration exceeds the batch window, so it can never be admitted) or ``other``
+    (a worker or record failure: the run is not finished, and the maintainer decides)."""
+    if stop.startswith("the cap of"):
+        return "cap_cpu"
+    if stop.startswith("the disk peak passed"):
+        return "cap_disk"
+    if stop.startswith("no remaining target fits"):
+        if todo and all(est_wall(t) > BATCH_SECONDS for t in todo):
+            return "window"
+        cheapest = min((est_cpu_hours(t) for t in todo), default=0.0)
+        if _charged() + cheapest > CAP_CPU_HOURS:
+            return "cap_cpu"
+        smallest = min((reserve(t) for t in todo), default=0)
+        if disk_bytes() + smallest > ADMIT_DISK_BYTES:
+            return "cap_disk"
+    return "other"
+
+
+def terminal(state: str, stop: str | None, todo: list[dict]) -> str | None:
+    """Write the run's terminal state to the ledger, after the last batch has drained: the
+    evaluation counts a missing record as a loss only after a terminal state of kind
+    ``complete``, ``cap_cpu``, ``cap_disk`` or ``window``."""
+    kind = "complete" if state == "complete" else stop_kind(stop or "", todo)
+    ledger = _ledger()
+    ledger["terminal"] = {
+        "state": state,
+        "kind": kind,
+        "stop": stop,
+        "unrecorded": sorted(t["key"] for t in todo),
+        "batches": len(ledger.get("batches", [])),
+        "cpu_hours_charged": round(_charged(), 4),
+        "disk_peak_bytes": ledger.get("disk_peak_bytes"),
+        "lock_sha256": LOCK_SHA,
+        "draw_sha256": DRAW_SHA,
+        "utc": utc(),
+    }
+    _save_ledger(ledger)
+    return kind
 
 
 if __name__ == "__main__":

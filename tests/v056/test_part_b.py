@@ -230,18 +230,12 @@ def _function_source(path: Path, name: str) -> str:
 
 
 def test_runner_battery_chain_unchanged():
-    a = _function_source(A / "part_a_run.py", "run_one")
-    b = _function_source(B / "part_b_run.py", "run_one")
-    b = b.replace(
-        '"mode": "confirmatory",\n        "claim_id": CLAIM_ID,', '"mode": "exploratory",'
-    )
-    assert a == b
-    for name in ("release_tpfs", "delete_literal", "run_batch", "_pick", "_finish", "sweep"):
+    # run_one (the battery chain) and the deletion and admission code are part A's; run_batch and
+    # _finish differ only by the bindings listed in the runner's docstring (see the diff test).
+    for name in ("run_one", "release_tpfs", "delete_literal", "_pick", "sweep"):
         fa = _function_source(A / "part_a_run.py", name)
         fb = _function_source(B / "part_b_run.py", name)
-        fb = fb.replace(
-            '"mode": "confirmatory",\n        "claim_id": CLAIM_ID,', '"mode": "exploratory",'
-        )
+        fb = fb.replace(B_MODE, A_MODE)
         assert fa == fb, name
 
 
@@ -255,17 +249,42 @@ def test_runner_diff_is_current():
     assert (B / "part_b_run.diff").read_text("utf-8") == diff
 
 
+@pytest.fixture(scope="module")
+def rb():
+    return _load(B / "part_b_run.py", "part_b_run_under_test")
+
+
+def test_stop_kinds(rb, monkeypatch):
+    small = {"sectors": [1], "key": "TIC-1"}
+    huge = {"sectors": list(range(70)), "key": "TIC-2"}  # 65 + 25 x 70 s > the 28-min window
+    monkeypatch.setattr(rb, "_charged", lambda: 1.0)
+    monkeypatch.setattr(rb, "disk_bytes", lambda root=None: 1)
+    assert rb.stop_kind("the cap of 15.0 CPU-h is reached", [small]) == "cap_cpu"
+    assert rb.stop_kind("the disk peak passed 20 GB", [small]) == "cap_disk"
+    assert rb.stop_kind("no remaining target fits (disk 1 GB)", [huge]) == "window"
+    assert rb.stop_kind("no remaining target fits (disk 1 GB)", [small]) == "other"
+    monkeypatch.setattr(rb, "_charged", lambda: 14.999)
+    assert rb.stop_kind("no remaining target fits (disk 1 GB)", [small]) == "cap_cpu"
+    monkeypatch.setattr(rb, "_charged", lambda: 1.0)
+    monkeypatch.setattr(rb, "disk_bytes", lambda root=None: 18e9)
+    assert rb.stop_kind("no remaining target fits (disk 18 GB)", [small]) == "cap_disk"
+    assert rb.stop_kind("a worker failed on TIC-1", [small]) == "other"
+
+
 # --- the draw's offline validation -----------------------------------------------------------
 
 
 SIGNATURE = "ab" * 48
 LOCK_BYTES = b'{"a synthetic lock": true}\n'
+CREATED = "2026-11-23T10:00:00Z"
 
 
 def _synthetic_draw(dr):
-    """A draw built from the real frozen inputs, a synthetic beacon and synthetic listings that
-    make every walked TIC eligible."""
+    """A draw built from the real frozen inputs, a synthetic beacon and commit, and synthetic
+    listings that make every walked TIC eligible."""
     import hashlib
+
+    from refute.drand import round_after
 
     randomness = hashlib.sha256(bytes.fromhex(SIGNATURE)).hexdigest()
     rows, exposed, _, _ = dr.frozen_inputs()
@@ -288,16 +307,35 @@ def _synthetic_draw(dr):
                      "listing_sha256": hashlib.sha256(
                          json.dumps(listing, indent=1).encode()).hexdigest()}  # fmt: skip
             trail.append(entry)
-            chosen.append({k: v for k, v in entry.items() if k != "listing"})
+            plain = {k: v for k, v in entry.items() if k != "listing"}
+            chosen.append({**plain, **{f: r[f] for f in paf.FRAME_FIELDS if f not in plain}})
         arms[s] = {"pool": len(groups[s]), "checked": len(trail), "eligible": len(chosen),
                    "chosen": chosen, "trail": trail}  # fmt: skip
     lock_sha = hashlib.sha256(LOCK_BYTES).hexdigest()
+    number = round_after(CREATED, dr.ROUND_MARGIN_SECONDS)
     return {
         "schema": "refute-v056-part-b-draw-2",
         "status": "complete",
         "lock_sha256": lock_sha,
-        "round": {"round": 7, "lock_sha256": lock_sha},
-        "beacon": {"round": 7, "signature": SIGNATURE, "randomness": randomness},
+        "round": {
+            "lock_commit": "c" * 40,
+            "lock_sha256": lock_sha,
+            "ci_push_run": {
+                "id": 1,
+                "event": "push",
+                "head_sha": "c" * 40,
+                "run_attempt": 1,
+                "created_at": CREATED,
+            },  # fmt: skip
+            "margin_seconds": dr.ROUND_MARGIN_SECONDS,
+            "round": number,
+        },
+        "beacon": {
+            "round": number,
+            "signature": SIGNATURE,
+            "previous_signature": "00",
+            "randomness": randomness,
+        },  # fmt: skip
         "arms": arms,
     }
 
@@ -307,31 +345,66 @@ def synthetic(dr):
     return _synthetic_draw(dr)
 
 
+def _validate(dr, d, lock=LOCK_BYTES):
+    return dr.validate_draw(d, lock, verify_signature=False, check_commit=False)
+
+
 def test_validate_draw_accepts_a_valid_draw(dr, synthetic):
     assert all(t["reason"] == "eligible" for s in dr.STRATA for t in synthetic["arms"][s]["trail"])
-    assert dr.validate_draw(synthetic, LOCK_BYTES) == []
+    assert _validate(dr, synthetic) == []
+
+
+def test_validate_draw_checks_the_signature_and_the_commit(dr, synthetic):
+    assert dr.validate_draw(synthetic, LOCK_BYTES, check_commit=False)  # synthetic beacon: no BLS
+    assert dr.validate_draw(synthetic, LOCK_BYTES, verify_signature=False)  # no such commit
+
+
+def _rehash(t):
+    import hashlib
+
+    t["listing_sha256"] = hashlib.sha256(json.dumps(t["listing"], indent=1).encode()).hexdigest()
 
 
 def test_validate_draw_refuses_tampering(dr, synthetic):
     def bad(change):
         d = copy.deepcopy(synthetic)
         change(d)
-        return dr.validate_draw(d, LOCK_BYTES)
+        return _validate(dr, d)
 
-    assert dr.validate_draw(synthetic, b"another lock")
+    assert _validate(dr, synthetic, b"another lock")
     assert bad(lambda d: d["arms"]["fp"]["trail"].reverse())
     assert bad(lambda d: d["arms"]["planet"]["trail"][0].update(reason="1 predicted transit(s)"))
     assert bad(lambda d: d["arms"]["planet"]["chosen"].pop())
     assert bad(lambda d: d.update(status="short"))
     assert bad(lambda d: d["beacon"].update(randomness="00" * 32))
     assert bad(lambda d: d["round"].update(lock_sha256="0" * 64))
+    # the round must be the one the CI run's creation time gives, and the run the commit's
+    assert bad(lambda d: (d["round"].update(round=d["round"]["round"] + 1),
+                          d["beacon"].update(round=d["round"]["round"])))  # fmt: skip
+    assert bad(lambda d: d["round"]["ci_push_run"].update(head_sha="d" * 40))
+    assert bad(lambda d: d["round"].update(margin_seconds=0))
+    # the fields the run uses are rebuilt from the frame and the trail
+    assert bad(lambda d: d["arms"]["planet"]["chosen"][0].update(period_days="1.0"))
+    assert bad(lambda d: d["arms"]["planet"]["chosen"][0].update(epoch_bjd="2459000.0"))
+    assert bad(lambda d: d["arms"]["fp"]["chosen"][0].update(sectors=[1, 2]))
+
+    def listing_change(field, value, on_window=True):
+        def change(d):
+            t = d["arms"]["fp"]["trail"][0]
+            target = t["listing"]["products"][0] if on_window else t["listing"]
+            target[field] = value
+            _rehash(t)
+
+        return change
+
+    assert bad(listing_change("tic_id", 1, on_window=False))
+    assert bad(listing_change("exptime", 1800.0))
+    assert bad(listing_change("sector", 108))
+    assert bad(listing_change("productFilename", "tess-s0001-0000000000000001-0001-s_lc.fits"))
 
     def part_a_product(d):
-        d["arms"]["fp"]["chosen"][0]["products"] = [
-            json.loads((A / "part-a-draw.json").read_text("utf-8"))["arms"]["open"]["trail"][0][
-                "products"
-            ][0]
-        ]
+        a = json.loads((A / "part-a-draw.json").read_text("utf-8"))
+        d["arms"]["fp"]["trail"][0]["products"] = [a["arms"]["open"]["trail"][0]["products"][0]]
 
     assert bad(part_a_product)
 
@@ -350,41 +423,65 @@ def _write(path: Path, obj) -> None:
     path.write_text(json.dumps(obj), "utf-8")
 
 
+LK, DW = "1" * 64, "2" * 64
+
+
 def test_records_are_bound(ev, tmp_path, monkeypatch):
     monkeypatch.setattr(ev, "RECORDS", tmp_path)
-    good = {"claim_id": ev.CLAIM_ID, "mode": "confirmatory", "target_key": "TIC-1"}
+    good = {"claim_id": ev.CLAIM_ID, "mode": "confirmatory", "target_key": "TIC-1",
+            "lock_sha256": LK, "draw_sha256": DW}  # fmt: skip
+    drawn = {"TIC-1", "TIC-2"}
     _write(tmp_path / "TIC-1.json", good)
-    records, files = ev.load_records({"TIC-1", "TIC-2"})
+    records, files = ev.load_records(drawn, LK, DW)
     assert set(records) == {"TIC-1"} and len(files) == 1
+    with pytest.raises(SystemExit):
+        ev.load_records(drawn, LK, "3" * 64)  # another draw
     _write(tmp_path / "TIC-3.json", {**good, "target_key": "TIC-3"})
     with pytest.raises(SystemExit):
-        ev.load_records({"TIC-1", "TIC-2"})  # not drawn
+        ev.load_records(drawn, LK, DW)  # not drawn
     (tmp_path / "TIC-3.json").unlink()
     _write(tmp_path / "TIC-2.json", {**good, "target_key": "TIC-1"})
     with pytest.raises(SystemExit):
-        ev.load_records({"TIC-1", "TIC-2"})  # a file not named after its key
+        ev.load_records(drawn, LK, DW)  # a file not named after its key
     _write(tmp_path / "TIC-2.json", {**good, "target_key": "TIC-2", "mode": "exploratory"})
     with pytest.raises(SystemExit):
-        ev.load_records({"TIC-1", "TIC-2"})
+        ev.load_records(drawn, LK, DW)
 
 
-def test_missing_records_need_a_cap_stop(ev, tmp_path, monkeypatch):
+def test_run_state_needs_a_terminal_state(ev, tmp_path, monkeypatch):
     claim, runner, ledger = tmp_path / "c.yaml", tmp_path / "r.py", tmp_path / "l.json"
     claim.write_text("claim", "utf-8")
     runner.write_text("runner", "utf-8")
     for name, value in (("CLAIM", claim), ("RUNNER", runner), ("LEDGER", ledger)):
         monkeypatch.setattr(ev, name, value)
     batch = {"claim_sha256": ev.sha256(b"claim"), "code_sha256": ev.sha256(b"runner"),
-             "stop": None}  # fmt: skip
-    _write(ledger, {"batches": [batch]})
-    assert ev.run_state({"TIC-1"}, {"TIC-1": {}})["missing_records"] == []
+             "lock_sha256": LK, "draw_sha256": DW, "stop": None}  # fmt: skip
+    term = {"state": "complete", "kind": "complete", "unrecorded": [], "batches": 1,
+            "lock_sha256": LK, "draw_sha256": DW}  # fmt: skip
+    one, two = {"TIC-1"}, {"TIC-1", "TIC-2"}
+    recs = {"TIC-1": {}}
+
+    def state(doc, drawn):
+        _write(ledger, doc)
+        return ev.run_state(drawn, recs, LK, DW)
+
+    assert state({"batches": [batch], "terminal": term}, one)["missing_records"] == []
     with pytest.raises(SystemExit):
-        ev.run_state({"TIC-1", "TIC-2"}, {"TIC-1": {}})
-    _write(ledger, {"batches": [{**batch, "stop": "the cap of 15.0 CPU-h is reached"}]})
-    assert ev.run_state({"TIC-1", "TIC-2"}, {"TIC-1": {}})["missing_records"] == ["TIC-2"]
-    _write(ledger, {"batches": [{**batch, "code_sha256": "0" * 64}]})
+        state({"batches": [batch]}, one)  # no terminal state
     with pytest.raises(SystemExit):
-        ev.run_state({"TIC-1"}, {"TIC-1": {}})
+        state({"batches": [batch], "terminal": term}, two)  # complete, yet a record is missing
+    cap = {**term, "state": "stopped", "kind": "cap_cpu", "unrecorded": ["TIC-2"]}
+    assert state({"batches": [batch], "terminal": cap}, two)["missing_records"] == ["TIC-2"]
+    with pytest.raises(SystemExit):
+        state({"batches": [batch, batch], "terminal": cap}, two)  # a batch after the end
+    with pytest.raises(SystemExit):
+        state({"batches": [batch], "terminal": {**cap, "kind": "other"}}, two)
+    with pytest.raises(SystemExit):
+        state({"batches": [batch], "terminal": {**cap, "unrecorded": []}}, two)
+    with pytest.raises(SystemExit):
+        state({"batches": [{**batch, "draw_sha256": "3" * 64}], "terminal": term}, one)
+    with pytest.raises(SystemExit):
+        state({"batches": [batch], "terminal": {**term, "lock_sha256": "3" * 64}}, one)
 
 
 # --- the exposure scan, second version -------------------------------------------------------

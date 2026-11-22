@@ -12,19 +12,26 @@ photometry that overlaps theirs; never that it "detects false positives".
   within half the TOI's duration);
 - **non-event**: status OK with nonzero coverage and no event; or status ERROR (counted as a
   non-event in the denominator, by the decision's ERROR rule);
-- **loss**: status ERROR, MISSING_PRODUCTS, OK with zero coverage, or no record (a run stopped
-  by a cap). ERROR is both a non-event in the denominator and a loss for the cap.
+- **loss**: status ERROR, MISSING_PRODUCTS, OK with zero coverage, or no record (a target
+  the run never admitted, after a terminal stop by a cap or by the batch window). ERROR is both
+  a non-event in the denominator and a loss for the cap.
 
 **Before anything is counted** (any failure stops; nothing is written):
-- the draw validates (``part_b_draw.validate_draw``: this lock, the order replayed from the
-  beacon, every reason recounted from its kept listing, the strata, part A's disjointness);
-- every record names this claim and ``mode: confirmatory``, its file is named after its
-  ``target_key``, and it is a drawn target; no duplicate;
-- every batch of the ledger names this claim's and this runner's SHA-256;
-- the run is finished: every drawn target has a record, or the last STOP was by a cap (CPU or
-  disk). Only then is a missing record a loss.
-The products each target used (light curves from the adapter's manifest, pixel files from the
-record) are listed against the draw's listing, as a report.
+- the lock verifies (``refute verify``: PASS);
+- the draw validates (``part_b_draw.validate_draw``: this lock, the round derived from the CI
+  evidence, the beacon's BLS signature, the order replayed from the beacon, every listing within
+  the filters and every reason recounted from it, the chosen entries rebuilt from the frame and
+  the trail, the strata, part A's disjointness) and is published (committed, equal to ``HEAD``,
+  on ``origin/main``);
+- every record names this claim, ``mode: confirmatory``, this lock and this draw; its file is
+  named after its ``target_key``, and it is a drawn target; no duplicate;
+- every batch of the ledger names this claim's, runner's, lock's and draw's SHA-256;
+- the run has ended: the ledger's terminal state, written after its last batch, is ``complete``
+  or a stop of kind ``cap_cpu``, ``cap_disk`` or ``window``, and its unrecorded targets are
+  exactly the missing records. Only then is a missing record a loss; a stop of kind ``other``
+  goes to the maintainer.
+The products each target used (light curves from the record's ``light_curve_manifest``, pixel
+files from its ``tpf_manifest``) are listed against the draw's listing, as a report.
 
 **The data rule:** the draw's status must be ``complete`` or ``short``; in each stratum the losses
 must be at most ``floor(MAX_LOSS_FRACTION * drawn)``. Otherwise the claim is **INCONCLUSIVE**.
@@ -70,8 +77,6 @@ CLAIM = HERE / "claim.yaml"
 RUNNER = HERE / "part_b_run.py"
 LEDGER = HERE / "part-b-ledger.json"
 RECORDS = ROOT / ".cache/v056/partb/records"
-DATA = ROOT / ".cache/v056/data"
-CAP_STOPS = ("the cap of", "the disk peak passed")
 OUT_JSON = HERE / "part-b-verdict.json"
 OUT_MD = HERE / "part-b-verdict.md"
 CLAIM_ID = "tess-v0.5.6-part-b-fp-agreement"
@@ -271,14 +276,19 @@ def _draw_module():
     return mod
 
 
-def load_records(drawn: set[str]) -> tuple[dict[str, dict], list[dict]]:
-    """The run's records, each bound to the claim and to a drawn target; anything else stops."""
+def load_records(
+    drawn: set[str], lock_sha: str, draw_sha: str
+) -> tuple[dict[str, dict], list[dict]]:
+    """The run's records, each bound to the claim, the lock, the draw and a drawn target;
+    anything else stops."""
     records, files = {}, []
     for f in sorted(RECORDS.glob("*.json")):
         raw = f.read_bytes()
         r = json.loads(raw)
         if r.get("claim_id") != CLAIM_ID or r.get("mode") != "confirmatory":
             raise SystemExit(f"{f.name} is not a record of {CLAIM_ID}")
+        if (r.get("lock_sha256"), r.get("draw_sha256")) != (lock_sha, draw_sha):
+            raise SystemExit(f"{f.name} is bound to another lock or draw")
         key = r.get("target_key")
         if f.stem != key or key in records:
             raise SystemExit(f"{f.name}: its target_key is {key!r}, or it is a duplicate")
@@ -289,41 +299,53 @@ def load_records(drawn: set[str]) -> tuple[dict[str, dict], list[dict]]:
     return records, files
 
 
-def run_state(drawn: set[str], records: dict[str, dict]) -> dict:
-    """The run must be finished: every drawn target recorded, or a STOP by a cap. Every batch must
-    name this claim and this runner."""
+FINISHED_KINDS = ("complete", "cap_cpu", "cap_disk", "window")
+
+
+def run_state(drawn: set[str], records: dict[str, dict], lock_sha: str, draw_sha: str) -> dict:
+    """The run must have ended with a terminal state written after its last batch, of a kind that
+    lets a missing record count as a loss; every batch must name this claim, runner, lock and
+    draw."""
     ledger = json.loads(LEDGER.read_text("utf-8"))
-    claim_sha, runner_sha = sha256(CLAIM.read_bytes()), sha256(RUNNER.read_bytes())
-    for b in ledger.get("batches", []):
-        if b.get("claim_sha256") != claim_sha or b.get("code_sha256") != runner_sha:
-            raise SystemExit(f"batch {b.get('started_utc')} ran another claim or runner")
+    want = (sha256(CLAIM.read_bytes()), sha256(RUNNER.read_bytes()), lock_sha, draw_sha)
+    batches = ledger.get("batches", [])
+    for b in batches:
+        got = (b.get("claim_sha256"), b.get("code_sha256"), b.get("lock_sha256"),
+               b.get("draw_sha256"))  # fmt: skip
+        if got != want:
+            raise SystemExit(
+                f"batch {b.get('started_utc')} ran another claim, runner, lock or draw"
+            )
+    term = ledger.get("terminal")
+    if term is None:
+        raise SystemExit("the run has no terminal state: it is not finished")
+    if (term.get("lock_sha256"), term.get("draw_sha256")) != (lock_sha, draw_sha):
+        raise SystemExit("the terminal state names another lock or draw")
+    if term.get("batches") != len(batches):
+        raise SystemExit("batches were run after the terminal state")
+    if term.get("kind") not in FINISHED_KINDS:
+        raise SystemExit(f"the run stopped ({term.get('kind')}: {term.get('stop')}); the "
+                         "maintainer decides")  # fmt: skip
     missing = sorted(drawn - set(records))
-    stops = [b.get("stop") for b in ledger.get("batches", []) if b.get("stop")]
-    if missing and not (stops and any(stops[-1].startswith(c) for c in CAP_STOPS)):
-        raise SystemExit(f"the run is not finished: {len(missing)} drawn target(s) without a "
-                         "record and no STOP by a cap")  # fmt: skip
-    return {
-        "missing_records": missing,
-        "last_stop": stops[-1] if stops else None,
-        "cpu_hours_charged": (ledger.get("batches") or [{}])[-1].get("cpu_hours_charged"),
-        "disk_peak_bytes": ledger.get("disk_peak_bytes"),
-    }
+    if missing != sorted(term.get("unrecorded", [])):
+        raise SystemExit("the missing records are not the terminal state's unrecorded targets")
+    if term["kind"] == "complete" and missing:
+        raise SystemExit("a complete run with missing records")
+    return {"terminal": term, "missing_records": missing,
+            "disk_peak_bytes": ledger.get("disk_peak_bytes")}  # fmt: skip
 
 
 def products_used(draw: dict, records: dict[str, dict]) -> dict:
-    """The light curves and pixel files each recorded target used, against the draw's listing
-    (reported, never part of the verdict)."""
-    from refute.packs.tess.adapter import manifest_path
-
+    """The light curves (the record's ``light_curve_manifest``) and pixel files (its
+    ``tpf_manifest``) each recorded target used, against the draw's listing (reported, never part
+    of the verdict)."""
     out = {}
     for s in STRATA:
         for c in draw["arms"][s]["chosen"]:
             r = records.get(f"TIC-{c['tic_id']}")
-            if r is None or r.get("status") not in ("OK", "ERROR"):
+            if r is None:
                 continue
-            mpath = manifest_path(DATA, int(c["tic_id"]))
-            files = json.loads(mpath.read_text("utf-8")).get("files", []) if mpath.exists() else []
-            used = {f["name"]: f.get("sha256") for f in files}
+            used = {f["name"]: f.get("sha256") for f in r.get("light_curve_manifest", [])}
             listed = set(c["products"])
             out[f"TIC-{c['tic_id']}"] = {
                 "light_curves": [{"name": n, "sha256": h} for n, h in sorted(used.items())],
@@ -337,13 +359,21 @@ def products_used(draw: dict, records: dict[str, dict]) -> dict:
 
 
 def main() -> None:
+    from refute.core.lock import verify_claim
+
+    result = verify_claim(CLAIM)
+    if result.status.value != "PASS":
+        raise SystemExit(f"the lock does not verify: {result.status.value} {result.messages}")
     draw = json.loads(DRAW.read_text("utf-8"))
-    problems = _draw_module().validate_draw(draw)
+    dm = _draw_module()
+    problems = dm.validate_draw(draw) + dm.published(DRAW)
     if problems:
-        raise SystemExit(f"the draw does not validate: {problems}")
+        raise SystemExit(f"the draw does not validate, or is not published: {problems}")
+    lock_sha, draw_sha = sha256(LOCK.read_bytes()), sha256(DRAW.read_bytes())
     drawn = {f"TIC-{c['tic_id']}" for k in STRATA for c in draw["arms"][k]["chosen"]}
-    records, files = load_records(drawn)
-    state = run_state(drawn, records) if draw["status"] in ("complete", "short") else None
+    records, files = load_records(drawn, lock_sha, draw_sha)
+    ran = draw["status"] in ("complete", "short")
+    state = run_state(drawn, records, lock_sha, draw_sha) if ran else None
     s = {k: stratum_summary(draw["arms"][k]["chosen"], records) for k in STRATA}
     v, reason, tests = verdict(draw["status"], s)
     doc = {
@@ -355,7 +385,8 @@ def main() -> None:
         "method_status": "not_validated",
         "measures": "agreement with TFOPWG dispositions on overlapping photometry",
         "draw_status": draw["status"],
-        "lock_sha256": draw["lock_sha256"],
+        "lock_sha256": lock_sha,
+        "draw_sha256": draw_sha,
         "code_sha256": sha256(Path(__file__).read_bytes()),
         "tests": tests,
         "strata": s,
