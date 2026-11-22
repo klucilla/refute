@@ -1,0 +1,36 @@
+{
+ "cap_cpu_hours": 50.0,
+ "cap_disk_bytes": 20000000000.0,
+ "batches": [
+  {
+   "label": "pilot",
+   "ended_utc": "2026-11-22T10:08:36Z",
+   "workers": 20,
+   "claim_sha256": "70065377c10ad7b5fe5a5a199f99d577e29efaff187a44ed4c6115cd9fb7ddad",
+   "code_sha256": "5d2c7b5374ee683232b038dd169e3f0e61d9156cf7327070f79267a82523d75c",
+   "records": 10,
+   "cpu_hours_spent": 0.3611,
+   "bytes": 6013728000
+  }
+ ],
+ "pilot_projection": {
+  "records": 10,
+  "cpu_hours": 0.36108506944444446,
+  "bytes": 6013728000,
+  "cpu_hours_per_target": 0.036108506944444445,
+  "bytes_per_target": 601372800.0,
+  "projected_cpu_hours": 8.666041666666667,
+  "projected_bytes": 144329472000.0,
+  "stop": true
+ },
+ "interruptions": [
+  {
+   "what": "the machine rebooted at 2026-11-22 02:29:32 local time (UTC-3) during the pilot; 7 records were written, 3 targets were downloading",
+   "lost_cpu_hours_upper_bound": 0.3,
+   "bound": "3 workers x the wall time from the pilot's start (about 02:23:50) to the reboot, about 5.7 min each; their CPU was not measured",
+   "cleanup": "8 incomplete pixel files of TIC 309792357 and TIC 237222864 deleted inside .cache/v056/data by the adapter's own check (discard_if_incomplete)",
+   "resumed": "the pilot resumed at about 06:57 local time and ran the 3 targets without records; no record was rewritten (not a rerun)"
+  }
+ ],
+ "charged_cpu_hours_upper_bound": 0.6611
+}
