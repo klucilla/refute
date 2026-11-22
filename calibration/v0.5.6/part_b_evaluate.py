@@ -28,8 +28,8 @@ photometry that overlaps theirs; never that it "detects false positives".
 - every batch of the ledger names this claim's, runner's, lock's and draw's SHA-256;
 - the run has ended: the ledger's terminal state, written after its last batch, is ``complete``
   or a stop of kind ``cap_cpu``, ``cap_disk`` or ``window``, and its unrecorded targets are
-  exactly the missing records. Only then is a missing record a loss; a stop of kind ``other``
-  goes to the maintainer.
+  exactly the missing records. Only then is a missing record a loss; a stop of kind ``other``,
+  or any failure recorded in a batch, goes to the maintainer.
 The products each target used (light curves from the record's ``light_curve_manifest``, pixel
 files from its ``tpf_manifest``) are listed against the draw's listing, as a report.
 
@@ -323,6 +323,9 @@ def run_state(drawn: set[str], records: dict[str, dict], lock_sha: str, draw_sha
         raise SystemExit("the terminal state names another lock or draw")
     if term.get("batches") != len(batches):
         raise SystemExit("batches were run after the terminal state")
+    failed = [f for b in batches for f in b.get("failures", [])]
+    if failed or term.get("failures"):
+        raise SystemExit(f"the run recorded failures ({len(failed)}); the maintainer decides")
     if term.get("kind") not in FINISHED_KINDS:
         raise SystemExit(f"the run stopped ({term.get('kind')}: {term.get('stop')}); the "
                          "maintainer decides")  # fmt: skip

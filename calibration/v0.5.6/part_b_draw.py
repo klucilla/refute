@@ -36,15 +36,17 @@ lock):
    ``origin/main``):
    - the draw and its round name this lock, and the lock commit holds this lock's bytes;
    - the round is the one ``round_after(the CI run's created_at, 600)`` gives, for the lock
-     commit's first push run;
+     commit's first push run, and that run is **read again from GitHub** (network), so the draw's
+     own copy of the CI evidence is never taken as given;
    - the beacon is that round, and its BLS signature verifies (``refute.drand.verify_beacon``);
    - the shuffle is replayed from the beacon's randomness and the pool, and the trail is the
      prefix of that order, each entry at its position with the frame's TOI;
    - every kept listing is this TIC's, within the filters (120-s cadence, sectors up to 107, this
      TIC's ``*lc.fits``), matches its hash and the entry's sectors and products, and recounts to
      the entry's reason;
-   - the chosen entries are **rebuilt** from the trail and the frozen frame (ephemerides,
-     sectors, products) and must be equal;
+   - every trail entry has exactly the trail's keys, and the chosen entries are **rebuilt**: the
+     trail's own keys, and every other field (ephemerides included) from the frozen frame; they
+     must be equal;
    - the TICs are unique, in their stratum, unexposed, and outside part A's draw (by TIC and by
      every listed product); the status follows from the counts.
 
@@ -62,6 +64,7 @@ import hashlib
 import importlib.util
 import io
 import json
+import math
 import os
 import subprocess
 import sys
@@ -163,6 +166,17 @@ def order(rows: list[dict], randomness_hex: str, stratum: str) -> list[dict]:
     from refute.drand import shuffled
 
     return shuffled(rows, stratum_seed(randomness_hex, stratum), key=lambda r: int(r["tic_id"]))
+
+
+TRAIL_KEYS = ("position", "tic_id", "toi", "reason", "predicted_transits", "sectors",
+              "products", "listing", "listing_sha256")  # fmt: skip
+
+
+def chosen_entry(paf, t: dict, row: dict) -> dict:
+    """A chosen entry: the trail's own keys (never its listing), then every other frame field
+    from the frozen frame row, so no trail field can stand in for an ephemeris."""
+    entry = {k: t[k] for k in TRAIL_KEYS if k != "listing"}
+    return {**entry, **{f: row[f] for f in paf.FRAME_FIELDS if f not in ("tic_id", "toi")}}
 
 
 def reason_for(paf, row: dict, windows: list[dict]) -> tuple[str, int]:
@@ -390,9 +404,7 @@ def draw() -> None:
         trail = walk(paf, cache, ordered)
         by_tic = {int(r["tic_id"]): r for r in ordered}
         chosen = [
-            {**t, **{f: by_tic[t["tic_id"]][f] for f in paf.FRAME_FIELDS if f not in t}}
-            for t in trail
-            if t["reason"] == "eligible"
+            chosen_entry(paf, t, by_tic[t["tic_id"]]) for t in trail if t["reason"] == "eligible"
         ]
         arms[s] = {"pool": len(ordered), "checked": len(trail), "eligible": len(chosen),
                    "chosen": [{k: v for k, v in c.items() if k != "listing"} for c in chosen],
@@ -480,6 +492,18 @@ def _round_problems(draw_doc: dict, lock_sha: str, check_commit: bool) -> list[s
     return problems
 
 
+def _ci_problems(draw_doc: dict) -> list[str]:
+    """The round's CI evidence read again from GitHub (network), independent of the draw: the run,
+    the lock's bytes in the commit and the round must equal the draw's."""
+    rnd = draw_doc.get("round") or {}
+    try:
+        again = round_evidence(str(rnd.get("lock_commit")))
+    except (SystemExit, Exception) as exc:  # noqa: BLE001 - any failure is a problem
+        return [f"the CI evidence cannot be read again: {exc}"]
+    keys = ("lock_commit", "lock_sha256", "ci_push_run", "margin_seconds", "round")
+    return [f"the round's {k} differs from GitHub's" for k in keys if again[k] != rnd.get(k)]
+
+
 def _beacon_problems(draw_doc: dict, verify_signature: bool) -> list[str]:
     from refute.drand import verify_beacon
 
@@ -505,10 +529,19 @@ def _listing_problems(paf, t: dict, tic: int) -> list[str]:
         problems.append("its listing names another TIC")
     for w in windows:
         name = str(w.get("productFilename", ""))
-        if abs(float(w.get("exptime", 0)) - paf.EXPTIME) > 1e-6:
+        try:
+            exptime = float(w.get("exptime"))
+            sector = w.get("sector")
+            t_min, t_max = float(w.get("t_min_mjd")), float(w.get("t_max_mjd"))
+        except (TypeError, ValueError):
+            problems.append("a listed product has an unreadable cadence or time range")
+            continue
+        if not (math.isfinite(exptime) and abs(exptime - paf.EXPTIME) <= 1e-6):
             problems.append("a listed product is not a 120-s cadence")
-        if int(w.get("sector", 10**6)) > paf.MAX_SECTOR:
-            problems.append(f"a listed sector is above {paf.MAX_SECTOR}")
+        if not (isinstance(sector, int) and 1 <= sector <= paf.MAX_SECTOR):
+            problems.append(f"a listed sector is not an integer from 1 to {paf.MAX_SECTOR}")
+        if not (math.isfinite(t_min) and math.isfinite(t_max) and t_min < t_max):
+            problems.append("a listed product has an invalid time range")
         if not name.endswith("lc.fits") or f"-{tic:016d}-" not in name:
             problems.append("a listed product is not this TIC's light curve")
     if t["sectors"] != sorted({w["sector"] for w in windows}):
@@ -524,11 +557,13 @@ def validate_draw(
     *,
     verify_signature: bool = True,
     check_commit: bool = True,
+    check_ci: bool = True,
 ) -> list[str]:
     """Every check the runner and the evaluation rely on, replayed offline. Returns the problems
-    (empty when the draw is valid). The runner and the evaluation call it with the defaults (the
-    beacon's BLS signature verified, the lock commit read from the repository); the offline tests
-    turn these two off for a synthetic beacon and commit, and test them apart."""
+    (empty when the draw is valid). The draw, the runner and the evaluation call it with the
+    defaults: the beacon's BLS signature verified, the lock commit read from the repository, and
+    the CI run read again from GitHub (network). The offline tests turn these three off for a
+    synthetic beacon, commit and run, and test the first two apart."""
     problems: list[str] = []
     lock_bytes = LOCK.read_bytes() if lock_bytes is None else lock_bytes
     lock_sha = sha256(lock_bytes)
@@ -537,6 +572,8 @@ def validate_draw(
     if draw_doc.get("lock_sha256") != lock_sha:
         problems.append("the draw does not name this lock")
     problems += _round_problems(draw_doc, lock_sha, check_commit)
+    if check_ci:
+        problems += _ci_problems(draw_doc)
     problems += _beacon_problems(draw_doc, verify_signature)
     randomness = (draw_doc.get("beacon") or {}).get("randomness", "")
     rows, exposed, _, part_a = frozen_inputs()
@@ -561,19 +598,22 @@ def validate_draw(
             tic = t["tic_id"]
             row = by_tic[tic]
             where = f"{s}: TIC {tic}"
+            if set(t) != set(TRAIL_KEYS):
+                problems.append(f"{where}: its keys are not the trail's")
+                continue
             if t.get("position") != position or t.get("toi") != row["toi"]:
                 problems.append(f"{where}: its position or TOI is not the frame's")
             if sha256(json.dumps(t["listing"], indent=1).encode()) != t["listing_sha256"]:
                 problems.append(f"{where}: its listing does not match its hash")
-            problems += [f"{where}: {p}" for p in _listing_problems(paf, t, tic)]
+            bad_listing = _listing_problems(paf, t, tic)
+            if bad_listing:  # never recounted from a listing outside the filters
+                problems += [f"{where}: {p}" for p in bad_listing]
+                continue
             reason, n = reason_for(paf, row, t["listing"]["products"])
             if (reason, n) != (t["reason"], t["predicted_transits"]):
                 problems.append(f"{where}: its reason does not recount")
             if reason == "eligible":
-                entry = {k: v for k, v in t.items() if k != "listing"}
-                expected_chosen.append(
-                    {**entry, **{f: row[f] for f in paf.FRAME_FIELDS if f not in entry}}
-                )
+                expected_chosen.append(chosen_entry(paf, t, row))
         n_eligible = len(expected_chosen)
         if n_eligible > PER_STRATUM:
             problems.append(f"{s}: more than {PER_STRATUM} eligible in the trail")

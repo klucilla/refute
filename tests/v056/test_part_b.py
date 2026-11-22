@@ -271,6 +271,20 @@ def test_stop_kinds(rb, monkeypatch):
     assert rb.stop_kind("a worker failed on TIC-1", [small]) == "other"
 
 
+def test_a_failure_prevails_over_a_cap(rb, tmp_path, monkeypatch):
+    ledger = tmp_path / "ledger.json"
+    monkeypatch.setattr(rb, "LEDGER", ledger)
+    monkeypatch.setattr(rb, "_charged", lambda: 1.0)
+    monkeypatch.setattr(rb, "disk_bytes", lambda root=None: 1)
+    small = {"sectors": [1], "key": "TIC-1"}
+    ledger.write_text(json.dumps({"batches": [{"failures": []}]}), "utf-8")
+    assert rb.terminal("stopped", "the disk peak passed 20 GB", [small]) == "cap_disk"
+    ledger.write_text(json.dumps({"batches": [{"failures": ["TIC-1: OSError"]}]}), "utf-8")
+    assert rb.terminal("stopped", "the disk peak passed 20 GB", [small]) == "other"
+    term = json.loads(ledger.read_text("utf-8"))["terminal"]
+    assert term["kind"] == "other" and term["failures"] == ["TIC-1: OSError"]
+
+
 # --- the draw's offline validation -----------------------------------------------------------
 
 
@@ -307,8 +321,7 @@ def _synthetic_draw(dr):
                      "listing_sha256": hashlib.sha256(
                          json.dumps(listing, indent=1).encode()).hexdigest()}  # fmt: skip
             trail.append(entry)
-            plain = {k: v for k, v in entry.items() if k != "listing"}
-            chosen.append({**plain, **{f: r[f] for f in paf.FRAME_FIELDS if f not in plain}})
+            chosen.append(dr.chosen_entry(paf, entry, r))
         arms[s] = {"pool": len(groups[s]), "checked": len(trail), "eligible": len(chosen),
                    "chosen": chosen, "trail": trail}  # fmt: skip
     lock_sha = hashlib.sha256(LOCK_BYTES).hexdigest()
@@ -346,7 +359,7 @@ def synthetic(dr):
 
 
 def _validate(dr, d, lock=LOCK_BYTES):
-    return dr.validate_draw(d, lock, verify_signature=False, check_commit=False)
+    return dr.validate_draw(d, lock, verify_signature=False, check_commit=False, check_ci=False)
 
 
 def test_validate_draw_accepts_a_valid_draw(dr, synthetic):
@@ -355,8 +368,10 @@ def test_validate_draw_accepts_a_valid_draw(dr, synthetic):
 
 
 def test_validate_draw_checks_the_signature_and_the_commit(dr, synthetic):
-    assert dr.validate_draw(synthetic, LOCK_BYTES, check_commit=False)  # synthetic beacon: no BLS
-    assert dr.validate_draw(synthetic, LOCK_BYTES, verify_signature=False)  # no such commit
+    off = {"check_commit": False, "check_ci": False}
+    assert dr.validate_draw(synthetic, LOCK_BYTES, **off)  # a synthetic beacon: no BLS signature
+    off = {"verify_signature": False, "check_ci": False}
+    assert dr.validate_draw(synthetic, LOCK_BYTES, **off)  # no such commit
 
 
 def _rehash(t):
@@ -398,6 +413,16 @@ def test_validate_draw_refuses_tampering(dr, synthetic):
         return change
 
     assert bad(listing_change("tic_id", 1, on_window=False))
+    assert bad(listing_change("sector", 0))
+    assert bad(listing_change("exptime", float("nan")))
+    assert bad(listing_change("t_max_mjd", float("nan")))
+
+    def ephemeris_in_both(d):
+        t, c = d["arms"]["planet"]["trail"][0], d["arms"]["planet"]["chosen"][0]
+        for x in (t, c):
+            x.update(period_days="1.0", epoch_bjd="2459000.0", duration_hours="9.0")
+
+    assert bad(ephemeris_in_both)
     assert bad(listing_change("exptime", 1800.0))
     assert bad(listing_change("sector", 108))
     assert bad(listing_change("productFilename", "tess-s0001-0000000000000001-0001-s_lc.fits"))
@@ -482,6 +507,8 @@ def test_run_state_needs_a_terminal_state(ev, tmp_path, monkeypatch):
         state({"batches": [{**batch, "draw_sha256": "3" * 64}], "terminal": term}, one)
     with pytest.raises(SystemExit):
         state({"batches": [batch], "terminal": {**term, "lock_sha256": "3" * 64}}, one)
+    with pytest.raises(SystemExit):  # a failure during the drain, then a cap stop
+        state({"batches": [{**batch, "failures": ["TIC-2: OSError"]}], "terminal": cap}, two)
 
 
 # --- the exposure scan, second version -------------------------------------------------------

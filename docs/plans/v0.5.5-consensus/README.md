@@ -401,3 +401,41 @@ The maintainer's decisions of 2026-11-22 (13:00), item 0 (#218): a review of the
 What the maintainer decided from it (item 1): door 3 is **found and not pursued**, for the review's reason (section 1): near-tautological, with one to four message templates per test, and already known through D4, T2a and I1. This departs from the plan's "the first door proceeds", by the maintainer's decision. Part B is prepared for a discrimination claim instead (items 2 to 6), through a dated amendment to the plan.
 
 Recorded at the same decision: the site was published by the maintainer's adviser on 2026-11-22 at 00:47, release `20261122T034724Z-23f4528`, with SERVED equal to BUILD.
+
+## v0.5.6 part B: the exploratory step, amendment 1 and the claim, before the lock
+
+Codex's review in three rounds, one conversation (`partb`, resumed with `-Thread`; the cap for a lock), of the work of the maintainer's decisions of 2026-11-22 (13:00), items 2 to 5 (#218): A, the exploratory step; B, the amendment and the lock plan; C, the claim and its attachments. Codex CLI 0.167.0-alpha.3.2, model gpt-6.2-sol, effort high; it answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Reviewed | Verdicts | SHA-256 |
+|---|---|---|---|---|
+| 1 | [partb-round-1-answer.md](partb-round-1-answer.md) | 403a480, 83f1bb0 | A REFUTED, B WEAKENED, C REFUTED; five blocking items | `acc9660ae00866581ee3aad601ebd89361fa89f5898168f0deb60bf08162ab01` |
+| 2 | [partb-round-2-answer.md](partb-round-2-answer.md) | 44374d2 | A SURVIVED, B WEAKENED, C REFUTED; four blocking items | `da91f07410a3ee27a880729ef2492e28cf5f20338a98189bb9414b6bac0af5fb` |
+| 3 | [partb-round-3-answer.md](partb-round-3-answer.md) | 62d3e59 | A SURVIVED, B WEAKENED, C REFUTED; three blocking items | `fcb24be154eb421b278874ebb6e616670342d5645b4eaae7a06878a83cb218de` |
+
+The tokens are cumulative over the conversation `partb`:
+- round 1: 2,987,692 input (2,848,000 cached) and 17,137 output;
+- round 2: 4,814,286 input (4,631,040 cached) and 26,645 output;
+- round 3: 6,301,719 input (6,088,704 cached) and 33,266 output.
+
+The conversation counts **246,281** review tokens (the last round's uncached input plus output).
+
+**Applied after round 1** (44374d2):
+- the prior-exposure scan, second version, as a new record (`part-b-exposure.json`): 973 exposed TICs, a pool of planet 197 and fp 411, and the bias stated;
+- the round bound to the lock and to the CI run;
+- the listings kept whole in the draw;
+- `validate_draw`, called by the draw, the runner and the evaluation;
+- records bound to the draw;
+- the caps as enforced, written down.
+
+**Applied after round 2** (62d3e59):
+- the BLS signature verified, and the round derived from the CI evidence;
+- the listing filters, and the chosen entries rebuilt;
+- records and batches bound to the lock and the draw, with the light curves in the record;
+- a terminal state written after the last batch.
+
+**After round 3, the divergence is settled by the most conservative option.** Three rounds are the cap, so Codex did not review this version. Its three blocking items were applied in full, since each fix only tightens a check:
+1. **The CI run is read again from GitHub** at each consumption (`validate_draw`, `check_ci`), so the draw's own copy of the CI evidence is never taken as given.
+2. **The trail's keys are fixed.** Every field of a chosen entry other than the trail's own keys (the ephemerides included) is rebuilt from the frozen frame. A listing with a non-integer or out-of-range sector, a non-finite cadence or an invalid time range is refused and never recounted.
+3. **Any failure recorded in a batch makes the terminal state's kind `other`,** whatever cap was also reached. The evaluation then refuses, and the maintainer decides. A failure to read the light-curve manifest goes through the same path as a record failure.
+
+The lock waits for the maintainer.

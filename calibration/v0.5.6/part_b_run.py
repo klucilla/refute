@@ -22,6 +22,8 @@ the battery chain of ``run_one`` is unchanged):
 - **a terminal state:** after the last batch drains, the ledger gets ``terminal`` (``complete``,
   or ``stopped`` with its kind: ``cap_cpu``, ``cap_disk``, ``window`` when every remaining
   target's estimated duration exceeds the batch window, or ``other``) and the unrecorded targets.
+  Any failure recorded in a batch (a worker, a record, a light-curve manifest, a deletion) makes
+  the kind ``other``, whatever cap was also reached.
   A ledger with a terminal state is never run again without the maintainer's approval.
 
 **The caps as enforced** (part A's mechanism, unchanged): a target is admitted only if the CPU
@@ -602,8 +604,11 @@ def _finish(rec: dict) -> str | None:
     """Write a target's record, read it back, then release its pixel files; a failure is
     returned as a STOP reason."""
     RECORDS.mkdir(parents=True, exist_ok=True)
-    rec = {**rec, "lock_sha256": LOCK_SHA, "draw_sha256": DRAW_SHA,
-           "light_curve_manifest": _lc_manifest(int(rec["tic_id"]))}  # fmt: skip
+    try:
+        rec = {**rec, "lock_sha256": LOCK_SHA, "draw_sha256": DRAW_SHA,
+               "light_curve_manifest": _lc_manifest(int(rec["tic_id"]))}  # fmt: skip
+    except Exception as exc:  # noqa: BLE001 - stops the run
+        return f"{rec['target_key']}'s light-curve manifest could not be read: {exc}"
     try:
         _write_json(RECORDS / f"{rec['target_key']}.json", rec)
     except Exception as exc:  # noqa: BLE001 - stops the run
@@ -854,13 +859,17 @@ def terminal(state: str, stop: str | None, todo: list[dict]) -> str | None:
     """Write the run's terminal state to the ledger, after the last batch has drained: the
     evaluation counts a missing record as a loss only after a terminal state of kind
     ``complete``, ``cap_cpu``, ``cap_disk`` or ``window``."""
-    kind = "complete" if state == "complete" else stop_kind(stop or "", todo)
     ledger = _ledger()
+    failed = [f for b in ledger.get("batches", []) for f in b.get("failures", [])]
+    # A failure (a worker, a record, a manifest, a deletion) prevails over any cap: an admitted
+    # target without a record is never a loss of the kind reserved for targets never admitted.
+    kind = "complete" if state == "complete" else "other" if failed else stop_kind(stop or "", todo)
     ledger["terminal"] = {
         "state": state,
         "kind": kind,
         "stop": stop,
         "unrecorded": sorted(t["key"] for t in todo),
+        "failures": failed,
         "batches": len(ledger.get("batches", [])),
         "cpu_hours_charged": round(_charged(), 4),
         "disk_peak_bytes": ledger.get("disk_peak_bytes"),

@@ -250,7 +250,7 @@ test_plan:
       part_a_draw: db48e736c9b519bf8863e6e5126f17585a48e804ad42ccea738c6fef3973b72d
       part_a_records: 4cc301b3c944faae25c7ded51a9895b471a684419a559a96bf68495055d0419e
       plan: bfd3bacf58e64486624dfa06e0f7fe9b079351ec91b3e9103f20aa6bb2006599
-      amendment: 7c2190e20203260b2eaffdcf2669ad68fb3e9bdf4ad5ddc1bfcc02a300da0ce9
+      amendment: 01c436ec3032115e6d904173cf7d04ba16dce9de9ba76dd38d15934f734ec0da
       v05_claim: 70065377c10ad7b5fe5a5a199f99d577e29efaff187a44ed4c6115cd9fb7ddad
     max_sector: 107
   stronger:
