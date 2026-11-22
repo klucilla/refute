@@ -11,8 +11,17 @@ the battery chain of ``run_one`` is unchanged):
   no TIC is shared), so the disk peak is measured over ``.cache/v056`` as in part A;
 - the CPU cap: **15 CPU-h** for everything of part B (attempts and interruptions included);
 - every record and deletion record carries ``mode: confirmatory`` and the claim's id;
-- one step, ``run``: it refuses unless the lock verifies (``refute verify``: PASS), the draw names
-  this lock's SHA-256 and the draw's status is ``complete`` or ``short``. There is no pilot.
+- one step, ``run``: it refuses unless the lock verifies (``refute verify``: PASS), the draw
+  validates (``part_b_draw.validate_draw``: this lock, the replayed order, the recounted reasons,
+  the strata, disjointness from part A) and its status is ``complete`` or ``short``. There is no
+  pilot.
+
+**The caps as enforced** (part A's mechanism, unchanged): a target is admitted only if the CPU
+charged, plus the estimates of the targets in flight and its own, stays under 15 CPU-h, and only
+if the measured disk plus reserves stays under 18 GB. A disk sample over 20 GB, or the CPU cap
+reached, STOPS admission: the targets in flight finish and are recorded (so the charged CPU and
+the peak can pass a cap by the work in flight; the ledger records it), and the run ends. Targets
+never admitted have no record; they are losses in the evaluation.
 
 Everything else is part A's: the TESS adapter's download, the v0.5 battery unchanged at stage 2
 without the catalog test, signal identity, pixel files deleted per target after the record and
@@ -109,12 +118,23 @@ def batch_limits() -> tuple[int, int]:
     return min(a[0], b[0]), min(a[1], b[1])
 
 
+def _draw_module():
+    """part_b_draw.py, for the draw's validation (offline)."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("part_b_draw", HERE / "part_b_draw.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+    return mod
+
+
 def targets() -> list[dict]:
     draw = json.loads(DRAW.read_text("utf-8"))
+    problems = _draw_module().validate_draw(draw)
+    if problems:
+        raise SystemExit(f"the draw does not validate: {problems}")
     if draw.get("status") not in ("complete", "short"):
         raise SystemExit("the draw is incomplete: the claim is evaluated without a run")
-    if draw.get("lock_sha256") != sha256(LOCK.read_bytes()):
-        raise SystemExit("the draw does not name this lock")
     out = []
     for arm in STRATA:
         for rank, c in enumerate(draw["arms"][arm]["chosen"]):

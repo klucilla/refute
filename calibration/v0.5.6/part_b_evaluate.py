@@ -15,6 +15,17 @@ photometry that overlaps theirs; never that it "detects false positives".
 - **loss**: status ERROR, MISSING_PRODUCTS, OK with zero coverage, or no record (a run stopped
   by a cap). ERROR is both a non-event in the denominator and a loss for the cap.
 
+**Before anything is counted** (any failure stops; nothing is written):
+- the draw validates (``part_b_draw.validate_draw``: this lock, the order replayed from the
+  beacon, every reason recounted from its kept listing, the strata, part A's disjointness);
+- every record names this claim and ``mode: confirmatory``, its file is named after its
+  ``target_key``, and it is a drawn target; no duplicate;
+- every batch of the ledger names this claim's and this runner's SHA-256;
+- the run is finished: every drawn target has a record, or the last STOP was by a cap (CPU or
+  disk). Only then is a missing record a loss.
+The products each target used (light curves from the adapter's manifest, pixel files from the
+record) are listed against the draw's listing, as a report.
+
 **The data rule:** the draw's status must be ``complete`` or ``short``; in each stratum the losses
 must be at most ``floor(MAX_LOSS_FRACTION * drawn)``. Otherwise the claim is **INCONCLUSIVE**.
 
@@ -55,7 +66,12 @@ ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
 DRAW = HERE / "part-b-draw.json"
 LOCK = HERE / "claim.lock.json"
+CLAIM = HERE / "claim.yaml"
+RUNNER = HERE / "part_b_run.py"
+LEDGER = HERE / "part-b-ledger.json"
 RECORDS = ROOT / ".cache/v056/partb/records"
+DATA = ROOT / ".cache/v056/data"
+CAP_STOPS = ("the cap of", "the disk peak passed")
 OUT_JSON = HERE / "part-b-verdict.json"
 OUT_MD = HERE / "part-b-verdict.md"
 CLAIM_ID = "tess-v0.5.6-part-b-fp-agreement"
@@ -192,6 +208,9 @@ def verdict(draw_status: str, s: dict[str, dict]) -> tuple[str, str, dict]:
     over = [k for k in STRATA if s[k]["losses"] > s[k]["loss_cap"]]
     if over:
         return "INCONCLUSIVE", "losses above the cap in: " + ", ".join(over), tests
+    empty = [k for k in STRATA if s[k]["denominator"] == 0]
+    if empty:
+        return "INCONCLUSIVE", "an empty denominator in: " + ", ".join(empty), tests
     pv = fisher_greater(f["events"], f["denominator"] - f["events"], p["events"],
                         p["denominator"] - p["events"])  # fmt: skip
     rate = Fraction(p["events"], p["denominator"]) if p["denominator"] else Fraction(1)
@@ -243,18 +262,88 @@ def write_once(path: Path, text: str) -> None:
     os.replace(tmp, path)
 
 
-def main() -> None:
-    draw = json.loads(DRAW.read_text("utf-8"))
-    if draw.get("lock_sha256") != sha256(LOCK.read_bytes()):
-        raise SystemExit("the draw does not name this lock")
+def _draw_module():
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("part_b_draw", HERE / "part_b_draw.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+    return mod
+
+
+def load_records(drawn: set[str]) -> tuple[dict[str, dict], list[dict]]:
+    """The run's records, each bound to the claim and to a drawn target; anything else stops."""
     records, files = {}, []
     for f in sorted(RECORDS.glob("*.json")):
         raw = f.read_bytes()
         r = json.loads(raw)
-        if r.get("claim_id") != CLAIM_ID:
+        if r.get("claim_id") != CLAIM_ID or r.get("mode") != "confirmatory":
             raise SystemExit(f"{f.name} is not a record of {CLAIM_ID}")
-        records[r["target_key"]] = r
+        key = r.get("target_key")
+        if f.stem != key or key in records:
+            raise SystemExit(f"{f.name}: its target_key is {key!r}, or it is a duplicate")
+        if key not in drawn:
+            raise SystemExit(f"{f.name} is not a drawn target")
+        records[key] = r
         files.append({"file": f.name, "sha256": sha256(raw)})
+    return records, files
+
+
+def run_state(drawn: set[str], records: dict[str, dict]) -> dict:
+    """The run must be finished: every drawn target recorded, or a STOP by a cap. Every batch must
+    name this claim and this runner."""
+    ledger = json.loads(LEDGER.read_text("utf-8"))
+    claim_sha, runner_sha = sha256(CLAIM.read_bytes()), sha256(RUNNER.read_bytes())
+    for b in ledger.get("batches", []):
+        if b.get("claim_sha256") != claim_sha or b.get("code_sha256") != runner_sha:
+            raise SystemExit(f"batch {b.get('started_utc')} ran another claim or runner")
+    missing = sorted(drawn - set(records))
+    stops = [b.get("stop") for b in ledger.get("batches", []) if b.get("stop")]
+    if missing and not (stops and any(stops[-1].startswith(c) for c in CAP_STOPS)):
+        raise SystemExit(f"the run is not finished: {len(missing)} drawn target(s) without a "
+                         "record and no STOP by a cap")  # fmt: skip
+    return {
+        "missing_records": missing,
+        "last_stop": stops[-1] if stops else None,
+        "cpu_hours_charged": (ledger.get("batches") or [{}])[-1].get("cpu_hours_charged"),
+        "disk_peak_bytes": ledger.get("disk_peak_bytes"),
+    }
+
+
+def products_used(draw: dict, records: dict[str, dict]) -> dict:
+    """The light curves and pixel files each recorded target used, against the draw's listing
+    (reported, never part of the verdict)."""
+    from refute.packs.tess.adapter import manifest_path
+
+    out = {}
+    for s in STRATA:
+        for c in draw["arms"][s]["chosen"]:
+            r = records.get(f"TIC-{c['tic_id']}")
+            if r is None or r.get("status") not in ("OK", "ERROR"):
+                continue
+            mpath = manifest_path(DATA, int(c["tic_id"]))
+            files = json.loads(mpath.read_text("utf-8")).get("files", []) if mpath.exists() else []
+            used = {f["name"]: f.get("sha256") for f in files}
+            listed = set(c["products"])
+            out[f"TIC-{c['tic_id']}"] = {
+                "light_curves": [{"name": n, "sha256": h} for n, h in sorted(used.items())],
+                "pixel_files": [
+                    {"name": t["name"], "sha256": t["sha256"]} for t in r.get("tpf_manifest", [])
+                ],  # fmt: skip
+                "not_in_draw_listing": sorted(set(used) - listed),
+                "listed_not_used": sorted(listed - set(used)),
+            }
+    return out
+
+
+def main() -> None:
+    draw = json.loads(DRAW.read_text("utf-8"))
+    problems = _draw_module().validate_draw(draw)
+    if problems:
+        raise SystemExit(f"the draw does not validate: {problems}")
+    drawn = {f"TIC-{c['tic_id']}" for k in STRATA for c in draw["arms"][k]["chosen"]}
+    records, files = load_records(drawn)
+    state = run_state(drawn, records) if draw["status"] in ("complete", "short") else None
     s = {k: stratum_summary(draw["arms"][k]["chosen"], records) for k in STRATA}
     v, reason, tests = verdict(draw["status"], s)
     doc = {
@@ -270,7 +359,9 @@ def main() -> None:
         "code_sha256": sha256(Path(__file__).read_bytes()),
         "tests": tests,
         "strata": s,
+        "run": state,
         "records": files,
+        "products": products_used(draw, records),
         "written_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
     }
     write_once(OUT_JSON, json.dumps(doc, indent=1) + "\n")

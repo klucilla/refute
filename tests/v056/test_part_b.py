@@ -171,8 +171,8 @@ def test_order_is_a_reproducible_permutation(dr):
 
 def test_pool_matches_the_frozen_inputs(dr):
     pool = yaml.safe_load((B / "pool-targets.yaml").read_text("utf-8"))
-    prep = json.loads((A / "part-b-prep.json").read_text("utf-8"))
-    exposed = set(prep["exposure"]["exposed_tics"])
+    exposure = json.loads((A / "part-b-exposure.json").read_text("utf-8"))
+    exposed = set(exposure["exposed_tics"])
     frame = {
         int(r["tic_id"]): r
         for r in csv.DictReader(io.StringIO((A / "part-a-frame.csv").read_text("utf-8")))
@@ -253,3 +253,156 @@ def test_runner_diff_is_current():
     diff = "".join(difflib.unified_diff(a, b, "docs/validation/v0.5.6/part_a_run.py",
                                         "calibration/v0.5.6/part_b_run.py"))  # fmt: skip
     assert (B / "part_b_run.diff").read_text("utf-8") == diff
+
+
+# --- the draw's offline validation -----------------------------------------------------------
+
+
+SIGNATURE = "ab" * 48
+LOCK_BYTES = b'{"a synthetic lock": true}\n'
+
+
+def _synthetic_draw(dr):
+    """A draw built from the real frozen inputs, a synthetic beacon and synthetic listings that
+    make every walked TIC eligible."""
+    import hashlib
+
+    randomness = hashlib.sha256(bytes.fromhex(SIGNATURE)).hexdigest()
+    rows, exposed, _, _ = dr.frozen_inputs()
+    groups = dr.strata(rows, exposed)
+    paf = dr.frame_module()
+    arms = {}
+    for s in dr.STRATA:
+        trail, chosen = [], []
+        for position, r in enumerate(dr.order(groups[s], randomness, s)[: dr.PER_STRATUM]):
+            tic, epoch = int(r["tic_id"]), float(r["epoch_bjd"]) - 2400000.5
+            name = f"tess-s0001-{tic:016d}-0001-s_lc.fits"
+            window = {"sector": 1, "exptime": 120.0, "obs_id": "x", "productFilename": name,
+                      "dataURI": "mast:x", "t_min_mjd": epoch - 0.5,
+                      "t_max_mjd": epoch + 3.5 * float(r["period_days"])}  # fmt: skip
+            listing = {"tic_id": tic, "queried_utc": "2026-11-22T00:00:00Z", "products": [window]}
+            reason, n = dr.reason_for(paf, r, [window])
+            entry = {"position": position, "tic_id": tic, "toi": r["toi"], "reason": reason,
+                     "predicted_transits": n, "sectors": [1], "products": [name],
+                     "listing": listing,
+                     "listing_sha256": hashlib.sha256(
+                         json.dumps(listing, indent=1).encode()).hexdigest()}  # fmt: skip
+            trail.append(entry)
+            chosen.append({k: v for k, v in entry.items() if k != "listing"})
+        arms[s] = {"pool": len(groups[s]), "checked": len(trail), "eligible": len(chosen),
+                   "chosen": chosen, "trail": trail}  # fmt: skip
+    lock_sha = hashlib.sha256(LOCK_BYTES).hexdigest()
+    return {
+        "schema": "refute-v056-part-b-draw-2",
+        "status": "complete",
+        "lock_sha256": lock_sha,
+        "round": {"round": 7, "lock_sha256": lock_sha},
+        "beacon": {"round": 7, "signature": SIGNATURE, "randomness": randomness},
+        "arms": arms,
+    }
+
+
+@pytest.fixture(scope="module")
+def synthetic(dr):
+    return _synthetic_draw(dr)
+
+
+def test_validate_draw_accepts_a_valid_draw(dr, synthetic):
+    assert all(t["reason"] == "eligible" for s in dr.STRATA for t in synthetic["arms"][s]["trail"])
+    assert dr.validate_draw(synthetic, LOCK_BYTES) == []
+
+
+def test_validate_draw_refuses_tampering(dr, synthetic):
+    def bad(change):
+        d = copy.deepcopy(synthetic)
+        change(d)
+        return dr.validate_draw(d, LOCK_BYTES)
+
+    assert dr.validate_draw(synthetic, b"another lock")
+    assert bad(lambda d: d["arms"]["fp"]["trail"].reverse())
+    assert bad(lambda d: d["arms"]["planet"]["trail"][0].update(reason="1 predicted transit(s)"))
+    assert bad(lambda d: d["arms"]["planet"]["chosen"].pop())
+    assert bad(lambda d: d.update(status="short"))
+    assert bad(lambda d: d["beacon"].update(randomness="00" * 32))
+    assert bad(lambda d: d["round"].update(lock_sha256="0" * 64))
+
+    def part_a_product(d):
+        d["arms"]["fp"]["chosen"][0]["products"] = [
+            json.loads((A / "part-a-draw.json").read_text("utf-8"))["arms"]["open"]["trail"][0][
+                "products"
+            ][0]
+        ]
+
+    assert bad(part_a_product)
+
+
+# --- the evaluation's checks before counting -------------------------------------------------
+
+
+def test_empty_denominator_is_inconclusive(ev):
+    empty = _stratum(ev, events=0, non_events=0)
+    empty["drawn"], empty["loss_cap"] = 0, 0
+    v, why, _ = ev.verdict("complete", {"planet": empty, "fp": _stratum(ev, 20, 130)})
+    assert v == "INCONCLUSIVE" and "empty" in why
+
+
+def _write(path: Path, obj) -> None:
+    path.write_text(json.dumps(obj), "utf-8")
+
+
+def test_records_are_bound(ev, tmp_path, monkeypatch):
+    monkeypatch.setattr(ev, "RECORDS", tmp_path)
+    good = {"claim_id": ev.CLAIM_ID, "mode": "confirmatory", "target_key": "TIC-1"}
+    _write(tmp_path / "TIC-1.json", good)
+    records, files = ev.load_records({"TIC-1", "TIC-2"})
+    assert set(records) == {"TIC-1"} and len(files) == 1
+    _write(tmp_path / "TIC-3.json", {**good, "target_key": "TIC-3"})
+    with pytest.raises(SystemExit):
+        ev.load_records({"TIC-1", "TIC-2"})  # not drawn
+    (tmp_path / "TIC-3.json").unlink()
+    _write(tmp_path / "TIC-2.json", {**good, "target_key": "TIC-1"})
+    with pytest.raises(SystemExit):
+        ev.load_records({"TIC-1", "TIC-2"})  # a file not named after its key
+    _write(tmp_path / "TIC-2.json", {**good, "target_key": "TIC-2", "mode": "exploratory"})
+    with pytest.raises(SystemExit):
+        ev.load_records({"TIC-1", "TIC-2"})
+
+
+def test_missing_records_need_a_cap_stop(ev, tmp_path, monkeypatch):
+    claim, runner, ledger = tmp_path / "c.yaml", tmp_path / "r.py", tmp_path / "l.json"
+    claim.write_text("claim", "utf-8")
+    runner.write_text("runner", "utf-8")
+    for name, value in (("CLAIM", claim), ("RUNNER", runner), ("LEDGER", ledger)):
+        monkeypatch.setattr(ev, name, value)
+    batch = {"claim_sha256": ev.sha256(b"claim"), "code_sha256": ev.sha256(b"runner"),
+             "stop": None}  # fmt: skip
+    _write(ledger, {"batches": [batch]})
+    assert ev.run_state({"TIC-1"}, {"TIC-1": {}})["missing_records"] == []
+    with pytest.raises(SystemExit):
+        ev.run_state({"TIC-1", "TIC-2"}, {"TIC-1": {}})
+    _write(ledger, {"batches": [{**batch, "stop": "the cap of 15.0 CPU-h is reached"}]})
+    assert ev.run_state({"TIC-1", "TIC-2"}, {"TIC-1": {}})["missing_records"] == ["TIC-2"]
+    _write(ledger, {"batches": [{**batch, "code_sha256": "0" * 64}]})
+    with pytest.raises(SystemExit):
+        ev.run_state({"TIC-1"}, {"TIC-1": {}})
+
+
+# --- the exposure scan, second version -------------------------------------------------------
+
+
+def test_exposure_patterns():
+    ex = _load(A / "part_b_exposure.py", "part_b_exposure_under_test")
+    paf = ex._frame_module()
+    assert ex.text_tics(paf, b'{"tic": 123456}') == {123456}
+    assert ex.text_tics(paf, b"tic=7777 and TIC-12345") == {7777, 12345}
+    assert ex.text_tics(paf, b"tess-s0008-0000000001003831-0136-s_lc.fits") == {1003831}
+    assert ex.text_tics(paf, b"statistic 12345; ticket 4444") == set()
+    assert ex.json_tics({"a": [{"TIC": "TIC 5555"}, {"tid": 6666, "x": {"tics": [1, "2"]}}]}) == {
+        1,
+        2,
+        5555,
+        6666,
+    }
+    assert ex.klass("calibration/v0.5/inputs/toi.csv") == "catalogue_copy"
+    assert ex.klass("calibration/v0.5/inputs-references/pscomppars-references.csv") == "record"
+    assert ex.klass(".cache/v05/x/tess-0000000000000001-") == "light_curve"

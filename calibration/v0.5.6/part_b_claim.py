@@ -25,6 +25,8 @@ INPUTS = {
     "frame_record": V + "part-a-frame.json",
     "frame_code": V + "part_a_frame.py",
     "prep": V + "part-b-prep.json",
+    "exposure": V + "part-b-exposure.json",
+    "exposure_code": V + "part_b_exposure.py",
     "prep_code": V + "part_b_prep.py",
     "part_a_run": V + "part_a_run.py",
     "part_a_draw": V + "part-a-draw.json",
@@ -80,7 +82,7 @@ def claim() -> dict:
             "protocol": "docs/plans/v0.5.6-plan-amendment-1.md, section 4 (its SHA-256 in "
             "test_plan.discovery.inputs.amendment)",
             "strata": "confirmation half of part-a-frame.csv: planet = the planet arm; fp = the "
-            "open arm with tfopwg_disp_descriptive FP; TICs in part-b-prep.json exposed_tics "
+            "open arm with tfopwg_disp_descriptive FP; TICs in part-b-exposure.json exposed_tics "
             "left out; FA, PC, APC, KP, CP and blank not drawn",
             "draw": "150 eligible per stratum (at least 120), in the order of the drand round "
             "fixed after the lock (part_b_draw.py)",
