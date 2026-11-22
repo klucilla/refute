@@ -1,0 +1,51 @@
+{
+ "accepted_by_the_domain": 2,
+ "counted_utc": "2026-11-22T10:17:35Z",
+ "decision": "the maintainer's addendum of 2026-11-21 (22:45), item 2 (#218)",
+ "design": "docs/plans/v0.5.5-t3b-preparation.md, section 3",
+ "domain": "v0.4 D-1 to D-9 (pilot.triage), unchanged",
+ "inputs": {
+  "excluded_v05_targets": 11,
+  "members": 52,
+  "pool_before_v05_exclusion": 63,
+  "pscomppars": {
+   "query": "select pl_name,tic_id,pl_orbper,disc_facility from pscomppars where tic_id is not null",
+   "retrieved_utc": "2026-11-22T01:57:41Z",
+   "sha256": "dbe4f2f83eb6c42d741ee58ec4ec73b6ffd4752ba568a3ab65b0f18dc73fc87d",
+   "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync"
+  },
+  "tess_eb": {
+   "obtained": "2026-10-18T00:56:26",
+   "sha256": "61cb8749ce2ebf87d3fdf495af888b2f803064c67a23c117f742b85598f5a323",
+   "source_url": "https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/258/16/tess-ebs&-out=TIC,m_TIC,RAJ2000,DEJ2000,Per&-out.max=unlimited"
+  },
+  "toi": {
+   "query": "select toi,tid,tfopwg_disp,pl_orbper,pl_tranmid,pl_trandurh,pl_trandep,st_tmag,toi_created,rowupdate from toi",
+   "retrieved_utc": "2026-11-22T01:57:39Z",
+   "sha256": "9c335b71e5e2062df4cc7ae738d54da62d402da14a4dc7d2f3d6f6a47e3e58fb",
+   "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync"
+  },
+  "v05_targets_sha256": "dac40e09a6d261585bc4e9d14e97a79795e9f9287b661d71160871a903837e69"
+ },
+ "label": "T3b: the count of the updated frame (counts only; it selects, draws and records nothing)",
+ "members_triaged": 52,
+ "method_status": "not_validated",
+ "needed": 11,
+ "note": "a count is a counted fact, not a record; selecting real targets, drand, and availability or infeasibility records are the maintainer's",
+ "order": "ascending TIC; no randomness",
+ "per_star_log": "kept in .cache/v056/t3b/ (TESS-EB is under a restricted licence)",
+ "per_star_log_sha256": "4ee9ed14134040a873189fc95ae42c39ddc17ca8e166d2bfd9e8ff3eca4c3908",
+ "process_cpu_seconds": 13.75,
+ "reached_the_threshold": false,
+ "rejected_by_clause": {
+  "D-1": 16,
+  "D-4": 19,
+  "D-5": 1,
+  "D-6": 5,
+  "D-7": 5,
+  "D-8": 4
+ },
+ "s_max": 107,
+ "shortage": 9,
+ "stopped_at_the_threshold": false
+}
