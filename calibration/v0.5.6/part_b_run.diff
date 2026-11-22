@@ -1,0 +1,246 @@
+--- docs/validation/v0.5.6/part_a_run.py
++++ calibration/v0.5.6/part_b_run.py
+@@ -1,73 +1,33 @@
+-"""v0.5.6 part A (exploratory): the labelled v0.5 battery on the drawn TOIs, the pilot first
+-(docs/plans/v0.5.6-plan.md; the maintainer's decisions of 2026-11-21, 22:30, item 3, and of
+-2026-11-22, 09:00, item 1; #218).
+-
+-**What runs:** for each drawn TIC, the TESS adapter's download (SPOC 120-s light curves and pixel
+-files up to sector 107, into ``.cache/v056/data``), then the v0.5 battery unchanged: the C3
+-claim's test plan (``calibration/v0.5/claim.yaml``, its SHA-256 checked), stage 2, **without the
+-catalog test**, by the same calls as ``refute.packs.tess.discover.measure.chain`` (detrending,
+-prewhitening, search, ``attack_candidate``, coverage, the sensitivity rule, deferral, the
+-decisive aggregate). The chain is reproduced here, not changed, so that each test's message,
+-coverage and sensitivity are kept (``measure.chain`` keeps only status and severity). No code in
+-``src/`` changes.
+-
+-**Every record** carries ``mode: exploratory`` and the limits label; outputs are never verdicts on
+-any TOI, never candidates in a public claim. ``method_status: not_validated``. Zero coverage stays
+-INCONCLUSIVE (``enforce_coverage``).
+-
+-**Signal identity** (recorded, never a replacement): the found period against the TOI's at the
+-factors 1, 2 and 0.5 within 0.1 % (C3's tolerance), and the found epoch's offset from the TOI's
+-predicted transit, in hours.
+-
+-**Caps** (the decisions): 50 CPU-h for everything of part A, the pilot, attempts and reruns
+-included, in ``part-a-ledger.json``. The pilot is the first 5 TICs of each arm in draw order. Its
+-projection stopped the run on disk (144 GB against 20 GB); the decision of 2026-11-22 (09:00)
+-turned the disk cap into a **peak** (what is on disk at any moment) and keeps the battery. After
+-Codex's round ``partarest`` (REFUTED for running with the first version; its five blocking items
+-are applied here):
+-
+-- **Pixel files are deleted per target** after its record is written and read back. Before the
+-  deletion, the record carries each TPF's manifest (MAST product name, observation id, data URI,
+-  sector, size, SHA-256), so the target can be reproduced by downloading again. The 10 pilot
+-  records are anchored by SHA-256 in ``part-a-pilot.json`` and do not change; every target's
+-  deletion manifest is also written, and read back, before any file is removed, to a new record in
+-  ``.cache/v056/run/tpf-deletions``. A resumed deletion keeps every entry of that manifest.
+-- **What is deleted** is the file found on disk by the target's TIC in its name, by its literal
+-  path, inside ``.cache/v056/data/lightkurve`` only: the name must carry the TIC (16 digits) and
+-  end in ``_tp.fits``, no component from ``.cache`` down may be a link or a junction, the resolved
+-  path must equal the literal one, and the file's SHA-256 is computed just before the deletion and
+-  must equal the manifest's. Light curves stay. (Residual: the check and the deletion are two
+-  calls, so a change made between them by another program is not excluded.)
+-- **The peak stays under the cap by admission:** a target starts only if the measured size of
+-  ``.cache/v056``, plus a reserve for every target in flight, plus its own reserve stays at or
+-  under 18 GB. A reserve is the target's listed sectors times the pilot's largest per-sector size
+-  (101 220 480 bytes of TPF plus 4 164 480 of light curve; about twice the pilot's typical size),
+-  and the measured size already counts what in-flight targets have written, so their files are
+-  counted twice. The first target in draw order that fits is admitted. The size is sampled every 2
+-  seconds; a sample over 20 GB stops admission and the run STOPS (what is in flight finishes and
+-  is recorded). This is a margin, not a proof: the adapter downloads what MAST lists up to sector
+-  107, and each record compares the sectors downloaded with the listed ones.
+-- **Network and workers:** Monday to Friday, 08:00 to 18:00, at most 10 workers and 2
+-  simultaneous downloads; otherwise up to 20 workers and 6 simultaneous downloads. A batch takes
+-  the smaller of the limits now and 30 minutes later. The parent admits a target only while fewer
+-  downloads than the limit are in progress (each worker reports the end of its fetch), and a
+-  semaphore shared by the workers holds the same limit around the adapter's fetch.
+-- **Batches:** a target is admitted only if the batch's elapsed time plus its estimated duration
+-  (65 s plus 25 s per listed sector, the pilot's largest per-sector wall time) stays within 28
+-  minutes; the batch then drains. Its CPU estimate (40 s plus 20 s per sector) must also fit under
+-  the 50 CPU-h cap with what is charged and in flight. BelowNormal priority and CPUs 8 to 31
+-  (``pinrun``).
+-- **Resumable:** every target is one record file, and a recorded target never runs again. A marker
+-  with a heartbeat lists the targets in flight; after an unclean end, the next start charges their
+-  lost CPU by an upper bound (their wall time up to the last heartbeat plus two intervals) in the
+-  ledger's interruptions. A worker or record failure stops admission, and every other finished
+-  result is still recorded. The parent's own CPU (sampling, hashing, deletion) is charged too.
+-- **Downloaded volume** per target: the bytes of the files that the fetch wrote and that were not
+-  on disk before it (``downloaded_bytes``); files reused from the cache are counted apart
+-  (``reused_bytes``). Partial transfers of failed attempts are not counted (the adapter removes
+-  them), so the total is a lower bound. The pilot's records carry their bytes on disk.
+-
+-Usage: ``part_a_run.py pilot`` (done) then ``part_a_run.py rest``.
++"""v0.5.6 part B (confirmatory): part A's runner on part B's drawn TOIs (docs/plans/
++v0.5.6-plan-amendment-1.md; the maintainer's decisions of 2026-11-22, 13:00, items 3 to 5; #218).
++
++**The same runner as part A.** This file is ``docs/validation/v0.5.6/part_a_run.py`` with only
++these changes (the unified diff is ``part_b_run.diff`` next to this file, and a test checks that
++the battery chain of ``run_one`` is unchanged):
++- the inputs and outputs: the claim ``calibration/v0.5.6/claim.yaml`` (its test plan is v0.5's,
++  without the catalog test, as part A ran it), the draw ``part-b-draw.json`` with the strata
++  ``planet`` and ``fp``, the ledger ``part-b-ledger.json``, and the records, deletion records and
++  marker under ``.cache/v056/partb``. Downloads still go to ``.cache/v056/data`` (part A's cache;
++  no TIC is shared), so the disk peak is measured over ``.cache/v056`` as in part A;
++- the CPU cap: **15 CPU-h** for everything of part B (attempts and interruptions included);
++- every record and deletion record carries ``mode: confirmatory`` and the claim's id;
++- one step, ``run``: it refuses unless the lock verifies (``refute verify``: PASS), the draw names
++  this lock's SHA-256 and the draw's status is ``complete`` or ``short``. There is no pilot.
++
++Everything else is part A's: the TESS adapter's download, the v0.5 battery unchanged at stage 2
++without the catalog test, signal identity, pixel files deleted per target after the record and
++its deletion manifest are written and read back (only inside ``.cache/v056/data/lightkurve``, by
++literal path, links and junctions refused, SHA-256 checked), admission under 18 GB with a STOP
++over a 20 GB peak, the network and worker limits (Monday to Friday, 08:00 to 18:00: at most 10
++workers and 2 simultaneous downloads; otherwise up to 20 and 6), batches of up to 28 minutes,
++BelowNormal priority on CPUs 8 to 31 (``pinrun``), and resumption target by target with
++interruptions charged by an upper bound.
++
++**Every record** carries the limits label and ``method_status: not_validated``. Zero coverage
++stays INCONCLUSIVE (``enforce_coverage``). The claim's verdict is computed only by
++``part_b_evaluate.py``, never here.
++
++Usage: ``part_b_run.py run``.
+ """
+ 
+ from __future__ import annotations
+@@ -86,20 +46,23 @@
+ from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, wait
+ from pathlib import Path
+ 
+-ROOT = Path(__file__).resolve().parents[3]
++ROOT = Path(__file__).resolve().parents[2]
+ HERE = Path(__file__).resolve().parent
+-CLAIM = ROOT / "calibration/v0.5/claim.yaml"
+-DRAW = HERE / "part-a-draw.json"
+-LEDGER = HERE / "part-a-ledger.json"
++CLAIM = HERE / "claim.yaml"
++DRAW = HERE / "part-b-draw.json"
++LEDGER = HERE / "part-b-ledger.json"
+ CACHE = ROOT / ".cache"
+ WORK = CACHE / "v056"
+ DATA = WORK / "data"
+ LIGHTKURVE = DATA / "lightkurve"
+-RECORDS = WORK / "run/records"
+-TPF_LOGS = WORK / "run/tpf-deletions"
+-MARKER = WORK / "run/in-flight.json"
++RECORDS = WORK / "partb/records"
++TPF_LOGS = WORK / "partb/tpf-deletions"
++MARKER = WORK / "partb/in-flight.json"
+ LABEL = "WEAKENED; does not meet D1, D2, D4, T2a"
+-CAP_CPU_HOURS = 50.0
++CAP_CPU_HOURS = 15.0
++CLAIM_ID = "tess-v0.5.6-part-b-fp-agreement"
++LOCK = HERE / "claim.lock.json"
++STRATA = ("planet", "fp")
+ CAP_DISK_BYTES = 20e9
+ ADMIT_DISK_BYTES = 18e9
+ RESERVE_PER_SECTOR = 101_220_480 + 4_164_480
+@@ -148,10 +111,12 @@
+ 
+ def targets() -> list[dict]:
+     draw = json.loads(DRAW.read_text("utf-8"))
+-    if draw.get("status") != "complete":
+-        raise SystemExit("the draw is not complete")
++    if draw.get("status") not in ("complete", "short"):
++        raise SystemExit("the draw is incomplete: the claim is evaluated without a run")
++    if draw.get("lock_sha256") != sha256(LOCK.read_bytes()):
++        raise SystemExit("the draw does not name this lock")
+     out = []
+-    for arm in ("planet", "open"):
++    for arm in STRATA:
+         for rank, c in enumerate(draw["arms"][arm]["chosen"]):
+             out.append({**c, "arm": arm, "rank": rank, "key": f"TIC-{c['tic_id']}"})
+     return out
+@@ -242,7 +207,8 @@
+         "toi": target["toi"],
+         "arm": target["arm"],
+         "rank": target["rank"],
+-        "mode": "exploratory",
++        "mode": "confirmatory",
++        "claim_id": CLAIM_ID,
+         "limits_label": LABEL,
+         "method_status": "not_validated",
+     }
+@@ -478,7 +444,8 @@
+     log = {
+         "target_key": target_key,
+         "tic_id": tic_id,
+-        "mode": "exploratory",
++        "mode": "confirmatory",
++        "claim_id": CLAIM_ID,
+         "limits_label": LABEL,
+         "status": "manifest-written",
+         "written_utc": (log or {}).get("written_utc", utc()),
+@@ -766,43 +733,35 @@
+ 
+ 
+ def main(step: str) -> None:
++    from refute.core.lock import verify_claim
++
++    if step != "run":
++        raise SystemExit("usage: part_b_run.py run")
++    result = verify_claim(CLAIM)
++    if result.status.value != "PASS":
++        raise SystemExit(f"the lock does not verify: {result.status.value} {result.messages}")
+     all_targets = targets()
+-    if step == "pilot":
+-        run_batch(pilot_set(all_targets), "pilot")
+-        p = projection(len(all_targets))
+-        ledger = _ledger()
+-        ledger["pilot_projection"] = p
+-        _save_ledger(ledger)
+-        print(json.dumps(p, indent=1))
+-    elif step == "rest":
+-        p = _ledger().get("pilot_projection")
+-        # The decision of 2026-11-22 (09:00): the projected total no longer stops the run on
+-        # disk (the cap is a peak now); the CPU projection still must fit.
+-        if p is None or p["projected_cpu_hours"] > CAP_CPU_HOURS:
+-            raise SystemExit("no pilot projection, or its CPU projection is over the cap")
+-        charged = charge_interruption()
+-        if charged:
+-            print("interruption charged:", json.dumps(charged), flush=True)
+-        parent_cpu = time.process_time()
+-        released = sweep()
+-        ledger = _ledger()
+-        ledger.setdefault("sweeps", []).append(
+-            {
+-                "utc": utc(),
+-                "released": released,
+-                "parent_cpu_hours": round((time.process_time() - parent_cpu) / 3600.0, 6),
+-            }
+-        )
+-        _save_ledger(ledger)
+-        print("pixel files released before the batches:", released, flush=True)
+-        while any(not (RECORDS / f"{t['key']}.json").exists() for t in all_targets):
+-            stop = run_batch(all_targets, "rest")
+-            if stop:
+-                print("STOP:", stop, flush=True)
+-                raise SystemExit(2)
+-        print("all targets recorded", json.dumps(_totals()), flush=True)
+-    else:
+-        raise SystemExit("usage: part_a_run.py pilot|rest")
++    charged = charge_interruption()
++    if charged:
++        print("interruption charged:", json.dumps(charged), flush=True)
++    parent_cpu = time.process_time()
++    released = sweep()
++    ledger = _ledger()
++    ledger.setdefault("sweeps", []).append(
++        {
++            "utc": utc(),
++            "released": released,
++            "parent_cpu_hours": round((time.process_time() - parent_cpu) / 3600.0, 6),
++        }
++    )
++    _save_ledger(ledger)
++    print("pixel files released before the batches:", released, flush=True)
++    while any(not (RECORDS / f"{t['key']}.json").exists() for t in all_targets):
++        stop = run_batch(all_targets, "run")
++        if stop:
++            print("STOP:", stop, flush=True)
++            raise SystemExit(2)
++    print("all targets recorded", json.dumps(_totals()), flush=True)
+ 
+ 
+ if __name__ == "__main__":

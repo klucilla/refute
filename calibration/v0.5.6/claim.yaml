@@ -1,0 +1,283 @@
+# Refute v0.5.6 part B: agreement of the labelled v0.5 battery with TFOPWG dispositions.
+# docs/plans/v0.5.6-plan-amendment-1.md (the maintainer's decisions of 2026-11-22, 13:00; #218).
+# Written by calibration/v0.5.6/part_b_claim.py before the lock. The targets attachment is the
+# pool; the drand round, fixed after the lock, orders it (part_b_draw.py); only the drawn TICs
+# are run (part_b_run.py), and the claim's verdict comes only from part_b_evaluate.py.
+schema_version: 1
+id: tess-v0.5.6-part-b-fp-agreement
+kind: discover
+pack: tess
+title: 'Refute v0.5.6 part B: agreement of the labelled v0.5 battery with TFOPWG dispositions (WEAKENED;
+  does not meet D1, D2, D4, T2a)'
+hypothesis: Among the TOIs of the frame's confirmation half, the v0.5 battery (limits label 'WEAKENED;
+  does not meet D1, D2, D4, T2a') refutes, on the TOI's own signal, a larger share of the TOIs dispositioned
+  FP by the TFOPWG than of the TOIs matched to TESS-discovered confirmed planets (Fisher exact, one-sided,
+  alpha 0.05), while its rate on those planets stays at most 0.05 with an upper Wilson 95 % bound
+  at most 0.10. It measures agreement with TFOPWG dispositions on photometry that overlaps theirs,
+  never that the battery detects false positives. The hypothesis was suggested by part A's descriptive
+  table (FP 0/2/5/14 of 21; planet arm 13/16/9/82 of 120) and was not a pre-written door.
+created: '2026-11-22'
+authors:
+- Klauber Lucilla
+definitions:
+  protocol: docs/plans/v0.5.6-plan-amendment-1.md, section 4 (its SHA-256 in test_plan.discovery.inputs.amendment)
+  strata: 'confirmation half of part-a-frame.csv: planet = the planet arm; fp = the open arm with
+    tfopwg_disp_descriptive FP; TICs in part-b-prep.json exposed_tics left out; FA, PC, APC, KP, CP
+    and blank not drawn'
+  draw: 150 eligible per stratum (at least 120), in the order of the drand round fixed after the lock
+    (part_b_draw.py)
+  event: status OK, nonzero coverage, outcome REFUTED and identity matched (period factor 1 within
+    0.001, epoch within half the TOI's duration)
+  missing_data: ERROR counts as a non-event in the denominator and as a loss; MISSING_PRODUCTS, zero
+    coverage and no record are losses outside the denominator; more than floor(0.10 x drawn) losses
+    in a stratum make the claim INCONCLUSIVE
+  verdict: INCONCLUSIVE if the draw is incomplete or the losses pass the cap; SURVIVED if p <= 0.05
+    and the guard holds; WEAKENED if p <= 0.05 and the guard fails; REFUTED if p > 0.05 (part_b_evaluate.py).
+    Never 'confirmed', 'discovery', 'TRUE' or a planet letter.
+  known_defects: OverflowError in gaussian_sigma_from_chi2 via centroid_v5 (#59; such a target is
+    ERROR); the half-period search defect (#59; not an event)
+  method_status: not_validated
+  limits_label: WEAKENED; does not meet D1, D2, D4, T2a
+  max_sector: S_max = 107 (test_plan.discovery.max_sector).
+data_sources:
+- name: NASA Exoplanet Archive, TOI table (ephemerides; tfopwg_disp as a stratum)
+  url: https://exoplanetarchive.ipac.caltech.edu/TAP/sync
+  retrieved: '2026-11-22T01:57:39Z'
+  notes: 'Read once for part A''s frame (part-a-frame.json); never queried again. Use of tfopwg_disp:
+    docs/plans/sources/v0.5.6-nexsci-answer-2026-11-22.md.'
+- name: NASA Exoplanet Archive, Planetary Systems Composite Parameters
+  url: https://exoplanetarchive.ipac.caltech.edu/TAP/sync
+  retrieved: '2026-11-22T01:57:41Z'
+  notes: The planet arm's match (part-a-frame.json).
+- name: 'MAST: SPOC 120-s light curves and target pixel files'
+  url: https://mast.stsci.edu
+  retrieved: at the draw (metadata) and the run (files), after the lock
+  notes: Each listing's SHA-256 is in part-b-draw.json; each file's in the records.
+- name: drand mainnet, default chain
+  url: https://api.drand.sh
+  retrieved: the round fixed by part_b_draw.py round, after the lock
+  notes: BLS signature verified (refute.drand).
+attachments:
+- path: pool-targets.yaml
+  role: targets
+- path: part_b_claim.py
+  role: claim-generator
+- path: part_b_draw.py
+  role: draw
+- path: part_b_run.py
+  role: runner
+- path: part_b_run.diff
+  role: runner-diff
+- path: part_b_evaluate.py
+  role: evaluation
+test_plan:
+  data:
+    mission: TESS
+    author: SPOC
+    exptime_seconds: 120
+    flux_column: pdcsap_flux
+    quality_bitmask: default
+    target_pixel_files: true
+    neighbor_radius_arcsec: 120.0
+  detrend:
+    method: robust-local-quadratic
+    window_days: 1.0
+    knot_spacing_days: 0.1
+    segment_gap_days: 0.5
+    min_points_per_knot: 30
+    clip_sigma: 3.0
+    clip_iterations: 2
+    upper_clip_sigma: 5.0
+    transit_mask_half_width_durations: 1.0
+  search:
+    method: bls-two-stage
+    objective: likelihood
+    period_min_days: 0.5
+    period_max_days: 20.0
+    durations_hours:
+    - 0.5
+    - 1.0
+    - 1.5
+    - 2.0
+    - 3.0
+    - 4.0
+    - 6.0
+    - 8.0
+    bin_minutes: 10.0
+    frequency_factor: 1.0
+    peaks_per_sector: 5
+    max_clusters: 5
+    cluster_tolerance: 0.01
+    block_gap_days: 10.0
+    refine_samples_per_width: 6.0
+    refine_width_factor: 1.5
+    final_duration_steps: 21
+    final_oversample: 20
+  gauntlet:
+    snr:
+      min_snr: 7.1
+    odd_even:
+      max_sigma: 3.0
+      min_transits_each: 2
+    secondary_eclipse:
+      max_sigma: 3.0
+      fatal_depth_ratio: 0.1
+    plausibility:
+      max_duration_ratio: 1.5
+      max_companion_radius_rjup: 2.5
+      max_stellar_radius_rel_err: 0.3
+      unreliable_tic_dispositions:
+      - SPLIT
+      - DUPLICATE
+      - ARTIFACT
+      max_tmag_mismatch: 1.0
+    holdout_by_year:
+      min_snr: 5.0
+      timing_sigma: 3.0
+      min_predicted_transits: 2
+      min_train_transits: 3
+      min_window_coverage: 0.5
+      baseline_gap_durations: 0.25
+      baseline_outer_durations: 1.5
+      timing_step_minutes: 1.0
+      timing_scan_half_width_durations: 0.5
+      hidden_detrend_window_factor: 3.0
+      max_timing_sigma_durations: 1.0
+      require_valid_train: true
+      max_train_duration_period_ratio: 0.2
+      max_hidden_window_fraction: 0.5
+    events:
+      min_coverage: 0.5
+      baseline_gap_durations: 0.25
+      baseline_outer_durations: 1.5
+    centroid_shift:
+      max_sigma: 3.0
+      min_offset_pixels: 0.5
+      min_sectors: 1
+    aperture_depth:
+      core_radius_pixels: 1.5
+      dilation_pixels: 1
+      max_sigma: 3.0
+      min_depth_ratio: 1.2
+    nearby_contamination:
+      max_separation_arcsec: 21.0
+      max_eclipse_depth: 1.0
+      min_crowdsap: 0.8
+      ignored_dispositions:
+      - SPLIT
+      - DUPLICATE
+      - ARTIFACT
+    period_alias:
+      min_box_delta_bic: 10.0
+      sine_harmonics: 2
+      detrend_window_periods: 3.0
+      systematic_periods_days:
+      - 13.7
+      - 6.85
+      - 4.566666666666666
+      - 3.425
+      - 1.0
+      systematic_tolerance: 0.01
+    systematics:
+      dump_margin_hours: 1.0
+      max_dump_fraction: 0.5
+      min_events_for_dumps: 3
+      max_sap_sigma: 3.0
+      max_sap_rel_diff: 0.5
+      max_background_sigma: 3.0
+      max_background_fraction: 0.5
+    eb_catalog:
+      match_radius_arcsec: 21.0
+      period_tolerance: 0.01
+      period_factors:
+      - 1.0
+      - 2.0
+      - 0.5
+      same_photometry_catalogs:
+      - TESS-EB
+    corrections:
+      version: 1
+      enabled: false
+      b_min: 20
+      gap_split: 5.0
+      fap_max: 0.0001
+      max_components: 3
+      k_clip: 2.5
+      h_min: 0.9
+      m_beta: 1.2
+      r_min: 20
+      alias_z_f: 18.47
+      alias_f: 0.5
+      capacity_b: 0.0
+      capacity_s: 0.0
+  discovery:
+    version: 2
+    decisive:
+    - snr
+    - odd_even
+    - secondary_eclipse
+    - plausibility
+    - aperture_depth
+    - nearby_contamination
+    - period_alias
+    - systematics
+    - edge_events
+    - sinusoid
+    - duty_cycle
+    diagnostic:
+    - holdout_by_year
+    - single_event
+    - event_consistency
+    - centroid_shift
+    stages:
+      centroid_shift: 2
+      aperture_depth: 2
+    required_diagnostics:
+    - holdout_by_year
+    method_status: not_validated
+    method_status_reference: docs/validation/v0.2.1/closing-2026-10-27.md
+    survived_meaning: 'a target''s SURVIVED is recorded and never used alone: the claim''s verdict
+      comes from part_b_evaluate.py (agreement with TFOPWG dispositions); the method is not validated'
+    inputs:
+      frame: 4ce8378d291f9aff93f11ab78ad47a3835cf9a0b4380edf2962fb841bdeb6a7a
+      frame_record: ae4c32a2a8b045f70aa9a32541dcce21e8922a45ca4bc62b66f203e21ee2010e
+      frame_code: 147d49387cec1f8135454b0c0cd2b86dd3815193e725d46075b296a04cdf8060
+      prep: 49b396467e7ac23e627db0d09e64b63e6d1ff2d8cd73dc53225da1149e65bd0a
+      prep_code: 4d32f5dc078d73b7ffc6bc7c45e817fdd7af893ad4293d2a116205df17fd8be9
+      part_a_run: 2764e48ec83f04951b291f8873ea923dec6b5d8d425056f6253eb61a56b38131
+      part_a_draw: db48e736c9b519bf8863e6e5126f17585a48e804ad42ccea738c6fef3973b72d
+      part_a_records: 4cc301b3c944faae25c7ded51a9895b471a684419a559a96bf68495055d0419e
+      plan: bfd3bacf58e64486624dfa06e0f7fe9b079351ec91b3e9103f20aa6bb2006599
+      amendment: f8b573c6cf3fda7fdbb96b7cf21cf96040b6ce0e9aea7e9bf207cc29c196a609
+      v05_claim: 70065377c10ad7b5fe5a5a199f99d577e29efaff187a44ed4c6115cd9fb7ddad
+    max_sector: 107
+  stronger:
+    odd_even_alternative_depth_fraction: 1.0
+    secondary_alternative_depth_fraction: 1.0
+    aperture_alternative_ratio_increment: 0.3
+    centroid_alternative_offset_factor: 2.0
+    sap_alternative_increment: 0.3
+    background_alternative_increment: 0.3
+    period_alias_realizations: 50
+    period_alias_required_failures: 45
+    single_event_max_ratio: 0.88
+    min_measured_events: 3
+    chi2_alpha: 0.00135
+    edge_gap_days: 0.3
+    edge_reach_durations: 2.0
+    edge_min_fraction: 0.5
+    edge_alternative_depth_fraction: 0.5
+    brightening_min_depth_ratio: 0.1
+    sinusoid_min_significance: 15.0
+    sinusoid_max_period_days: 10.0
+    sinusoid_min_amplitude_ratio: 0.5
+    sinusoid_mask_durations: 1.0
+    max_duty_cycle: 0.5
+    centroid_control_epochs: 20
+    centroid_min_controls: 10
+    centroid_min_sectors: 2
+    centroid_qualification_sigma: 3.0
+    centroid_max_unqualified_fraction: 0.5
+    shape_max_ingress_fraction: 0.45
+    shape_alternative_ingress_fraction: 0.5
+    depth_stability_alternative_fraction: 0.5

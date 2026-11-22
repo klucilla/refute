@@ -940,6 +940,12 @@ Nothing depends on `tfopwg_disp` until NExScI answers. `method_status: not_valid
   [docs/plans/v0.5.6-t3b-availability-record.md](docs/plans/v0.5.6-t3b-availability-record.md).
   Both frames give 2 domain-eligible stars against the 11 needed. It is **not** an infeasibility
   record, and T3b stays deferred (`INCONCLUSIVE`).
+- **Part B, amendment 1** (the maintainer's decision of 2026-11-22, 13:00, #218):
+  [docs/plans/v0.5.6-plan-amendment-1.md](docs/plans/v0.5.6-plan-amendment-1.md). Door 3 is
+  found and not pursued, a departure from "the first door proceeds" decided by the maintainer.
+  Part B is instead a claim of **agreement** with TFOPWG dispositions (FP against the planet arm,
+  in the confirmation half), suggested by part A's table and disclosed as such:
+  `calibration/v0.5.6/claim.yaml`. Its lock and drand round wait for the maintainer.
 
 **Exit criteria** (detail in the plan)
 - [ ] Part A ran on the set and within the cost the maintainer approved; the frame, the split by
