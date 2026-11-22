@@ -11,11 +11,13 @@ the lock (it rewrites the claim from the current files); after the lock, any cha
 claim's ``definitions`` just before the lock: the network, the chain hash (``refute.drand``), the
 round's number and its time by the public formula genesis + period x (round - 1). ``--drand-round
 auto`` takes the first round published at least ``LOCK_MARGIN_SECONDS`` (30 minutes) after now;
-``--drand-round N`` writes N. Without the option, the claim keeps the round it already has (or
-none, before the lock is prepared); the draw refuses a claim without a round.
+no other value is accepted. Without the option, the claim keeps the round it already has (or none,
+before the lock is prepared); the draw refuses a claim without a round. Once the lock exists the
+script refuses to write anything: there is no relock (the maintainer's decision of 2026-11-22,
+19:30, item 1).
 
 Usage (from the project root): ``.venv/Scripts/python.exe -B calibration/v0.5.6/part_b_claim.py
-[--drand-round auto|N]``.
+[--drand-round auto]``.
 """
 
 from __future__ import annotations
@@ -72,8 +74,8 @@ def drand_definitions(number: int | None) -> dict[str, str]:
         "drand_round_time_utc": UNSET if number is None else round_time(number).isoformat(),
         "drand_rule": "the draw uses this round and no other; its BLS signature is verified, "
         "and its time must be after the lock commit's time on GitHub (the creation time of the "
-        "lock commit's CI push run, read from GitHub); otherwise the lock is discarded without a "
-        "draw and redone with a new number (recorded)",
+        "lock commit's CI push run, read from GitHub); otherwise the execution stops without a "
+        "draw and the maintainer decides (no relock)",
     }
 
 
@@ -184,24 +186,18 @@ def claim(drand_round: int | None = None) -> dict:
 def main() -> None:
     from refute.drand import round_after
 
+    # Once the lock exists the claim is never rewritten, with or without an option: there is no
+    # relock (the maintainer's decision of 2026-11-22, 19:30, item 1).
+    if (HERE / "claim.lock.json").exists() or (HERE / "part-b-draw.json").exists():
+        raise SystemExit("the claim is locked; it is never rewritten (no relock)")
     args = sys.argv[1:]
-    if args[:1] == ["--drand-round"] and len(args) == 2:
-        if args[1] == "auto":
-            now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-            number = round_after(now, LOCK_MARGIN_SECONDS)
-        else:
-            number = int(args[1])
+    if args == ["--drand-round", "auto"]:
+        now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        number = round_after(now, LOCK_MARGIN_SECONDS)
     elif not args:
         number = current_round()
     else:
-        raise SystemExit("usage: part_b_claim.py [--drand-round auto|N]")
-    if (HERE / "part-b-draw.json").exists():
-        raise SystemExit("the draw is recorded; the claim is never rewritten")
-    if (HERE / "claim.lock.json").exists() and not args:
-        raise SystemExit(
-            "the claim is locked: only a discarded lock (its round passed before the "
-            "lock reached GitHub) is redone, with --drand-round and a recorded relock"
-        )
+        raise SystemExit("usage: part_b_claim.py [--drand-round auto]")
     text = HEADER + yaml.safe_dump(claim(number), sort_keys=False, allow_unicode=True, width=96)
     (HERE / "claim.yaml").write_text(text, "utf-8", newline="\n")
     print("claim.yaml written")

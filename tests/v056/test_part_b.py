@@ -455,12 +455,99 @@ def test_claim_round(dr, tmp_path, monkeypatch):
             dr.claim_round()
 
 
-def test_claim_has_no_round_before_the_lock():
+def test_claim_round_state_before_the_lock():
+    # Before the lock the claim holds either no round yet, or the round fixed by
+    # ``--drand-round auto`` just before the lock (a legitimate state, round 4's item 2).
+    from refute.drand import round_time
+
     gen = _load(B / "part_b_claim.py", "part_b_claim_round_under_test")
     d = yaml.safe_load((B / "claim.yaml").read_text("utf-8"))["definitions"]
-    if not (B / "claim.lock.json").exists():
-        assert d["drand_round"].startswith("unset")
+    if d["drand_round"].isdigit():
+        assert d["drand_round_time_utc"] == round_time(int(d["drand_round"])).isoformat()
+    else:
+        assert d["drand_round"] == gen.UNSET and not (B / "claim.lock.json").exists()
     assert gen.drand_definitions(ROUND_NUMBER)["drand_round"] == str(ROUND_NUMBER)
+
+
+def test_the_claim_generator_never_writes_after_the_lock(tmp_path, monkeypatch):
+    # The decision of 2026-11-22, 19:30, item 1: no relock, no ``--drand-round N`` at all, and no
+    # rewrite of any kind once the lock exists.
+    gen = _load(B / "part_b_claim.py", "part_b_claim_lock_under_test")
+    monkeypatch.setattr(gen, "HERE", tmp_path)
+    (tmp_path / "claim.lock.json").write_text("{}", "utf-8")
+    for argv in ([], ["--drand-round", "auto"], ["--drand-round", str(ROUND_NUMBER)]):
+        monkeypatch.setattr(gen.sys, "argv", ["part_b_claim.py", *argv])
+        with pytest.raises(SystemExit):
+            gen.main()
+        assert not (tmp_path / "claim.yaml").exists()
+    (tmp_path / "claim.lock.json").unlink()
+    monkeypatch.setattr(gen.sys, "argv", ["part_b_claim.py", "--drand-round", str(ROUND_NUMBER)])
+    with pytest.raises(SystemExit):
+        gen.main()  # a number is never accepted, even before the lock
+    assert not (tmp_path / "claim.yaml").exists()
+
+
+def test_lock_commit_refuses_a_relock(dr, monkeypatch):
+    # The lock commit is the one commit that touches the lock file; a second commit that
+    # touches it (a relock, a removal and a new addition) is refused (19:30, item 1).
+    def fake(history):
+        def _git(*args):
+            if "--diff-filter=A" in args:
+                return "".join(c + "\n" for c, kind in history if kind == "A").encode()
+            return "".join(c + "\n" for c, _ in history).encode()
+
+        return _git
+
+    monkeypatch.setattr(dr, "_git", fake([("c1", "A")]))
+    assert dr.lock_commit() == "c1"
+    for history in ([("c2", "M"), ("c1", "A")], [("c3", "A"), ("c2", "D"), ("c1", "A")], []):
+        monkeypatch.setattr(dr, "_git", fake(history))
+        with pytest.raises(SystemExit):
+            dr.lock_commit()
+
+
+def test_check_verifies_the_lock_before_reading_the_round(dr, monkeypatch):
+    import refute.core.lock as core_lock
+
+    class Failed:
+        class status:  # noqa: N801 - mirrors the result's shape
+            value = "TAMPERED"
+
+        messages = ["synthetic"]
+
+    def never(*_a, **_k):
+        raise AssertionError("the round was read before the lock verified")
+
+    monkeypatch.setattr(core_lock, "verify_claim", lambda _path: Failed)
+    monkeypatch.setattr(dr, "claim_round", never)
+    monkeypatch.setattr(dr, "lock_commit", never)
+    with pytest.raises(SystemExit):
+        dr.check()
+
+
+def test_validate_draw_refuses_a_boolean_sector(dr, synthetic):
+    # Round 4's item 3: ``True == 1`` in Python, so a boolean sector equals sector 1 everywhere
+    # else; the listing filter itself must refuse it.
+    d = copy.deepcopy(synthetic)
+    t = d["arms"]["fp"]["trail"][0]
+    t["listing"]["products"][0]["sector"] = True
+    _rehash(t)
+    assert any("sector" in p for p in _validate(dr, d))
+
+
+def test_a_recorded_failure_prevails_over_complete(rb, tmp_path, monkeypatch):
+    # Round 4's item 4: on a resumed run with every record present and a failure already in the
+    # ledger, the terminal kind is ``other``, never ``complete``.
+    ledger = tmp_path / "ledger.json"
+    monkeypatch.setattr(rb, "LEDGER", ledger)
+    monkeypatch.setattr(rb, "_charged", lambda: 1.0)
+    ledger.write_text(json.dumps({"batches": [{"failures": []}]}), "utf-8")
+    assert rb.terminal("complete", None, []) == "complete"
+    ledger.write_text(
+        json.dumps({"batches": [{"failures": ["TIC-1: OSError"]}, {"failures": []}]}), "utf-8"
+    )
+    assert rb.terminal("complete", None, []) == "other"
+    assert json.loads(ledger.read_text("utf-8"))["terminal"]["kind"] == "other"
 
 
 # --- the evaluation's checks before counting -------------------------------------------------

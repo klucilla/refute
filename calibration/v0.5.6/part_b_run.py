@@ -861,9 +861,10 @@ def terminal(state: str, stop: str | None, todo: list[dict]) -> str | None:
     ``complete``, ``cap_cpu``, ``cap_disk`` or ``window``."""
     ledger = _ledger()
     failed = [f for b in ledger.get("batches", []) for f in b.get("failures", [])]
-    # A failure (a worker, a record, a manifest, a deletion) prevails over any cap: an admitted
-    # target without a record is never a loss of the kind reserved for targets never admitted.
-    kind = "complete" if state == "complete" else "other" if failed else stop_kind(stop or "", todo)
+    # A failure (a worker, a record, a manifest, a deletion) prevails over any cap and over
+    # ``complete``, also on a resumed run: a ledger with a recorded failure never ends ``complete``
+    # (the maintainer's decision of 2026-11-22, 19:30, item 2).
+    kind = "other" if failed else "complete" if state == "complete" else stop_kind(stop or "", todo)
     ledger["terminal"] = {
         "state": state,
         "kind": kind,

@@ -1,6 +1,7 @@
 """v0.5.6 part B (confirmatory): the pool, the drand round, the draw and its validation (docs/plans/
 v0.5.6-plan-amendment-1.md; the maintainer's decisions of 2026-11-22, 13:00, items 3 and 5;
-Codex's round ``partb`` 1 to 3; the decision of 2026-11-22, 14:30, item 2; #218).
+Codex's round ``partb`` 1 to 4; the decisions of 2026-11-22, 14:30, item 2, and 19:30, items 1
+and 2; #218).
 ``method_status: not_validated``. Limits label: 'WEAKENED; does not meet D1, D2, D4, T2a'.
 
 Steps (each refuses to write over its output, except the pool, which is rewritten only before the
@@ -14,14 +15,16 @@ lock):
    - ``fp``: the open arm with the frame's ``tfopwg_disp_descriptive`` equal to ``FP``;
    - every TIC of ``exposed_tics`` is left out; FA, PC, APC, KP, CP and blank are not drawn.
    Written as the claim's targets attachment (``pool-targets.yaml``, ``refute-tess-targets-1``).
-2. ``check`` (after the lock commit is pushed): the drand round is **fixed in the claim** before
-   the lock (``definitions``: the network, the chain hash, the round and its time by the public
+2. ``check`` (after the lock commit is pushed): the lock is verified first (``refute verify``:
+   PASS), and only then is the round read. The drand round is **fixed in the claim** before the
+   lock (``definitions``: the network, the chain hash, the round and its time by the public
    formula genesis + period x (round - 1), chosen about 30 minutes after the lock commit;
-   ``part_b_claim.py --drand-round auto``). The lock commit is the one commit that adds
-   ``calibration/v0.5.6/claim.lock.json``; its time on GitHub is the creation time of its CI
-   push run, read from GitHub (workflow ``ci.yml``, event ``push``, ``head_sha`` the commit, run
-   attempt 1). If the round is not after that time, the lock is discarded without a draw and
-   redone with a new number (recorded). Writes nothing.
+   ``part_b_claim.py --drand-round auto``). The lock commit is the only commit that touches
+   ``calibration/v0.5.6/claim.lock.json``, and it adds it; its time on GitHub is the creation time
+   of its CI push run, read from GitHub (workflow ``ci.yml``, event ``push``, ``head_sha`` the
+   commit, run attempt 1). If the round is not after that time, the execution **stops without a
+   draw** and the maintainer decides: there is no relock (the maintainer's decision of
+   2026-11-22, 19:30, item 1). Writes nothing.
 3. ``draw`` (once the round is published): the lock must verify (``refute verify``: PASS), and
    the claim's round must be after the lock's time on GitHub, read again. That round and no other
    is fetched, and its BLS signature verified. Each stratum, sorted by TIC, is shuffled with
@@ -305,11 +308,19 @@ def claim_round() -> dict:
 
 
 def lock_commit() -> str:
-    """The one commit that added the lock file, from the local repository."""
-    found = _git("log", "--diff-filter=A", "--format=%H", "--", LOCK_PATH_IN_REPO).decode().split()
-    if len(found) != 1:
-        raise SystemExit(f"{len(found)} commits add {LOCK_PATH_IN_REPO}; the maintainer decides")
-    return found[0]
+    """The lock commit, from the local repository: the one commit that touches the lock file, and
+    it adds it. There is no relock (the maintainer's decision of 2026-11-22, 19:30, item 1): a
+    second commit that touches the lock (a change, a removal, a new addition) stops, and the
+    maintainer decides."""
+    path = ("--full-history", "--", LOCK_PATH_IN_REPO)
+    touching = _git("log", "--format=%H", *path).decode().split()
+    added = _git("log", "--diff-filter=A", "--format=%H", *path).decode().split()
+    if len(touching) != 1 or added != touching:
+        raise SystemExit(
+            f"{len(touching)} commits touch {LOCK_PATH_IN_REPO} ({len(added)} add it); the lock "
+            "commit must be the only one, and it adds the lock: STOP, the maintainer decides"
+        )
+    return touching[0]
 
 
 def github_time(commit: str) -> dict:
@@ -351,15 +362,31 @@ def round_is_after(number: int, github_time_utc: str) -> bool:
     return round_time(number) > when
 
 
+NOT_AFTER = (
+    "the claim's round is not after the lock commit's time on GitHub: STOP without a draw; the "
+    "maintainer decides (no relock; the decision of 2026-11-22, 19:30, item 1)"
+)
+
+
+def verified_lock() -> None:
+    """The lock must verify (``refute verify``: PASS) before the claim's round is read."""
+    from refute.core.lock import verify_claim
+
+    result = verify_claim(CLAIM)
+    if result.status.value != "PASS":
+        raise SystemExit(f"the lock does not verify: {result.status.value} {result.messages}")
+
+
 def check() -> None:
-    """After the lock commit is pushed: is the claim's round after the lock's time on GitHub? If
-    not, the lock is discarded without a draw and redone with a new number (the decision of
-    2026-11-22, 14:30, item 2). Writes nothing."""
+    """After the lock commit is pushed: the lock is verified first; then, is the claim's round
+    after the lock's time on GitHub? If not, the execution stops without a draw and the maintainer
+    decides (the decision of 2026-11-22, 19:30, item 1). Writes nothing."""
+    verified_lock()
     rnd, gh = claim_round(), github_time(lock_commit())
     ok = round_is_after(rnd["round"], gh["github_time_utc"])
     print(json.dumps({**rnd, **gh, "round_after_github_time": ok}, indent=1))
     if not ok:
-        raise SystemExit("the round had passed when the lock reached GitHub: discard the lock")
+        raise SystemExit(NOT_AFTER)
 
 
 # --- 3. the draw -------------------------------------------------------------------------------
@@ -410,21 +437,15 @@ def walk(paf, cache: Path, ordered: list[dict]) -> list[dict]:
 
 
 def draw() -> None:
-    from refute.core.lock import verify_claim
     from refute.drand import drand_seed, interpreter_record
 
     if DRAW.exists():
         raise SystemExit("the draw is recorded; never written over")
-    result = verify_claim(CLAIM)
-    if result.status.value != "PASS":
-        raise SystemExit(f"the lock does not verify: {result.status.value} {result.messages}")
+    verified_lock()
     rnd = claim_round()
     gh = github_time(lock_commit())
     if not round_is_after(rnd["round"], gh["github_time_utc"]):
-        raise SystemExit(
-            "the claim's round had passed when the lock reached GitHub: the lock is discarded "
-            "without a draw and redone with a new number (recorded)"
-        )
+        raise SystemExit(NOT_AFTER)
     seed, beacon = drand_seed(rnd["round"])
     if int(beacon["randomness"], 16) != seed:
         raise SystemExit("the beacon's randomness does not match its seed")
@@ -559,7 +580,8 @@ def _listing_problems(paf, t: dict, tic: int) -> list[str]:
             continue
         if not (math.isfinite(exptime) and abs(exptime - paf.EXPTIME) <= 1e-6):
             problems.append("a listed product is not a 120-s cadence")
-        if not (isinstance(sector, int) and 1 <= sector <= paf.MAX_SECTOR):
+        # ``bool`` is a subtype of ``int`` (``True == 1``): a boolean is never a sector.
+        if not (type(sector) is int and 1 <= sector <= paf.MAX_SECTOR):
             problems.append(f"a listed sector is not an integer from 1 to {paf.MAX_SECTOR}")
         if not (math.isfinite(t_min) and math.isfinite(t_max) and t_min < t_max):
             problems.append("a listed product has an invalid time range")

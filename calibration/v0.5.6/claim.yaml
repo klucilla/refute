@@ -47,8 +47,8 @@ definitions:
   drand_round_time_utc: 'unset: fixed just before the lock (part_b_claim.py --drand-round auto)'
   drand_rule: the draw uses this round and no other; its BLS signature is verified, and its time must
     be after the lock commit's time on GitHub (the creation time of the lock commit's CI push run,
-    read from GitHub); otherwise the lock is discarded without a draw and redone with a new number
-    (recorded)
+    read from GitHub); otherwise the execution stops without a draw and the maintainer decides (no
+    relock)
 data_sources:
 - name: NASA Exoplanet Archive, TOI table (ephemerides; tfopwg_disp as a stratum)
   url: https://exoplanetarchive.ipac.caltech.edu/TAP/sync
@@ -260,7 +260,7 @@ test_plan:
       part_a_draw: db48e736c9b519bf8863e6e5126f17585a48e804ad42ccea738c6fef3973b72d
       part_a_records: 4cc301b3c944faae25c7ded51a9895b471a684419a559a96bf68495055d0419e
       plan: bfd3bacf58e64486624dfa06e0f7fe9b079351ec91b3e9103f20aa6bb2006599
-      amendment: 807d28c112c74cebea7c326acb8d59574ca7f00d3baacda690524d9ad306ff43
+      amendment: 1b0111e4e7db9bc5f6bfacb59416cf8cdf94a1cb40e3e8ff4173b1d7a0454283
       v05_claim: 70065377c10ad7b5fe5a5a199f99d577e29efaff187a44ed4c6115cd9fb7ddad
     max_sector: 107
   stronger:
