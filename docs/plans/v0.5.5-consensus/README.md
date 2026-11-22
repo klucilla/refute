@@ -360,3 +360,32 @@ The tokens are cumulative over the conversation `partaframe`:
 The conversation counts **89,772** review tokens (the last round's uncached input plus output).
 
 Applied before anything was recorded: the listing mirrors the adapter's filters (author SPOC, exposure exactly 120 s, *lc.fits products, the TIC, sectors up to 107), a failed query is never an empty answer; predicted transits are a union of indices with a 0.01 d edge margin; the split is int(sha256(seed:split:tic), 16) % 2, with a test vector; the exposure scan reads commit c4d6fa3's blobs, text and TIC columns, with evidence per TIC; each step consumes the frozen output of the one before, writes atomically and refuses to write over; the draw's final record is written only after its checks, or as incomplete; the plan's text is aligned. No second round (one round by default in exploratory mode).
+
+## v0.5.6 part A: the rest of the run (pixel files deleted per target) and T3b's record
+
+Codex's round (one round, the process diet) on docs/validation/v0.5.6/part_a_run.py, changed for the maintainer's decisions of 2026-11-22 (09:00), item 1 (pixel files deleted per target after the record, the disk cap as a peak, download limits), and on docs/plans/v0.5.6-t3b-availability-record.md with its pointer in ROADMAP.md (item 2), before anything ran or was deleted (#218). Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answer is stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [partarest-round-1-answer.md](partarest-round-1-answer.md) | gpt-6.2-sol, high | **A (runner): REFUTED** with five blocking items: the deletion could reach a file other than the one validated; a resumed deletion could overwrite the deletion manifest; admission at 18 GB is not a proof of the 20 GB peak, and the queue blocked on its head; the hours, batch length and CPU cap could be passed by work in flight, and interruptions were not charged; a failure while draining could lose finished results, and the downloaded volume counted reused files. **B (T3b record): SURVIVED** | `a8f09f3557c0040b9e3797ebe05525f389896c7bcba061dd4691701f6e38af6e` |
+
+The tokens are cumulative over the conversation `partarest`:
+
+- round 1: 295,073 input (240,640 cached) and 5,457 output;
+
+The conversation counts **59,890** review tokens (the last round's uncached input plus output).
+
+Applied before anything ran or was deleted (no second round, one round by default in exploratory mode):
+1. The file deleted is the one found on disk by the TIC in its name, by its literal path, with the TIC and `_tp.fits` checked and its SHA-256 computed just before the deletion. The residual race between the check and the deletion is stated in the runner.
+2. A resumed deletion keeps every entry of the manifest already written, and adds any file found since. The adapter's own removal of incomplete FITS files (in `src/`, unchanged) removes only incomplete downloads, which no record lists.
+3. Admission keeps a margin, not a proof, and says so. The reserve is about twice the pilot's typical per-sector size, measured files are counted twice, and samples are taken every 2 s, with a STOP over 20 GB. Each record lists sectors downloaded beyond the listed ones. The first target in draw order that fits is admitted.
+4. Hours, batch length and CPU:
+   - A batch takes the smaller limits of now and 30 minutes later.
+   - A target is admitted only if its estimated duration fits in 28 minutes and its estimated CPU fits under the cap.
+   - The parent admits a target only while fewer downloads than the limit are in progress.
+   - A heartbeat marker charges an interruption's lost CPU by an upper bound.
+   - The parent's own CPU is charged.
+5. Draining and download volume:
+   - Every finished result is recorded even if another fails, and a failure stops admission.
+   - The downloaded volume counts only files that were not on disk before the fetch. Reused bytes are counted apart, and partial transfers are a stated lower bound.
+   - The pilot's bytes on disk are reported apart.

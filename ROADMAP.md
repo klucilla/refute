@@ -936,6 +936,11 @@ T2a'), to public TOIs. Explore first (part A, exploratory: outputs are never ver
 confirm what exploration picks on targets it did not use, under a lock (part B, confirmatory).
 Nothing depends on `tfopwg_disp` until NExScI answers. `method_status: not_validated`.
 
+- **T3b availability record** (adopted by the maintainer's decision of 2026-11-22, 09:00, #218):
+  [docs/plans/v0.5.6-t3b-availability-record.md](docs/plans/v0.5.6-t3b-availability-record.md).
+  Both frames give 2 domain-eligible stars against the 11 needed. It is **not** an infeasibility
+  record, and T3b stays deferred (`INCONCLUSIVE`).
+
 **Exit criteria** (detail in the plan)
 - [ ] Part A ran on the set and within the cost the maintainer approved; the frame, the split by
       TIC and the draw were committed before any light curve was read; every output carries its
