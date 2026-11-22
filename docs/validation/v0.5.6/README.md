@@ -16,6 +16,23 @@ battery carries its limits label, **"WEAKENED; does not meet D1, D2, D4, T2a"**.
 | `part_a_run.py`, `part-a-ledger.json` | The labelled v0.5 battery on the drawn TICs (the pilot first), and the caps ledger (50 CPU-h). |
 | `t3b_updated_count.py` | T3b's count of the updated frame (the addendum of 22:45, item 2): metadata only, counts only. |
 | `codex_tokens.py` | The per-thread count of Codex review tokens (the decision of 22:30, item 1). |
+| `part-a-records.json`, `part_a_report.py`, `part-a-report.json`, `part-a-report.md` | Part A's 240 records and TPF deletion records (unchanged, with SHA-256), and the exploratory door report. |
+| `part_b_prep.py`, `part-b-prep.json`, `part-b-prep.md` | Part B's exploratory step: the REFUTED cases one by one and identity against outcome. Its prior-exposure section is superseded by `part-b-exposure.*`. |
+| `part_b_exposure.py`, `part-b-exposure.json`, `part-b-exposure.md` | The prior-exposure scan, second version: all evidence per TIC, catalogue copies excluded by a written list. |
+
+## Part B
+
+- The design is [amendment 1](../../plans/v0.5.6-plan-amendment-1.md), and the steps are in
+  [the lock plan](../../plans/v0.5.6-part-b-lock-plan.md).
+- The claim, its pool and its scripts are in
+  [`calibration/v0.5.6/`](../../../calibration/v0.5.6/), with the draw, the ledger and the
+  verdict once they exist.
+- **The Codex review of part B** (conversation `partb`) and the independent review of its options
+  are stored, with unchanged bytes, in the consensus record
+  [`docs/plans/v0.5.5-consensus/`](../../plans/v0.5.5-consensus/README.md):
+  - `partb-independent-review.md`;
+  - `partb-round-1-answer.md` to `partb-round-3-answer.md`, and any later round;
+  - see the README's sections "v0.5.6 part B". They are not moved, since their bytes are recorded.
 
 ## Data and acknowledgments
 

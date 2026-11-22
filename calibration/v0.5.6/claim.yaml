@@ -1,8 +1,9 @@
 # Refute v0.5.6 part B: agreement of the labelled v0.5 battery with TFOPWG dispositions.
 # docs/plans/v0.5.6-plan-amendment-1.md (the maintainer's decisions of 2026-11-22, 13:00; #218).
 # Written by calibration/v0.5.6/part_b_claim.py before the lock. The targets attachment is the
-# pool; the drand round, fixed after the lock, orders it (part_b_draw.py); only the drawn TICs
-# are run (part_b_run.py), and the claim's verdict comes only from part_b_evaluate.py.
+# pool; the drand round fixed in the definitions (about 30 minutes after the lock) orders it
+# (part_b_draw.py); only the drawn TICs are run (part_b_run.py), and the claim's verdict comes only
+# from part_b_evaluate.py.
 schema_version: 1
 id: tess-v0.5.6-part-b-fp-agreement
 kind: discover
@@ -24,8 +25,8 @@ definitions:
   strata: 'confirmation half of part-a-frame.csv: planet = the planet arm; fp = the open arm with
     tfopwg_disp_descriptive FP; TICs in part-b-exposure.json exposed_tics left out; FA, PC, APC, KP,
     CP and blank not drawn'
-  draw: 150 eligible per stratum (at least 120), in the order of the drand round fixed after the lock
-    (part_b_draw.py)
+  draw: 150 eligible per stratum (at least 120), in the order of the drand round these definitions
+    fix (part_b_draw.py)
   event: status OK, nonzero coverage, outcome REFUTED and identity matched (period factor 1 within
     0.001, epoch within half the TOI's duration)
   missing_data: ERROR counts as a non-event in the denominator and as a loss; MISSING_PRODUCTS, zero
@@ -39,6 +40,15 @@ definitions:
   method_status: not_validated
   limits_label: WEAKENED; does not meet D1, D2, D4, T2a
   max_sector: S_max = 107 (test_plan.discovery.max_sector).
+  drand_network: drand mainnet, default chain (https://api.drand.sh); genesis 1595431050, period 30
+    s (refute.drand)
+  drand_chain_hash: 8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce
+  drand_round: 'unset: fixed just before the lock (part_b_claim.py --drand-round auto)'
+  drand_round_time_utc: 'unset: fixed just before the lock (part_b_claim.py --drand-round auto)'
+  drand_rule: the draw uses this round and no other; its BLS signature is verified, and its time must
+    be after the lock commit's time on GitHub (the creation time of the lock commit's CI push run,
+    read from GitHub); otherwise the lock is discarded without a draw and redone with a new number
+    (recorded)
 data_sources:
 - name: NASA Exoplanet Archive, TOI table (ephemerides; tfopwg_disp as a stratum)
   url: https://exoplanetarchive.ipac.caltech.edu/TAP/sync
@@ -55,7 +65,7 @@ data_sources:
   notes: Each listing's SHA-256 is in part-b-draw.json; each file's in the records.
 - name: drand mainnet, default chain
   url: https://api.drand.sh
-  retrieved: the round fixed by part_b_draw.py round, after the lock
+  retrieved: the round fixed in the definitions, fetched by part_b_draw.py draw once published
   notes: BLS signature verified (refute.drand).
 attachments:
 - path: pool-targets.yaml
@@ -250,7 +260,7 @@ test_plan:
       part_a_draw: db48e736c9b519bf8863e6e5126f17585a48e804ad42ccea738c6fef3973b72d
       part_a_records: 4cc301b3c944faae25c7ded51a9895b471a684419a559a96bf68495055d0419e
       plan: bfd3bacf58e64486624dfa06e0f7fe9b079351ec91b3e9103f20aa6bb2006599
-      amendment: 01c436ec3032115e6d904173cf7d04ba16dce9de9ba76dd38d15934f734ec0da
+      amendment: 807d28c112c74cebea7c326acb8d59574ca7f00d3baacda690524d9ad306ff43
       v05_claim: 70065377c10ad7b5fe5a5a199f99d577e29efaff187a44ed4c6115cd9fb7ddad
     max_sector: 107
   stronger:

@@ -1,7 +1,7 @@
 """v0.5.6 part B (confirmatory): the pool, the drand round, the draw and its validation (docs/plans/
 v0.5.6-plan-amendment-1.md; the maintainer's decisions of 2026-11-22, 13:00, items 3 and 5;
-Codex's round ``partb`` 1, items 1 to 4; #218). ``method_status: not_validated``. Limits label:
-'WEAKENED; does not meet D1, D2, D4, T2a'.
+Codex's round ``partb`` 1 to 3; the decision of 2026-11-22, 14:30, item 2; #218).
+``method_status: not_validated``. Limits label: 'WEAKENED; does not meet D1, D2, D4, T2a'.
 
 Steps (each refuses to write over its output, except the pool, which is rewritten only before the
 lock):
@@ -14,16 +14,17 @@ lock):
    - ``fp``: the open arm with the frame's ``tfopwg_disp_descriptive`` equal to ``FP``;
    - every TIC of ``exposed_tics`` is left out; FA, PC, APC, KP, CP and blank are not drawn.
    Written as the claim's targets attachment (``pool-targets.yaml``, ``refute-tess-targets-1``).
-2. ``round <lock-commit>`` (after the lock commit is pushed as the head of its own push): the
-   commit must add ``calibration/v0.5.6/claim.lock.json``, be on ``origin/main``, and its lock
-   file's bytes must equal the lock on disk. The round is the first drand round published at least
-   ``ROUND_MARGIN_SECONDS`` (10 minutes) after the creation time of the commit's CI push run
-   (workflow ``ci.yml``, event ``push``, ``head_sha`` the commit, run attempt 1). The GitHub API's
-   answer is kept (its SHA-256 and the run's id, URL and times). No such run, or more than one,
-   stops the step.
-3. ``draw`` (once the round is published): the lock must verify (``refute verify``: PASS), and the
-   round is **recomputed** from the commit and the CI run, and must equal the record. The beacon is
-   fetched and its BLS signature verified. Each stratum, sorted by TIC, is shuffled with
+2. ``check`` (after the lock commit is pushed): the drand round is **fixed in the claim** before
+   the lock (``definitions``: the network, the chain hash, the round and its time by the public
+   formula genesis + period x (round - 1), chosen about 30 minutes after the lock commit;
+   ``part_b_claim.py --drand-round auto``). The lock commit is the one commit that adds
+   ``calibration/v0.5.6/claim.lock.json``; its time on GitHub is the creation time of its CI
+   push run, read from GitHub (workflow ``ci.yml``, event ``push``, ``head_sha`` the commit, run
+   attempt 1). If the round is not after that time, the lock is discarded without a draw and
+   redone with a new number (recorded). Writes nothing.
+3. ``draw`` (once the round is published): the lock must verify (``refute verify``: PASS), and
+   the claim's round must be after the lock's time on GitHub, read again. That round and no other
+   is fetched, and its BLS signature verified. Each stratum, sorted by TIC, is shuffled with
    ``random.Random(seed_s)``, where ``seed_s = int(sha256(randomness_hex + "|v0.5.6|part-b|" +
    stratum), 16)``. Each TIC in that order is checked from MAST **metadata only**, with part A's
    own listing (``part_a_frame.py``: author SPOC, exposure exactly 120 s, ``*lc.fits``, the TIC
@@ -34,11 +35,11 @@ lock):
 4. ``validate_draw`` (offline; called by the draw before writing, by the runner and by the
    evaluation, which also require the draw to be ``published``: committed, equal to ``HEAD`` and on
    ``origin/main``):
-   - the draw and its round name this lock, and the lock commit holds this lock's bytes;
-   - the round is the one ``round_after(the CI run's created_at, 600)`` gives, for the lock
-     commit's first push run, and that run is **read again from GitHub** (network), so the draw's
-     own copy of the CI evidence is never taken as given;
-   - the beacon is that round, and its BLS signature verifies (``refute.drand.verify_beacon``);
+   - the draw names this lock, and the lock commit (from the repository) holds this lock's bytes;
+   - the draw's round and the beacon's are the claim's round, and the beacon's BLS signature
+     verifies (``refute.drand.verify_beacon``);
+   - the claim's round is after the lock's time on GitHub, **read again from GitHub** (network),
+     so no file of the draw is taken as evidence of that time;
    - the shuffle is replayed from the beacon's randomness and the pool, and the trail is the
      prefix of that order, each entry at its position with the frame's TOI;
    - every kept listing is this TIC's, within the filters (120-s cadence, sectors up to 107, this
@@ -54,7 +55,7 @@ The draw's status is ``complete`` (150 per stratum), ``short`` (at least ``MIN_P
 pool exhausted) or ``incomplete`` (fewer: the claim's evaluation ends INCONCLUSIVE).
 
 Usage (from the project root): ``.venv/Scripts/python.exe -B calibration/v0.5.6/part_b_draw.py
-pool|round <commit>|draw``.
+pool|check|draw``.
 """
 
 from __future__ import annotations
@@ -84,14 +85,12 @@ FRAME_CODE = VALIDATION / "part_a_frame.py"
 CLAIM = HERE / "claim.yaml"
 LOCK = HERE / "claim.lock.json"
 POOL = HERE / "pool-targets.yaml"
-ROUND = HERE / "part-b-round.json"
 DRAW = HERE / "part-b-draw.json"
 MAST_ROOT = ROOT / ".cache/v056/partb"
 LABEL = "WEAKENED; does not meet D1, D2, D4, T2a"
 STRATA = ("planet", "fp")
 PER_STRATUM = 150
 MIN_PER_STRATUM = 120
-ROUND_MARGIN_SECONDS = 600
 SEED_TAG = "|v0.5.6|part-b|"
 BATCH = 10
 LOCK_PATH_IN_REPO = "calibration/v0.5.6/claim.lock.json"
@@ -275,25 +274,54 @@ def pool() -> None:
     print(doc["selection"]["counts"])
 
 
-# --- 2. the round ------------------------------------------------------------------------------
+# --- 2. the round (fixed in the claim, before the lock) -----------------------------------------
 
 
 def _git(*args: str) -> bytes:
     return subprocess.run(["git", "-C", str(ROOT), *args], capture_output=True, check=True).stdout
 
 
-def round_evidence(commit: str) -> dict:
-    """The round for ``commit`` from the repository and the GitHub API (network)."""
-    from refute.drand import round_after, round_time
+def claim_round() -> dict:
+    """The drand round the locked claim fixes (``definitions``: ``drand_network``,
+    ``drand_chain_hash``, ``drand_round``, ``drand_round_time_utc``), checked against
+    ``refute.drand``'s chain hash and the public formula genesis + period x (round - 1)."""
+    from refute.drand import DRAND_CHAIN_HASH, round_time
+
+    d = yaml.safe_load(CLAIM.read_text("utf-8"))["definitions"]
+    try:
+        number = int(d["drand_round"])
+    except (KeyError, ValueError) as exc:
+        raise SystemExit("the claim fixes no drand round") from exc
+    if d.get("drand_chain_hash") != DRAND_CHAIN_HASH:
+        raise SystemExit("the claim's chain hash is not refute.drand's")
+    if d.get("drand_round_time_utc") != round_time(number).isoformat():
+        raise SystemExit("the claim's round time is not genesis + period x (round - 1)")
+    return {
+        "network": d.get("drand_network"),
+        "chain_hash": d["drand_chain_hash"],
+        "round": number,
+        "round_time_utc": d["drand_round_time_utc"],
+    }
+
+
+def lock_commit() -> str:
+    """The one commit that added the lock file, from the local repository."""
+    found = _git("log", "--diff-filter=A", "--format=%H", "--", LOCK_PATH_IN_REPO).decode().split()
+    if len(found) != 1:
+        raise SystemExit(f"{len(found)} commits add {LOCK_PATH_IN_REPO}; the maintainer decides")
+    return found[0]
+
+
+def github_time(commit: str) -> dict:
+    """When the lock commit reached GitHub, read from GitHub (network), never from a file of the
+    draw: the creation time of the commit's CI push run (workflow ``ci.yml``, event ``push``,
+    ``head_sha`` the commit, run attempt 1). The commit must be on ``origin/main`` and hold the
+    lock's bytes. No such run, or more than one, stops (the maintainer decides)."""
     from refute.packs.tess.discover import pilot
 
-    added = _git("show", "--diff-filter=A", "--name-only", "--format=", commit).decode().split()
-    if LOCK_PATH_IN_REPO not in added:
-        raise SystemExit(f"{commit} does not add {LOCK_PATH_IN_REPO}")
     _git("merge-base", "--is-ancestor", commit, "origin/main")
-    in_commit = sha256(_git("show", f"{commit}:{LOCK_PATH_IN_REPO}"))
-    if in_commit != sha256(LOCK.read_bytes()):
-        raise SystemExit("the lock on disk differs from the lock in the commit")
+    if sha256(_git("show", f"{commit}:{LOCK_PATH_IN_REPO}")) != sha256(LOCK.read_bytes()):
+        raise SystemExit("the lock on disk differs from the lock in its commit")
     answers: list[bytes] = []
 
     def fetch(url: str) -> bytes:
@@ -304,27 +332,34 @@ def round_evidence(commit: str) -> dict:
     created = pilot.push_run_created_at(commit, fetch=fetch)
     runs = json.loads(answers[-1])["workflow_runs"]
     run = next(r for r in runs if r.get("head_sha") == commit and r.get("run_attempt") == 1)
-    number = round_after(created, ROUND_MARGIN_SECONDS)
+    keys = ("id", "html_url", "event", "head_sha", "run_attempt", "created_at")
     return {
         "lock_commit": commit,
-        "lock_sha256": in_commit,
-        "ci_push_run": {
-            k: run.get(k)
-            for k in ("id", "html_url", "event", "head_sha", "run_attempt", "created_at")
-        },  # fmt: skip
-        "ci_answer_sha256": sha256(answers[-1]),
-        "margin_seconds": ROUND_MARGIN_SECONDS,
-        "round": number,
-        "round_time_utc": round_time(number).isoformat(),
+        "github_time_utc": created,
+        "ci_push_run": {k: run.get(k) for k in keys},
+        "github_answer_sha256": sha256(answers[-1]),
     }
 
 
-def lock_round(commit: str) -> None:
-    if ROUND.exists():
-        raise SystemExit("the round is recorded; never written over")
-    doc = {"schema": "refute-v056-part-b-round-2", **round_evidence(commit), "written_utc": utc()}
-    write_once(ROUND, json.dumps(doc, indent=1) + "\n")
-    print(json.dumps(doc, indent=1))
+def round_is_after(number: int, github_time_utc: str) -> bool:
+    """True when round ``number`` is published strictly after ``github_time_utc``."""
+    from datetime import UTC, datetime
+
+    from refute.drand import round_time
+
+    when = datetime.strptime(github_time_utc, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=UTC)
+    return round_time(number) > when
+
+
+def check() -> None:
+    """After the lock commit is pushed: is the claim's round after the lock's time on GitHub? If
+    not, the lock is discarded without a draw and redone with a new number (the decision of
+    2026-11-22, 14:30, item 2). Writes nothing."""
+    rnd, gh = claim_round(), github_time(lock_commit())
+    ok = round_is_after(rnd["round"], gh["github_time_utc"])
+    print(json.dumps({**rnd, **gh, "round_after_github_time": ok}, indent=1))
+    if not ok:
+        raise SystemExit("the round had passed when the lock reached GitHub: discard the lock")
 
 
 # --- 3. the draw -------------------------------------------------------------------------------
@@ -383,14 +418,14 @@ def draw() -> None:
     result = verify_claim(CLAIM)
     if result.status.value != "PASS":
         raise SystemExit(f"the lock does not verify: {result.status.value} {result.messages}")
-    rnd = json.loads(ROUND.read_text("utf-8"))
-    again = round_evidence(rnd["lock_commit"])
-    for key in ("lock_sha256", "round", "margin_seconds"):
-        if again[key] != rnd[key]:
-            raise SystemExit(f"the round record differs from its recomputation: {key}")
-    if again["ci_push_run"] != rnd["ci_push_run"]:
-        raise SystemExit("the CI push run differs from the record")
-    seed, beacon = drand_seed(int(rnd["round"]))
+    rnd = claim_round()
+    gh = github_time(lock_commit())
+    if not round_is_after(rnd["round"], gh["github_time_utc"]):
+        raise SystemExit(
+            "the claim's round had passed when the lock reached GitHub: the lock is discarded "
+            "without a draw and redone with a new number (recorded)"
+        )
+    seed, beacon = drand_seed(rnd["round"])
     if int(beacon["randomness"], 16) != seed:
         raise SystemExit("the beacon's randomness does not match its seed")
     rows, exposed, record, _ = frozen_inputs()
@@ -424,7 +459,7 @@ def draw() -> None:
         "method_status": "not_validated",
         "status": status,
         "lock_sha256": sha256(LOCK.read_bytes()),
-        "round": rnd,
+        "round": {**rnd, **gh},
         "beacon": beacon,
         "interpreter": interpreter_record(),
         "frame_sha256": record["frame_sha256"],
@@ -464,53 +499,39 @@ def published(path: Path) -> list[str]:
     return []
 
 
-def _round_problems(draw_doc: dict, lock_sha: str, check_commit: bool) -> list[str]:
-    from refute.drand import round_after
-
+def _round_problems(
+    draw_doc: dict, rnd: dict, lock_sha: str, check_commit: bool, check_ci: bool
+) -> list[str]:
+    """The draw's round against the claim's; with ``check_commit``, the lock commit (from the
+    repository) holds this lock; with ``check_ci``, the round is after the lock's time on GitHub,
+    read again from GitHub (network), never from the draw."""
     problems = []
-    rnd = draw_doc.get("round") or {}
-    run = rnd.get("ci_push_run") or {}
-    if rnd.get("lock_sha256") != lock_sha:
-        problems.append("the round does not name the draw's lock")
-    if rnd.get("margin_seconds") != ROUND_MARGIN_SECONDS:
-        problems.append("the round's margin is not the claim's")
-    first_push = (run.get("head_sha"), run.get("event"), run.get("run_attempt"))
-    if first_push != (rnd.get("lock_commit"), "push", 1):
-        problems.append("the CI run is not the lock commit's first push run")
-    try:
-        if round_after(str(run.get("created_at")), ROUND_MARGIN_SECONDS) != rnd.get("round"):
-            problems.append("the round is not the one the CI run's creation time gives")
-    except ValueError:
-        problems.append("the CI run's creation time cannot be read")
+    if (draw_doc.get("round") or {}).get("round") != rnd["round"]:
+        problems.append("the draw's round is not the claim's")
     if check_commit:
         try:
-            in_commit = sha256(_git("show", f"{rnd.get('lock_commit')}:{LOCK_PATH_IN_REPO}"))
-        except subprocess.CalledProcessError:
-            in_commit = None
-        if in_commit != lock_sha:
+            commit = lock_commit()
+            held = sha256(_git("show", f"{commit}:{LOCK_PATH_IN_REPO}"))
+        except (SystemExit, subprocess.CalledProcessError) as exc:
+            return [*problems, f"the lock commit cannot be read: {exc}"]
+        if held != lock_sha:
             problems.append("the lock commit does not hold this lock")
+    if check_ci:
+        try:
+            gh = github_time(lock_commit())
+        except (SystemExit, Exception) as exc:  # noqa: BLE001 - any failure is a problem
+            return [*problems, f"the lock's time on GitHub cannot be read: {exc}"]
+        if not round_is_after(rnd["round"], gh["github_time_utc"]):
+            problems.append("the claim's round is not after the lock's time on GitHub")
     return problems
 
 
-def _ci_problems(draw_doc: dict) -> list[str]:
-    """The round's CI evidence read again from GitHub (network), independent of the draw: the run,
-    the lock's bytes in the commit and the round must equal the draw's."""
-    rnd = draw_doc.get("round") or {}
-    try:
-        again = round_evidence(str(rnd.get("lock_commit")))
-    except (SystemExit, Exception) as exc:  # noqa: BLE001 - any failure is a problem
-        return [f"the CI evidence cannot be read again: {exc}"]
-    keys = ("lock_commit", "lock_sha256", "ci_push_run", "margin_seconds", "round")
-    return [f"the round's {k} differs from GitHub's" for k in keys if again[k] != rnd.get(k)]
-
-
-def _beacon_problems(draw_doc: dict, verify_signature: bool) -> list[str]:
+def _beacon_problems(draw_doc: dict, number: int, verify_signature: bool) -> list[str]:
     from refute.drand import verify_beacon
 
     beacon = draw_doc.get("beacon") or {}
-    number = (draw_doc.get("round") or {}).get("round")
     if beacon.get("round") != number:
-        return ["the beacon is not the recorded round"]
+        return ["the beacon is not the claim's round"]
     if not verify_signature:
         ok = sha256(bytes.fromhex(beacon.get("signature", ""))) == beacon.get("randomness")
         return [] if ok else ["the beacon's randomness is not sha256(signature)"]
@@ -555,15 +576,17 @@ def validate_draw(
     draw_doc: dict,
     lock_bytes: bytes | None = None,
     *,
+    claim_rnd: dict | None = None,
     verify_signature: bool = True,
     check_commit: bool = True,
     check_ci: bool = True,
 ) -> list[str]:
     """Every check the runner and the evaluation rely on, replayed offline. Returns the problems
     (empty when the draw is valid). The draw, the runner and the evaluation call it with the
-    defaults: the beacon's BLS signature verified, the lock commit read from the repository, and
-    the CI run read again from GitHub (network). The offline tests turn these three off for a
-    synthetic beacon, commit and run, and test the first two apart."""
+    defaults: the round read from the locked claim, the beacon's BLS signature verified, the lock
+    commit read from the repository, and the lock's time read from GitHub (network). The offline
+    tests pass a synthetic round and turn the three checks off for a synthetic beacon, commit and
+    run, and test the first two apart."""
     problems: list[str] = []
     lock_bytes = LOCK.read_bytes() if lock_bytes is None else lock_bytes
     lock_sha = sha256(lock_bytes)
@@ -571,10 +594,9 @@ def validate_draw(
         problems.append("unknown schema")
     if draw_doc.get("lock_sha256") != lock_sha:
         problems.append("the draw does not name this lock")
-    problems += _round_problems(draw_doc, lock_sha, check_commit)
-    if check_ci:
-        problems += _ci_problems(draw_doc)
-    problems += _beacon_problems(draw_doc, verify_signature)
+    rnd = claim_round() if claim_rnd is None else claim_rnd
+    problems += _round_problems(draw_doc, rnd, lock_sha, check_commit, check_ci)
+    problems += _beacon_problems(draw_doc, rnd["round"], verify_signature)
     randomness = (draw_doc.get("beacon") or {}).get("randomness", "")
     rows, exposed, _, part_a = frozen_inputs()
     groups = strata(rows, exposed)
@@ -651,9 +673,9 @@ if __name__ == "__main__":
     step = sys.argv[1] if len(sys.argv) > 1 else ""
     if step == "pool":
         pool()
-    elif step == "round" and len(sys.argv) == 3:
-        lock_round(sys.argv[2])
+    elif step == "check":
+        check()
     elif step == "draw":
         draw()
     else:
-        raise SystemExit("usage: part_b_draw.py pool | round <lock-commit> | draw")
+        raise SystemExit("usage: part_b_draw.py pool | check | draw")

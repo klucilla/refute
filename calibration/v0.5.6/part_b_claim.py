@@ -7,12 +7,22 @@ without catalog attachments must not give it a role. ``discovery.inputs`` record
 every file the claim depends on outside the code, so the lock covers them. Run again only before
 the lock (it rewrites the claim from the current files); after the lock, any change is TAMPERED.
 
-Usage (from the project root): ``.venv/Scripts/python.exe -B calibration/v0.5.6/part_b_claim.py``.
+**The drand round** (the maintainer's decision of 2026-11-22, 14:30, item 2) is written into the
+claim's ``definitions`` just before the lock: the network, the chain hash (``refute.drand``), the
+round's number and its time by the public formula genesis + period x (round - 1). ``--drand-round
+auto`` takes the first round published at least ``LOCK_MARGIN_SECONDS`` (30 minutes) after now;
+``--drand-round N`` writes N. Without the option, the claim keeps the round it already has (or
+none, before the lock is prepared); the draw refuses a claim without a round.
+
+Usage (from the project root): ``.venv/Scripts/python.exe -B calibration/v0.5.6/part_b_claim.py
+[--drand-round auto|N]``.
 """
 
 from __future__ import annotations
 
 import hashlib
+import sys
+import time
 from pathlib import Path
 
 import yaml
@@ -35,12 +45,15 @@ INPUTS = {
     "amendment": "docs/plans/v0.5.6-plan-amendment-1.md",
     "v05_claim": "calibration/v0.5/claim.yaml",
 }
+LOCK_MARGIN_SECONDS = 1800
+UNSET = "unset: fixed just before the lock (part_b_claim.py --drand-round auto)"
 HEADER = """\
 # Refute v0.5.6 part B: agreement of the labelled v0.5 battery with TFOPWG dispositions.
 # docs/plans/v0.5.6-plan-amendment-1.md (the maintainer's decisions of 2026-11-22, 13:00; #218).
 # Written by calibration/v0.5.6/part_b_claim.py before the lock. The targets attachment is the
-# pool; the drand round, fixed after the lock, orders it (part_b_draw.py); only the drawn TICs
-# are run (part_b_run.py), and the claim's verdict comes only from part_b_evaluate.py.
+# pool; the drand round fixed in the definitions (about 30 minutes after the lock) orders it
+# (part_b_draw.py); only the drawn TICs are run (part_b_run.py), and the claim's verdict comes only
+# from part_b_evaluate.py.
 """
 
 
@@ -48,7 +61,32 @@ def sha(path: str) -> str:
     return hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
 
 
-def claim() -> dict:
+def drand_definitions(number: int | None) -> dict[str, str]:
+    from refute.drand import DRAND_CHAIN_HASH, DRAND_GENESIS, DRAND_PERIOD, round_time
+
+    return {
+        "drand_network": "drand mainnet, default chain (https://api.drand.sh); genesis "
+        f"{DRAND_GENESIS}, period {DRAND_PERIOD} s (refute.drand)",
+        "drand_chain_hash": DRAND_CHAIN_HASH,
+        "drand_round": UNSET if number is None else str(number),
+        "drand_round_time_utc": UNSET if number is None else round_time(number).isoformat(),
+        "drand_rule": "the draw uses this round and no other; its BLS signature is verified, "
+        "and its time must be after the lock commit's time on GitHub (the creation time of the "
+        "lock commit's CI push run, read from GitHub); otherwise the lock is discarded without a "
+        "draw and redone with a new number (recorded)",
+    }
+
+
+def current_round() -> int | None:
+    """The round the claim on disk already fixes, or None."""
+    path = HERE / "claim.yaml"
+    if not path.exists():
+        return None
+    value = (yaml.safe_load(path.read_text("utf-8")).get("definitions") or {}).get("drand_round")
+    return int(value) if value and str(value).isdigit() else None
+
+
+def claim(drand_round: int | None = None) -> dict:
     v05 = yaml.safe_load((ROOT / INPUTS["v05_claim"]).read_text("utf-8"))
     tp = v05["test_plan"]
     disc = tp["discovery"]
@@ -85,7 +123,7 @@ def claim() -> dict:
             "open arm with tfopwg_disp_descriptive FP; TICs in part-b-exposure.json exposed_tics "
             "left out; FA, PC, APC, KP, CP and blank not drawn",
             "draw": "150 eligible per stratum (at least 120), in the order of the drand round "
-            "fixed after the lock (part_b_draw.py)",
+            "these definitions fix (part_b_draw.py)",
             "event": "status OK, nonzero coverage, outcome REFUTED and identity matched (period "
             "factor 1 within 0.001, epoch within half the TOI's duration)",
             "missing_data": "ERROR counts as a non-event in the denominator and as a loss; "
@@ -100,6 +138,7 @@ def claim() -> dict:
             "method_status": "not_validated",
             "limits_label": "WEAKENED; does not meet D1, D2, D4, T2a",
             "max_sector": "S_max = 107 (test_plan.discovery.max_sector).",
+            **drand_definitions(drand_round),
         },
         "data_sources": [
             {
@@ -125,7 +164,8 @@ def claim() -> dict:
             {
                 "name": "drand mainnet, default chain",
                 "url": "https://api.drand.sh",
-                "retrieved": "the round fixed by part_b_draw.py round, after the lock",
+                "retrieved": "the round fixed in the definitions, fetched by part_b_draw.py "
+                "draw once published",
                 "notes": "BLS signature verified (refute.drand).",
             },
         ],
@@ -142,7 +182,27 @@ def claim() -> dict:
 
 
 def main() -> None:
-    text = HEADER + yaml.safe_dump(claim(), sort_keys=False, allow_unicode=True, width=96)
+    from refute.drand import round_after
+
+    args = sys.argv[1:]
+    if args[:1] == ["--drand-round"] and len(args) == 2:
+        if args[1] == "auto":
+            now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+            number = round_after(now, LOCK_MARGIN_SECONDS)
+        else:
+            number = int(args[1])
+    elif not args:
+        number = current_round()
+    else:
+        raise SystemExit("usage: part_b_claim.py [--drand-round auto|N]")
+    if (HERE / "part-b-draw.json").exists():
+        raise SystemExit("the draw is recorded; the claim is never rewritten")
+    if (HERE / "claim.lock.json").exists() and not args:
+        raise SystemExit(
+            "the claim is locked: only a discarded lock (its round passed before the "
+            "lock reached GitHub) is redone, with --drand-round and a recorded relock"
+        )
+    text = HEADER + yaml.safe_dump(claim(number), sort_keys=False, allow_unicode=True, width=96)
     (HERE / "claim.yaml").write_text(text, "utf-8", newline="\n")
     print("claim.yaml written")
 

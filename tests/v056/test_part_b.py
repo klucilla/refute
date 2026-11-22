@@ -192,7 +192,8 @@ def test_pool_matches_the_frozen_inputs(dr):
 
 def test_claim_is_current_and_valid():
     gen = _load(B / "part_b_claim.py", "part_b_claim_under_test")
-    text = gen.HEADER + yaml.safe_dump(gen.claim(), sort_keys=False, allow_unicode=True, width=96)
+    doc = gen.claim(gen.current_round())
+    text = gen.HEADER + yaml.safe_dump(doc, sort_keys=False, allow_unicode=True, width=96)
     assert (B / "claim.yaml").read_text("utf-8") == text  # every input's SHA-256 is current
     from refute.core.claim import load_claim
 
@@ -290,15 +291,13 @@ def test_a_failure_prevails_over_a_cap(rb, tmp_path, monkeypatch):
 
 SIGNATURE = "ab" * 48
 LOCK_BYTES = b'{"a synthetic lock": true}\n'
-CREATED = "2026-11-23T10:00:00Z"
+ROUND_NUMBER = 20_000_000
 
 
 def _synthetic_draw(dr):
     """A draw built from the real frozen inputs, a synthetic beacon and commit, and synthetic
     listings that make every walked TIC eligible."""
     import hashlib
-
-    from refute.drand import round_after
 
     randomness = hashlib.sha256(bytes.fromhex(SIGNATURE)).hexdigest()
     rows, exposed, _, _ = dr.frozen_inputs()
@@ -325,24 +324,16 @@ def _synthetic_draw(dr):
         arms[s] = {"pool": len(groups[s]), "checked": len(trail), "eligible": len(chosen),
                    "chosen": chosen, "trail": trail}  # fmt: skip
     lock_sha = hashlib.sha256(LOCK_BYTES).hexdigest()
-    number = round_after(CREATED, dr.ROUND_MARGIN_SECONDS)
+    number = ROUND_NUMBER
     return {
         "schema": "refute-v056-part-b-draw-2",
         "status": "complete",
         "lock_sha256": lock_sha,
         "round": {
-            "lock_commit": "c" * 40,
-            "lock_sha256": lock_sha,
-            "ci_push_run": {
-                "id": 1,
-                "event": "push",
-                "head_sha": "c" * 40,
-                "run_attempt": 1,
-                "created_at": CREATED,
-            },  # fmt: skip
-            "margin_seconds": dr.ROUND_MARGIN_SECONDS,
             "round": number,
-        },
+            "lock_commit": "c" * 40,
+            "github_time_utc": "2026-11-23T10:00:00Z",
+        },  # fmt: skip
         "beacon": {
             "round": number,
             "signature": SIGNATURE,
@@ -358,8 +349,12 @@ def synthetic(dr):
     return _synthetic_draw(dr)
 
 
+CLAIM_RND = {"round": ROUND_NUMBER}
+
+
 def _validate(dr, d, lock=LOCK_BYTES):
-    return dr.validate_draw(d, lock, verify_signature=False, check_commit=False, check_ci=False)
+    off = {"verify_signature": False, "check_commit": False, "check_ci": False}
+    return dr.validate_draw(d, lock, claim_rnd=CLAIM_RND, **off)
 
 
 def test_validate_draw_accepts_a_valid_draw(dr, synthetic):
@@ -368,10 +363,10 @@ def test_validate_draw_accepts_a_valid_draw(dr, synthetic):
 
 
 def test_validate_draw_checks_the_signature_and_the_commit(dr, synthetic):
-    off = {"check_commit": False, "check_ci": False}
+    off = {"claim_rnd": CLAIM_RND, "check_commit": False, "check_ci": False}
     assert dr.validate_draw(synthetic, LOCK_BYTES, **off)  # a synthetic beacon: no BLS signature
-    off = {"verify_signature": False, "check_ci": False}
-    assert dr.validate_draw(synthetic, LOCK_BYTES, **off)  # no such commit
+    off = {"claim_rnd": CLAIM_RND, "verify_signature": False, "check_ci": False}
+    assert dr.validate_draw(synthetic, LOCK_BYTES, **off)  # no commit adds the lock
 
 
 def _rehash(t):
@@ -392,12 +387,9 @@ def test_validate_draw_refuses_tampering(dr, synthetic):
     assert bad(lambda d: d["arms"]["planet"]["chosen"].pop())
     assert bad(lambda d: d.update(status="short"))
     assert bad(lambda d: d["beacon"].update(randomness="00" * 32))
-    assert bad(lambda d: d["round"].update(lock_sha256="0" * 64))
-    # the round must be the one the CI run's creation time gives, and the run the commit's
-    assert bad(lambda d: (d["round"].update(round=d["round"]["round"] + 1),
-                          d["beacon"].update(round=d["round"]["round"])))  # fmt: skip
-    assert bad(lambda d: d["round"]["ci_push_run"].update(head_sha="d" * 40))
-    assert bad(lambda d: d["round"].update(margin_seconds=0))
+    # the claim's round and no other: the draw's and the beacon's must both be it
+    assert bad(lambda d: d["round"].update(round=ROUND_NUMBER + 1))
+    assert bad(lambda d: d["beacon"].update(round=ROUND_NUMBER + 1))
     # the fields the run uses are rebuilt from the frame and the trail
     assert bad(lambda d: d["arms"]["planet"]["chosen"][0].update(period_days="1.0"))
     assert bad(lambda d: d["arms"]["planet"]["chosen"][0].update(epoch_bjd="2459000.0"))
@@ -432,6 +424,43 @@ def test_validate_draw_refuses_tampering(dr, synthetic):
         d["arms"]["fp"]["trail"][0]["products"] = [a["arms"]["open"]["trail"][0]["products"][0]]
 
     assert bad(part_a_product)
+
+
+def test_round_is_after(dr):
+    from refute.drand import round_time
+
+    when = round_time(ROUND_NUMBER).strftime("%Y-%m-%dT%H:%M:%SZ")
+    assert not dr.round_is_after(ROUND_NUMBER, when)  # published at that second: not after
+    assert dr.round_is_after(ROUND_NUMBER + 1, when)
+    assert not dr.round_is_after(ROUND_NUMBER - 1, when)
+
+
+def test_claim_round(dr, tmp_path, monkeypatch):
+    from refute.drand import DRAND_CHAIN_HASH, round_time
+
+    claim = tmp_path / "claim.yaml"
+    monkeypatch.setattr(dr, "CLAIM", claim)
+
+    def write(**d):
+        claim.write_text(yaml.safe_dump({"definitions": d}), "utf-8")
+
+    good = {"drand_chain_hash": DRAND_CHAIN_HASH, "drand_round": str(ROUND_NUMBER),
+            "drand_round_time_utc": round_time(ROUND_NUMBER).isoformat()}  # fmt: skip
+    write(**good)
+    assert dr.claim_round()["round"] == ROUND_NUMBER
+    for bad in ({"drand_round": "unset"}, {"drand_chain_hash": "0" * 64},
+                {"drand_round_time_utc": round_time(ROUND_NUMBER + 1).isoformat()}):  # fmt: skip
+        write(**{**good, **bad})
+        with pytest.raises(SystemExit):
+            dr.claim_round()
+
+
+def test_claim_has_no_round_before_the_lock():
+    gen = _load(B / "part_b_claim.py", "part_b_claim_round_under_test")
+    d = yaml.safe_load((B / "claim.yaml").read_text("utf-8"))["definitions"]
+    if not (B / "claim.lock.json").exists():
+        assert d["drand_round"].startswith("unset")
+    assert gen.drand_definitions(ROUND_NUMBER)["drand_round"] == str(ROUND_NUMBER)
 
 
 # --- the evaluation's checks before counting -------------------------------------------------
