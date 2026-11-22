@@ -457,3 +457,17 @@ Round 4 used 9,381,208 input tokens (9,130,752 cached) and 43,250 output tokens,
 4. A failure already recorded still allows a terminal state `complete` on a resumed run. The evaluation refuses that ledger anyway.
 
 **By the decision (item 3), round 4 is not SURVIVED, so the claim is not locked.** The work stops for the maintainer. Nothing was locked or drawn.
+
+## v0.5.6 part B: round 5 (the maintainer's exception), before the lock
+
+The maintainer's decision of 2026-11-22 (19:30), item 3 (#218, comment 7086708909), allowed one round 5 as a recorded exception, in the same conversation (`partb`). Its scope was closed to the changes of items 1 and 2 (commit 8b8cce5): the relock path removed, a boolean sector refused, and a recorded failure prevailing over `complete`. A blocking item was only one that could change the sample or the verdict, or let tampering or an undue loss pass; anything else goes to #59. There is no round 6. Codex CLI 0.167.0-alpha.3.2, model gpt-6.2-sol, effort high; it answered in Portuguese, and the answer is stored unchanged.
+
+| Round | File | Reviewed | Verdicts | SHA-256 |
+|---|---|---|---|---|
+| 5 | [partb-round-5-answer.md](partb-round-5-answer.md) | 8b8cce5 | A SURVIVED, B SURVIVED, C SURVIVED; no blocking item | `31acb4890c9fbac33fef5f9c59ae68385b320d7c2fe63e03bd72057bc89a6678` |
+
+Round 5 used 11,340,476 input tokens (10,852,864 cached) and 48,099 output tokens, both cumulative over the conversation. The conversation now counts **535,711** review tokens: the last round's uncached input plus its output (`docs/validation/v0.5.6/codex_tokens.py`).
+
+**One non-blocking item, on #59:** on a resumed run with every record present and an earlier failure, the ledger can show `state: complete` beside `kind: other`, and the runner can exit with success. The evaluation refuses that ledger, so the verdict and the loss rule are kept. The state and the runner's exit should follow the kind.
+
+**By the decision (item 3), round 5 is SURVIVED in A, B and C with no blocking item, so the lock may proceed** under the lock plan.
