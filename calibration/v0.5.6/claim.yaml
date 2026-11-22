@@ -43,8 +43,8 @@ definitions:
   drand_network: drand mainnet, default chain (https://api.drand.sh); genesis 1595431050, period 30
     s (refute.drand)
   drand_chain_hash: 8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce
-  drand_round: 'unset: fixed just before the lock (part_b_claim.py --drand-round auto)'
-  drand_round_time_utc: 'unset: fixed just before the lock (part_b_claim.py --drand-round auto)'
+  drand_round: '6665418'
+  drand_round_time_utc: '2026-11-23T00:26:00+00:00'
   drand_rule: the draw uses this round and no other; its BLS signature is verified, and its time must
     be after the lock commit's time on GitHub (the creation time of the lock commit's CI push run,
     read from GitHub); otherwise the execution stops without a draw and the maintainer decides (no
