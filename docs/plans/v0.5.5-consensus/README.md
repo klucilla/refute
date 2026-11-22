@@ -389,3 +389,15 @@ Applied before anything ran or was deleted (no second round, one round by defaul
    - Every finished result is recorded even if another fails, and a failure stops admission.
    - The downloaded volume counts only files that were not on disk before the fetch. Reused bytes are counted apart, and partial transfers are a stated lower bound.
    - The pilot's bytes on disk are reported apart.
+
+## v0.5.6 part B: the independent review of the options
+
+The maintainer's decisions of 2026-11-22 (13:00), item 0 (#218): a review of the part B options, by one read-only session of Claude Fable 5.2 launched by the maintainer's adviser at the maintainer's request, on commit 2e734b53 (176,190 tokens, outside Codex's lines; not a blind review: the reviewer saw part A's results by design). The file is the maintainer's attachment, stored unchanged; its SHA-256 was checked against the attachment before the commit.
+
+| File | SHA-256 |
+|---|---|
+| [partb-independent-review.md](partb-independent-review.md) | `a4f0846b3dc8e6782d0dcba9f0efa6fe3227b801d9110a99a4750c8c258e1eff` |
+
+What the maintainer decided from it (item 1): door 3 is **found and not pursued**, for the review's reason (section 1): near-tautological, with one to four message templates per test, and already known through D4, T2a and I1. This departs from the plan's "the first door proceeds", by the maintainer's decision. Part B is prepared for a discrimination claim instead (items 2 to 6), through a dated amendment to the plan.
+
+Recorded at the same decision: the site was published by the maintainer's adviser on 2026-11-22 at 00:47, release `20261122T034724Z-23f4528`, with SERVED equal to BUILD.
