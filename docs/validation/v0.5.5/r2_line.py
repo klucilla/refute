@@ -10,7 +10,9 @@ any R2 work: its caps, its opening time and the decision. It touches no part and
 
 **What counts:**
 - tokens: the Codex conversations whose name starts with ``r2``, each counted by summing the last
-  completed round's net usage for each distinct thread (``lv.codex_tokens``). Since the
+  completed round's net usage for each distinct thread (``docs/validation/v0.5.6/codex_tokens.py``,
+  the maintainer's decision of 2026-11-21, 22:30, item 1; ``ledger_v055.py`` keeps its anchored
+  bytes, and its stop check reads the same count through ``_Corrected``). Since the
   maintainer's decisions of 2026-11-21 (15:20), item 4, their events live in
   ``.cache/v055/r2/codex/`` and **count only on R2's line**; v0.5.5's line is reported with and
   without them (``both_lines``);
@@ -33,8 +35,10 @@ import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-if str(HERE) not in sys.path:
-    sys.path.insert(0, str(HERE))
+for _p in (HERE, HERE.parent / "v0.5.6"):
+    if str(_p) not in sys.path:
+        sys.path.insert(0, str(_p))
+import codex_tokens as ct  # noqa: E402
 import ledger_v055 as lv  # noqa: E402
 
 budgeted = lv.budgeted
@@ -85,25 +89,39 @@ CODEX_EVENTS = lv.ROOT / ".cache/v055/r2/codex"  # R2's own folder (decisions of
 
 
 def tokens() -> dict:
-    """R2's Codex conversations, from their own folder, counted as ``lv.codex_tokens`` counts
-    (the last completed round's net usage for each distinct thread). Since the maintainer's
-    decisions of 2026-11-21 (15:20), item 4, they count **only** on R2's line: their events live
-    apart from v0.5.5's folder, so ``lv.codex_tokens`` no longer sees them."""
-    saved = lv.CODEX_EVENTS
-    lv.CODEX_EVENTS = CODEX_EVENTS
-    try:
-        per = dict(lv.codex_tokens()["conversations"])
-    finally:
-        lv.CODEX_EVENTS = saved
+    """R2's Codex conversations, from their own folder, counted by ``codex_tokens.count`` (the
+    last completed round's net usage for each distinct thread). Since the maintainer's decisions
+    of 2026-11-21 (15:20), item 4, they count **only** on R2's line: their events live apart from
+    v0.5.5's folder, so v0.5.5's count no longer sees them."""
+    per = dict(ct.count(CODEX_EVENTS)["conversations"])
     per = {c: n for c, n in per.items() if c.startswith(PREFIX)}
     return {"conversations": per, "r2": sum(per.values())}
 
 
+def v055_tokens() -> dict:
+    """v0.5.5's own folder, counted by ``codex_tokens.count``."""
+    return ct.count(lv.CODEX_EVENTS)
+
+
 def both_lines() -> dict:
     """v0.5.5's review tokens without R2 (its own folder) and with R2 (the two summed)."""
-    v055 = lv.codex_tokens()["phase"]
+    v055 = v055_tokens()["phase"]
     r2 = tokens()["r2"]
     return {"v055_without_r2": v055, "r2": r2, "v055_with_r2": v055 + r2}
+
+
+class _Corrected:
+    """For the duration of a v0.5.5 check, ``lv.codex_tokens`` reads ``codex_tokens.count`` (the
+    corrected count); the anchored ``ledger_v055.py`` is not edited, and the original function is
+    put back afterwards."""
+
+    def __enter__(self):
+        self.saved = lv.codex_tokens
+        lv.codex_tokens = v055_tokens
+
+    def __exit__(self, *exc):
+        lv.codex_tokens = self.saved
+        return False
 
 
 def agent_days(since: str) -> tuple[float, float]:
@@ -123,7 +141,8 @@ def check(step: str, reserve_days: float, reserve_tokens: int) -> dict:
     """Both lines: v0.5.5's (``lv.check_caps``) and R2's, each with the step's reservation; R2's
     entry is recorded in ``r2-caps.json`` before the STOP rule is applied."""
     line = _line()
-    lv.check_caps(f"r2: {step}", reserve_days, reserve_tokens)
+    with _Corrected():
+        lv.check_caps(f"r2: {step}", reserve_days, reserve_tokens)
     tok = tokens()
     wall, active = agent_days(line["opened_utc"])
     entry = {

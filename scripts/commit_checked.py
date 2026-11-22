@@ -30,6 +30,14 @@ Usage: python scripts/commit_checked.py [-q] (-m MESSAGE | -F FILE) [--no-edit]
    folders.
 6. Just before the commit, the staged tree, the list and the configuration are read again;
    any change refuses the commit.
+6a. **Privacy** (the maintainer's decision of 2026-11-21, 22:30, item 2, #218): every staged
+   text file (its staged blob) and the commit message are searched for the Windows user-profile
+   path prefix (with either slash), the application-data folder's name and the Windows user
+   name; the terms are built in ``privacy_pattern``, so that this file and its tests hold none
+   of them literally. Any hit refuses the commit (exit 2);
+   the output names the file and line, never the matched text or the name. The only lines let
+   through are the exact (file, line) pairs of ``PRIVACY_EXCEPTIONS``: the passage of CLAUDE.md
+   that names the forbidden deletion roots.
 7. ``git commit`` runs with the given options. **Limit:** between step 6 and the moment
    git writes the commit, another process or a git hook could still change the index; this
    is not prevented. Afterwards the tree of the new commit is compared with the checked
@@ -42,10 +50,13 @@ content that ruff did not check, or change what is committed.
 
 from __future__ import annotations
 
+import getpass
 import posixpath
+import re
 import subprocess
 import sys
 import tomllib
+from pathlib import Path
 
 # the folders CI never lints (.github/workflows/ci.yml, CLAUDE.md): published records
 EXCLUDE = (
@@ -61,6 +72,85 @@ FLAG_OPTIONS = {"-q", "--quiet", "--no-edit"}
 
 class RefusedError(Exception):
     """A reason not to commit."""
+
+
+# The only lines the privacy check lets through: exact (file, line) pairs, the passage of
+# CLAUDE.md that names the forbidden deletion roots (the maintainer's decision of 2026-11-21,
+# 22:30, item 2). A changed line, or the same line in another file, is checked as any other.
+APP_DATA = "App" + "Data"  # built, so that this file holds no literal hit
+PROFILES = "Us" + "ers"
+PRIVACY_EXCEPTIONS = frozenset(
+    {
+        (
+            "CLAUDE.md",
+            "  (`%USERPROFILE%` / `$HOME`), "
+            f"`%{APP_DATA}%`, `%Local{APP_DATA}%`, `%ProgramFiles%`,",
+        ),
+    }
+)
+
+
+def privacy_pattern(user: str) -> re.Pattern:
+    """The user-profile path prefix, the application-data folder and the Windows user name."""
+    parts = [r"C:[\\/]" + PROFILES + r"[\\/]", APP_DATA]
+    if user:
+        parts.append(r"\b" + re.escape(user) + r"\b")
+    return re.compile("|".join(parts), re.IGNORECASE)
+
+
+def privacy_hits(path: str, text: str, pattern: re.Pattern) -> list[int]:
+    """The numbers of the lines of ``text`` that match, the exceptions left out."""
+    return [
+        n
+        for n, line in enumerate(text.splitlines(), 1)
+        if pattern.search(line) and (path, line) not in PRIVACY_EXCEPTIONS
+    ]
+
+
+def message_texts(options: list[str]) -> list[str]:
+    """The commit message texts the options give (``-m`` values and ``-F`` files)."""
+    texts, k = [], 0
+    while k < len(options):
+        arg = options[k]
+        if arg.startswith("--") and "=" in arg:
+            name, value = arg.split("=", 1)
+        elif arg in VALUE_OPTIONS:
+            name, value = arg, options[k + 1]
+            k += 1
+        else:
+            k += 1
+            continue
+        if name in ("-m", "--message"):
+            texts.append(value)
+        elif name in ("-F", "--file"):
+            texts.append(Path(value).read_text(encoding="utf-8", errors="replace"))
+        k += 1
+    return texts
+
+
+def check_privacy(root: str, options: list[str]) -> int:
+    """Refuse the commit when a staged text file or the message matches the privacy pattern.
+    Returns the number of staged text files searched."""
+    pattern = privacy_pattern(getpass.getuser())
+    listed = git(root, "diff", "--cached", "--name-only", "--diff-filter=ACMRT", "-z")
+    files = [f for f in listed.split("\0") if f]
+    found = []
+    searched = 0
+    for path, sha in index_blobs(root, files).items():
+        data = blob(root, sha)
+        if b"\0" in data:
+            continue  # a binary file
+        searched += 1
+        text = data.decode("utf-8", errors="replace")
+        found += [f"{path}:{n}" for n in privacy_hits(path, text, pattern)]
+    for k, text in enumerate(message_texts(options), 1):
+        found += [f"the message ({k}):{n}" for n in privacy_hits("", text, pattern)]
+    if found:
+        raise RefusedError(
+            "privacy check: a user path, the application-data folder or the user name in "
+            + ", ".join(found)
+        )
+    return searched
 
 
 def parse(args: list[str]) -> tuple[list[str] | None, str]:
@@ -280,6 +370,8 @@ def main(argv: list[str]) -> int:
         root = top.stdout.strip()
         state = staged_state(root)
         tree, blobs, _config = state
+        searched = check_privacy(root, options)
+        print(f"commit_checked: privacy check passed on {searched} staged text file(s)")
         if blobs:
             ruff_version_check(root)
             checked = check_staged(root, blobs)

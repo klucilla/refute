@@ -878,9 +878,12 @@ ticked.
 #218: the amendment to the advance rule, case (c)), which ended the pause. Limits label: 'WEAKENED;
 does not meet D1, D2, D4, T2a'. The next phase is v0.5.6.
 
-**Note on R1's frozen files.** The 21:00 token-accounting update changes an R1 frozen file
-(`docs/validation/v0.5.5/ledger_v055.py`, whose SHA-256 R1's records carry). Verify historical R1
-records at their recorded commits; keep their recorded hashes and figures.
+**Note on R1's frozen files.** The 21:00 token-accounting update had changed an R1 frozen file
+(`docs/validation/v0.5.5/ledger_v055.py`, whose SHA-256 R1's records carry), in commit `edfd81e`.
+By the maintainer's decision of 2026-11-21 (22:30, #218) it is **restored** to its anchored bytes
+(SHA-256 `65e65400…0a17`, as in R1's records); the corrected count lives in a new module,
+[`docs/validation/v0.5.6/codex_tokens.py`](docs/validation/v0.5.6/codex_tokens.py), which v0.5.5's
+and R2's readings use.
 
 **Opened on 2026-11-20** by the maintainer's decision of that day (15:40, #218), which resumed
 the v0.5 line through a new change of approach. **The advance rule is not amended, and no phase

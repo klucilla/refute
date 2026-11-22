@@ -74,9 +74,20 @@ def test_no_check_before_the_line(ledger):
 
 def test_only_r2_conversations_count(ledger, monkeypatch):
     monkeypatch.setattr(
-        lv, "codex_tokens", lambda: {"conversations": {"g1": 900_000, "r2args": 100, "r2x": 20}}
+        r2.ct,
+        "count",
+        lambda folder: {"conversations": {"g1": 900_000, "r2args": 100, "r2x": 20}},
     )
     assert r2.tokens() == {"conversations": {"r2args": 100, "r2x": 20}, "r2": 120}
+
+
+def test_the_stop_check_reads_the_Corrected_count_and_restores(monkeypatch):
+    # the decision of 2026-11-21 (22:30), item 1: the anchored ledger is not edited
+    original = lv.codex_tokens
+    monkeypatch.setattr(r2, "v055_tokens", lambda: {"conversations": {}, "phase": 7})
+    with r2._Corrected():
+        assert lv.codex_tokens()["phase"] == 7
+    assert lv.codex_tokens is original
 
 
 def _events(folder, name, inp, cached, out):
@@ -95,9 +106,9 @@ def test_r2_conversations_count_only_on_r2_s_line(tmp_path, monkeypatch):
     monkeypatch.setattr(lv, "CODEX_EVENTS", v055)
     monkeypatch.setattr(r2, "CODEX_EVENTS", r2dir)
     assert r2.tokens() == {"conversations": {"r2args": 220}, "r2": 220}
-    assert lv.codex_tokens()["phase"] == 650
+    assert r2.v055_tokens()["phase"] == 650
     assert r2.both_lines() == {"v055_without_r2": 650, "r2": 220, "v055_with_r2": 870}
-    assert lv.CODEX_EVENTS == v055  # restored after the count
+    assert lv.CODEX_EVENTS == v055  # untouched by the count
 
 
 @pytest.mark.parametrize(

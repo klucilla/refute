@@ -302,3 +302,77 @@ def test_a_merge_prepared_with_no_commit_is_committed_with_no_edit(repo):
     assert out.returncode == 0, out.stdout + out.stderr
     parents = git(repo, "log", "-1", "--format=%P").stdout.split()
     assert len(parents) == 2
+
+
+# The privacy check (the maintainer's decision of 2026-11-21, 22:30, item 2): a hit blocks the
+# commit; only the exact CLAUDE.md line in PRIVACY_EXCEPTIONS is let through.
+FAKE_USER = "zqxuser"
+APP_DATA = "App" + "Data"  # built, so that this file holds no literal hit
+PROFILES = "Us" + "ers"
+ROOTS_LINE = (
+    f"  (`%USERPROFILE%` / `$HOME`), `%{APP_DATA}%`, `%Local{APP_DATA}%`, `%ProgramFiles%`,"
+)
+
+
+def commit_as(repo: Path, *args: str) -> subprocess.CompletedProcess:
+    """commit_checked with a known user name (getpass reads LOGNAME first)."""
+    import os
+
+    env = {**os.environ, "LOGNAME": FAKE_USER}
+    return subprocess.run(
+        [sys.executable, str(SCRIPT), *args],
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        check=False,
+        env=env,
+    )
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        f"see C:\\{PROFILES}\\someone\\x\n",
+        f"see C:/{PROFILES}/someone/x\n",
+        f"in {APP_DATA} here\n",
+    ],
+)
+def test_a_user_path_or_the_application_data_folder_blocks_the_commit(repo, text):
+    stage(repo, "notes.md", "ok\n" + text)
+    out = commit_as(repo, "-m", "x")
+    assert out.returncode == 2 and "privacy check" in out.stderr
+    assert "notes.md:2" in out.stderr
+    assert "someone" not in out.stderr and f"{APP_DATA} here" not in out.stderr
+    assert commits(repo) == 0
+
+
+def test_the_user_name_blocks_the_commit_and_is_never_printed(repo):
+    stage(repo, "notes.md", f"by {FAKE_USER}\n")
+    out = commit_as(repo, "-m", "x")
+    assert out.returncode == 2 and "notes.md:1" in out.stderr
+    assert FAKE_USER not in out.stderr + out.stdout
+    assert commits(repo) == 0
+
+
+def test_the_message_is_checked_too(repo):
+    stage(repo, "notes.md", "ok\n")
+    out = commit_as(repo, "-m", f"copied from C:/{PROFILES}/someone")
+    assert out.returncode == 2 and "the message" in out.stderr
+    assert commits(repo) == 0
+
+
+def test_the_known_claude_md_line_is_let_through(repo):
+    stage(repo, "CLAUDE.md", "rules\n" + ROOTS_LINE + "\n")
+    out = commit_as(repo, "-q", "-m", "x")
+    assert out.returncode == 0, out.stdout + out.stderr
+    assert "privacy check passed on 2 staged text file(s)" in out.stdout
+    assert commits(repo) == 1
+
+
+def test_the_same_line_elsewhere_or_changed_is_blocked(repo):
+    stage(repo, "OTHER.md", ROOTS_LINE + "\n")
+    stage(repo, "CLAUDE.md", ROOTS_LINE + f" C:\\{PROFILES}\\x\n")
+    out = commit_as(repo, "-m", "x")
+    assert out.returncode == 2
+    assert "OTHER.md:1" in out.stderr and "CLAUDE.md:1" in out.stderr
+    assert commits(repo) == 0

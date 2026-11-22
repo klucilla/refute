@@ -11,9 +11,7 @@ any cap, STOP.** So the CPU line given to ``budgeted`` is 80 % of 80 = 64 CPU-h,
 allocation and charge fits inside it.
 
 **Review tokens:** each Codex conversation's last turn ``input_tokens - cached_input_tokens +
-output_tokens`` (the events under ``.cache/v055/codex/``), as in every earlier phase; since
-2026-11-21 (21:00, #218), summed over the conversation's threads when its rounds did not resume one
-thread (``codex_tokens``).
+output_tokens`` (the events under ``.cache/v055/codex/``), as in every earlier phase.
 **Agent-days:** Claude's session transcripts since the phase opened, wall clock over 8-hour days
 (an upper bound), with the active time also recorded (``.cache/v052/tools/agent_time.py``)."""
 
@@ -445,28 +443,14 @@ def hard_cap(part: str, workers: int, max_shard_seconds: float) -> float:
 
 
 def codex_tokens() -> dict:
-    """Per Codex conversation (``<name>-r<round>-events.jsonl``), its uncached input plus output,
-    and the phase's total.
-
-    Rounds that resume one Codex thread (the same ``thread.started`` id, ``codex_affinity.ps1
-    -Thread``) report cumulative usage, so a thread counts by its last round. Rounds run as new
-    sessions each start a thread of their own, so a conversation counts by the **sum over its
-    threads** (the maintainer's decision of 2026-11-21, 21:00, item 3, #218: the conversation
-    "pause" ran its rounds as new sessions and its last round alone undercounted it; the figures
-    already recorded keep their bytes, and the correction is
-    ``docs/validation/v0.5.5/pause-tokens-correction.md``). In short: sum the last completed
-    round's net usage for each distinct thread.
-
-    The contract: a conversation of one counted round counts even without a thread id; in a
-    conversation of several counted rounds, every counted round must name its thread; a file that
-    names two different thread ids is refused. Rounds are ordered by their number (``r10`` after
-    ``r2``)."""
-    rounds: dict[str, list[tuple[int, str | None, int]]] = {}
+    """Per Codex conversation (``<name>-r<round>-events.jsonl``), the last round's cumulative
+    uncached input plus output, and the phase's total."""
+    last: dict[str, tuple[int, int]] = {}
     for path in sorted(CODEX_EVENTS.glob("*-events.jsonl")):
         m = re.fullmatch(r"(.+)-r(\d+)-events\.jsonl", path.name)
         if not m:
             continue
-        usage, ids = None, set()
+        usage = None
         for line in path.read_text("utf-8-sig", errors="replace").splitlines():
             line = line.strip().lstrip("﻿")
             if not line.startswith("{"):
@@ -475,26 +459,15 @@ def codex_tokens() -> dict:
                 event = json.loads(line)
             except ValueError:
                 continue
-            if event.get("type") == "thread.started" and event.get("thread_id"):
-                ids.add(event["thread_id"])
             if event.get("type") == "turn.completed" and "usage" in event:
                 usage = event["usage"]
-        if len(ids) > 1:
-            raise SystemExit(f"{path.name}: conflicting thread ids; refused")
         if usage is None:
             continue
         count = usage["input_tokens"] - usage["cached_input_tokens"] + usage["output_tokens"]
         conv, rnd = m.group(1), int(m.group(2))
-        rounds.setdefault(conv, []).append((rnd, next(iter(ids), None), count))
-    per = {}
-    for conv, items in rounds.items():
-        if len(items) > 1 and any(thread is None for _, thread, _ in items):
-            raise SystemExit(f"{conv}: a round of several has no thread id; refused")
-        last: dict[str | None, tuple[int, int]] = {}
-        for rnd, thread, count in items:
-            if thread not in last or rnd > last[thread][0]:
-                last[thread] = (rnd, count)
-        per[conv] = sum(c for _, c in last.values())
+        if conv not in last or rnd > last[conv][0]:
+            last[conv] = (rnd, count)
+    per = {conv: c for conv, (_, c) in last.items()}
     return {"conversations": per, "phase": sum(per.values())}
 
 
