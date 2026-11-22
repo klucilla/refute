@@ -344,3 +344,19 @@ The tokens are cumulative over the conversation `relaunch`:
 The conversation counts **139,106** review tokens (the last round's uncached input plus output).
 
 Applied: every blocking item and remark of rounds 1 and 2 (the precedence sentences in ROADMAP.md and CLAUDE.md; the note on R1's frozen file in v0.5.5's section; the parser's contract and its tests; the frame frozen before any light curve, the split by TIC, the exclusion of prior exposure, the freeze before the drand draw and the disjointness check; the doors' denominators, minimums and causes; B incomplete leaves the criterion open; `tfopwg_disp` only for the use NExScI's reply covers; the ephemeris source recorded before part A's approval, with the SPOC fallback only on approved inputs; eligibility by predicted transits; the cost wording). The token count of this conversation is the sum over its one thread (resumed).
+
+## v0.5.6 part A: the frame and split script, before recording
+
+Codex's exploratory round (one round, the process diet) on docs/validation/v0.5.6/part_a_frame.py before the frame, the split by TIC and the draw were recorded (the maintainer's decisions of 2026-11-21, 22:30, item 3, and 22:45, item 3; #218). Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [partaframe-round-1-answer.md](partaframe-round-1-answer.md) | gpt-6.1-sol, high | **REFUTED for recording with the first script** (fixable within the approved exploratory design): six blocking items: the MAST listing could accept products the adapter would not download; a transit could be counted twice and MJD/BJD needed a margin; the split's parity differed from the stated rule; the prior-exposure scan read mutable files and missed CSV TIC columns; a resumed run could rewrite the frame or finish an incomplete draw; the plan described another frame | `c0aa360cf3a3114d6bd4612ddcb746afb3d5ec5b8d55e6886a6d64ad54faad2d` |
+
+The tokens are cumulative over the conversation `partaframe`:
+
+- round 1: 1,051,648 input (970,752 cached) and 8,876 output;
+
+The conversation counts **89,772** review tokens (the last round's uncached input plus output).
+
+Applied before anything was recorded: the listing mirrors the adapter's filters (author SPOC, exposure exactly 120 s, *lc.fits products, the TIC, sectors up to 107), a failed query is never an empty answer; predicted transits are a union of indices with a 0.01 d edge margin; the split is int(sha256(seed:split:tic), 16) % 2, with a test vector; the exposure scan reads commit c4d6fa3's blobs, text and TIC columns, with evidence per TIC; each step consumes the frozen output of the one before, writes atomically and refuses to write over; the draw's final record is written only after its checks, or as incomplete; the plan's text is aligned. No second round (one round by default in exploratory mode).
