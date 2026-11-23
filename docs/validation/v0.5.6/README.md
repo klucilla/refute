@@ -26,6 +26,12 @@ battery carries its limits label, **"WEAKENED; does not meet D1, D2, D4, T2a"**.
 **The phase's public report:** [docs/reports/v0.5.6-report.md](../../reports/v0.5.6-report.md)
 (approved by the maintainer on 2026-11-23, #218).
 
+**Its dated addendum:**
+[docs/reports/v0.5.6-report-addendum-2026-11-23.md](../../reports/v0.5.6-report-addendum-2026-11-23.md).
+- It is a new file of 2026-11-23, from v0.5.8 (exploratory). The report is not edited.
+- It records how part B's events moved when the same TOIs were refitted from the TOI's ephemeris.
+- The locked verdict stands as recorded.
+
 ## Part B
 
 - The design is [amendment 1](../../plans/v0.5.6-plan-amendment-1.md), and the steps are in

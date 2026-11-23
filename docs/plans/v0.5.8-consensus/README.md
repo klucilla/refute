@@ -62,3 +62,42 @@ The round used 1,234,791 input tokens (1,150,592 cached) and 12,957 output token
    - `clean` also deletes light curves of the set left without a manifest, logged with their SHA-256.
 
 **Not fully applied, and stated:** CPU and the deadline govern admission, not the work already running. A running target finishes. The CPU estimate is about 4 CPU-h against the cap of 8.
+
+## The note and the v0.5.6 addendum (one round)
+
+The maintainer's decision of 2026-11-23 (received at 16:42 local, #218, comment 7111994921), item 3: one Codex round on the public note and the v0.5.6 addendum, checking facts and numbers against the records.
+- **The texts:** `docs/reports/v0.5.8-stability-note.md` and `docs/reports/v0.5.6-report-addendum-2026-11-23.md`, uncommitted, in the working tree.
+- **The records:** commit `bbfdecc`.
+- **The round:** conversation `v058note` (thread `01a209f0-2eb9-7672-93bc-b68528fe555d`); Codex CLI 0.167.0-alpha.3.2, model gpt-6.2-sol, effort high.
+- **The answer** is in Portuguese and stored unchanged.
+
+| Round | File | Verdicts | SHA-256 |
+|---|---|---|---|
+| 1 | [note-round-1-answer.md](note-round-1-answer.md) | 1 WEAKENED, 2 SURVIVED, 3 WEAKENED, 4 WEAKENED; five blocking items; **OVERALL: WEAKENED** | `42d6ff61b361ab82d02a3512bfd5ee272f7cb3c4b03153c61bd794c2a929ea22` |
+
+The round used 473,441 input tokens (406,528 cached) and 12,787 output tokens: **79,700** review tokens.
+
+**What Codex confirmed:**
+- every count in the note;
+- sentence 2a, transition by transition;
+- the 18 events are exactly the locked claim's;
+- the original v0.5.6 report is unchanged.
+
+**Applied** (one round, so there is no second round; each divergence goes to the more conservative option):
+1. **12 of 150:** its Wilson upper bound is 13 %, not 14 % (13.46 %).
+2. **The scope of "no other planet became REFUTED"** (sentence 2b, in the note and the addendum). v0.5.8 reran 40 of the claim's 150 planet records, so the clause now states that scope.
+   - Codex proposed a fuller rewording.
+   - The maintainer's sentence was kept, and the scope was added inside it: "and none of the other 39 part B planet records rerun here (of the claim's 150 drawn planets) became REFUTED".
+   - Both versions state the same facts and the same scope; the smaller edit of the maintainer's words was chosen.
+3. **The note's set:**
+   - it now says that the TOIs were selected from records whose fitted signals matched the TOI ephemerides;
+   - "using the same public SPOC data" became the provenance as measured: 83 records matched by hash, 84 unverified.
+4. **The note's question and its first point** now compare the TOI-ephemeris start with v0.5.6's search-mode output, without "only the starting point changed". The count of one in seven states that it includes two runs that ended in ERROR.
+5. **The addendum:** only the runs that reached the fitting step were seeded.
+
+**The non-blocking items, applied:**
+- the failed-run row now has its rate and Wilson interval;
+- a sentence states that the 150 status changes include 70 changes to NOT OK from the failed runs;
+- "cited as in the root README" was restored.
+
+**Not touched:** the approved v0.5.8 report. The round did not cover it, and the decision approved it as it is. It reads door 1 as outputs that changed "when only the seed changed"; the note now uses the more careful wording.

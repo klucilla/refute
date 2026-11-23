@@ -82,6 +82,9 @@ strictly"; see [the section below](#v056-apply-with-declared-limits)).
   under the limits label 'WEAKENED; does not meet D1, D2, D4, T2a'. It is agreement, not
   independence.
 - **The public report** is [docs/reports/v0.5.6-report.md](docs/reports/v0.5.6-report.md).
+  - **Its addendum of 2026-11-23** (a new file; the report is not edited):
+    [docs/reports/v0.5.6-report-addendum-2026-11-23.md](docs/reports/v0.5.6-report-addendum-2026-11-23.md).
+    It records how the claim's events moved in v0.5.8. The locked verdict stands as recorded.
 - **The reviews:**
   - Codex's review of the phase returned `SURVIVED`;
   - the independent gate review returned `SURVIVED`, with no critical or important finding
@@ -995,6 +998,8 @@ Nothing depends on `tfopwg_disp` until NExScI answers. `method_status: not_valid
   185fd91, verdict 57c4160): [calibration/v0.5.6/part-b-verdict.md](calibration/v0.5.6/part-b-verdict.md).
 - **The phase's public report** (approved by the maintainer on 2026-11-23, #218):
   [docs/reports/v0.5.6-report.md](docs/reports/v0.5.6-report.md). Nothing on the site yet.
+- **Its dated addendum** (the maintainer's decision of 2026-11-23, #218; a new file, the report is
+  not edited): [docs/reports/v0.5.6-report-addendum-2026-11-23.md](docs/reports/v0.5.6-report-addendum-2026-11-23.md).
 
 **Exit criteria** (detail in the plan; ticked on 2026-11-23 by the maintainer's decision of 08:30,
 item 2, #218, where the evidence exists)
@@ -1135,6 +1140,15 @@ TOI signal is refitted from another seed, and publish that per test.
 
 **The rule:** nothing changes in the v0.5 battery or in any verdict, and any proposal of a new
 threshold ends the phase. Everything is exploratory, and `method_status: not_validated` stands.
+
+**The report and the note** (both approved by the maintainer on 2026-11-23, #218; the exit
+criteria are ticked only when the phase closes, after the gate):
+- the exploratory report: [docs/reports/v0.5.8-report.md](docs/reports/v0.5.8-report.md);
+- the note "How stable is a Refute output?":
+  [docs/reports/v0.5.8-stability-note.md](docs/reports/v0.5.8-stability-note.md). Its facts were
+  checked in one Codex round, whose corrections were applied
+  ([record](docs/plans/v0.5.8-consensus/README.md)). Nothing on the site;
+- the records: [docs/validation/v0.5.8/](docs/validation/v0.5.8/README.md).
 
 **Exit criteria** (detail in the plan)
 - [ ] The scripts, the draw of the 60 and the doors are committed before the first result.
