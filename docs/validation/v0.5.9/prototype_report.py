@@ -11,15 +11,16 @@ verdicts, never candidates and never doors with a threshold. The numbers describ
 only. Every record carries the limits label 'WEAKENED; does not meet D1, D2, D4, T2a'.
 
 **Rules fixed before any result:**
-- **Completeness.** Nothing is marked unless:
-  - the run reached a terminal state (``complete``, ``stopped`` or ``abandoned``), recorded in the
-    bundle;
-  - there is exactly one row per TOI and mode (48), each with a status.
-
-  Then each question is marked only if every TOI it reads is complete: both rows have a status
-  other than ``NO RECORD``, no required unit is missing, and no consensus is ``INCOMPLETE``. A
-  recorded failure with its reason (an ERROR, a download that failed, a unit stopped at a cap)
-  is complete; a unit never run is not. The incomplete TOIs are listed.
+- **Structural validity** (its own field): the run reached a terminal state (``complete``,
+  ``stopped`` or ``abandoned``), recorded in the bundle, and there is exactly one row per TOI and
+  mode (48), each with a status. Without it nothing is marked.
+- **Completeness, per question** (Codex's round 2, item 4): each question is marked only if every
+  TOI it reads is complete: both rows have a status other than ``NO RECORD``, no required unit is
+  missing, **no unit ended by a resource stop** (``STOPPED_AT_CAP``, ``CPU_ALLOWANCE``,
+  ``DOWNLOAD_ALLOWANCE``, ``WORKER_LOST``), and no consensus is ``INCOMPLETE``. A recorded
+  scientific or code failure with its reason (an ERROR, an unresolved entry) is complete. A
+  resource stop is never counted as a disagreement or a demotion; it stays in Q5's costs. The
+  incomplete TOIs are listed.
 - **A pair** is one TOI's E row and S row. A row that is not OK makes its pair neither the same
   class nor decided.
 - **Q1, the 14 changes** (``changes`` and ``reverse``), without consensus (both bases) and with
@@ -113,10 +114,17 @@ def complete(records: list[dict], keys: list[str], run_state: str | None) -> tup
     return not problems, problems
 
 
+OPERATIONAL = ("STOPPED_AT_CAP", "CPU_ALLOWANCE", "DOWNLOAD_ALLOWANCE", "WORKER_LOST")
+
+
 def toi_complete(by: dict, k: str) -> bool:
+    """Both rows recorded, no required unit missing, no unit ended by a resource stop (Codex's
+    round 2, item 4: a stop is never counted as a scientific outcome), no INCOMPLETE consensus."""
     for m in MODES:
         r = by.get((k, m))
         if r is None or r.get("status") in (None, "NO RECORD") or r.get("required_missing"):
+            return False
+        if r.get("operational_stops") or any(s in str(r.get("status")) for s in OPERATIONAL):
             return False
         if (r.get("consensus") or {}).get("status") == "INCOMPLETE":
             return False
@@ -297,12 +305,14 @@ def build() -> dict:
         if BUNDLE.exists() else None,
         "run_state": doc.get("run_state"),
         "records": len(records),
-        "complete": ok,
+        "structurally_valid": ok,
         "completeness_problems": problems,
     }  # fmt: skip
     if not ok:
+        rep["complete"] = False
         return rep
     rep["incomplete_tois"] = [k for k in keys if not toi_complete(by, k)]
+    rep["complete"] = not rep["incomplete_tois"]
 
     def marked(scope: list[str], fn):
         missing = [k for k in scope if k in rep["incomplete_tois"]]
@@ -343,10 +353,11 @@ def markdown(rep: dict) -> str:
         "these 24 TOIs only. E enters through the TOI's ephemeris, S through the battery's own "
         "search, on the same input bytes.",
         "",
-        f"Rows: {rep['records']}; run state: {rep['run_state']}; complete: {rep['complete']}.",
+        f"Rows: {rep['records']}; run state: {rep['run_state']}; structurally valid: "
+        f"{rep['structurally_valid']}; every TOI complete: {rep['complete']}.",
     ]
-    if not rep["complete"]:
-        lines += ["", "Not complete (nothing is marked):", ""]
+    if not rep["structurally_valid"]:
+        lines += ["", "Not structurally valid (nothing is marked):", ""]
         lines += [f"- {p}" for p in rep["completeness_problems"]]
         return "\n".join(lines) + "\n"
     if rep["incomplete_tois"]:

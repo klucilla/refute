@@ -126,6 +126,8 @@ PROBES = (
 )
 MODES = ("E", "S")
 MAX_GIT_BYTES = 5_000_000  # raw outputs above 5 MB never enter git (the maintainer's rule)
+# the statuses of a unit ended by a resource stop, never a scientific outcome
+OPERATIONAL = ("STOPPED_AT_CAP", "CPU_ALLOWANCE", "DOWNLOAD_ALLOWANCE", "WORKER_LOST")
 
 _ORIGINAL_DISK_BYTES = sr.disk_bytes
 
@@ -394,8 +396,8 @@ def consensus(base: dict | None, probes: dict[str, dict | None]) -> dict:
     """The consensus output of one mode. It only demotes:
     - a base that is missing or not OK has no output (its status is kept);
     - an INCONCLUSIVE base stays INCONCLUSIVE (no probe runs);
-    - a decided base with a probe not recorded has no consensus yet (``status: INCOMPLETE``,
-      kept apart from a recorded failure);
+    - a decided base with a probe not recorded, or ended by a resource stop (``OPERATIONAL``),
+      has no consensus (``status: INCOMPLETE``, kept apart from a recorded disagreement);
     - a decided base keeps its class only if all six probes are recorded, OK, and give that
       class; otherwise INCONCLUSIVE, naming the first disagreeing probe in the frozen order
       (a recorded probe that is not OK disagrees)."""
@@ -410,6 +412,10 @@ def consensus(base: dict | None, probes: dict[str, dict | None]) -> dict:
     if missing:
         return {"outcome": None, "status": "INCOMPLETE", "first_disagreeing": None,
                 "reason": f"probes not recorded: {', '.join(missing)}"}  # fmt: skip
+    stopped = [n for n, _, _ in PROBES if probes[n].get("status") in OPERATIONAL]
+    if stopped:  # a resource stop is not a scientific disagreement (Codex's round 2, item 4)
+        return {"outcome": None, "status": "INCOMPLETE", "first_disagreeing": None,
+                "reason": f"probes ended by a resource stop: {', '.join(stopped)}"}  # fmt: skip
     for name, _, _ in PROBES:
         p = probes.get(name)
         why = None
@@ -448,12 +454,14 @@ class NumericFailureError(Exception):
 
 
 def _check_pd(matrix, what: str) -> None:
-    """Finite, symmetric (to ``SYMMETRY_RTOL``) and positive definite (Cholesky)."""
+    """Finite, symmetric (to ``SYMMETRY_RTOL`` of the matrix's own largest entry, checked before
+    Cholesky) and positive definite (Cholesky)."""
     m = np.asarray(matrix, dtype=float)
     if not np.all(np.isfinite(m)):
         raise NumericFailureError(f"{what} is not finite")
-    if np.max(np.abs(m - m.T)) > SYMMETRY_RTOL * max(1.0, float(np.max(np.abs(m)))):
-        raise NumericFailureError(f"{what} is not symmetric")
+    scale = float(np.max(np.abs(m))) if m.size else 0.0
+    if scale == 0.0 or np.max(np.abs(m - m.T)) > SYMMETRY_RTOL * scale:
+        raise NumericFailureError(f"{what} is not symmetric (or is zero)")
     try:
         np.linalg.cholesky(m)
     except np.linalg.LinAlgError as exc:
@@ -790,8 +798,13 @@ def metered(adapter, allowance: float, meter: dict):
                 raise DownloadAllowanceError(
                     f"{used} bytes metered, at the unit's allowance of {int(allowance)}"
                 )
-            path = plain_dl(product, row_name, download_dir, **kwargs)
-            meter["completed_bytes"] += Path(path).stat().st_size
+            cached = {p.resolve(): p.stat().st_size for p in Path(download_dir).rglob(row_name)}
+            path = Path(plain_dl(product, row_name, download_dir, **kwargs))
+            size = path.stat().st_size
+            if cached.get(path.resolve()) == size:
+                meter["cache_hits"] = meter.get("cache_hits", 0) + 1  # no transfer: not counted
+                return path
+            meter["completed_bytes"] += size
             meter["files"] += 1
             return path
 
@@ -892,9 +905,12 @@ def _fetch(unit: dict, test_plan: dict, rec: dict, w) -> None:
 
 
 def _load(unit: dict, test_plan: dict, rec: dict, w):
-    """The same input bytes for every unit: each file's SHA-256 is checked against the fetch
-    unit's record before anything is read. Returns (data, plan) or None (the record says why)."""
-    from refute.packs.tess.adapter import TessAdapter
+    """The same input bytes for every unit: each FITS file's SHA-256 is checked against the fetch
+    unit's record, and the adapter's manifest (the star and neighbor data the tests read) is
+    parsed from the exact bytes whose SHA-256 was checked, with the adapter's own checks, then
+    read by the adapter's ``load_from_manifest``. Returns (data, plan) or None (the record says
+    why)."""
+    from refute.packs.tess import adapter
     from refute.packs.tess.discover.measure import stage_plan
     from refute.packs.tess.params import TessTestPlan
 
@@ -902,12 +918,12 @@ def _load(unit: dict, test_plan: dict, rec: dict, w):
     if fetched is None or fetched.get("status") != "OK":
         rec.update({"status": "NOT_RUN", "reason": "the fetch unit is not OK"})
         return None
-    pinned = [*fetched["inputs"], {"name": "manifest", **fetched["manifest"]}]
-    changed = [f["name"] for f in pinned
+    changed = [f["name"] for f in fetched["inputs"]
                if w.sha256_path(DATA / f["path"]) != f["sha256"]]  # fmt: skip
-    rec["inputs_checked"] = len(
-        pinned
-    )  # the FITS files and the adapter's manifest (star, neighbors)
+    raw = (DATA / fetched["manifest"]["path"]).read_bytes()
+    if hashlib.sha256(raw).hexdigest() != fetched["manifest"]["sha256"]:
+        changed.append("manifest")
+    rec["inputs_checked"] = len(fetched["inputs"]) + 1  # the FITS files and the manifest
     if changed:
         rec.update({"status": "INPUTS_CHANGED", "reason": f"SHA-256 changed: {changed[:5]}"})
         return None
@@ -918,8 +934,17 @@ def _load(unit: dict, test_plan: dict, rec: dict, w):
     if why is not None:
         rec.update({"status": "PATH_REFUSED", "reason": why})
         return None
-    tgt = {"key": unit["target_key"], "tic_id": int(unit["tic_id"])}
-    data = TessAdapter().load(tgt, plan_dict, DATA)
+    tic = int(unit["tic_id"])
+    manifest = json.loads(raw.decode("utf-8"))
+    if (
+        manifest.get("schema") not in adapter.SUPPORTED_SCHEMAS
+        or manifest.get("tic_id") != tic
+        or manifest.get("target_key") != f"TIC-{tic}"
+    ):
+        rec.update({"status": "INPUTS_CHANGED", "reason": "the manifest is not this TOI's"})
+        return None
+    max_sector, read_pixels = adapter._limits(plan)
+    data = adapter.load_from_manifest(manifest, DATA, plan.data, None, max_sector, read_pixels)
     return data, plan
 
 
@@ -994,44 +1019,10 @@ def _probe(unit: dict, test_plan: dict, rec: dict, w) -> None:
                 "tests_differing_from_base": differ})  # fmt: skip
 
 
-_HALT = None  # the batch's halt event, in a worker (set by ``init_worker``)
-
-
-def init_worker(semaphore, fetched, halt) -> None:
-    """A worker's initializer: ``seeded_run``'s download semaphore and fetched queue, and the
-    batch's halt event."""
-    global _HALT
+def run_unit(unit: dict, test_plan: dict, _hist: dict | None = None) -> dict:
+    """One work unit, in its own worker process. Any failure is recorded, never hidden."""
     w = _point_worker()
-    w._init(semaphore, fetched)
-    _HALT = halt
-
-
-class _Watchdog(threading.Thread):
-    """In a worker, during one unit: when the batch's halt event is set (a cap is reached), the
-    unit's main thread is interrupted, so the unit ends with its record."""
-
-    def __init__(self) -> None:
-        super().__init__(daemon=True)
-        self.done = threading.Event()
-        self.fired = False
-
-    def run(self) -> None:
-        import _thread
-
-        while not self.done.wait(1.0):
-            if _HALT is not None and _HALT.is_set():
-                self.fired = True
-                _thread.interrupt_main()
-                return
-
-
-def run_unit(unit: dict, test_plan: dict, _hist: dict | None) -> dict:
-    """One work unit, in a worker. Any failure is recorded, never hidden."""
-    w = _point_worker()
-    if unit["kind"] != "fetch" and w._FETCHED is not None:
-        w._FETCHED.put(unit["key"])  # no download in this unit
     started, wall = time.process_time(), time.time()
-    dog = _Watchdog()
     rec = {
         "unit_key": unit["key"],
         "target_key": unit["target_key"],
@@ -1053,43 +1044,73 @@ def run_unit(unit: dict, test_plan: dict, _hist: dict | None) -> dict:
         "coverage_state": "unavailable",
     }
     try:
-        if _HALT is not None and _HALT.is_set():
-            raise KeyboardInterrupt
-        dog.start()
-        {"fetch": _fetch, "base": _base, "probe": _probe}[unit["kind"]](unit, test_plan, rec, w)
-    except KeyboardInterrupt:
-        if not (dog.fired or (_HALT is not None and _HALT.is_set())):
-            raise
-        rec.update(
-            {
-                "status": "STOPPED_AT_CAP",
-                "coverage_state": "unavailable",
-                "reason": "the batch reached a cap (CPU or disk) while this unit ran",
-            }
-        )
+        if unit["kind"] == "selftest":  # the supervisor's offline tests only
+            end = time.process_time() + float(unit.get("spin_seconds", 0.0))
+            while time.process_time() < end:
+                pass
+            rec.update({"status": "OK", "outcome": "INCONCLUSIVE", "outcome_reason": "selftest"})
+        else:
+            handler = {"fetch": _fetch, "base": _base, "probe": _probe}[unit["kind"]]
+            handler(unit, test_plan, rec, w)
     except Exception as exc:  # noqa: BLE001 - recorded, never hidden
         rec.update({"status": "ERROR", "reason": f"{type(exc).__name__}: {exc}",
                     "trace": traceback.format_exc()[-1500:]})  # fmt: skip
     finally:
-        dog.done.set()
         rec["cpu_seconds"] = time.process_time() - started
         rec["wall_seconds"] = time.time() - wall
         rec["ended_utc"] = sr.utc()
     return rec
 
 
+def _self_limit(cpu_allowance: float) -> None:
+    """In a worker: a thread that ends the process (``os._exit``) once its own CPU passes the
+    unit's allowance, so even a worker whose controller died cannot spend more."""
+
+    def watch() -> None:
+        while True:
+            time.sleep(1.0)
+            if time.process_time() > cpu_allowance:
+                os._exit(86)
+
+    threading.Thread(target=watch, daemon=True).start()
+
+
+def child_main(unit: dict, test_plan: dict, result_path: str) -> None:
+    """A worker process: run one unit and write its record to ``result_path`` (atomic, read
+    back). The controller turns that file into the unit's record."""
+    _self_limit(unit["cpu_allowance_seconds"])
+    rec = run_unit(unit, test_plan)
+    write_json(Path(result_path), rec)
+
+
 # --- the controller ----------------------------------------------------------------------------
 
 _UNITS: dict[str, dict] = {}
-SAMPLE_SECONDS = 2.0
-CPU_HALT_MARGIN_HOURS = 0.02  # the live halt fires this far below the CPU cap
+SAMPLE_SECONDS = 1.0
+CPU_HALT_MARGIN_HOURS = 0.02  # the supervisor stops every worker this far below the CPU cap
+CPU_ALLOWANCE_FACTOR, MIN_CPU_ALLOWANCE = 4.0, 600.0  # per unit, enforced by both sides
+ATTEMPTS = WORK / "run/attempts"
+RESULTS = WORK / "run/results"
+CHILD_ENV = {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+}  # one thread per worker: its CPU is bounded by its wall
+ARCHIVE_ROOT = Path("K:/Meu Drive/Pessoal/Projetos/refute")
+
+
+def cache_roots() -> list[Path]:
+    return [LIGHTKURVE, RECORDS, ATTEMPTS, RESULTS, WORK / "run/tpf-deletions",
+            *(WORK / rel for rel in sr.ENV_DIRS.values())]  # fmt: skip
 
 
 def no_link_roots() -> None:
-    """Refuse a run whose cache roots are links or junctions (Codex's round 1, item 6): every
-    existing component from ``.cache`` down to the records and the light curves."""
+    """Refuse a run whose cache roots are links or junctions (Codex's rounds 1 and 2, item 6):
+    every existing component from ``.cache`` down to every configured root, checked before any
+    directory is created and before every download."""
     cache = ROOT / ".cache"
-    for leaf in (LIGHTKURVE, RECORDS, WORK / "run/tpf-deletions"):
+    for leaf in cache_roots():
         p = leaf
         while True:
             if p.exists() and (p.is_symlink() or p.is_junction()):
@@ -1130,17 +1151,38 @@ def targets() -> list[dict]:
 
 
 def download_reserve(u: dict) -> float:
-    """A fetch unit's byte allowance, enforced in the worker (``metered``): 1.25 times the TOI's
-    v0.5.8 bytes, at least 0.3 GB. Other units download nothing."""
+    """A fetch unit's byte allowance: 1.25 times the TOI's v0.5.8 bytes, at least 0.3 GB. Other
+    units download nothing."""
     if u["kind"] != "fetch":
         return 0.0
     return max(MIN_DOWNLOAD_RESERVE, DOWNLOAD_RESERVE_FACTOR * (u.get("v058_bytes") or 0))
+
+
+def est_cpu_hours(u: dict) -> float:
+    if u["kind"] == "selftest":
+        return float(u.get("spin_seconds", 0.0)) / 3600.0
+    base = max(60.0, u.get("v058_cpu") or 0.0, 15.0 * len(u.get("sectors") or []))
+    return CPU_FACTORS[u["kind"]] * base / 3600.0
+
+
+def cpu_allowance(u: dict) -> float:
+    """A unit's CPU allowance (seconds): enforced by the supervisor and by the worker itself."""
+    if u["kind"] == "selftest":
+        return float(u.get("cpu_allowance_seconds", 60.0))
+    return max(MIN_CPU_ALLOWANCE, CPU_ALLOWANCE_FACTOR * est_cpu_hours(u) * 3600.0)
+
+
+def est_wall(u: dict) -> float:
+    if u["kind"] == "fetch":
+        return min(MAX_UNIT_WALL, 1.5 * (u.get("v058_fetch_wall") or 120.0) + 60.0)
+    return min(MAX_UNIT_WALL, 3.0 * est_cpu_hours(u) * 3600.0 + 30.0)
 
 
 def _unit(t: dict, kind: str, mode: str | None = None, probe: str | None = None) -> dict:
     key = unit_key(t["key"], kind, mode, probe)
     u = {**t, "target_key": t["key"], "key": key, "kind": kind, "mode": mode, "probe": probe}
     u["allowance_bytes"] = download_reserve(u)
+    u["cpu_allowance_seconds"] = cpu_allowance(u)
     _UNITS[key] = u
     return u
 
@@ -1188,28 +1230,6 @@ def target_done(t: dict) -> bool:
     return all(_read_record(k) is not None for k in required_units(t))
 
 
-def est_cpu_hours(u: dict) -> float:
-    base = max(60.0, u.get("v058_cpu") or 0.0, 15.0 * len(u.get("sectors") or []))
-    return CPU_FACTORS[u["kind"]] * base / 3600.0
-
-
-def est_wall(u: dict) -> float:
-    if u["kind"] == "fetch":
-        return min(MAX_UNIT_WALL, 1.5 * (u.get("v058_fetch_wall") or 120.0) + 60.0)
-    return min(MAX_UNIT_WALL, 3.0 * est_cpu_hours(u) * 3600.0 + 30.0)
-
-
-def downloaded_so_far() -> int:
-    """The bytes charged to the download cap: per fetch record, the larger of the metered
-    transfer and the manifest's new files; plus every interrupted fetch's whole allowance."""
-    total = 0
-    for p in sorted(RECORDS.glob("*.fetch.json")):
-        r = json.loads(p.read_text("utf-8"))
-        total += max(int(r.get("metered_download_bytes") or 0), int(r.get("downloaded_bytes") or 0))
-    ledger = sr._ledger()
-    return total + sum(int(i.get("bytes", 0)) for i in ledger.get("download_interruptions", []))
-
-
 def disk_bytes(root: Path | None = None) -> int:
     """The disk under ``.cache/v059`` by default."""
     return _ORIGINAL_DISK_BYTES(WORK if root is None else root)
@@ -1220,6 +1240,7 @@ def write_json(path: Path, obj: dict) -> str:
     replace refused by Windows (v0.5.8's heartbeat departure) is tried again up to 5 times,
     0.2 s apart."""
     text = json.dumps(obj, indent=1, default=sr._plain)
+    path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_name(f"{path.name}.{os.getpid()}.{threading.get_ident()}.tmp")
     tmp.write_text(text, "utf-8", newline="\n")
     for attempt in range(6):
@@ -1235,24 +1256,147 @@ def write_json(path: Path, obj: dict) -> str:
     return text
 
 
-def finish(rec: dict) -> str | None:
-    """Write the unit's record; when the TOI's last required unit is recorded, release its pixel
-    files (the manifest first, then each file by literal path and SHA-256)."""
-    RECORDS.mkdir(parents=True, exist_ok=True)
+# --- the attempt journal: one durable file per dispatch ---------------------------------------
+
+
+def attempts() -> list[dict]:
+    return [json.loads(p.read_text("utf-8")) for p in sorted(ATTEMPTS.glob("*.json"))]
+
+
+def charged() -> dict:
+    """The one charge used for admission, supervision and settlement: per attempt, its settled
+    charge (or, while it runs, its last measured CPU and bytes); plus the controller's CPU of every
+    batch. Downloads: per fetch attempt, its charged bytes."""
+    cpu, nbytes = 0.0, 0
+    for a in attempts():
+        cpu += float(a.get("cpu_seconds_charged") or 0.0)
+        nbytes += int(a.get("bytes_charged") or 0)
+    ledger = sr._ledger()
+    controller = sum(float(b.get("controller_cpu_hours") or 0.0) for b in ledger.get("batches", []))
+    return {"cpu_hours": cpu / 3600.0 + controller, "download_bytes": nbytes}
+
+
+def _creation_time(pid: int) -> int | None:
+    import ctypes
+
+    h = sr._handle(pid)
+    if not h:
+        return None
     try:
-        write_json(RECORDS / f"{rec['unit_key']}.json", rec)
-    except Exception as exc:  # noqa: BLE001 - stops the run
-        return f"{rec['unit_key']}'s record could not be written: {exc}"
+        t = [ctypes.c_ulonglong() for _ in range(4)]
+        if not ctypes.windll.kernel32.GetProcessTimes(h, *(ctypes.byref(x) for x in t)):
+            return None
+        return int(t[0].value)
+    finally:
+        ctypes.windll.kernel32.CloseHandle(h)
+
+
+def same_process_alive(pid: int, created: int | None) -> bool:
+    """The process this run started is still alive: its PID is alive with the same creation time
+    (a reused PID is another process)."""
+    return created is not None and sr.process_alive(pid) and _creation_time(pid) == created
+
+
+def observe_download(baseline: dict, current: dict, max_seen: dict) -> int:
+    """Bytes transferred by a fetch unit, from snapshots of the TOI's files ({path: size}): every
+    file absent from the baseline counts at the largest size seen, even if it later vanished (a
+    discarded partial file); a file already in the baseline (a cache hit) does not count."""
+    for path, size in current.items():
+        if path not in baseline:
+            max_seen[path] = max(size, max_seen.get(path, 0))
+    return sum(max_seen.values())
+
+
+def _tic_snapshot(tic: int) -> dict:
+    out = {}
+    if LIGHTKURVE.exists():
+        for p in LIGHTKURVE.rglob(f"*{int(tic):016d}*"):
+            try:
+                if p.is_file():
+                    out[str(p)] = p.stat().st_size
+            except FileNotFoundError:
+                continue
+    return out
+
+
+def settle(a: dict, rec: dict | None, status: str | None = None, reason: str | None = None) -> str:
+    """Make one attempt durable: the unit's record first (the worker's, or one the supervisor
+    writes for a stopped or lost worker), then its charge in the journal. Returns the record's
+    status. Charges: the larger of the worker's own CPU and the supervisor's last reading plus one
+    sample; for a fetch, the largest of the observed, the metered and the manifest's new bytes."""
+    if rec is None:
+        rec = {"unit_key": a["key"], "target_key": a["target_key"], "tic_id": a["tic_id"],
+               "toi": a.get("toi"), "kind": a["kind"], "entry_mode": a.get("mode"),
+               "probe": a.get("probe"), "phase": "v0.5.9", "mode": "exploratory",
+               "limits_label": LABEL, "method_status": "not_validated",
+               "started_utc": a["started_utc"], "coverage_state": "unavailable",
+               "status": status or "WORKER_LOST", "reason": reason or "no result from the worker",
+               "cpu_seconds": a.get("cpu_seconds_seen", 0.0) + SAMPLE_SECONDS,
+               "ended_utc": sr.utc()}  # fmt: skip
+    rec["attempt_id"] = a["attempt_id"]
+    cpu = max(float(rec.get("cpu_seconds") or 0.0),
+              float(a.get("cpu_seconds_seen") or 0.0) + SAMPLE_SECONDS)  # fmt: skip
+    nbytes = 0
+    if a["kind"] == "fetch":
+        nbytes = max(int(a.get("bytes_seen") or 0), int(rec.get("metered_download_bytes") or 0),
+                     int(rec.get("downloaded_bytes") or 0))  # fmt: skip
+        rec["bytes_charged"] = nbytes
+    write_json(RECORDS / f"{a['key']}.json", rec)
+    a.update({"state": "settled", "settled_utc": sr.utc(), "record_status": rec.get("status"),
+              "cpu_seconds_charged": cpu, "bytes_charged": nbytes})  # fmt: skip
+    write_json(ATTEMPTS / f"{a['attempt_id']}.json", a)
+    return str(rec.get("status"))
+
+
+def recover() -> list[str]:
+    """Before any dispatch (idempotent): every attempt not settled is settled now. A worker still
+    alive refuses the run (the maintainer decides). A worker's result file, if any, becomes its
+    record; otherwise the attempt is charged its whole CPU and byte allowances and its unit stays
+    unrecorded, so it is dispatched again within the same approved run."""
+    notes = []
+    for a in attempts():
+        if a.get("state") == "settled":
+            continue
+        if same_process_alive(int(a["pid"]), a.get("created")):
+            raise SystemExit(f"refused: a worker of an earlier batch is alive (PID {a['pid']}, "
+                             f"{a['key']}); the maintainer decides")  # fmt: skip
+        result = RESULTS / f"{a['attempt_id']}.json"
+        recorded = _read_record(a["key"])
+        if recorded is not None and recorded.get("attempt_id") == a["attempt_id"]:
+            a.update({"state": "settled", "settled_utc": sr.utc(), "recovered": True,
+                      "cpu_seconds_charged": max(float(recorded.get("cpu_seconds") or 0.0),
+                                                 float(a.get("cpu_seconds_seen") or 0.0)),
+                      "bytes_charged": int(recorded.get("bytes_charged") or 0)})  # fmt: skip
+            write_json(ATTEMPTS / f"{a['attempt_id']}.json", a)
+        elif result.exists():
+            settle(a, json.loads(result.read_text("utf-8")))
+        else:
+            a.update({"state": "settled", "settled_utc": sr.utc(), "recovered": True,
+                      "record_status": None,
+                      "cpu_seconds_charged": float(a["cpu_allowance_seconds"]),
+                      "bytes_charged": int(a.get("allowance_bytes") or 0),
+                      "rule": "no result: charged its whole CPU and byte allowances; the unit "
+                              "stays unrecorded and runs again in this approved run"})  # fmt: skip
+            write_json(ATTEMPTS / f"{a['attempt_id']}.json", a)
+        notes.append(a["key"])
+    return notes
+
+
+def finish_target(rec: dict) -> None:
+    """When a TOI's last required unit is recorded, release its pixel files (manifest first, then
+    each file by literal path and SHA-256)."""
     t = _UNITS.get(rec["unit_key"])
-    try:
-        if t is not None and target_done(t):
-            sr.release_tpfs(rec["target_key"], int(rec["tic_id"]))
-    except Exception as exc:  # noqa: BLE001 - stops the run
-        return f"{rec['target_key']}'s pixel files were not released: {exc}"
-    return None
+    if t is not None and t["kind"] != "selftest" and target_done(t):
+        sr.release_tpfs(rec["target_key"], int(rec["tic_id"]))
+
+
+# --- the supervisor ---------------------------------------------------------------------------
 
 
 def fingerprints() -> dict[str, str]:
+    """The run's code, protocol and environment: the scripts, the set, the plan, the imported
+    v0.5.7 and v0.5.8 files, the test plans, the draws, the bundles, every file under ``src/``,
+    ``pyproject.toml`` and ``uv.lock``."""
     files = {
         "prototype_run": Path(__file__),
         "prototype_report": REPORT_SCRIPT,
@@ -1261,19 +1405,27 @@ def fingerprints() -> dict[str, str]:
         "seeded_run": V057 / "seeded_run.py",
         "stability_report": V058 / "stability_report.py",
         "v058_records": v058.BUNDLE,
+        "pyproject": ROOT / "pyproject.toml",
+        "uv_lock": ROOT / "uv.lock",
         **{f"test_plan_{p}": v for p, v in sr.PLANS.items()},
         **{f"draw_{p}": v for p, v in sr.DRAWS.items()},
         **{f"bundle_{p}": v for p, v in sr.BUNDLES.items()},
     }
-    return {k: hashlib.sha256(v.read_bytes()).hexdigest() for k, v in files.items()}
+    out = {k: hashlib.sha256(v.read_bytes()).hexdigest() for k, v in files.items()}
+    src = hashlib.sha256()
+    for p in sorted((ROOT / "src").rglob("*.py")):
+        src.update(p.relative_to(ROOT).as_posix().encode() + b"\0" + p.read_bytes() + b"\0")
+    out["src_tree"] = src.hexdigest()
+    return out
 
 
 def check_pinned(ledger: dict) -> None:
-    """The run's fingerprints are pinned by its first batch; a resume or a bundle with other
-    files is refused (Codex's round 1, item 5)."""
+    """The run's fingerprints are pinned before its first dispatch; a resume or a bundle with any
+    of those files changed is refused (Codex's rounds 1 and 2, item 5)."""
     pinned = ledger.get("pinned_fingerprints")
     if pinned is not None and pinned != fingerprints():
-        changed = sorted(k for k, v in fingerprints().items() if pinned.get(k) != v)
+        now = fingerprints()
+        changed = sorted(k for k in set(now) | set(pinned) if pinned.get(k) != now.get(k))
         raise SystemExit(f"refused: the files changed since the run was pinned: {changed}")
 
 
@@ -1304,8 +1456,8 @@ class OsLock:
 
 
 def point_runner() -> None:
-    """Point the imported v0.5.7 runner's paths, caps and helpers to v0.5.9 (this process). Its
-    batch loop is not used: ``run_batch`` below replaces it."""
+    """Point the imported v0.5.7 runner's paths and caps to v0.5.9 (this process). Its batch loop
+    is not used: the supervisor below replaces it."""
     sr.WORK = WORK
     sr.DATA = DATA
     sr.LIGHTKURVE = LIGHTKURVE
@@ -1317,187 +1469,190 @@ def point_runner() -> None:
     sr.CAP_CPU_HOURS = CAP_CPU_HOURS
     sr.CAP_DISK_BYTES = CAP_DISK_BYTES
     sr.DEADLINE = DEADLINE
-    sr.disk_bytes = disk_bytes
-    sr.fingerprints = fingerprints
     sr._write_json = write_json
-    sr.RunLock = OsLock
 
 
-class Monitor(threading.Thread):
-    """The batch's monitor and the only writer of the in-flight marker (a write lock serializes
-    the thread's heartbeat and the controller's updates). Every 2 s it samples the disk and the
-    live CPU charge (the CPU charged before the batch, the batch's live worker CPU and the
-    controller's); at the CPU cap (less a margin) or over the disk cap it sets the halt event,
-    which stops every running unit with its record."""
-
-    def __init__(self, halt, charged_before: float, parent_start: float) -> None:
-        super().__init__(daemon=True)
-        self.halt, self.charged_before, self.parent_start = halt, charged_before, parent_start
-        self.lock, self.write_lock = threading.Lock(), threading.Lock()
-        self.flight: dict[str, float] = {}
-        self.allowances: dict[str, float] = {}
-        self.pool = None
-        self.peak, self.samples = disk_bytes(), 1
-        self.live_hours = charged_before
-        self.halt_reason: str | None = None
-        self._stop_event = threading.Event()
-        self.beat()
-
-    def worker_cpu(self) -> float:
-        total = 0.0
-        for p in list(getattr(self.pool, "_processes", {}).values()):
-            total += sr.process_cpu_seconds(p.pid) or 0.0
-        return total
-
-    def beat(self) -> None:
-        with self.write_lock:
-            with self.lock:
-                flight, allow = dict(self.flight), dict(self.allowances)
-            sr.MARKER.parent.mkdir(parents=True, exist_ok=True)
-            write_json(sr.MARKER, {"heartbeat": time.time(), "interval_seconds": SAMPLE_SECONDS,
-                                   "in_flight": flight, "allowances": allow})  # fmt: skip
-
-    def sample(self) -> None:
-        self.peak = max(self.peak, disk_bytes())
-        self.samples += 1
-        parent = (time.process_time() - self.parent_start) / 3600.0
-        self.live_hours = self.charged_before + self.worker_cpu() / 3600.0 + parent
-        if self.halt_reason is None:
-            if self.live_hours >= CAP_CPU_HOURS - CPU_HALT_MARGIN_HOURS:
-                self.halt_reason = f"the CPU cap: {self.live_hours:.3f} CPU-h charged live"
-            elif self.peak > CAP_DISK_BYTES:
-                self.halt_reason = f"the disk cap: a sample of {self.peak / 1e9:.2f} GB"
-            if self.halt_reason is not None:
-                self.halt.set()
-
-    def run(self) -> None:
-        while not self._stop_event.wait(SAMPLE_SECONDS):
-            self.sample()
-            self.beat()
-
-    def stop(self) -> None:
-        self._stop_event.set()
-        self.join()
-        self.peak = max(self.peak, disk_bytes())
-        with self.write_lock:
-            if sr.MARKER.exists():
-                sr.MARKER.unlink()
-
-
-def pick(todo: list[dict], in_flight: dict, elapsed: float, monitor: Monitor) -> int | None | str:
-    """Admission: the deadline, the batch time, the disk, the CPU and the downloads. The caps are
-    also enforced while units run: the CPU and the disk by the monitor's halt, the downloads by
-    each fetch unit's metered allowance."""
+def pick(todo: list[dict], running: dict, elapsed: float, live: dict, k: int) -> int | None | str:
+    """Admission: the deadline, the batch time, at most ``k`` downloads at once, the disk, the
+    CPU and the downloads, each with every running unit's allowance reserved."""
     if dt.datetime.now() > DEADLINE:
         return f"the phase's deadline ({DEADLINE.isoformat()} local) has passed"
-    if monitor.halt_reason is not None:
-        return monitor.halt_reason
+    fetching = sum(r["unit"]["kind"] == "fetch" for r in running.values())
+    held_bytes = sum(r["unit"]["allowance_bytes"] for r in running.values())
+    held_cpu = sum(r["unit"]["cpu_allowance_seconds"] for r in running.values()) / 3600.0
     measured = disk_bytes()
-    held = sum(_UNITS[v["key"]]["allowance_bytes"] for v in in_flight.values())
-    cpu = monitor.live_hours + sum(v["cpu"] for v in in_flight.values())
-    dl = downloaded_so_far() + held
     for i, u in enumerate(todo):
+        if u["kind"] == "fetch" and fetching >= k:
+            continue
         if elapsed + est_wall(u) > BATCH_SECONDS:
             continue
-        if measured + held + u["allowance_bytes"] > ADMIT_DISK_BYTES:
+        if measured + held_bytes + u["allowance_bytes"] > ADMIT_DISK_BYTES:
             continue
-        if cpu + est_cpu_hours(u) > CAP_CPU_HOURS - CPU_HALT_MARGIN_HOURS:
+        cpu_need = live["cpu_hours"] + held_cpu + u["cpu_allowance_seconds"] / 3600.0
+        if cpu_need > CAP_CPU_HOURS - CPU_HALT_MARGIN_HOURS:
             continue
-        if dl + u["allowance_bytes"] > ADMIT_DOWNLOAD_BYTES:
+        if live["download_bytes"] + held_bytes + u["allowance_bytes"] > ADMIT_DOWNLOAD_BYTES:
             continue
         return i
-    if not in_flight and elapsed == 0.0:
-        return (f"no remaining unit fits (disk {measured / 1e9:.2f} GB, CPU {cpu:.2f} h, "
-                f"downloads {dl / 1e9:.2f} GB)")  # fmt: skip
+    if not running and elapsed == 0.0:
+        return (
+            f"no remaining unit fits (disk {measured / 1e9:.2f} GB, CPU "
+            f"{live['cpu_hours']:.2f} h, downloads {live['download_bytes'] / 1e9:.2f} GB)"
+        )
     return None
 
 
+def _launch(ctx, u: dict, plan: dict) -> dict:
+    attempt_id = f"{u['key']}.{time.time_ns()}"
+    a = {"attempt_id": attempt_id, "key": u["key"], "target_key": u["target_key"],
+         "tic_id": u["tic_id"], "toi": u.get("toi"), "kind": u["kind"], "mode": u.get("mode"),
+         "probe": u.get("probe"), "state": "launching", "started_utc": sr.utc(),
+         "cpu_allowance_seconds": u["cpu_allowance_seconds"],
+         "allowance_bytes": u["allowance_bytes"]}  # fmt: skip
+    write_json(ATTEMPTS / f"{attempt_id}.json", a)  # journaled before the process exists
+    result = RESULTS / f"{attempt_id}.json"
+    baseline = _tic_snapshot(int(u["tic_id"])) if u["kind"] == "fetch" else {}
+    proc = ctx.Process(target=child_main, args=(u, plan, str(result)), daemon=False)
+    proc.start()
+    a.update({"state": "running", "pid": proc.pid, "created": _creation_time(proc.pid)})
+    write_json(ATTEMPTS / f"{attempt_id}.json", a)
+    return {"unit": u, "attempt": a, "proc": proc, "result": result, "baseline": baseline,
+            "max_seen": {}, "started": time.time()}  # fmt: skip
+
+
+def _kill(r: dict) -> None:
+    """End a worker this run started, by its own process handle (never by name)."""
+    if r["proc"].is_alive():
+        r["proc"].terminate()
+    r["proc"].join(10)
+
+
 def run_batch(selection: list[dict], label: str) -> str | None:
-    """One batch, after ``seeded_run.run_batch`` with v0.5.9's changes (Codex's round 1, items 4
-    and 5): a halt event enforced in the workers, one serialized marker writer, the monitor and
-    the marker always stopped in ``finally``, and the workers' CPU read before they exit. Returns
-    a STOP reason, or None."""
+    """One batch under a parent-owned supervisor (Codex's round 2, items 1 to 3): one process per
+    unit, journaled before it starts; every second the supervisor reads each worker's CPU and each
+    download's bytes on disk, the disk, and the one charge; it ends a worker that passes its CPU
+    or byte allowance, and every worker at the CPU or disk cap, then writes their records and
+    charges before clearing them. Any failure of the supervisor itself ends every worker, settles
+    it, and stops the run. Returns a STOP reason, or None."""
     import multiprocessing
-    import queue
-    from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, wait
 
     plans, plan_shas = sr._plans()
-    RECORDS.mkdir(parents=True, exist_ok=True)
-    DATA.mkdir(parents=True, exist_ok=True)
+    for d in (RECORDS, ATTEMPTS, RESULTS, DATA):
+        d.mkdir(parents=True, exist_ok=True)
     todo = [u for u in selection if _read_record(u["key"]) is None]
-    charged_before = sr._charged()
-    if charged_before >= CAP_CPU_HOURS - CPU_HALT_MARGIN_HOURS:
-        return f"the cap of {CAP_CPU_HOURS} CPU-h is reached"
     n, k = sr.batch_limits()
-    parent_cpu = time.process_time()
     ctx = multiprocessing.get_context("spawn")
-    semaphore, fetched, halt = ctx.Semaphore(k), ctx.Queue(), ctx.Event()
-    monitor = Monitor(halt, charged_before, parent_cpu)
-    monitor.start()
-    start, stop, in_flight, recorded, failures, worker_cpu = time.time(), None, {}, 0, [], None
+    controller0, start = time.process_time(), time.time()
+    running: dict[str, dict] = {}
+    stop, recorded, failures, peak, samples = None, 0, [], disk_bytes(), 0
+    os.environ.update(CHILD_ENV)
+    settled_charge = charged()
+    if settled_charge["cpu_hours"] >= CAP_CPU_HOURS - CPU_HALT_MARGIN_HOURS:
+        return f"the cap of {CAP_CPU_HOURS} CPU-h is reached"
+
+    def live() -> dict:
+        cpu = settled_charge["cpu_hours"] + (time.process_time() - controller0) / 3600.0
+        cpu += sum(r["attempt"].get("cpu_seconds_seen", 0.0) for r in running.values()) / 3600.0
+        nbytes = settled_charge["download_bytes"] + sum(
+            r["attempt"].get("bytes_seen", 0) for r in running.values()
+        )
+        return {"cpu_hours": cpu, "download_bytes": nbytes}
+
+    def stop_all(status: str, reason: str) -> None:
+        for key in list(running):
+            r = running.pop(key)
+            _kill(r)
+            settle(r["attempt"], None, status, reason)
+
     try:
-        with ProcessPoolExecutor(max_workers=n, mp_context=ctx, initializer=init_worker,
-                                 initargs=(semaphore, fetched, halt)) as pool:  # fmt: skip
-            monitor.pool = pool
-            while True:
-                while True:
-                    try:
-                        done_key = fetched.get_nowait()
-                    except queue.Empty:
-                        break
-                    for v in in_flight.values():
-                        if v["key"] == done_key:
-                            v["fetching"] = False
-                while todo and stop is None and len(in_flight) < n:
-                    if sum(v["fetching"] for v in in_flight.values()) >= k:
-                        break
-                    elapsed = 0.0 if not in_flight and recorded == 0 else time.time() - start
-                    i = pick(todo, in_flight, elapsed, monitor)
-                    if isinstance(i, str):
-                        stop = i
-                        break
-                    if i is None:
-                        break
-                    u = todo.pop(i)
-                    with monitor.lock:  # journaled before the dispatch
-                        monitor.flight[u["key"]] = time.time()
-                        if u["allowance_bytes"]:
-                            monitor.allowances[u["key"]] = u["allowance_bytes"]
-                    monitor.beat()
-                    fut = pool.submit(run_unit, u, plans[u["part"]], None)
-                    in_flight[fut] = {"key": u["key"], "cpu": est_cpu_hours(u), "fetching": True}
-                if not in_flight:
+        while True:
+            while todo and stop is None and len(running) < n:
+                elapsed = 0.0 if not running and recorded == 0 else time.time() - start
+                i = pick(todo, running, elapsed, live(), k)
+                if isinstance(i, str):
+                    stop = i
                     break
-                finished, _ = wait(list(in_flight), timeout=SAMPLE_SECONDS,
-                                   return_when=FIRST_COMPLETED)  # fmt: skip
-                for fut in finished:
-                    v = in_flight.pop(fut)
-                    try:
-                        rec = fut.result()
-                    except BaseException as exc:  # noqa: BLE001 - a worker failure stops admission
-                        failures.append(f"{v['key']}: {type(exc).__name__}: {exc}")
-                        stop = stop or f"a worker failed on {v['key']}"
-                        continue
-                    problem = finish(rec)
-                    with monitor.lock:
-                        monitor.flight.pop(v["key"], None)
-                        monitor.allowances.pop(v["key"], None)
-                    if problem:
-                        failures.append(problem)
-                        stop = stop or problem
-                        continue
+                if i is None:
+                    break
+                u = todo.pop(i)
+                running[u["key"]] = _launch(ctx, u, plans[u["part"]])
+            if not running:
+                break
+            time.sleep(SAMPLE_SECONDS)
+            samples += 1
+            peak = max(peak, disk_bytes())
+            for key in list(running):
+                r = running[key]
+                a, u = r["attempt"], r["unit"]
+                seen = sr.process_cpu_seconds(r["proc"].pid) if r["proc"].is_alive() else None
+                if seen is None:  # unreadable or ended: the wall since the last reading bounds it
+                    seen = a.get("cpu_seconds_seen", 0.0) + SAMPLE_SECONDS
+                a["cpu_seconds_seen"] = max(a.get("cpu_seconds_seen", 0.0), seen)
+                if u["kind"] == "fetch":
+                    a["bytes_seen"] = observe_download(
+                        r["baseline"], _tic_snapshot(int(u["tic_id"])), r["max_seen"]
+                    )
+                write_json(ATTEMPTS / f"{a['attempt_id']}.json", a)
+                why = None
+                if a["cpu_seconds_seen"] > u["cpu_allowance_seconds"]:
+                    why = (
+                        "CPU_ALLOWANCE",
+                        f"the unit passed its CPU allowance of {u['cpu_allowance_seconds']:.0f} s",
+                    )
+                elif u["kind"] == "fetch" and a.get("bytes_seen", 0) >= u["allowance_bytes"]:
+                    why = (
+                        "DOWNLOAD_ALLOWANCE",
+                        f"the download passed its allowance of {int(u['allowance_bytes'])} bytes",
+                    )
+                if why is not None:
+                    running.pop(key)
+                    _kill(r)
+                    settle(a, None, *why)
                     recorded += 1
-                    print(rec["unit_key"], rec["status"], rec.get("outcome"),
-                          round(rec["cpu_seconds"]), f"live {monitor.live_hours:.2f} CPU-h",
-                          f"peak {monitor.peak / 1e9:.2f} GB", flush=True)  # fmt: skip
-                if monitor.halt_reason is not None and stop is None:
-                    stop = monitor.halt_reason
-            worker_cpu = monitor.worker_cpu()  # the workers are still alive here
+                    continue
+                if not r["proc"].is_alive():
+                    running.pop(key)
+                    r["proc"].join()
+                    rec = (
+                        json.loads(r["result"].read_text("utf-8")) if r["result"].exists() else None
+                    )
+                    status = settle(
+                        a,
+                        rec,
+                        None if rec else "WORKER_LOST",
+                        None if rec else f"exit code {r['proc'].exitcode}, no result",
+                    )
+                    recorded += 1
+                    finish_target(json.loads((RECORDS / f"{key}.json").read_text("utf-8")))
+                    print(key, status, (rec or {}).get("outcome"), round(a["cpu_seconds_seen"]),
+                          f"charged {live()['cpu_hours']:.2f} CPU-h", f"peak {peak / 1e9:.2f} GB",
+                          flush=True)  # fmt: skip
+            now = live()
+            write_json(sr.MARKER, {"heartbeat": time.time(), "interval_seconds": SAMPLE_SECONDS,
+                                   "running": {k_: r["attempt"]["attempt_id"]
+                                               for k_, r in running.items()}})  # fmt: skip
+            if now["cpu_hours"] >= CAP_CPU_HOURS - CPU_HALT_MARGIN_HOURS:
+                stop = stop or f"the CPU cap: {now['cpu_hours']:.3f} CPU-h charged"
+                stop_all("STOPPED_AT_CAP", stop)
+            elif peak > CAP_DISK_BYTES:
+                stop = stop or f"the disk cap: a sample of {peak / 1e9:.2f} GB"
+                stop_all("STOPPED_AT_CAP", stop)
+            elif now["download_bytes"] > CAP_DOWNLOAD_BYTES:
+                stop = stop or f"the download cap: {now['download_bytes'] / 1e9:.2f} GB charged"
+                stop_all("STOPPED_AT_CAP", stop)
+    except BaseException as exc:  # a failure of the supervisor itself stops everything
+        failures.append(f"supervisor: {type(exc).__name__}: {exc}")
+        stop = stop or f"the supervisor failed: {type(exc).__name__}: {exc}"
+        try:
+            stop_all("STOPPED_AT_CAP", "the supervisor stopped")
+        except BaseException as inner:  # noqa: BLE001 - the attempts stay unsettled for recover()
+            failures.append(f"settlement: {type(inner).__name__}: {inner}")
     finally:
-        monitor.stop()
-    if monitor.halt_reason is not None and stop is None:
-        stop = monitor.halt_reason
-    spent, nbytes, done = sr._spent()
+        for r in running.values():  # anything left is ended; recover() settles it
+            _kill(r)
+        if sr.MARKER.exists() and not running:
+            sr.MARKER.unlink()
+    peak = max(peak, disk_bytes())
     ledger = sr._ledger()
     ledger.setdefault("pinned_fingerprints", fingerprints())
     ledger["caps"] = {
@@ -1507,56 +1662,31 @@ def run_batch(selection: list[dict], label: str) -> str | None:
         "deadline_local": DEADLINE.isoformat(),
     }
     ledger["batches"].append({
-        "label": label,
-        "started_utc": sr.utc(start),
-        "ended_utc": sr.utc(),
-        "wall_seconds": round(time.time() - start, 1),
-        "workers": n,
-        "simultaneous_downloads": k,
-        "test_plan_sha256": plan_shas,
-        "fingerprints": fingerprints(),
-        "recorded_in_batch": recorded,
-        "records": done,
-        "cpu_hours_spent_records": round(spent, 4),
-        "worker_process_cpu_hours": None if worker_cpu is None else round(worker_cpu / 3600, 4),
-        "parent_cpu_hours": round((time.process_time() - parent_cpu) / 3600.0, 6),
-        "downloaded_bytes_charged": downloaded_so_far(),
-        "disk_peak_bytes": monitor.peak,
-        "disk_samples": monitor.samples,
-        "halt_reason": monitor.halt_reason,
-        "failures": failures,
-        "stop": stop,
+        "label": label, "started_utc": sr.utc(start), "ended_utc": sr.utc(),
+        "wall_seconds": round(time.time() - start, 1), "workers": n,
+        "simultaneous_downloads": k, "test_plan_sha256": plan_shas,
+        "fingerprints": fingerprints(), "recorded_in_batch": recorded,
+        "controller_cpu_hours": round((time.process_time() - controller0) / 3600.0, 6),
+        "disk_peak_bytes": peak, "disk_samples": samples, "failures": failures, "stop": stop,
     })  # fmt: skip
-    ledger["disk_peak_bytes"] = max(ledger.get("disk_peak_bytes", 0), monitor.peak)
+    ledger["disk_peak_bytes"] = max(ledger.get("disk_peak_bytes", 0), peak)
     sr._save_ledger(ledger)
-    ledger["batches"][-1]["cpu_hours_charged"] = round(sr._charged(), 4)
+    after = charged()
+    ledger["batches"][-1].update(
+        {
+            "cpu_hours_charged": round(after["cpu_hours"], 4),
+            "download_bytes_charged": after["download_bytes"],
+        }
+    )
     sr._save_ledger(ledger)
+    if stop is None:  # the caps checked again after the drain
+        if after["cpu_hours"] > CAP_CPU_HOURS:
+            stop = f"the CPU cap was passed after the drain ({after['cpu_hours']:.3f} CPU-h)"
+        elif after["download_bytes"] > CAP_DOWNLOAD_BYTES:
+            stop = "the download cap was passed after the drain"
+        elif peak > CAP_DISK_BYTES:
+            stop = "the disk cap was passed"
     return stop
-
-
-def charge_interruptions() -> None:
-    """Before any redispatch: an unclean end is charged as ``seeded_run`` does (each unrecorded
-    in-flight unit's wall time up to the last heartbeat), and each unrecorded in-flight fetch
-    unit's whole byte allowance is charged to the download cap."""
-    if not sr.MARKER.exists():
-        return
-    m = json.loads(sr.MARKER.read_text("utf-8"))
-    lost = {k: b for k, b in (m.get("allowances") or {}).items()
-            if not (RECORDS / f"{k}.json").exists()}  # fmt: skip
-    charged = sr.charge_interruption()  # reads and removes the marker
-    ledger = sr._ledger()
-    if lost:
-        ledger.setdefault("download_interruptions", []).append(
-            {
-                "detected_utc": sr.utc(),
-                "units": sorted(lost),
-                "bytes": int(sum(lost.values())),
-                "rule": "the whole allowance of each fetch unit in flight without a record",
-            }
-        )
-        sr._save_ledger(ledger)
-    print("interruption charged:", json.dumps(charged), "download bytes:", sum(lost.values()),
-          flush=True)  # fmt: skip
 
 
 def sweep(all_targets: list[dict]) -> list[str]:
@@ -1580,8 +1710,16 @@ def run() -> None:
         ledger = sr._ledger()
         if ledger.get("state") in ("complete", "abandoned"):
             raise SystemExit(f"refused: the run is {ledger.get('state')}")
+        if "pinned_fingerprints" not in ledger:  # pinned before the first dispatch
+            ledger["pinned_fingerprints"] = fingerprints()
+            ledger["pinned_utc"] = sr.utc()
+            sr._save_ledger(ledger)
         check_pinned(ledger)
-        charge_interruptions()
+        recovered = recover()
+        if recovered:
+            print("recovered attempts:", recovered, flush=True)
+        if sr.MARKER.exists():
+            sr.MARKER.unlink()
         sweep(all_targets)
         while True:
             todo = ready_units(all_targets)
@@ -1594,7 +1732,7 @@ def run() -> None:
                 raise SystemExit(2)
         sweep(all_targets)
         sr._terminal("complete", "every required unit of the set is recorded")
-        print("all units recorded", json.dumps(sr._totals()), flush=True)
+        print("all units recorded", json.dumps(charged()), flush=True)
 
 
 # --- the bundle: 48 records (24 TOIs x 2 modes) ---------------------------------------------
@@ -1603,13 +1741,16 @@ def run() -> None:
 def mode_record(t: dict, mode: str) -> dict:
     """One TOI in one mode, from its unit records only: the base and consensus outputs, the fit
     identity, the first disagreeing probe and the measured costs. A row whose units are not all
-    recorded says so (``status: NO RECORD`` or ``required_missing``)."""
+    recorded says so (``status: NO RECORD`` or ``required_missing``); a unit ended by a resource
+    stop is listed in ``operational_stops``."""
     f = _read_record(unit_key(t["key"], "fetch"))
     b = _read_record(unit_key(t["key"], "base", mode))
     probes = {n: _read_record(unit_key(t["key"], "probe", mode, n)) for n, _, _ in PROBES}
     cons = consensus(b, probes)
     missing = [k for k in required_units(t)
                if k.split(".")[1] in ("fetch", mode) and _read_record(k) is None]  # fmt: skip
+    stops = [r["unit_key"] for r in (f, b, *probes.values())
+             if r is not None and r.get("status") in OPERATIONAL]  # fmt: skip
     reason = None
     if f is None or (f.get("status") == "OK" and b is None):
         status = "NO RECORD"
@@ -1631,6 +1772,7 @@ def mode_record(t: dict, mode: str) -> dict:
         "status": status,
         "reason": reason,
         "required_missing": missing,
+        "operational_stops": stops,
         "coverage_state": (b or {}).get("coverage_state", "unavailable"),
         "provenance": (f or {}).get("provenance") or {"overall": "unknown",
                                                       "reason": "no fetch record"},  # fmt: skip
@@ -1663,6 +1805,7 @@ def mode_record(t: dict, mode: str) -> dict:
             "fetch_cpu_seconds": (f or {}).get("cpu_seconds"),
             "download_bytes_of_the_toi": (f or {}).get("downloaded_bytes"),
             "metered_download_bytes_of_the_toi": (f or {}).get("metered_download_bytes"),
+            "charged_download_bytes_of_the_toi": (f or {}).get("bytes_charged"),
             "bytes_of_the_toi": (f or {}).get("bytes"),
             "base_cpu_seconds": (b or {}).get("cpu_seconds"),
             "fit_cpu_seconds": (b or {}).get("fit_cpu_seconds"),
@@ -1676,13 +1819,14 @@ def mode_record(t: dict, mode: str) -> dict:
 
 UNITS_BUNDLE = HERE / "prototype-units.json"
 ARCHIVE_STAGE = WORK / "run/units.json"
+ARCHIVE_MANIFEST = WORK / "run/archive-manifest.json"
 
 
 def bundle() -> None:
-    """The 48 mode records (with every unit file's SHA-256 and the run's terminal state) to
-    ``prototype-records.json``; the unit records themselves to ``prototype-units.json`` if it
-    stays within 5 MB, otherwise staged in ``.cache/v059/run/units.json`` for the Drive archive
-    (``verify-archive`` checks the copy against its SHA-256 before anything local is retired)."""
+    """The 48 mode rows (with every unit file's SHA-256, the attempts and the run's terminal
+    state) to ``prototype-records.json``; the unit records themselves to ``prototype-units.json``
+    if it stays within 5 MB, otherwise staged in ``.cache/v059/run/units.json`` for the Drive
+    archive (``verify-archive`` checks the copy before anything local is retired)."""
     ledger = sr._ledger()
     check_pinned(ledger)
     all_targets = targets()
@@ -1693,6 +1837,7 @@ def bundle() -> None:
         "limits_label": LABEL,
         "units": [{"file": p.name, "sha256": sr.sha256(p.read_bytes()),
                    "content": json.loads(p.read_text("utf-8"))} for p in units],
+        "attempts": attempts(),
         "tpf_deletions": [{"file": p.name, "sha256": sr.sha256(p.read_bytes()),
                            "content": json.loads(p.read_text("utf-8"))}
                           for p in sorted(sr.TPF_LOGS.glob("*.json"))],
@@ -1701,7 +1846,7 @@ def bundle() -> None:
     target = UNITS_BUNDLE if len(text.encode()) <= MAX_GIT_BYTES else ARCHIVE_STAGE
     target.write_text(text, "utf-8", newline="\n")
     doc = {
-        "schema": "refute-v059-prototype-records-1",
+        "schema": "refute-v059-prototype-records-2",
         "mode": "exploratory",
         "limits_label": LABEL,
         "method_status": "not_validated",
@@ -1709,30 +1854,37 @@ def bundle() -> None:
         "fingerprints": fingerprints(),
         "run_state": ledger.get("state"),
         "run_state_reason": ledger.get("state_reason"),
+        "charged": charged(),
         "units_file": {"path": target.relative_to(ROOT).as_posix(),
                        "sha256": sr.sha256(text.encode()), "bytes": len(text.encode())},
         "unit_files_sha256": {u["file"]: u["sha256"] for u in unit_doc["units"]},
         "records": [mode_record(t, m) for t in all_targets for m in MODES],
     }  # fmt: skip
     BUNDLE.write_text(json.dumps(doc, indent=1, default=sr._plain) + "\n", "utf-8", newline="\n")
-    print(len(doc["records"]), "mode records;", len(unit_doc["units"]), "unit records in",
+    print(len(doc["records"]), "mode rows;", len(unit_doc["units"]), "unit records in",
           target.relative_to(ROOT).as_posix(), "; run state", ledger.get("state"))  # fmt: skip
 
 
 def verify_archive(copy: str) -> None:
-    """The Drive copy of the staged unit records against the bundle's SHA-256, with a manifest of
-    source and destination; nothing is deleted here."""
+    """The Drive copy of the staged unit records: a distinct file under the approved archive
+    root, whose SHA-256 equals the bundle's and the staged source's; the receipt (destination and
+    both hashes) is written to ``.cache/v059/run/archive-manifest.json``. Nothing is deleted."""
     doc = json.loads(BUNDLE.read_text("utf-8"))
     want = doc["units_file"]["sha256"]
-    src = ROOT / doc["units_file"]["path"]
+    src = (ROOT / doc["units_file"]["path"]).resolve()
+    dest = Path(copy).resolve()
+    if dest == src or ROOT.resolve() in dest.parents:
+        raise SystemExit("refused: the copy must be a distinct file outside the project")
+    if ARCHIVE_ROOT.resolve() not in dest.parents:
+        raise SystemExit(f"refused: the copy must be under {ARCHIVE_ROOT.as_posix()}")
     got_src = sr.sha256_path(src) if src.exists() else None
-    got = sr.sha256_path(Path(copy))
-    manifest = {"utc": sr.utc(), "source": doc["units_file"]["path"], "source_sha256": got_src,
-                "expected_sha256": want, "copy_sha256": got,
-                "match": got == want and got_src == want}  # fmt: skip
-    write_json(WORK / "run/archive-manifest.json", manifest)
-    print(json.dumps(manifest))
-    if not manifest["match"]:
+    got = sr.sha256_path(dest)
+    receipt = {"utc": sr.utc(), "source": doc["units_file"]["path"], "source_sha256": got_src,
+               "destination": dest.as_posix(), "destination_sha256": got,
+               "expected_sha256": want, "match": got == want and got_src == want}  # fmt: skip
+    write_json(ARCHIVE_MANIFEST, receipt)
+    print(json.dumps(receipt))
+    if not receipt["match"]:
         raise SystemExit("the archive copy does not match")
 
 
@@ -1747,13 +1899,20 @@ def abandon(reason: str) -> None:
 
 def clean() -> None:
     """The light curves at the end, only for a run that is complete or explicitly abandoned, with
-    no unit in flight: every pixel file released (manifest first), then each light curve by
-    literal path and SHA-256, inside ``.cache/v059`` only."""
+    no unit in flight and every attempt settled, and, when unit records were staged for the Drive,
+    only after the archive receipt matches: every pixel file released (manifest first), then each
+    light curve by literal path and SHA-256, inside ``.cache/v059`` only."""
     ledger = sr._ledger()
     if ledger.get("state") not in ("complete", "abandoned"):
         raise SystemExit(f"refused: the run is {ledger.get('state')!r}, not complete or abandoned")
-    if sr.MARKER.exists():
-        raise SystemExit("refused: a unit is still marked in flight")
+    if sr.MARKER.exists() or any(a.get("state") != "settled" for a in attempts()):
+        raise SystemExit("refused: a unit is still in flight or not settled")
+    if ARCHIVE_STAGE.exists():
+        receipt = (
+            json.loads(ARCHIVE_MANIFEST.read_text("utf-8")) if ARCHIVE_MANIFEST.exists() else {}
+        )
+        if not receipt.get("match"):
+            raise SystemExit("refused: the staged unit records have no matching archive receipt")
     entries, freed = [], 0
     for t in targets():
         f = _read_record(unit_key(t["key"], "fetch"))
@@ -1788,7 +1947,7 @@ def main(argv: list[str]) -> None:
               {c: v for c, v in doc["controls"].items()})  # fmt: skip
         return
     point_runner()
-    no_link_roots()
+    no_link_roots()  # before any directory is created
     sr.isolate_caches()  # every cache inside .cache/v059 (sr.WORK is pointed there)
     if step == "run":
         run()

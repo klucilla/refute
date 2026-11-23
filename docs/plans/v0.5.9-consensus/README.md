@@ -102,3 +102,53 @@ first and each question marked only if complete. The cap is not raised.
 
 Because the round returned REFUTED, a second round in the same conversation reviews these
 changes (the decision, item 3).
+
+## The prototype, before the run: round 2
+
+The same conversation (thread `01a20a4f-3ec2-7cb2-8a0a-5990041bd6d7`) reviewed `97be424f`. Codex CLI
+0.167.0-alpha.3.2, model gpt-6.2-sol, effort high. The answer is stored unchanged.
+
+| Round | File | Verdicts | SHA-256 |
+|---|---|---|---|
+| 2 | [prototype-round-2-answer.md](prototype-round-2-answer.md) | round 1's item 1 RESOLVED; items 2, 3, 5, 6 PARTLY; item 4 NOT RESOLVED; six blocking items; **OVERALL: REFUTED** | `234ef454d69aee8746ef925ec28255828e6a4814b20cfbff51c7c5b4da5e7864` |
+
+The round used 7,030,085 input tokens (6,633,856 cached) and 34,224 output tokens: **430,453**
+review tokens. The two rounds on the prototype together: **803,456** review tokens.
+
+**What Codex confirmed:** the refit window, the shared box membership and the declared probe
+offsets; that Windows `spawn` initializes the worker and returns a record; that the fixes can stay
+in the prototype; the disclosure of the CPU risk; correction 2's inference label.
+
+**Applied, all six blocking items, in the prototype only (commit D):**
+1. **Downloads during the transfer.** The supervisor reads the TOI's new bytes on disk every
+   second (cache hits excluded, vanished partial files at their largest size) and ends the worker
+   at its allowance; the worker's own meter no longer counts cache hits; a charge over 15 GB ends
+   every worker. Tested offline (an oversized product, a cache hit, a vanished partial file).
+2. **A parent-owned supervisor.** The interrupt watchdog is gone. Each unit is its own process,
+   one thread, with a CPU allowance enforced by the supervisor and by the worker itself (it ends
+   its own process past it). One charge serves admission, supervision and settlement; an
+   unreadable reading is bounded by the wall time; a supervisor failure ends and settles every
+   worker and stops the run; the caps are checked again after every drain. Tested with real
+   worker processes (`selftest` units): normal settlement, a unit past its CPU allowance, and
+   every worker stopped at the CPU cap.
+3. **Durable settlement.** Every dispatch is journaled before its process starts; the record,
+   then the charge, are written before it leaves the journal; recovery is idempotent, refuses a
+   worker of an earlier batch still alive (PID and creation time), adopts a result file, or
+   charges the whole allowances. The fingerprints (now with every file under `src/`,
+   `pyproject.toml` and `uv.lock`) are pinned before the first dispatch; the manifest is parsed
+   from the exact bytes whose SHA-256 was checked.
+4. **Resource stops out of the scientific counts.** The report has its own structural-validity
+   field; a unit ended by a resource stop makes its TOI incomplete (its questions are not marked)
+   and makes a consensus `INCOMPLETE`, never a demotion; its cost stays in Q5. The plan's
+   counting rule was updated before any result.
+5. **The symmetry tolerance** is relative to the matrix itself, checked before Cholesky, and
+   tested at both scales.
+6. **The destinations.** Every configured cache root (including the cache folders the runner
+   sets) is refused if it is a link, before any folder is created; `verify-archive` needs a
+   distinct copy under the approved archive root and records the destination and both hashes;
+   `clean` refuses while staged records lack a matching receipt.
+
+**Not reviewed by a third round.** The decision authorizes a second round when the first returns
+REFUTED; it does not authorize a third. Codex's last verdict on record is therefore **REFUTED**, on
+the code before commit D. By the rule of the most conservative option, the run is not proposed as
+reviewed: whether a third round reviews commit D before the run is the maintainer's decision.

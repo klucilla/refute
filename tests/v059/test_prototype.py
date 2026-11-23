@@ -1,7 +1,9 @@
 """v0.5.9 prototype: the box, the bounded entry, the probes, the consensus rule, the explicit path,
-the centroid guard, the unit bookkeeping and the report's rules.
+the centroid guard, the downloads, the supervisor, the unit bookkeeping and the report's rules.
 
-Offline: synthetic data and the git bundles only; nothing downloads.
+Offline: synthetic data, the git bundles and ``selftest`` units only; nothing downloads. The
+runner is imported by its own name (its folder on ``sys.path``), so that the supervisor's spawned
+workers can import it as the run does.
 """
 
 from __future__ import annotations
@@ -16,6 +18,11 @@ import numpy as np
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
+HERE_V059 = ROOT / "docs/validation/v0.5.9"
+if str(HERE_V059) not in sys.path:
+    sys.path.insert(0, str(HERE_V059))
+
+import prototype_run as run  # noqa: E402
 
 
 def _load(name: str, rel: str):
@@ -26,7 +33,6 @@ def _load(name: str, rel: str):
     return mod
 
 
-run = _load("v059_prototype_run", "docs/validation/v0.5.9/prototype_run.py")
 rep = _load("v059_prototype_report", "docs/validation/v0.5.9/prototype_report.py")
 
 
@@ -154,6 +160,9 @@ def test_consensus_only_demotes_and_names_the_first_disagreement():
     assert c["status"] == "INCOMPLETE" and c["outcome"] is None and "p6" in c["reason"]
     failed = {**agree, "p1": {"status": "ERROR"}}
     assert run.consensus(_ok("SURVIVED"), failed)["first_disagreeing"] == "p1"
+    for status in run.OPERATIONAL:  # a resource stop is not a disagreement
+        c = run.consensus(_ok("SURVIVED"), {**agree, "p4": {"status": status}})
+        assert c["status"] == "INCOMPLETE" and c["outcome"] is None and "p4" in c["reason"]
     assert run.consensus(_ok("INCONCLUSIVE"), {})["outcome"] == "INCONCLUSIVE"
     promote = {n: _ok("SURVIVED") for n in names}
     assert run.consensus(_ok("INCONCLUSIVE"), promote)["outcome"] == "INCONCLUSIVE"
@@ -183,8 +192,10 @@ def test_the_guards_reject_singular_covariances_and_negative_quadratic_forms():
         run.guarded_combine(lambda r: None)(rows)
     with pytest.raises(run.NumericFailureError):
         run.guarded_sky_power(lambda r, *a: None, None)(rows, 1.0)
-    with pytest.raises(run.NumericFailureError, match="symmetric"):
-        run._check_pd([[1.0, 4.0], [0.0, 1.0]], "an asymmetric matrix")  # Cholesky alone passes
+    for scale in (1.0, 1e-12):  # the tolerance is relative to the matrix itself
+        with pytest.raises(run.NumericFailureError, match="symmetric"):
+            run._check_pd(scale * np.array([[1.0, 4.0], [0.0, 1.0]]), "an asymmetric matrix")
+        run._check_pd(scale * np.array([[2.0, 0.3], [0.3, 1.5]]), "a valid matrix")
     sig = run.guarded_sigma(lambda c, d: 1.0)
     with pytest.raises(run.NumericFailureError):
         sig(-5.0, 2)
@@ -396,6 +407,10 @@ def test_the_report_marks_nothing_until_the_run_is_terminal_and_whole():
     assert not rep.toi_complete(by, "A")
     by[("A", "S")] = {**rows[1], "status": "ERROR", "reason": "recorded failure"}
     assert rep.toi_complete(by, "A")  # a recorded failure with its reason is complete
+    by[("A", "S")] = {**rows[1], "operational_stops": ["TIC-1.S.p6"]}
+    assert not rep.toi_complete(by, "A")  # a resource stop is never a scientific outcome
+    by[("A", "S")] = {**rows[1], "status": "NOT_RUN (fetch DOWNLOAD_ALLOWANCE)"}
+    assert not rep.toi_complete(by, "A")
 
 
 def test_the_report_pairs_and_controls():
@@ -457,11 +472,102 @@ def test_downloads_are_metered_and_refused_at_the_allowance(tmp_path):
         partial = tmp_path / "p.fits"
         partial.write_bytes(b"y" * 30)
         assert adapter.discard_if_incomplete(partial, tmp_path)
+        adapter.download_checked(100, "a.fits", tmp_path)  # already cached: no transfer
         adapter.download_checked(40, "b.fits", tmp_path)  # 130 < 150: allowed
         with pytest.raises(run.DownloadAllowanceError):
             adapter.download_checked(10, "c.fits", tmp_path)  # 170 >= 150: refused
-    assert meter == {"completed_bytes": 140, "partial_bytes": 30, "files": 2}
+    assert meter == {"completed_bytes": 140, "partial_bytes": 30, "files": 2, "cache_hits": 1}
     assert adapter.download_checked is download_checked  # restored
+
+
+def test_the_supervisor_counts_transferred_bytes_from_the_files():
+    """Cache hits do not count; a partial file that vanished counts at its largest size; an
+    oversized product shows as soon as it is on disk."""
+    baseline = {"cached.fits": 500}
+    seen: dict = {}
+    assert run.observe_download(baseline, {"cached.fits": 500, "a.part": 80}, seen) == 80
+    assert run.observe_download(baseline, {"cached.fits": 500}, seen) == 80  # a.part vanished
+    assert run.observe_download(baseline, {"cached.fits": 500, "big.fits": 200}, seen) == 280
+
+
+def _selftest_units(n: int, spin: float, allowance: float) -> list[dict]:
+    out = []
+    for i in range(n):
+        u = {"key": f"TIC-{900 + i}.selftest", "target_key": f"TIC-{900 + i}", "tic_id": 900 + i,
+             "toi": "selftest", "part": "A", "arm": "planet", "group": "selftest",
+             "kind": "selftest", "mode": None, "probe": None, "spin_seconds": spin,
+             "cpu_allowance_seconds": allowance, "allowance_bytes": 0.0}  # fmt: skip
+        run._UNITS[u["key"]] = u
+        out.append(u)
+    return out
+
+
+@pytest.fixture
+def supervised(tmp_path, monkeypatch):
+    """The supervisor's paths in a temporary folder (the workers write only their result files,
+    which the supervisor names)."""
+    for name, rel in (("WORK", "w"), ("RECORDS", "w/run/records"), ("ATTEMPTS", "w/run/attempts"),
+                      ("RESULTS", "w/run/results"), ("DATA", "w/data")):  # fmt: skip
+        monkeypatch.setattr(run, name, tmp_path / rel)
+    monkeypatch.setattr(run.sr, "LEDGER", tmp_path / "ledger.json")
+    monkeypatch.setattr(run.sr, "MARKER", tmp_path / "w/run/in-flight.json")
+    monkeypatch.setattr(run.sr, "batch_limits", lambda: (2, 1))
+    return tmp_path
+
+
+def test_the_supervisor_settles_every_unit_with_its_charge(supervised):
+    stop = run.run_batch(_selftest_units(2, 0.2, 60.0), "selftest")
+    assert stop is None
+    for a in run.attempts():
+        assert a["state"] == "settled" and a["record_status"] == "OK"
+        assert a["cpu_seconds_charged"] >= 0.2
+    assert all((run.RECORDS / f"TIC-{900 + i}.selftest.json").exists() for i in range(2))
+    assert run.charged()["cpu_hours"] > 0 and not run.sr.MARKER.exists()
+
+
+def test_the_supervisor_ends_a_unit_past_its_cpu_allowance(supervised):
+    run.run_batch(_selftest_units(1, 60.0, 2.0), "selftest")
+    rec = json.loads((run.RECORDS / "TIC-900.selftest.json").read_text("utf-8"))
+    assert rec["status"] == "CPU_ALLOWANCE" or (
+        rec["status"] == "WORKER_LOST" and "86" in rec["reason"]  # the worker's own limit
+    )
+    assert run.attempts()[0]["cpu_seconds_charged"] >= 2.0
+
+
+def test_the_supervisor_stops_every_worker_at_the_cpu_cap(supervised, monkeypatch):
+    monkeypatch.setattr(run, "CAP_CPU_HOURS", 0.001)  # 3.6 s
+    monkeypatch.setattr(run, "CPU_HALT_MARGIN_HOURS", 0.0)
+    monkeypatch.setattr(run, "pick", lambda todo, *a: 0 if todo else None)  # admit regardless
+    stop = run.run_batch(_selftest_units(2, 60.0, 600.0), "selftest")
+    assert stop is not None and "CPU cap" in stop
+    statuses = {a["record_status"] for a in run.attempts()}
+    assert statuses == {"STOPPED_AT_CAP"} and all(a["state"] == "settled" for a in run.attempts())
+
+
+def test_recovery_settles_an_unsettled_attempt_once(supervised):
+    run.ATTEMPTS.mkdir(parents=True)
+    a = {"attempt_id": "TIC-1.fetch.1", "key": "TIC-1.fetch", "target_key": "TIC-1",
+         "tic_id": 1, "kind": "fetch", "state": "running", "pid": 999999, "created": 1,
+         "started_utc": "x", "cpu_allowance_seconds": 600.0, "allowance_bytes": 3e8}  # fmt: skip
+    run.write_json(run.ATTEMPTS / "TIC-1.fetch.1.json", a)
+    assert run.recover() == ["TIC-1.fetch"]
+    got = run.attempts()[0]
+    assert got["state"] == "settled" and got["cpu_seconds_charged"] == 600.0
+    assert got["bytes_charged"] == 300_000_000 and run._read_record("TIC-1.fetch") is None
+    assert run.recover() == []  # idempotent
+    assert run.charged()["download_bytes"] == 300_000_000
+
+
+def test_the_archive_copy_must_be_distinct_and_under_the_archive_root(tmp_path, monkeypatch):
+    staged = tmp_path / "units.json"
+    staged.write_text("{}", "utf-8")
+    bundle = tmp_path / "records.json"
+    bundle.write_text(json.dumps({"units_file": {"path": "x", "sha256": "0"}}), "utf-8")
+    monkeypatch.setattr(run, "BUNDLE", bundle)
+    with pytest.raises(SystemExit, match="distinct file outside the project"):
+        run.verify_archive(str(run.ROOT / "x"))  # the source itself is refused
+    with pytest.raises(SystemExit, match="must be under"):
+        run.verify_archive(str(staged))  # outside the approved archive root
 
 
 def test_cleanup_needs_a_complete_or_abandoned_run(tmp_path, monkeypatch):
