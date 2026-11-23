@@ -1,0 +1,50 @@
+{
+ "mode": "exploratory",
+ "limits_label": "WEAKENED; does not meet D1, D2, D4, T2a",
+ "cap_cpu_hours": 20.0,
+ "cap_disk_bytes": 20000000000.0,
+ "deadline_local": "2026-12-03T23:59:00",
+ "batches": [
+  {
+   "label": "pilot",
+   "started_utc": "2026-11-23T14:09:25Z",
+   "ended_utc": "2026-11-23T14:29:24Z",
+   "wall_seconds": 1198.9,
+   "workers": 10,
+   "simultaneous_downloads": 2,
+   "test_plan_sha256": {
+    "A": "70065377c10ad7b5fe5a5a199f99d577e29efaff187a44ed4c6115cd9fb7ddad",
+    "B": "1df48b1bfd80166804d945ac0923773f00e7b1dae28c2006bf300d6885f64af1"
+   },
+   "fingerprints": {
+    "runner": "94d476b146a1935acbf8ec05bcce1cbdb1be8de3544bf5f6b0641fcfcbcf508a",
+    "report": "8ee3611f5d5a291c8128f1671a0dd739dda43c75c89a0d280980bd70a7ebf082",
+    "plan_A": "70065377c10ad7b5fe5a5a199f99d577e29efaff187a44ed4c6115cd9fb7ddad",
+    "plan_B": "1df48b1bfd80166804d945ac0923773f00e7b1dae28c2006bf300d6885f64af1",
+    "draw_A": "db48e736c9b519bf8863e6e5126f17585a48e804ad42ccea738c6fef3973b72d",
+    "draw_B": "4610c70d60157269ca6a212d6c0b7a8449fc5e741582a56786be4e962db1170b",
+    "bundle_A": "4cc301b3c944faae25c7ded51a9895b471a684419a559a96bf68495055d0419e",
+    "bundle_B": "d5a3ee8793ac1f9431b3ed532cae0d5c59477333e2b4bfab4214c3fd5a2a1782"
+   },
+   "recorded_in_batch": 10,
+   "records": 10,
+   "cpu_hours_spent_records": 0.3449,
+   "worker_process_cpu_hours": 0.3461,
+   "parent_cpu_hours": 0.00273,
+   "bytes": 3404272320,
+   "disk_peak_bytes": 2503952273,
+   "disk_samples": 594,
+   "downloaded_bytes_recorded": 3404272320,
+   "reused_bytes_recorded": 0,
+   "tpf_bytes_deleted": 3268823040,
+   "tpf_deletion_records": 10,
+   "failures": [],
+   "stop": null,
+   "cpu_hours_charged": 0.3488
+  }
+ ],
+ "state": "stopped",
+ "disk_peak_bytes": 2503952273,
+ "state_reason": "the pilot did not pass",
+ "state_utc": "2026-11-23T14:29:24Z"
+}
