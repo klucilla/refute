@@ -21,7 +21,10 @@ Plan: [docs/plans/v0.5.8-plan.md](../../plans/v0.5.8-plan.md). Tracking: #218.
 The tests of the runner and the report are in `tests/v058/`.
 
 **The phase's report and note** (both approved by the maintainer on 2026-11-23, #218):
-- [docs/reports/v0.5.8-report.md](../../reports/v0.5.8-report.md);
+- [docs/reports/v0.5.8-report.md](../../reports/v0.5.8-report.md), with its dated correction
+  [docs/reports/v0.5.8-report-correction-2026-11-23.md](../../reports/v0.5.8-report-correction-2026-11-23.md):
+  - it answers the gate review's important finding (#219);
+  - it is a new file, and the approved report is not edited;
 - [docs/reports/v0.5.8-stability-note.md](../../reports/v0.5.8-stability-note.md), "How stable is a
   Refute output?".
 

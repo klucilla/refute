@@ -100,4 +100,27 @@ The round used 473,441 input tokens (406,528 cached) and 12,787 output tokens: *
 - a sentence states that the 150 status changes include 70 changes to NOT OK from the failed runs;
 - "cited as in the root README" was restored.
 
-**Not touched:** the approved v0.5.8 report. The round did not cover it, and the decision approved it as it is. It reads door 1 as outputs that changed "when only the seed changed"; the note now uses the more careful wording.
+**Not touched:** the approved v0.5.8 report (it was answered later by a dated correction; see the
+next section). The round did not cover it, and the decision approved it as it is. It reads door 1 as outputs that changed "when only the seed changed"; the note now uses the more careful wording.
+## The dated correction of the report (one round)
+
+The maintainer's decision of 2026-11-23 (received at 17:15 local, #218, comment 7112815055), item 1.
+- **Why:** the short gate review ([docs/gates/v0.5.8-review.md](../../gates/v0.5.8-review.md), SHA-256 `79a0360c7237c0ce859cc3100eea3834be4f893f64a6451aea7118cf8bef56fd`, stored unchanged) found one important finding: door 1's reading in the report. It is tracked in #219.
+- **The correction:** the maintainer approved its content, written as a new file, [docs/reports/v0.5.8-report-correction-2026-11-23.md](../../reports/v0.5.8-report-correction-2026-11-23.md). The approved report is not edited.
+- **The round:** one Codex round checked the correction against the records, in conversation `v058correction` (thread `01a20a0d-a611-7bc1-96ad-2ee017c979a5`). Codex CLI 0.167.0-alpha.3.2, model gpt-6.2-sol, effort high. The answer is stored unchanged.
+
+| Round | File | Verdicts | SHA-256 |
+|---|---|---|---|
+| 1 | [correction-round-1-answer.md](correction-round-1-answer.md) | 1 SURVIVED, 2 SURVIVED, 3 REFUTED, 4 SURVIVED; one blocking item; **OVERALL: WEAKENED** | `a9d9d2a5f6198818758e48a7cd2694afa2109e70acb4b91b4233f90234546acb` |
+
+The round used 350,712 input tokens (294,784 cached) and 6,890 output tokens: **62,818** review tokens.
+
+**Applied:**
+- **The blocking item, as Codex wrote it.** The sentence that the four off-ephemeris records "still count in every door" was too broad:
+  - TOI-639.01 was drawn INCONCLUSIVE, so it is outside door 1;
+  - door 2 counts status changes, not outcomes.
+
+  The sentence is now: "Each door and panel uses the plan's fixed counting rules. The four records whose fits left the ephemeris contribute wherever they meet those rules."
+- **The non-blocking item:** the two ERRORs of door 1 are named:
+  - TOI-734.01, after the fit;
+  - TOI-531.01, a 600-second timeout before the fit.

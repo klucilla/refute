@@ -48,16 +48,30 @@ how later work is done.
 
 ## Current phase
 
-**v0.5.8 Output stability** (opened on 2026-11-23 by the maintainer's decision received at 13:27
-local, #218, comment 7107165120; see [the section below](#v058-output-stability)).
-- **The goal:** measure how many outputs and test statuses of the v0.5 battery change when the
-  same TOI signal is refitted from another seed, and publish that per test.
-- **Another question, the same mode:** the phase reuses v0.5.7's TOI-seeded mode for stability,
-  not equivalence.
-- **v0.5.7's stop stands.**
-- **The old runner is not edited:** its stop guard is unchanged, and a new script imports its
-  functions.
-- **Plan:** [docs/plans/v0.5.8-plan.md](docs/plans/v0.5.8-plan.md).
+**None open: the next phase is the maintainer's decision** (since v0.5.8 closed on 2026-11-23, by
+the maintainer's decision received at 17:15 local, #218, comment 7112815055).
+
+### Previous phase record: v0.5.8 Output stability
+
+**v0.5.8 Output stability: closed on 2026-11-23, gate `WEAKENED` (one important finding,
+corrected)** (opened on 2026-11-23 by the maintainer's decision received at 13:27 local, #218,
+comment 7107165120; see [the section below](#v058-output-stability)).
+- **All five exit criteria are met,** each with its evidence in the v0.5.8 section.
+- **The question:** how many outputs and test statuses of the v0.5 battery change between v0.5.6's
+  search mode and a TOI-seeded rerun of the same TOIs. Everything is exploratory.
+  - Doors 1, 2 and 4 were not found, and door 3 was found.
+  - No verdict, rule or threshold changed.
+- **The gate review** returned `WEAKENED`, with one important finding and no critical one
+  ([docs/gates/v0.5.8-review.md](docs/gates/v0.5.8-review.md)).
+  - **The important finding** (door 1's reading in the report) is tracked in #219. It is answered
+    by a dated correction,
+    [docs/reports/v0.5.8-report-correction-2026-11-23.md](docs/reports/v0.5.8-report-correction-2026-11-23.md).
+    The approved report is not edited.
+  - **The minor findings** are on #59.
+  - **The lock tags:** `verify_locked_tags.py` gave joint PASS, 10 of 10, including the v0.5.6 tag
+    ([docs/gates/v0.5.8-verify-locked-tags.md](docs/gates/v0.5.8-verify-locked-tags.md)).
+- **Method status:** `method_status: not_validated` stands, under the limits label 'WEAKENED; does
+  not meet D1, D2, D4, T2a'.
 
 ### Previous phase record: v0.5.7 The TOI's own signal
 
@@ -1141,23 +1155,61 @@ TOI signal is refitted from another seed, and publish that per test.
 **The rule:** nothing changes in the v0.5 battery or in any verdict, and any proposal of a new
 threshold ends the phase. Everything is exploratory, and `method_status: not_validated` stands.
 
-**The report and the note** (both approved by the maintainer on 2026-11-23, #218; the exit
-criteria are ticked only when the phase closes, after the gate):
+**Status: closed on 2026-11-23, gate `WEAKENED` (one important finding, corrected)**, by the
+maintainer's decision received at 17:15 local (#218, comment 7112815055).
+- The gate review: [docs/gates/v0.5.8-review.md](docs/gates/v0.5.8-review.md).
+- The important finding is tracked in #219 and answered by the dated correction (below).
+- The minor findings are on #59 (comment 7112886489).
+
+**The report and the note** (both approved by the maintainer on 2026-11-23, #218):
 - the exploratory report: [docs/reports/v0.5.8-report.md](docs/reports/v0.5.8-report.md);
+- its dated correction (a new file; the approved report is not edited):
+  [docs/reports/v0.5.8-report-correction-2026-11-23.md](docs/reports/v0.5.8-report-correction-2026-11-23.md).
+  It reads door 1 as the note does, records the 4 fits that left the TOI ephemeris, and corrects
+  the header and stage 0's wording;
 - the note "How stable is a Refute output?":
   [docs/reports/v0.5.8-stability-note.md](docs/reports/v0.5.8-stability-note.md). Its facts were
   checked in one Codex round, whose corrections were applied
   ([record](docs/plans/v0.5.8-consensus/README.md)). Nothing on the site;
 - the records: [docs/validation/v0.5.8/](docs/validation/v0.5.8/README.md).
 
-**Exit criteria** (detail in the plan)
-- [ ] The scripts, the draw of the 60 and the doors are committed before the first result.
-- [ ] Stage 0 reproduces the table of section 1 of the recommendation, or records the difference.
-- [ ] The stage-1 records exist, with a machine `started_utc`, `mode: exploratory`, the limits
+**Exit criteria** (detail in the plan; ticked on 2026-11-23 by the maintainer's decision of 17:15,
+item 3, #218, with the evidence below; the gate review checked each one)
+- [x] The scripts, the draw of the 60 and the doors are committed before the first result.
+      *Evidence:*
+      - The doors and their counting rules were in the plan from 2ba0232.
+      - The runner, the report script and the set were in 1f3e5f9, pushed at 16:48:30Z (GitHub's
+        clock).
+      - The first record's `started_utc` is 16:48:38Z (the machine's clock).
+      - The three files' SHA-256 equal the fingerprints of every batch in
+        [stability-ledger.json](docs/validation/v0.5.8/stability-ledger.json).
+      - The reviewer reproduced the draw.
+- [x] Stage 0 reproduces the table of section 1 of the recommendation, or records the difference.
+      *Evidence:* [stage0-records.md](docs/validation/v0.5.8/stage0-records.md) (0066087). It did
+      not reproduce exactly, and records two differences: 31 near refusals against 30, and
+      TOI-2111.01, which cannot be checked.
+- [x] The stage-1 records exist, with a machine `started_utc`, `mode: exploratory`, the limits
       label, coverage and provenance.
-- [ ] A report with flips per test and per output, Wilson intervals, and every door marked (in
+      *Evidence:* [stability-records.json](docs/validation/v0.5.8/stability-records.json) (bbfdecc):
+      - 167 records, one per key of the set;
+      - each with `started_utc`, `mode: exploratory`, the label and `not_validated`;
+      - coverage: 162 `measured` and 5 `unavailable` (the failed runs);
+      - provenance: 83 `same`, 84 `unknown`.
+- [x] A report with flips per test and per output, Wilson intervals, and every door marked (in
       total and over provenance `same`).
-- [ ] One Codex round on the design, and a short gate review.
+      *Evidence:*
+      - [stability-report.md](docs/validation/v0.5.8/stability-report.md) (bbfdecc) and
+        [the report](docs/reports/v0.5.8-report.md), with
+        [its correction](docs/reports/v0.5.8-report-correction-2026-11-23.md).
+      - The marks, in total and over `same`: doors 1, 2 and 4 not found; door 3 found.
+      - The reviewer's own recount gave the same marks.
+- [x] One Codex round on the design, and a short gate review.
+      *Evidence:*
+      - The design round: [design-round-1-answer.md](docs/plans/v0.5.8-consensus/design-round-1-answer.md).
+        It returned `REFUTED` with five blocking items, applied before the run (item 4 in part, as
+        stated).
+      - The short gate review: [docs/gates/v0.5.8-review.md](docs/gates/v0.5.8-review.md),
+        `WEAKENED`.
 
 **Stops that stay the maintainer's:**
 - any change in `src/`;
