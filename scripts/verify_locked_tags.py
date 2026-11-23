@@ -7,8 +7,9 @@ Two lists, checked apart:
 - ``LOCKED_TAGS``, the **historical** locks of v0.1 and v0.2: their claims match the lock by the
   projection of ``refute.core.lock_compat``, so a worktree is trusted only when its lock has a
   historical identity of that table (``HISTORICAL_LOCKS``).
-- ``DIRECT_LOCKS``, the five locks of the v0.3 main sample, the lock of the v0.4 pilot claim and
-  the lock of the v0.5 calibration claim (tag ``v0.5.0-calibration-lock``, commit B):
+- ``DIRECT_LOCKS``, the five locks of the v0.3 main sample, the lock of the v0.4 pilot claim, the
+  lock of the v0.5 calibration claim (tag ``v0.5.0-calibration-lock``, commit B) and the lock of
+  the v0.5.6 part B claim (tag ``v0.5.6-partb-lock``, the lock commit fdd87e7):
   never in ``HISTORICAL_LOCKS`` (that table only projects old claims). Each entry gives the tag,
   the full commit the tag must point to, the claim path and the expected identity of the lock
   (``lock_compat.lock_identity``). The worktree must be at that commit with no tracked change
@@ -74,6 +75,10 @@ V04_CLAIM = "calibration/v0.4/claim.yaml"
 V05_TAG = "v0.5.0-calibration-lock"
 V05_COMMIT = "b6249b500d8d7b98a6246dbe0d99a4c55363f1cb"  # commit B of the v0.5 calibration (#199)
 V05_CLAIM = "calibration/v0.5/claim.yaml"
+
+V056_TAG = "v0.5.6-partb-lock"
+V056_COMMIT = "fdd87e75d94fb7bbc49767764a5f247e09d065ca"  # the lock commit of v0.5.6 part B (#218)
+V056_CLAIM = "calibration/v0.5.6/claim.yaml"
 
 
 @dataclass(frozen=True)
@@ -171,6 +176,25 @@ DIRECT_LOCKS: tuple[DirectLock, ...] = (
             "code_sha256": "15a9c256b5aa8f6b6f1eb9db511420ee1efca15b95edd9343322d7c3bb52bf8e",
             "git_commit": "dbc67a14724f290562d3c040f0c96a71480066e0",
             "locked_at_utc": "2026-11-04T21:47:09Z",
+        },
+    ),
+    # Read from calibration/v0.5.6/claim.lock.json at the lock commit (2026-11-22); a literal, as
+    # above. Added by the maintainer's decision of 2026-11-23 (13:27 local, item 5; #218), before
+    # any change in src/ could make the lock TAMPERED in the current tree.
+    DirectLock(
+        tag=V056_TAG,
+        commit=V056_COMMIT,
+        claim=V056_CLAIM,
+        identity={
+            "lock_version": 1,
+            "canonicalization": "refute-cjson-1",
+            "claim_id": "tess-v0.5.6-part-b-fp-agreement",
+            "claim_kind": "discover",
+            "claim_path_in_repo": V056_CLAIM,
+            "claim_sha256": "d451e995eae3f12afda0e5d807f5c5516c16c8bc1094b6d72c1623e5528b749f",
+            "code_sha256": "e1a89af9784a51baad9479044c0c678664104e571e4434e287519cc1e08d0cab",
+            "git_commit": "fd62b0aba9a0be7e2dd7fbe49dac483b4bc05732",
+            "locked_at_utc": "2026-11-22T23:56:07Z",
         },
     ),
 )
