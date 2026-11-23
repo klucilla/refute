@@ -58,17 +58,42 @@ def test_box_stats_recovers_an_injected_depth():
     assert math.isnan(empty["depth"]) and empty["log_likelihood"] == 0.0
 
 
-def test_entry_grids_use_the_battery_steps_and_record_them():
+def test_transits_are_counted_with_the_box_membership():
+    t = np.array([0.0, 0.03, 0.2, 1.0, 2.04, 2.3, 3.5])  # in the box: cycles 0, 1 and 2
+    f, s = np.ones(t.size), np.ones(t.size)
+    st = run.box_stats(t, f, s, 1.0, 0.0, 0.1)
+    assert st["n_in"] == 4 and st["n_transits"] == 3
+    s[3] = np.nan  # the only point of cycle 1 has no finite noise: that cycle does not count
+    assert run.box_stats(t, f, s, 1.0, 0.0, 0.1)["n_transits"] == 2
+
+
+def test_entry_grids_stay_inside_the_window_with_exact_ends():
     g = run.entry_grids(3.7, 0.1, 54.0, _Search)
     fine = 0.1 * 3.7 / (6.0 * 54.0) / 10.0
-    assert g["period_step_days"] == pytest.approx(fine) and not g["period_step_coarsened"]
-    assert g["periods"][0] == pytest.approx(3.7 * (1 - run.PERIOD_WINDOW), abs=fine)
-    assert g["periods"][-1] == pytest.approx(3.7 * (1 + run.PERIOD_WINDOW), abs=fine)
-    assert g["offsets"][0] == pytest.approx(-0.05) and g["offsets"][-1] == pytest.approx(0.05)
+    assert g["period_step_days"] <= fine and not g["period_step_coarsened"]
+    half = 3.7 * run.PERIOD_WINDOW
+    assert g["periods"][0] == 3.7 - half and g["periods"][-1] == 3.7 + half
+    assert np.all(np.abs(g["periods"] - 3.7) <= half)
+    assert np.allclose(np.diff(g["periods"]), g["period_step_days"])
+    assert g["offsets"][0] == -0.05 and g["offsets"][-1] == 0.05
+    assert np.all(np.abs(g["offsets"]) <= 0.05)
     assert g["epoch_step_days"] == pytest.approx(0.1 / 20)
     assert g["durations"][0] == pytest.approx(0.05) and g["durations"][-1] == pytest.approx(0.15)
     long = run.entry_grids(3.7, 0.1, 4000.0, _Search)
     assert long["period_step_coarsened"] and long["period_points"] == 2 * run.MAX_PERIOD_STEPS + 1
+    assert np.all(np.abs(long["periods"] - 3.7) <= half)
+
+
+def test_an_interior_optimum_is_not_pushed_to_the_edge():
+    """The injection sits half a step inside the window's end: the optimum is an interior trial
+    or the exact end, never a trial beyond the window."""
+    period = 3.7 * (1 + 0.9 * run.PERIOD_WINDOW)
+    t, f, s = _box_curve(period=period, noise=1e-4)
+    g = run.entry_grids(3.7, 0.1, float(t[-1] - t[0]), _Search)
+    best = run.bounded_fit(t, f, s, run.pivot_epoch(1326.3, period, 0.5 * (t[0] + t[-1])), g)
+    assert best is not None and abs(best["period"] - 3.7) <= 3.7 * run.PERIOD_WINDOW
+    assert "period" not in run.edges(best, g)
+    assert best["period"] == pytest.approx(period, abs=2 * g["period_step_days"])
 
 
 def test_bounded_fit_finds_the_injection_inside_the_window():
@@ -125,7 +150,8 @@ def test_consensus_only_demotes_and_names_the_first_disagreement():
     c = run.consensus(_ok("SURVIVED"), one)
     assert c["outcome"] == "INCONCLUSIVE" and c["first_disagreeing"] == "p3"
     missing = {n: v for n, v in agree.items() if n != "p6"}
-    assert run.consensus(_ok("SURVIVED"), missing)["first_disagreeing"] == "p6"
+    c = run.consensus(_ok("SURVIVED"), missing)  # not recorded: apart from a recorded failure
+    assert c["status"] == "INCOMPLETE" and c["outcome"] is None and "p6" in c["reason"]
     failed = {**agree, "p1": {"status": "ERROR"}}
     assert run.consensus(_ok("SURVIVED"), failed)["first_disagreeing"] == "p1"
     assert run.consensus(_ok("INCONCLUSIVE"), {})["outcome"] == "INCONCLUSIVE"
@@ -156,7 +182,9 @@ def test_the_guards_reject_singular_covariances_and_negative_quadratic_forms():
     with pytest.raises(run.NumericFailureError):
         run.guarded_combine(lambda r: None)(rows)
     with pytest.raises(run.NumericFailureError):
-        run.guarded_sky_power(lambda r, *a: None)(rows, 1.0)
+        run.guarded_sky_power(lambda r, *a: None, None)(rows, 1.0)
+    with pytest.raises(run.NumericFailureError, match="symmetric"):
+        run._check_pd([[1.0, 4.0], [0.0, 1.0]], "an asymmetric matrix")  # Cholesky alone passes
     sig = run.guarded_sigma(lambda c, d: 1.0)
     with pytest.raises(run.NumericFailureError):
         sig(-5.0, 2)
@@ -171,23 +199,65 @@ def test_the_guards_reject_singular_covariances_and_negative_quadratic_forms():
     assert sig(3.0, 2) == 1.0
 
 
-@pytest.mark.parametrize("exc", [np.linalg.LinAlgError("Singular matrix"),
-                                 OverflowError("math range error")])  # fmt: skip
-def test_a_numerical_failure_becomes_an_inconclusive_centroid(exc):
-    from refute.core.verdict import TestStatus
+def _saved():
     from refute.packs.tess import battery, centroid_v5
 
-    saved = (centroid_v5.combine, centroid_v5.sky_power, battery.gaussian_sigma_from_chi2)
+    return (centroid_v5.combine, centroid_v5.sky_power, centroid_v5.simulated_probability,
+            battery.gaussian_sigma_from_chi2)  # fmt: skip
+
+
+def test_a_guarded_failure_becomes_an_inconclusive_centroid():
+    from refute.core.verdict import TestStatus
+
+    saved = _saved()
+
+    def original(*args):
+        raise run.NumericFailureError("a singular matrix (observed): Singular matrix")
+
+    out = run.guarded_centroid(original)([], [], None, None, 0)
+    assert out.status is TestStatus.INCONCLUSIVE and out.coverage == 0
+    assert out.name == "centroid_shift" and "Singular matrix" in out.message
+    assert "Singular matrix" in out.metrics["numerical_failure"]["reason"]
+    assert _saved() == saved  # restored
+
+
+@pytest.mark.parametrize("exc", [np.linalg.LinAlgError("elsewhere"), ValueError("unrelated")])
+def test_unrelated_failures_propagate_and_the_patches_are_restored(exc):
+    saved = _saved()
 
     def original(*args):
         raise exc
 
-    out = run.guarded_centroid(original)([], [], None, None, 0)
-    assert out.status is TestStatus.INCONCLUSIVE and out.coverage == 0
-    assert out.name == "centroid_shift" and type(exc).__name__ in out.message
-    assert out.metrics["numerical_failure"]["kind"] == type(exc).__name__
-    assert (centroid_v5.combine, centroid_v5.sky_power,
-            battery.gaussian_sigma_from_chi2) == saved  # restored  # fmt: skip
+    with pytest.raises(type(exc)):
+        run.guarded_centroid(original)([], [], None, None, 0)
+    assert _saved() == saved
+
+
+def test_the_simulation_path_checks_its_quadratic_forms():
+    """``sky_power``'s simulations: a non-finite draw reaches the checked rule and is a numerical
+    failure; with valid rows the guarded ``sky_power`` equals the plain one."""
+    from types import SimpleNamespace
+
+    from refute.core.sensitivity import simulated_probability
+    from refute.packs.tess import centroid_v5
+
+    rows = [{"sector": s, "cov_sky": np.array([[2.0, 0.3], [0.3, 1.5]]),
+             "offset_sky": np.array([0.4, -0.2])} for s in (1, 2)]  # fmt: skip
+    fake = SimpleNamespace(simulated_probability=simulated_probability)
+
+    def original(rows_, *a):
+        def draw(rng, n):
+            return np.full((n, 2, 2), np.nan)
+
+        return fake.simulated_probability(draw, lambda o: np.zeros(len(o), bool), 1)
+
+    with pytest.raises(run.NumericFailureError, match="simulated heterogeneity"):
+        run.guarded_sky_power(original, fake)(rows)
+    assert fake.simulated_probability is simulated_probability  # restored
+    plain = centroid_v5.sky_power(rows, 20.0, 10.5, 3.0, 0.00135, 7)
+    guarded = run.guarded_sky_power(centroid_v5.sky_power, centroid_v5)(rows, 20.0, 10.5, 3.0,
+                                                                       0.00135, 7)  # fmt: skip
+    assert guarded == plain and centroid_v5.simulated_probability is simulated_probability
 
 
 def test_the_guard_runs_inside_the_real_centroid_test(monkeypatch):
@@ -311,9 +381,21 @@ def _record(key, mode, outcome, cons=None, status="OK"):
             "consensus": {"status": "OK", "outcome": cons or outcome}}  # fmt: skip
 
 
-def test_the_report_marks_nothing_until_complete():
-    ok, problems = rep.complete([_record("A", "E", "SURVIVED")], ["A"])
-    assert not ok and problems
+def test_the_report_marks_nothing_until_the_run_is_terminal_and_whole():
+    rows = [_record("A", m, "SURVIVED") for m in ("E", "S")]
+    assert rep.complete(rows, ["A"], "complete")[0]
+    assert not rep.complete(rows, ["A"], "open")[0]  # no terminal state
+    assert not rep.complete(rows[:1], ["A"], "complete")[0]  # a row is missing
+    by = {(r["target_key"], r["entry_mode"]): r for r in rows}
+    assert rep.toi_complete(by, "A")
+    by[("A", "S")] = {**rows[1], "status": "NO RECORD"}
+    assert not rep.toi_complete(by, "A")
+    by[("A", "S")] = {**rows[1], "consensus": {"status": "INCOMPLETE"}}
+    assert not rep.toi_complete(by, "A")  # a probe never ran: not a demotion
+    by[("A", "S")] = {**rows[1], "required_missing": ["TIC-1.S.p2"]}
+    assert not rep.toi_complete(by, "A")
+    by[("A", "S")] = {**rows[1], "status": "ERROR", "reason": "recorded failure"}
+    assert rep.toi_complete(by, "A")  # a recorded failure with its reason is complete
 
 
 def test_the_report_pairs_and_controls():
@@ -326,10 +408,10 @@ def test_the_report_pairs_and_controls():
         ("C", "S"): _record("C", "S", "REFUTED"),
     }
     base = rep.pairs(by, ["A", "B", "C"], rep.base_out)
-    assert base["stable"]["k"] == 2 and base["both_decided"] == 1
-    assert base["both_inconclusive"] == 1
+    assert base["same_decided_class"]["k"] == 1 and base["both_inconclusive"]["k"] == 1
+    assert base["same_class"]["k"] == 2
     cons = rep.pairs(by, ["A", "B", "C"], rep.cons_out)
-    assert cons["stable"]["k"] == 1 and cons["both_inconclusive"] == 1
+    assert cons["same_decided_class"]["k"] == 0 and cons["both_inconclusive"]["k"] == 1
     q2 = rep.q2(by, {"SURVIVED": ["A"], "INCONCLUSIVE": ["B"]})
     assert q2["base"]["k"] == 2 and q2["consensus"]["k"] == 1
     q4 = rep.q4(by, ["A", "B", "C"])
@@ -337,3 +419,66 @@ def test_the_report_pairs_and_controls():
     assert q4["S"]["lost_to_consensus"] == 1
     q3 = rep.q3(by, ["C"])
     assert not q3["all_ended"]
+
+
+def test_q3_needs_a_reason_and_reports_skipped_evaluations_apart():
+    by = {
+        ("X", "E"): {"target_key": "X", "entry_mode": "E", "status": "OK",
+                     "base": {"outcome": "INCONCLUSIVE", "outcome_reason": "entry unresolved: x",
+                              "tests": {}}},
+        ("X", "S"): {"target_key": "X", "entry_mode": "S", "status": "NOT_RUN (fetch ERROR)",
+                     "reason": None, "base": None},
+    }  # fmt: skip
+    q3 = rep.q3(by, ["X"])
+    assert not q3["all_ended"]  # a skipped mode without a reason does not pass
+    assert not q3["all_evaluated"] and q3["rows"][0]["ended_with_status_and_reason"]
+
+
+# --- downloads and cleanup ----------------------------------------------------------------
+
+
+def test_downloads_are_metered_and_refused_at_the_allowance(tmp_path):
+    from types import SimpleNamespace
+
+    def download_checked(product, row_name, download_dir, **kw):
+        path = tmp_path / row_name
+        path.write_bytes(b"x" * product)
+        return path
+
+    def discard_if_incomplete(path, root):
+        Path(path).unlink()
+        return True
+
+    adapter = SimpleNamespace(download_checked=download_checked,
+                              discard_if_incomplete=discard_if_incomplete)  # fmt: skip
+    meter = {"completed_bytes": 0, "partial_bytes": 0, "files": 0}
+    with run.metered(adapter, 150, meter):
+        adapter.download_checked(100, "a.fits", tmp_path)
+        partial = tmp_path / "p.fits"
+        partial.write_bytes(b"y" * 30)
+        assert adapter.discard_if_incomplete(partial, tmp_path)
+        adapter.download_checked(40, "b.fits", tmp_path)  # 130 < 150: allowed
+        with pytest.raises(run.DownloadAllowanceError):
+            adapter.download_checked(10, "c.fits", tmp_path)  # 170 >= 150: refused
+    assert meter == {"completed_bytes": 140, "partial_bytes": 30, "files": 2}
+    assert adapter.download_checked is download_checked  # restored
+
+
+def test_cleanup_needs_a_complete_or_abandoned_run(tmp_path, monkeypatch):
+    monkeypatch.setattr(run.sr, "LEDGER", tmp_path / "ledger.json")
+    run.sr._save_ledger({"state": "stopped", "batches": []})
+    with pytest.raises(SystemExit, match="not complete or abandoned"):
+        run.clean()
+    run.abandon("the maintainer ended the run")
+    assert run.sr._ledger()["state"] == "abandoned"
+    run.sr._save_ledger({"state": "open", "batches": []})
+    with pytest.raises(SystemExit, match="only a stopped run"):
+        run.abandon("too early")
+
+
+def test_a_changed_file_refuses_a_resume():
+    pinned = {**run.fingerprints(), "plan": "0" * 64}
+    with pytest.raises(SystemExit, match="changed"):
+        run.check_pinned({"pinned_fingerprints": pinned})
+    run.check_pinned({"pinned_fingerprints": run.fingerprints()})
+    run.check_pinned({})
