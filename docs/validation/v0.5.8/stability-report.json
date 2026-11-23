@@ -1,0 +1,633 @@
+{
+ "schema": "refute-v058-stability-report-1",
+ "mode": "exploratory",
+ "limits_label": "WEAKENED; does not meet D1, D2, D4, T2a",
+ "method_status": "not_validated",
+ "code_sha256": "d19db982dc8ed19d342b5716208310f9346eff479ec25e8e7f9834fdb51a4515",
+ "set_sha256": "84c14aead346e5345fee3dbed42c69bab8143bc8f6cbaf2b0c5140f58d3edfe5",
+ "records": 167,
+ "complete": true,
+ "completeness_problems": [],
+ "provenance": {
+  "unknown": 84,
+  "same": 83
+ },
+ "flips_total": {
+  "partial": false,
+  "pairs": 167,
+  "per_output": {
+   "INCONCLUSIVE -> ERROR": 3,
+   "INCONCLUSIVE -> INCONCLUSIVE": 56,
+   "INCONCLUSIVE -> SURVIVED": 1,
+   "REFUTED -> ERROR": 1,
+   "REFUTED -> INCONCLUSIVE": 2,
+   "REFUTED -> REFUTED": 22,
+   "REFUTED -> WEAKENED": 1,
+   "SURVIVED -> INCONCLUSIVE": 6,
+   "SURVIVED -> SURVIVED": 22,
+   "WEAKENED -> ERROR": 1,
+   "WEAKENED -> INCONCLUSIVE": 4,
+   "WEAKENED -> WEAKENED": 48
+  },
+  "outputs_changed": {
+   "k": 19,
+   "n": 167,
+   "rate": 0.11377245508982035,
+   "wilson95": [
+    0.07405659685209187,
+    0.17085736671110058
+   ]
+  },
+  "per_test": {
+   "aperture_depth": {
+    "changes": {
+     "PASS -> INCONCLUSIVE": 9,
+     "PASS -> NOT OK": 4,
+     "FAIL -> NOT OK": 1,
+     "FAIL -> INCONCLUSIVE": 1
+    },
+    "rate": {
+     "k": 15,
+     "n": 167,
+     "rate": 0.08982035928143713,
+     "wilson95": [
+      0.05518782731353631,
+      0.14289909523031924
+     ]
+    }
+   },
+   "centroid_shift": {
+    "changes": {
+     "PASS -> INCONCLUSIVE": 6,
+     "INCONCLUSIVE -> NOT OK": 5,
+     "INCONCLUSIVE -> PASS": 5,
+     "FAIL -> INCONCLUSIVE": 1,
+     "INCONCLUSIVE -> FAIL": 1
+    },
+    "rate": {
+     "k": 18,
+     "n": 167,
+     "rate": 0.10778443113772455,
+     "wilson95": [
+      0.0692734688851998,
+      0.16393373442315845
+     ]
+    }
+   },
+   "duty_cycle": {
+    "changes": {
+     "PASS -> NOT OK": 5,
+     "FAIL -> PASS": 1
+    },
+    "rate": {
+     "k": 6,
+     "n": 167,
+     "rate": 0.03592814371257485,
+     "wilson95": [
+      0.016568325910812812,
+      0.0761577543395347
+     ]
+    }
+   },
+   "edge_events": {
+    "changes": {
+     "PASS -> NOT OK": 5,
+     "INCONCLUSIVE -> PASS": 1
+    },
+    "rate": {
+     "k": 6,
+     "n": 167,
+     "rate": 0.03592814371257485,
+     "wilson95": [
+      0.016568325910812812,
+      0.0761577543395347
+     ]
+    }
+   },
+   "event_consistency": {
+    "changes": {
+     "PASS -> FAIL": 5,
+     "FAIL -> PASS": 2,
+     "INCONCLUSIVE -> FAIL": 10,
+     "PASS -> NOT OK": 2,
+     "INCONCLUSIVE -> NOT OK": 2,
+     "FAIL -> INCONCLUSIVE": 1,
+     "FAIL -> NOT OK": 1
+    },
+    "rate": {
+     "k": 23,
+     "n": 167,
+     "rate": 0.1377245508982036,
+     "wilson95": [
+      0.09355742548296513,
+      0.1981835790995642
+     ]
+    }
+   },
+   "nearby_contamination": {
+    "changes": {
+     "FAIL -> NOT OK": 3,
+     "PASS -> NOT OK": 2,
+     "PASS -> FAIL": 1
+    },
+    "rate": {
+     "k": 6,
+     "n": 167,
+     "rate": 0.03592814371257485,
+     "wilson95": [
+      0.016568325910812812,
+      0.0761577543395347
+     ]
+    }
+   },
+   "odd_even": {
+    "changes": {
+     "PASS -> INCONCLUSIVE": 7,
+     "PASS -> NOT OK": 4,
+     "PASS -> FAIL": 1,
+     "FAIL -> NOT OK": 1,
+     "FAIL -> PASS": 2,
+     "INCONCLUSIVE -> PASS": 2
+    },
+    "rate": {
+     "k": 17,
+     "n": 167,
+     "rate": 0.10179640718562874,
+     "wilson95": [
+      0.06453215761708572,
+      0.15696828543643826
+     ]
+    }
+   },
+   "period_alias": {
+    "changes": {
+     "PASS -> NOT OK": 5,
+     "PASS -> INCONCLUSIVE": 2
+    },
+    "rate": {
+     "k": 7,
+     "n": 167,
+     "rate": 0.041916167664670656,
+     "wilson95": [
+      0.02045015348713488,
+      0.08398268701804684
+     ]
+    }
+   },
+   "plausibility": {
+    "changes": {
+     "PASS -> NOT OK": 4,
+     "INCONCLUSIVE -> NOT OK": 1
+    },
+    "rate": {
+     "k": 5,
+     "n": 167,
+     "rate": 0.029940119760479042,
+     "wilson95": [
+      0.012855039352347983,
+      0.0681642806431653
+     ]
+    }
+   },
+   "secondary_eclipse": {
+    "changes": {
+     "PASS -> NOT OK": 5,
+     "FAIL -> PASS": 2,
+     "PASS -> FAIL": 2,
+     "INCONCLUSIVE -> FAIL": 1,
+     "PASS -> INCONCLUSIVE": 1,
+     "INCONCLUSIVE -> PASS": 1
+    },
+    "rate": {
+     "k": 12,
+     "n": 167,
+     "rate": 0.0718562874251497,
+     "wilson95": [
+      0.04157961673733164,
+      0.12138702504202122
+     ]
+    }
+   },
+   "single_event": {
+    "changes": {
+     "PASS -> NOT OK": 5,
+     "INCONCLUSIVE -> PASS": 1
+    },
+    "rate": {
+     "k": 6,
+     "n": 167,
+     "rate": 0.03592814371257485,
+     "wilson95": [
+      0.016568325910812812,
+      0.0761577543395347
+     ]
+    }
+   },
+   "sinusoid": {
+    "changes": {
+     "PASS -> NOT OK": 5,
+     "INCONCLUSIVE -> PASS": 1
+    },
+    "rate": {
+     "k": 6,
+     "n": 167,
+     "rate": 0.03592814371257485,
+     "wilson95": [
+      0.016568325910812812,
+      0.0761577543395347
+     ]
+    }
+   },
+   "snr": {
+    "changes": {
+     "PASS -> NOT OK": 5
+    },
+    "rate": {
+     "k": 5,
+     "n": 167,
+     "rate": 0.029940119760479042,
+     "wilson95": [
+      0.012855039352347983,
+      0.0681642806431653
+     ]
+    }
+   },
+   "systematics": {
+    "changes": {
+     "PASS -> INCONCLUSIVE": 12,
+     "PASS -> NOT OK": 1,
+     "INCONCLUSIVE -> PASS": 1,
+     "INCONCLUSIVE -> NOT OK": 4
+    },
+    "rate": {
+     "k": 18,
+     "n": 167,
+     "rate": 0.10778443113772455,
+     "wilson95": [
+      0.0692734688851998,
+      0.16393373442315845
+     ]
+    }
+   }
+  },
+  "tests_never_changed": []
+ },
+ "flips_same": {
+  "partial": false,
+  "pairs": 83,
+  "per_output": {
+   "INCONCLUSIVE -> INCONCLUSIVE": 29,
+   "REFUTED -> INCONCLUSIVE": 2,
+   "REFUTED -> REFUTED": 15,
+   "REFUTED -> WEAKENED": 1,
+   "SURVIVED -> INCONCLUSIVE": 4,
+   "SURVIVED -> SURVIVED": 9,
+   "WEAKENED -> ERROR": 1,
+   "WEAKENED -> INCONCLUSIVE": 2,
+   "WEAKENED -> WEAKENED": 20
+  },
+  "outputs_changed": {
+   "k": 10,
+   "n": 83,
+   "rate": 0.12048192771084337,
+   "wilson95": [
+    0.066776902980842,
+    0.2077631513257165
+   ]
+  },
+  "per_test": {
+   "aperture_depth": {
+    "changes": {
+     "PASS -> INCONCLUSIVE": 6,
+     "PASS -> NOT OK": 1,
+     "FAIL -> INCONCLUSIVE": 1
+    },
+    "rate": {
+     "k": 8,
+     "n": 83,
+     "rate": 0.0963855421686747,
+     "wilson95": [
+      0.04965274035892192,
+      0.17882636501471963
+     ]
+    }
+   },
+   "centroid_shift": {
+    "changes": {
+     "PASS -> INCONCLUSIVE": 4,
+     "INCONCLUSIVE -> NOT OK": 1,
+     "INCONCLUSIVE -> PASS": 2,
+     "FAIL -> INCONCLUSIVE": 1,
+     "INCONCLUSIVE -> FAIL": 1
+    },
+    "rate": {
+     "k": 9,
+     "n": 83,
+     "rate": 0.10843373493975904,
+     "wilson95": [
+      0.058104915192981194,
+      0.19340466464711883
+     ]
+    }
+   },
+   "duty_cycle": {
+    "changes": {
+     "PASS -> NOT OK": 1,
+     "FAIL -> PASS": 1
+    },
+    "rate": {
+     "k": 2,
+     "n": 83,
+     "rate": 0.024096385542168676,
+     "wilson95": [
+      0.006633166140727599,
+      0.08366309243416317
+     ]
+    }
+   },
+   "edge_events": {
+    "changes": {
+     "PASS -> NOT OK": 1,
+     "INCONCLUSIVE -> PASS": 1
+    },
+    "rate": {
+     "k": 2,
+     "n": 83,
+     "rate": 0.024096385542168676,
+     "wilson95": [
+      0.006633166140727599,
+      0.08366309243416317
+     ]
+    }
+   },
+   "event_consistency": {
+    "changes": {
+     "FAIL -> PASS": 1,
+     "INCONCLUSIVE -> FAIL": 7,
+     "PASS -> NOT OK": 1,
+     "PASS -> FAIL": 1
+    },
+    "rate": {
+     "k": 10,
+     "n": 83,
+     "rate": 0.12048192771084337,
+     "wilson95": [
+      0.066776902980842,
+      0.2077631513257165
+     ]
+    }
+   },
+   "nearby_contamination": {
+    "changes": {
+     "FAIL -> NOT OK": 1,
+     "PASS -> FAIL": 1
+    },
+    "rate": {
+     "k": 2,
+     "n": 83,
+     "rate": 0.024096385542168676,
+     "wilson95": [
+      0.006633166140727599,
+      0.08366309243416317
+     ]
+    }
+   },
+   "odd_even": {
+    "changes": {
+     "PASS -> INCONCLUSIVE": 6,
+     "PASS -> NOT OK": 1,
+     "FAIL -> PASS": 2,
+     "INCONCLUSIVE -> PASS": 1
+    },
+    "rate": {
+     "k": 10,
+     "n": 83,
+     "rate": 0.12048192771084337,
+     "wilson95": [
+      0.066776902980842,
+      0.2077631513257165
+     ]
+    }
+   },
+   "period_alias": {
+    "changes": {
+     "PASS -> NOT OK": 1
+    },
+    "rate": {
+     "k": 1,
+     "n": 83,
+     "rate": 0.012048192771084338,
+     "wilson95": [
+      0.0021299774281082692,
+      0.06513580668032404
+     ]
+    }
+   },
+   "plausibility": {
+    "changes": {
+     "PASS -> NOT OK": 1
+    },
+    "rate": {
+     "k": 1,
+     "n": 83,
+     "rate": 0.012048192771084338,
+     "wilson95": [
+      0.0021299774281082692,
+      0.06513580668032404
+     ]
+    }
+   },
+   "secondary_eclipse": {
+    "changes": {
+     "PASS -> NOT OK": 1,
+     "FAIL -> PASS": 2,
+     "PASS -> FAIL": 2,
+     "INCONCLUSIVE -> FAIL": 1,
+     "PASS -> INCONCLUSIVE": 1
+    },
+    "rate": {
+     "k": 7,
+     "n": 83,
+     "rate": 0.08433734939759036,
+     "wilson95": [
+      0.04145333632101998,
+      0.16399529458616308
+     ]
+    }
+   },
+   "single_event": {
+    "changes": {
+     "PASS -> NOT OK": 1,
+     "INCONCLUSIVE -> PASS": 1
+    },
+    "rate": {
+     "k": 2,
+     "n": 83,
+     "rate": 0.024096385542168676,
+     "wilson95": [
+      0.006633166140727599,
+      0.08366309243416317
+     ]
+    }
+   },
+   "sinusoid": {
+    "changes": {
+     "PASS -> NOT OK": 1
+    },
+    "rate": {
+     "k": 1,
+     "n": 83,
+     "rate": 0.012048192771084338,
+     "wilson95": [
+      0.0021299774281082692,
+      0.06513580668032404
+     ]
+    }
+   },
+   "snr": {
+    "changes": {
+     "PASS -> NOT OK": 1
+    },
+    "rate": {
+     "k": 1,
+     "n": 83,
+     "rate": 0.012048192771084338,
+     "wilson95": [
+      0.0021299774281082692,
+      0.06513580668032404
+     ]
+    }
+   },
+   "systematics": {
+    "changes": {
+     "PASS -> INCONCLUSIVE": 7,
+     "PASS -> NOT OK": 1
+    },
+    "rate": {
+     "k": 8,
+     "n": 83,
+     "rate": 0.0963855421686747,
+     "wilson95": [
+      0.04965274035892192,
+      0.17882636501471963
+     ]
+    }
+   }
+  },
+  "tests_never_changed": []
+ },
+ "doors_total": {
+  "door_1": {
+   "decided": 107,
+   "changed_class": 15,
+   "rate": {
+    "k": 15,
+    "n": 107,
+    "rate": 0.14018691588785046,
+    "wilson95": [
+     0.08683228773331665,
+     0.21848179943905388
+    ]
+   },
+   "found": false,
+   "complete": true
+  },
+  "door_2": {
+   "status_changes": 150,
+   "near": 12,
+   "rate": {
+    "k": 12,
+    "n": 150,
+    "rate": 0.08,
+    "wilson95": [
+     0.04635364151865291,
+     0.13462136375053146
+    ]
+   },
+   "found": false,
+   "complete": true
+  },
+  "door_3": {
+   "tois": 167,
+   "snr_differs": 15,
+   "snr_missing": 5,
+   "needed": 9,
+   "rate": {
+    "k": 15,
+    "n": 167,
+    "rate": 0.08982035928143713,
+    "wilson95": [
+     0.05518782731353631,
+     0.14289909523031924
+    ]
+   },
+   "found": true,
+   "complete": true
+  },
+  "door_4": {
+   "fp_events": 17,
+   "fp_stay_refuted": 14,
+   "planets_b": 40,
+   "planets_refuted": 1,
+   "found": false,
+   "complete": true
+  }
+ },
+ "doors_same": {
+  "door_1": {
+   "decided": 54,
+   "changed_class": 10,
+   "rate": {
+    "k": 10,
+    "n": 54,
+    "rate": 0.18518518518518517,
+    "wilson95": [
+     0.10382685542089135,
+     0.30835947782152484
+    ]
+   },
+   "found": false,
+   "complete": true
+  },
+  "door_2": {
+   "status_changes": 64,
+   "near": 8,
+   "rate": {
+    "k": 8,
+    "n": 64,
+    "rate": 0.125,
+    "wilson95": [
+     0.06472242663330453,
+     0.22774561821129946
+    ]
+   },
+   "found": false,
+   "complete": true
+  },
+  "door_3": {
+   "tois": 83,
+   "snr_differs": 12,
+   "snr_missing": 1,
+   "needed": 5,
+   "rate": {
+    "k": 12,
+    "n": 83,
+    "rate": 0.14457831325301204,
+    "wilson95": [
+     0.08468299102280806,
+     0.2359180122166673
+    ]
+   },
+   "found": true,
+   "complete": true
+  },
+  "door_4": {
+   "fp_events": 17,
+   "fp_stay_refuted": 14,
+   "planets_b": 40,
+   "planets_refuted": 1,
+   "found": false,
+   "complete": true
+  }
+ }
+}
