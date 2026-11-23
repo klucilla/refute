@@ -48,9 +48,29 @@ how later work is done.
 
 ## Current phase
 
-**v0.5.6 Apply with declared limits** (opened on 2026-11-21 by the maintainer's decision of 21:00,
-#218, which relaunched Refute under "Explore freely, conclude strictly"; see
-[the section below](#v056-apply-with-declared-limits)).
+**None open: the next phase is the maintainer's decision** (since v0.5.6 closed on 2026-11-23, by
+the maintainer's decision received at 09:50 local, #218, comment 7101712940).
+
+### Previous phase record: v0.5.6 Apply with declared limits
+
+**v0.5.6 Apply with declared limits: closed on 2026-11-23, gate `SURVIVED`** (opened on 2026-11-21
+by the maintainer's decision of 21:00, #218, which relaunched Refute under "Explore freely, conclude
+strictly"; see [the section below](#v056-apply-with-declared-limits)).
+- **All five exit criteria are met**, each with its evidence in the v0.5.6 section.
+- **Part B's claim** (agreement of the labelled battery with TFOPWG dispositions) is `SURVIVED`,
+  under the limits label 'WEAKENED; does not meet D1, D2, D4, T2a'. It is agreement, not
+  independence.
+- **The public report** is [docs/reports/v0.5.6-report.md](docs/reports/v0.5.6-report.md).
+- **The reviews:**
+  - Codex's review of the phase returned `SURVIVED`;
+  - the independent gate review returned `SURVIVED`, with no critical or important finding
+    ([docs/gates/v0.5.6-review.md](docs/gates/v0.5.6-review.md));
+  - its two checks passed in the pinned environment
+    ([docs/gates/v0.5.6-verify-outputs.md](docs/gates/v0.5.6-verify-outputs.md)).
+- **The gate's minor findings** are on #59.
+- **Method status:** `method_status: not_validated` stands.
+
+### The v0.5 line's declared limits
 
 - **The v0.5 line is closed with declared limits** (the amendment of 2026-11-21 to the advance
   rule, case (c)). Its failed targets stay listed and unmet: D1 (EB1 and EB2), D2, D4 and T2a. Its
@@ -927,6 +947,9 @@ The phase stops at 80 % of any cap.
 
 ## v0.5.6 Apply with declared limits
 
+**Closed on 2026-11-23, gate `SURVIVED`** (the maintainer's decision received at 09:50 local, #218,
+comment 7101712940; [gate review](docs/gates/v0.5.6-review.md)).
+
 Tracking: #218. Opened on 2026-11-21 by the maintainer's decision of 21:00 (the relaunch). Plan:
 [docs/plans/v0.5.6-plan.md](docs/plans/v0.5.6-plan.md); open sources:
 [docs/plans/sources/v0.5.6-open-sources-2026-11-21.md](docs/plans/sources/v0.5.6-open-sources-2026-11-21.md).
@@ -965,8 +988,8 @@ item 2, #218, where the evidence exists)
         ([part-a-ledger.json](docs/validation/v0.5.6/part-a-ledger.json)). That decision came after
         the pilot's stop on disk.
       - Labels and coverage: every record is `exploratory`, with the limits label and
-        `not_validated`. Every test of the 239 OK records carries its coverage. The one ERROR is
-        counted as a coverage loss ([part-a-records.json](docs/validation/v0.5.6/part-a-records.json),
+        `not_validated`. Every test of the 239 OK records carries its coverage or the reason it
+        has none. The one ERROR is counted as a coverage loss ([part-a-records.json](docs/validation/v0.5.6/part-a-records.json),
         [part-a-report.md](docs/validation/v0.5.6/part-a-report.md)).
 - [x] An exploratory report is committed, with each pre-written "door" marked found or not found.
       *Evidence:* [part-a-report.md](docs/validation/v0.5.6/part-a-report.md) (2e734b5). Door 1
@@ -993,10 +1016,21 @@ item 2, #218, where the evidence exists)
       Its facts, numbers and quotations were checked against the records in one Codex round, and
       its blocking items were applied
       ([report-round-1-answer.md](docs/plans/v0.5.5-consensus/report-round-1-answer.md)).
-- [ ] Codex's review (up to three rounds, one conversation) and a gate review.
-      *Codex's review is done:* round 1 returned `SURVIVED`, with no blocking item
-      ([phase-round-1-answer.md](docs/plans/v0.5.5-consensus/phase-round-1-answer.md)). The gate
-      review is still to come, so this criterion stays open.
+- [x] Codex's review (up to three rounds, one conversation) and a gate review.
+      *Evidence:*
+      - Codex's review of the phase: round 1 returned `SURVIVED`, with no blocking item
+        ([phase-round-1-answer.md](docs/plans/v0.5.5-consensus/phase-round-1-answer.md)).
+      - The gate review was a fresh, read-only session that did not build the phase, launched by
+        the maintainer's adviser with the maintainer's approval. It ran on dde966d and returned
+        `SURVIVED`, with no critical or important finding
+        ([docs/gates/v0.5.6-review.md](docs/gates/v0.5.6-review.md), stored unchanged).
+      - The two checks the gate asked for passed in the pinned environment
+        ([docs/gates/v0.5.6-verify-outputs.md](docs/gates/v0.5.6-verify-outputs.md)).
+
+**Recorded correction (2026-11-23, after the gate review).** In criterion 1's evidence, "carries its
+coverage" now reads "carries its coverage or the reason it has none": 273 of part A's tests have
+`coverage: null`, and all of them are `INCONCLUSIVE` (the gate review, a minor finding; the
+maintainer's decision of 2026-11-23, item 3).
 
 **Stops that stay the maintainer's:** running part A (its set and cost), drand rounds and locks,
 any change in `src/`, public text and deploys, third-party code, dependencies.

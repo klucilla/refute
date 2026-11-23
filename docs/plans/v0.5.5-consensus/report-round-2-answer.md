@@ -1,0 +1,9 @@
+1. **SURVIVED. All outcomes.** The 150 planet records contain 13 `REFUTED` outcomes. Of those, 12 have `identity.matched: false` and one has `identity.matched: true`. The plain rate is 13/150 = **8.7%**. I recomputed the upper Wilson 95% bound as `0.14262822373621914`, which rounds to **0.143**. The guard applies to the matched event, **1/150**. [Part B records](/C:/Projetos/refute/docs/validation/v0.5.6/part-b-records.json) · [Verdict JSON, `strata.planet` and `tests.guard`](/C:/Projetos/refute/calibration/v0.5.6/part-b-verdict.json)
+2. **SURVIVED. Reviews.** The limit was three rounds, and the maintainer authorized rounds 4 and 5 as exceptions. The five stored answers match the consensus record: block C was `REFUTED` in rounds 1–4, and all three blocks were `SURVIVED` with no blocking item in round 5. Git history places the round 5 record `58388cf` before lock commit `fdd87e7`. [Rounds 1–3](/C:/Projetos/refute/docs/plans/v0.5.5-consensus/README.md:405) · [Rounds 4–5](/C:/Projetos/refute/docs/plans/v0.5.5-consensus/README.md:443)
+3. **SURVIVED. What stays open.** Both reviews returned `SURVIVED`, and both relative links resolve to the intended files in `15d3ebf`. The committed gate review’s SHA-256 matches `b26fb596ea71890c1fd1f2b1b9424e16005297b68f1aa98fc927cd6b48e4a503`. The two follow-up checks required by the gate also passed. [Phase review](/C:/Projetos/refute/docs/plans/v0.5.5-consensus/phase-round-1-answer.md:29) · [Gate review](/C:/Projetos/refute/docs/gates/v0.5.6-review.md:18) · [Follow-up checks](/C:/Projetos/refute/docs/gates/v0.5.6-verify-outputs.md:3)
+
+The report diff from `532ba44` to `15d3ebf` contains exactly these three changes.
+
+**Blocking items:** None.
+
+OVERALL: SURVIVED

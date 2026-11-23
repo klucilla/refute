@@ -505,3 +505,16 @@ The round used 1,862,321 input tokens (1,701,120 cached) and 15,365 output token
 **The non-blocking remarks:**
 - ROADMAP's sentence on part B's lock waiting for the maintainer, and the wording of part A's disk peak: fixed directly in ROADMAP.
 - The lock plan's 28 minutes: logged on #59. The lock plan is a record of the phase and stays unchanged.
+## v0.5.6: the public report's three last corrections (round 2 of `report`)
+
+The maintainer's decision of 2026-11-23 (received at 09:50 local, 12:50Z; #218, comment 7101712940), item 2, approved the report's text of 532ba44, asked for three more corrections (commit 15d3ebf), and asked for one Codex round on those three changes only. The round resumed the conversation `report` (thread `01a2082d-49a2-7470-a2be-84ead7802e46`). Codex CLI 0.167.0-alpha.3.2, model gpt-6.2-sol, effort high. The answer is stored unchanged.
+
+| Round | File | Reviewed | Verdicts | SHA-256 |
+|---|---|---|---|---|
+| 2 | [report-round-2-answer.md](report-round-2-answer.md) | 15d3ebf | the three changes SURVIVED; no blocking item; **OVERALL: SURVIVED** | `c662cb047f651e76fe5bc5d8f5037a63eeb5c6129b1c3053b3ca3b1fec2eaeb4` |
+
+The round's usage is cumulative over the conversation: 2,468,457 input tokens (2,322,688 cached) and 19,611 output tokens. The conversation `report` now counts **165,380** review tokens: the last round's uncached input plus its output (`docs/validation/v0.5.6/codex_tokens.py`).
+
+## Answers stored in Portuguese: a recorded exception
+
+Some Codex answers in this record are in Portuguese, among them `partb-round-*-answer.md` and `parta*-round-1-answer.md`. Codex wrote them that way. They are third-party bytes, stored unchanged and cited by SHA-256, so they are not translated in place. This is an exception to "everything written to the repository is in English" (the v0.5.6 gate review, a minor finding; the maintainer's decision of 2026-11-23, item 4). CLAUDE.md does not change. A translation, if one is ever added, goes beside the answer as a new file.
