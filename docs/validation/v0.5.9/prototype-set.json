@@ -1,0 +1,112 @@
+{
+ "schema": "refute-v059-prototype-set-1",
+ "mode": "exploratory",
+ "limits_label": "WEAKENED; does not meet D1, D2, D4, T2a",
+ "method_status": "not_validated",
+ "rule": "changes: decided v0.5.6 records whose completed v0.5.8 run changed class; reverse: drawn INCONCLUSIVE records whose completed v0.5.8 run became decided; numeric_errors: v0.5.8 runs that ended in OverflowError or LinAlgError; controls: per class, 2 records whose completed v0.5.8 run kept the v0.5.6 class, with provenance same and identity matched, the keys sorted by TIC, then random.Random(int(sha256(CONTROL_SEED_TEXT + b'|' + class), 16)).sample(keys, 2); the network ERRORs are out",
+ "control_seed_text": "refute v0.5.9 prototype: 2 unchanged controls per class, provenance same",
+ "sources_sha256": {
+  "v058_records": "4993d9a77a68c4ae961fb92007fa53ab7eac15d99b27ced0f46225bdbd7c9b5a",
+  "v058_set": "84c14aead346e5345fee3dbed42c69bab8143bc8f6cbaf2b0c5140f58d3edfe5",
+  "v056_A": "4cc301b3c944faae25c7ded51a9895b471a684419a559a96bf68495055d0419e",
+  "v056_B": "d5a3ee8793ac1f9431b3ed532cae0d5c59477333e2b4bfab4214c3fd5a2a1782"
+ },
+ "changes": [
+  "TIC-124206468",
+  "TIC-142937186",
+  "TIC-153078576",
+  "TIC-219388773",
+  "TIC-220016044",
+  "TIC-299799658",
+  "TIC-356235833",
+  "TIC-365733349",
+  "TIC-372596795",
+  "TIC-401604346",
+  "TIC-419858461",
+  "TIC-467783290",
+  "TIC-55275863"
+ ],
+ "reverse": [
+  "TIC-47244580"
+ ],
+ "numeric_errors": [
+  "TIC-146846569",
+  "TIC-259172249"
+ ],
+ "controls": {
+  "SURVIVED": [
+   "TIC-452866790",
+   "TIC-46432937"
+  ],
+  "WEAKENED": [
+   "TIC-161223358",
+   "TIC-124379043"
+  ],
+  "REFUTED": [
+   "TIC-172110606",
+   "TIC-295354126"
+  ],
+  "INCONCLUSIVE": [
+   "TIC-301051430",
+   "TIC-18318288"
+  ]
+ },
+ "control_pools": {
+  "SURVIVED": 9,
+  "WEAKENED": 20,
+  "REFUTED": 15,
+  "INCONCLUSIVE": 28
+ },
+ "order": [
+  "TIC-124206468",
+  "TIC-142937186",
+  "TIC-153078576",
+  "TIC-219388773",
+  "TIC-220016044",
+  "TIC-299799658",
+  "TIC-356235833",
+  "TIC-365733349",
+  "TIC-372596795",
+  "TIC-401604346",
+  "TIC-419858461",
+  "TIC-467783290",
+  "TIC-55275863",
+  "TIC-47244580",
+  "TIC-146846569",
+  "TIC-259172249",
+  "TIC-452866790",
+  "TIC-46432937",
+  "TIC-161223358",
+  "TIC-124379043",
+  "TIC-172110606",
+  "TIC-295354126",
+  "TIC-301051430",
+  "TIC-18318288"
+ ],
+ "tois": {
+  "TIC-124206468": "2357.01",
+  "TIC-142937186": "2427.01",
+  "TIC-153078576": "2407.01",
+  "TIC-219388773": "399.01",
+  "TIC-220016044": "357.01",
+  "TIC-299799658": "1062.01",
+  "TIC-356235833": "2111.01",
+  "TIC-365733349": "1288.01",
+  "TIC-372596795": "3040.01",
+  "TIC-401604346": "2193.01",
+  "TIC-419858461": "3165.01",
+  "TIC-467783290": "3753.01",
+  "TIC-55275863": "5515.01",
+  "TIC-47244580": "6450.01",
+  "TIC-146846569": "734.01",
+  "TIC-259172249": "5218.01",
+  "TIC-452866790": "488.01",
+  "TIC-46432937": "7716.01",
+  "TIC-161223358": "2415.01",
+  "TIC-124379043": "2803.01",
+  "TIC-172110606": "5135.01",
+  "TIC-295354126": "1965.01",
+  "TIC-301051430": "923.01",
+  "TIC-18318288": "6086.01"
+ }
+}
