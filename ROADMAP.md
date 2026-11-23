@@ -945,7 +945,8 @@ Nothing depends on `tfopwg_disp` until NExScI answers. `method_status: not_valid
   found and not pursued, a departure from "the first door proceeds" decided by the maintainer.
   Part B is instead a claim of **agreement** with TFOPWG dispositions (FP against the planet arm,
   in the confirmation half), suggested by part A's table and disclosed as such:
-  `calibration/v0.5.6/claim.yaml`. Its lock and drand round wait for the maintainer.
+  `calibration/v0.5.6/claim.yaml`. Its lock and drand round waited for the maintainer; both are
+  done (next item).
 - **Part B's verdict** (2026-11-23, #218): `SURVIVED` under the limits label (lock fdd87e7, draw
   185fd91, verdict 57c4160): [calibration/v0.5.6/part-b-verdict.md](calibration/v0.5.6/part-b-verdict.md).
 - **The phase's public report** (approved by the maintainer on 2026-11-23, #218):
@@ -959,9 +960,10 @@ item 2, #218, where the evidence exists)
       *Evidence:*
       - Order: the frame and the split were committed in 099c67c and the draw in 2f0d95e. Both
         precede the pilot (1d4bdcf) and the run (2e734b5, 240 records).
-      - Cost: 5.95 CPU-h charged against the 50 CPU-h cap, and a disk peak of 9.14 GB against
-        20 GB ([part-a-ledger.json](docs/validation/v0.5.6/part-a-ledger.json)). This came after
-        the pilot's stop on disk and the maintainer's decision of 2026-11-22 (09:00).
+      - Cost: 5.95 CPU-h charged against the 50 CPU-h cap. The maximum sampled disk use after the
+        maintainer's decision of 2026-11-22 (09:00) was 9.14 GB against 20 GB
+        ([part-a-ledger.json](docs/validation/v0.5.6/part-a-ledger.json)). That decision came after
+        the pilot's stop on disk.
       - Labels and coverage: every record is `exploratory`, with the limits label and
         `not_validated`. Every test of the 239 OK records carries its coverage. The one ERROR is
         counted as a coverage loss ([part-a-records.json](docs/validation/v0.5.6/part-a-records.json),
@@ -992,6 +994,9 @@ item 2, #218, where the evidence exists)
       its blocking items were applied
       ([report-round-1-answer.md](docs/plans/v0.5.5-consensus/report-round-1-answer.md)).
 - [ ] Codex's review (up to three rounds, one conversation) and a gate review.
+      *Codex's review is done:* round 1 returned `SURVIVED`, with no blocking item
+      ([phase-round-1-answer.md](docs/plans/v0.5.5-consensus/phase-round-1-answer.md)). The gate
+      review is still to come, so this criterion stays open.
 
 **Stops that stay the maintainer's:** running part A (its set and cost), drand rounds and locks,
 any change in `src/`, public text and deploys, third-party code, dependencies.

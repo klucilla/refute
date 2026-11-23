@@ -492,3 +492,16 @@ The round used 2,016,354 input tokens (1,891,456 cached) and 17,298 output token
 - the three statements that went beyond the evidence are narrowed.
 
 The round was one round, as decided, so there is no second round on the corrections.
+## v0.5.6: Codex's review of the phase
+
+The maintainer's decision of 2026-11-23 (08:30), item 2 (#218) asked for Codex's review of the phase: up to three rounds, in one conversation, after the exit criteria with evidence were ticked. The conversation is `phase` (thread `01a20835-5975-7bf3-97be-15742e50e897`). Codex CLI 0.167.0-alpha.3.2, model gpt-6.2-sol, effort high. The answer is stored unchanged.
+
+| Round | File | Reviewed | Verdicts | SHA-256 |
+|---|---|---|---|---|
+| 1 | [phase-round-1-answer.md](phase-round-1-answer.md) | 532ba44 | items 1 to 7 SURVIVED; no blocking item; three non-blocking remarks; **OVERALL: SURVIVED** | `406533b03f317bf6e2eda405718deaa069e19b7dbbc3d6ca94a4bd9d40f4a3df` |
+
+The round used 1,862,321 input tokens (1,701,120 cached) and 15,365 output tokens. The conversation counts **176,566** review tokens: the uncached input plus the output. Round 1 was SURVIVED with no blocking item, so no second round ran.
+
+**The non-blocking remarks:**
+- ROADMAP's sentence on part B's lock waiting for the maintainer, and the wording of part A's disk peak: fixed directly in ROADMAP.
+- The lock plan's 28 minutes: logged on #59. The lock plan is a record of the phase and stays unchanged.
