@@ -1,0 +1,233 @@
+{
+ "schema": "refute-v058-stage0-1",
+ "mode": "exploratory",
+ "limits_label": "WEAKENED; does not meet D1, D2, D4, T2a",
+ "method_status": "not_validated",
+ "code_sha256": "961f2792d054cddda513d80e7ef56da470c8479955b272c5a8c5ff571ac28be5",
+ "bundles_sha256": {
+  "A": "4cc301b3c944faae25c7ded51a9895b471a684419a559a96bf68495055d0419e",
+  "B": "d5a3ee8793ac1f9431b3ed532cae0d5c59477333e2b4bfab4214c3fd5a2a1782"
+ },
+ "ok_records": 534,
+ "blocks": 4820,
+ "table": {
+  "0.005": {
+   "pass_blocks_near": 9,
+   "refusals_near": 8,
+   "survived_with_pass_near": 2,
+   "weakened_with_pass_near": 0
+  },
+  "0.01": {
+   "pass_blocks_near": 21,
+   "refusals_near": 21,
+   "survived_with_pass_near": 2,
+   "weakened_with_pass_near": 2
+  },
+  "0.02": {
+   "pass_blocks_near": 43,
+   "refusals_near": 31,
+   "survived_with_pass_near": 2,
+   "weakened_with_pass_near": 4
+  }
+ },
+ "survived_total": 31,
+ "weakened_total": 60,
+ "ties": [
+  {
+   "toi": "1062.01",
+   "test": "systematics",
+   "block": "background"
+  },
+  {
+   "toi": "973.01",
+   "test": "period_alias",
+   "block": "main"
+  },
+  {
+   "toi": "4188.01",
+   "test": "period_alias",
+   "block": "main"
+  }
+ ],
+ "inconclusive_total": 374,
+ "inconclusive_decided_by_refusals_002": [],
+ "fp_events": [
+  {
+   "toi": "5135.01",
+   "first_fatal_fail": "odd_even",
+   "message": "odd/even depth difference 4.34 sigma (> 3.0)",
+   "sigma_margin": 1.3399999999999999,
+   "within_1_sigma": false
+  },
+  {
+   "toi": "592.01",
+   "first_fatal_fail": "odd_even",
+   "message": "odd/even depth difference 4.04 sigma (> 3.0)",
+   "sigma_margin": 1.04,
+   "within_1_sigma": false
+  },
+  {
+   "toi": "379.01",
+   "first_fatal_fail": "aperture_depth",
+   "message": "depth grows with the aperture (ratio 7.35, 21.3 sigma): the signal comes from outside the core aperture",
+   "sigma_margin": null,
+   "within_1_sigma": false
+  },
+  {
+   "toi": "1061.01",
+   "first_fatal_fail": "aperture_depth",
+   "message": "depth grows with the aperture (ratio 2.19, 5.3 sigma): the signal comes from outside the core aperture",
+   "sigma_margin": null,
+   "within_1_sigma": false
+  },
+  {
+   "toi": "1323.01",
+   "first_fatal_fail": "aperture_depth",
+   "message": "depth grows with the aperture (ratio inf, 5.3 sigma): the signal comes from outside the core aperture",
+   "sigma_margin": null,
+   "within_1_sigma": false
+  },
+  {
+   "toi": "401.01",
+   "first_fatal_fail": "aperture_depth",
+   "message": "depth grows with the aperture (ratio 2.99, 4.3 sigma): the signal comes from outside the core aperture",
+   "sigma_margin": null,
+   "within_1_sigma": false
+  },
+  {
+   "toi": "4135.01",
+   "first_fatal_fail": "aperture_depth",
+   "message": "depth grows with the aperture (ratio 6.47, 14.1 sigma): the signal comes from outside the core aperture",
+   "sigma_margin": null,
+   "within_1_sigma": false
+  },
+  {
+   "toi": "2173.01",
+   "first_fatal_fail": "aperture_depth",
+   "message": "depth grows with the aperture (ratio 2.51, 7.6 sigma): the signal comes from outside the core aperture",
+   "sigma_margin": null,
+   "within_1_sigma": false
+  },
+  {
+   "toi": "1965.01",
+   "first_fatal_fail": "odd_even",
+   "message": "odd/even depth difference 6.54 sigma (> 3.0)",
+   "sigma_margin": 3.54,
+   "within_1_sigma": false
+  },
+  {
+   "toi": "2111.01",
+   "first_fatal_fail": "aperture_depth",
+   "message": "depth grows with the aperture (ratio 1.69, 3.1 sigma): the signal comes from outside the core aperture",
+   "sigma_margin": null,
+   "within_1_sigma": false
+  },
+  {
+   "toi": "2208.01",
+   "first_fatal_fail": "odd_even",
+   "message": "odd/even depth difference 3.81 sigma (> 3.0)",
+   "sigma_margin": 0.81,
+   "within_1_sigma": true
+  },
+  {
+   "toi": "3165.01",
+   "first_fatal_fail": "odd_even",
+   "message": "odd/even depth difference 3.47 sigma (> 3.0)",
+   "sigma_margin": 0.4700000000000002,
+   "within_1_sigma": true
+  },
+  {
+   "toi": "1008.01",
+   "first_fatal_fail": "aperture_depth",
+   "message": "depth grows with the aperture (ratio 1.56, 5.1 sigma): the signal comes from outside the core aperture",
+   "sigma_margin": null,
+   "within_1_sigma": false
+  },
+  {
+   "toi": "1536.01",
+   "first_fatal_fail": "aperture_depth",
+   "message": "depth grows with the aperture (ratio 2.10, 4.0 sigma): the signal comes from outside the core aperture",
+   "sigma_margin": null,
+   "within_1_sigma": false
+  },
+  {
+   "toi": "3060.01",
+   "first_fatal_fail": "period_alias",
+   "message": "a sinusoid at the found period explains the dip (adding a transit improves the BIC by 0.7 < 10)",
+   "sigma_margin": null,
+   "within_1_sigma": false
+  },
+  {
+   "toi": "1975.01",
+   "first_fatal_fail": "odd_even",
+   "message": "odd/even depth difference 5.50 sigma (> 3.0)",
+   "sigma_margin": 2.5,
+   "within_1_sigma": false
+  },
+  {
+   "toi": "3753.01",
+   "first_fatal_fail": "odd_even",
+   "message": "odd/even depth difference 3.24 sigma (> 3.0)",
+   "sigma_margin": 0.2400000000000002,
+   "within_1_sigma": true
+  }
+ ],
+ "fp_events_within_1_sigma": [
+  "2208.01",
+  "3165.01",
+  "3753.01"
+ ],
+ "fp_events_unparsed": [
+  "1008.01",
+  "1061.01",
+  "1323.01",
+  "1536.01",
+  "2111.01",
+  "2173.01",
+  "3060.01",
+  "379.01",
+  "401.01",
+  "4135.01"
+ ],
+ "fisher_13_vs_1": 0.0007253229660511057,
+ "expected": {
+  "blocks": 4820,
+  "table": {
+   "0.005": [
+    9,
+    8,
+    2,
+    0
+   ],
+   "0.01": [
+    21,
+    21,
+    2,
+    2
+   ],
+   "0.02": [
+    43,
+    30,
+    2,
+    4
+   ]
+  },
+  "survived_total": 31,
+  "weakened_total": 60,
+  "ties": 3,
+  "inconclusive_total": 374,
+  "inconclusive_decided_by_refusals_002": 0,
+  "fragile_events": [
+   "3165.01",
+   "3753.01",
+   "2208.01",
+   "2111.01"
+  ],
+  "fisher_13_vs_1": 0.00073
+ },
+ "differences": [
+  "margin 0.02: (43, 31, 2, 4) against (43, 30, 2, 4)",
+  "fragile FP events: ['2208.01', '3165.01', '3753.01'] against ['2111.01', '2208.01', '3165.01', '3753.01'] (unparsed: ['1008.01', '1061.01', '1323.01', '1536.01', '2111.01', '2173.01', '3060.01', '379.01', '401.01', '4135.01'])"
+ ],
+ "reproduced": false
+}
