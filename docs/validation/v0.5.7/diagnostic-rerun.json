@@ -1,0 +1,1003 @@
+{
+ "schema": "refute-v057-diagnostic-rerun-1",
+ "mode": "exploratory",
+ "limits_label": "WEAKENED; does not meet D1, D2, D4, T2a",
+ "method_status": "not_validated",
+ "question": "does the flip come from the seeding, the environment, or the battery's nondeterminism?",
+ "procedure": "#218, comment 7104767892",
+ "code_sha256": "529dd5b021b4da47113b471f1db21c38244d794e72fd5b681d3d9d9593841fe1",
+ "cpu_seconds": 671.734375,
+ "stop": null,
+ "answers": {
+  "299799658": {
+   "answer": "seeding",
+   "search_runs_agree": true,
+   "seeded_runs_agree": true,
+   "search_reproduces_v056": true,
+   "seeded_reproduces_pilot": true,
+   "modes_differ": true
+  },
+  "274138511": {
+   "answer": "seeding",
+   "search_runs_agree": true,
+   "seeded_runs_agree": true,
+   "search_reproduces_v056": true,
+   "seeded_reproduces_pilot": true,
+   "modes_differ": true
+  }
+ },
+ "runs": [
+  {
+   "tic_id": 299799658,
+   "toi": "1062.01",
+   "mode": "search",
+   "run": 1,
+   "started_utc": "2026-11-23T14:57:35Z",
+   "status": "OK",
+   "outcome": "SURVIVED",
+   "candidate": {
+    "period_days": 4.115049530218984,
+    "t0_btjd": 1325.4267357009528,
+    "snr": 26.170117831079807
+   },
+   "tests": {
+    "snr": {
+     "status": "PASS",
+     "message": "SNR 26.2 >= 7.1"
+    },
+    "odd_even": {
+     "status": "PASS",
+     "message": "odd/even depth difference 1.17 sigma (<= 3.0)"
+    },
+    "secondary_eclipse": {
+     "status": "PASS",
+     "message": "no significant dip or brightening at phase 0.5 (0.24 sigma)"
+    },
+    "plausibility": {
+     "status": "PASS",
+     "message": "companion radius 0.19 R_Jup and duration ratio 0.36 are plausible"
+    },
+    "centroid_shift": {
+     "status": "PASS",
+     "message": "transit source consistent with the target (offset 2.9 arcsec, 0.0 sigma, 10 sectors); a PASS does not exclude unresolved blends closer than 10.3 arcsec"
+    },
+    "aperture_depth": {
+     "status": "PASS",
+     "message": "depth does not grow with the aperture (ratio 1.00, -0.0 sigma; transit detected at 18.2 sigma)"
+    },
+    "nearby_contamination": {
+     "status": "PASS",
+     "message": "TIC cone query of 120 arcsec returned 31 source(s): 1 within 21 arcsec, none could produce the signal; median CROWDSAP 1.00"
+    },
+    "period_alias": {
+     "status": "PASS",
+     "message": "the dip needs a transit on top of a sinusoid (BIC gain 604, 1768 in-transit cadences); not near a known systematic period"
+    },
+    "systematics": {
+     "status": "PASS",
+     "message": "no problem in 3 sub-checks: momentum dumps (293 in the quality column), SAP versus PDCSAP, background"
+    },
+    "single_event": {
+     "status": "PASS",
+     "message": "largest single-event SNR 0.26 of the total (<= 0.88)"
+    },
+    "event_consistency": {
+     "status": "INCONCLUSIVE",
+     "message": "PASS refused: insufficient sensitivity: one event off the common depth by a full depth 501.437 ppm not detectable (0.008 < 0.95) (per-event depths: chi2 55.3 for 58 dof, p = 0.58)"
+    },
+    "edge_events": {
+     "status": "PASS",
+     "message": "1 of 59 events near a segment edge (2%)"
+    },
+    "sinusoid": {
+     "status": "PASS",
+     "message": "no significant sinusoid at P/2, P or 2P"
+    },
+    "duty_cycle": {
+     "status": "PASS",
+     "message": "duration over period 0.010 (<= 0.5)"
+    }
+   },
+   "systematics": {
+    "status": "PASS",
+    "sensitivity": {
+     "dumps": {
+      "category": "fraction",
+      "reason": "fraction of the transits near momentum dumps, against 0.5"
+     },
+     "sap": {
+      "effect": "SAP relative depth difference",
+      "alternative": 0.8,
+      "unit": "fraction",
+      "rule_id": "compound-sim-1",
+      "probability": 1.0,
+      "required_probability": 0.95,
+      "detectable": true
+     },
+     "background": {
+      "effect": "background rise in transit",
+      "alternative": 0.8,
+      "unit": "fraction of the depth",
+      "rule_id": "compound-sim-1",
+      "probability": 0.95,
+      "required_probability": 0.95,
+      "detectable": true
+     }
+    },
+    "message": "no problem in 3 sub-checks: momentum dumps (293 in the quality column), SAP versus PDCSAP, background"
+   },
+   "downloaded_bytes": 471502080,
+   "reused_bytes": 19546560,
+   "cpu_seconds": 148.15625,
+   "reason": null,
+   "environment": {
+    "git_commit": "fdc4e8be36b7ba43927ad8f6aaa84ffa3fa7adc7",
+    "uv_lock_sha256": "767bbb387b0f6c58e9c66048ad80f33651a52954bb444a525235ec5425e0865d",
+    "python": "3.13.16",
+    "packages": {
+     "numpy": "2.5.3",
+     "scipy": "1.18.1",
+     "astropy": "8.0.1",
+     "lightkurve": "2.6.0",
+     "astroquery": "0.4.11"
+    },
+    "runners_sha256": {
+     "part_b_run.py": "247c93439a4839310e3bf628b8dd50691973cb039e99a918fbf485ae44f016fe",
+     "seeded_run.py": "94d476b146a1935acbf8ec05bcce1cbdb1be8de3544bf5f6b0641fcfcbcf508a"
+    }
+   }
+  },
+  {
+   "tic_id": 299799658,
+   "toi": "1062.01",
+   "mode": "seeded",
+   "run": 1,
+   "started_utc": "2026-11-23T15:01:05Z",
+   "status": "OK",
+   "outcome": "INCONCLUSIVE",
+   "candidate": {
+    "period_days": 4.115049185384808,
+    "t0_btjd": 1325.4254621880361,
+    "duration_hours": 1.0584261,
+    "depth": 0.00046710709726290983,
+    "depth_err": 1.7847653725658374e-05,
+    "snr": 26.171904970981217
+   },
+   "tests": {
+    "snr": {
+     "status": "PASS",
+     "message": "SNR 26.2 >= 7.1"
+    },
+    "odd_even": {
+     "status": "PASS",
+     "message": "odd/even depth difference 1.04 sigma (<= 3.0)"
+    },
+    "secondary_eclipse": {
+     "status": "PASS",
+     "message": "no significant dip or brightening at phase 0.5 (0.16 sigma)"
+    },
+    "plausibility": {
+     "status": "PASS",
+     "message": "companion radius 0.19 R_Jup and duration ratio 0.39 are plausible"
+    },
+    "centroid_shift": {
+     "status": "PASS",
+     "message": "transit source consistent with the target (offset 2.9 arcsec, 0.0 sigma, 10 sectors); a PASS does not exclude unresolved blends closer than 10.3 arcsec"
+    },
+    "aperture_depth": {
+     "status": "PASS",
+     "message": "depth does not grow with the aperture (ratio 0.98, -0.2 sigma; transit detected at 19.1 sigma)"
+    },
+    "nearby_contamination": {
+     "status": "PASS",
+     "message": "TIC cone query of 120 arcsec returned 31 source(s): 1 within 21 arcsec, none could produce the signal; median CROWDSAP 1.00"
+    },
+    "period_alias": {
+     "status": "PASS",
+     "message": "the dip needs a transit on top of a sinusoid (BIC gain 602, 1873 in-transit cadences); not near a known systematic period"
+    },
+    "systematics": {
+     "status": "INCONCLUSIVE",
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.877 < 0.95) (no problem in 3 sub-checks: momentum dumps (293 in the quality column), SAP versus PDCSAP, background)"
+    },
+    "single_event": {
+     "status": "PASS",
+     "message": "largest single-event SNR 0.24 of the total (<= 0.88)"
+    },
+    "event_consistency": {
+     "status": "INCONCLUSIVE",
+     "message": "PASS refused: insufficient sensitivity: one event off the common depth by a full depth 484.517 ppm not detectable (0.008 < 0.95) (per-event depths: chi2 48.3 for 58 dof, p = 0.81)"
+    },
+    "edge_events": {
+     "status": "PASS",
+     "message": "2 of 59 events near a segment edge (3%)"
+    },
+    "sinusoid": {
+     "status": "PASS",
+     "message": "no significant sinusoid at P/2, P or 2P"
+    },
+    "duty_cycle": {
+     "status": "PASS",
+     "message": "duration over period 0.011 (<= 0.5)"
+    }
+   },
+   "systematics": {
+    "status": "INCONCLUSIVE",
+    "sensitivity": {
+     "dumps": {
+      "category": "fraction",
+      "reason": "fraction of the transits near momentum dumps, against 0.5"
+     },
+     "sap": {
+      "effect": "SAP relative depth difference",
+      "alternative": 0.8,
+      "unit": "fraction",
+      "rule_id": "compound-sim-1",
+      "probability": 0.9995,
+      "required_probability": 0.95,
+      "detectable": true
+     },
+     "background": {
+      "effect": "background rise in transit",
+      "alternative": 0.8,
+      "unit": "fraction of the depth",
+      "rule_id": "compound-sim-1",
+      "probability": 0.877,
+      "required_probability": 0.95,
+      "detectable": false
+     }
+    },
+    "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.877 < 0.95) (no problem in 3 sub-checks: momentum dumps (293 in the quality column), SAP versus PDCSAP, background)"
+   },
+   "downloaded_bytes": 0,
+   "reused_bytes": 491048640,
+   "cpu_seconds": 126.359375,
+   "reason": null,
+   "environment": {
+    "git_commit": "fdc4e8be36b7ba43927ad8f6aaa84ffa3fa7adc7",
+    "uv_lock_sha256": "767bbb387b0f6c58e9c66048ad80f33651a52954bb444a525235ec5425e0865d",
+    "python": "3.13.16",
+    "packages": {
+     "numpy": "2.5.3",
+     "scipy": "1.18.1",
+     "astropy": "8.0.1",
+     "lightkurve": "2.6.0",
+     "astroquery": "0.4.11"
+    },
+    "runners_sha256": {
+     "part_b_run.py": "247c93439a4839310e3bf628b8dd50691973cb039e99a918fbf485ae44f016fe",
+     "seeded_run.py": "94d476b146a1935acbf8ec05bcce1cbdb1be8de3544bf5f6b0641fcfcbcf508a"
+    }
+   }
+  },
+  {
+   "tic_id": 299799658,
+   "toi": "1062.01",
+   "mode": "search",
+   "run": 2,
+   "started_utc": "2026-11-23T15:03:43Z",
+   "status": "OK",
+   "outcome": "SURVIVED",
+   "candidate": {
+    "period_days": 4.115049530218984,
+    "t0_btjd": 1325.4267357009528,
+    "snr": 26.170117831079807
+   },
+   "tests": {
+    "snr": {
+     "status": "PASS",
+     "message": "SNR 26.2 >= 7.1"
+    },
+    "odd_even": {
+     "status": "PASS",
+     "message": "odd/even depth difference 1.17 sigma (<= 3.0)"
+    },
+    "secondary_eclipse": {
+     "status": "PASS",
+     "message": "no significant dip or brightening at phase 0.5 (0.24 sigma)"
+    },
+    "plausibility": {
+     "status": "PASS",
+     "message": "companion radius 0.19 R_Jup and duration ratio 0.36 are plausible"
+    },
+    "centroid_shift": {
+     "status": "PASS",
+     "message": "transit source consistent with the target (offset 2.9 arcsec, 0.0 sigma, 10 sectors); a PASS does not exclude unresolved blends closer than 10.3 arcsec"
+    },
+    "aperture_depth": {
+     "status": "PASS",
+     "message": "depth does not grow with the aperture (ratio 1.00, -0.0 sigma; transit detected at 18.2 sigma)"
+    },
+    "nearby_contamination": {
+     "status": "PASS",
+     "message": "TIC cone query of 120 arcsec returned 31 source(s): 1 within 21 arcsec, none could produce the signal; median CROWDSAP 1.00"
+    },
+    "period_alias": {
+     "status": "PASS",
+     "message": "the dip needs a transit on top of a sinusoid (BIC gain 604, 1768 in-transit cadences); not near a known systematic period"
+    },
+    "systematics": {
+     "status": "PASS",
+     "message": "no problem in 3 sub-checks: momentum dumps (293 in the quality column), SAP versus PDCSAP, background"
+    },
+    "single_event": {
+     "status": "PASS",
+     "message": "largest single-event SNR 0.26 of the total (<= 0.88)"
+    },
+    "event_consistency": {
+     "status": "INCONCLUSIVE",
+     "message": "PASS refused: insufficient sensitivity: one event off the common depth by a full depth 501.437 ppm not detectable (0.008 < 0.95) (per-event depths: chi2 55.3 for 58 dof, p = 0.58)"
+    },
+    "edge_events": {
+     "status": "PASS",
+     "message": "1 of 59 events near a segment edge (2%)"
+    },
+    "sinusoid": {
+     "status": "PASS",
+     "message": "no significant sinusoid at P/2, P or 2P"
+    },
+    "duty_cycle": {
+     "status": "PASS",
+     "message": "duration over period 0.010 (<= 0.5)"
+    }
+   },
+   "systematics": {
+    "status": "PASS",
+    "sensitivity": {
+     "dumps": {
+      "category": "fraction",
+      "reason": "fraction of the transits near momentum dumps, against 0.5"
+     },
+     "sap": {
+      "effect": "SAP relative depth difference",
+      "alternative": 0.8,
+      "unit": "fraction",
+      "rule_id": "compound-sim-1",
+      "probability": 1.0,
+      "required_probability": 0.95,
+      "detectable": true
+     },
+     "background": {
+      "effect": "background rise in transit",
+      "alternative": 0.8,
+      "unit": "fraction of the depth",
+      "rule_id": "compound-sim-1",
+      "probability": 0.95,
+      "required_probability": 0.95,
+      "detectable": true
+     }
+    },
+    "message": "no problem in 3 sub-checks: momentum dumps (293 in the quality column), SAP versus PDCSAP, background"
+   },
+   "downloaded_bytes": 0,
+   "reused_bytes": 491048640,
+   "cpu_seconds": 148.953125,
+   "reason": null,
+   "environment": {
+    "git_commit": "fdc4e8be36b7ba43927ad8f6aaa84ffa3fa7adc7",
+    "uv_lock_sha256": "767bbb387b0f6c58e9c66048ad80f33651a52954bb444a525235ec5425e0865d",
+    "python": "3.13.16",
+    "packages": {
+     "numpy": "2.5.3",
+     "scipy": "1.18.1",
+     "astropy": "8.0.1",
+     "lightkurve": "2.6.0",
+     "astroquery": "0.4.11"
+    },
+    "runners_sha256": {
+     "part_b_run.py": "247c93439a4839310e3bf628b8dd50691973cb039e99a918fbf485ae44f016fe",
+     "seeded_run.py": "94d476b146a1935acbf8ec05bcce1cbdb1be8de3544bf5f6b0641fcfcbcf508a"
+    }
+   }
+  },
+  {
+   "tic_id": 299799658,
+   "toi": "1062.01",
+   "mode": "seeded",
+   "run": 2,
+   "started_utc": "2026-11-23T15:06:41Z",
+   "status": "OK",
+   "outcome": "INCONCLUSIVE",
+   "candidate": {
+    "period_days": 4.115049185384808,
+    "t0_btjd": 1325.4254621880361,
+    "duration_hours": 1.0584261,
+    "depth": 0.00046710709726290983,
+    "depth_err": 1.7847653725658374e-05,
+    "snr": 26.171904970981217
+   },
+   "tests": {
+    "snr": {
+     "status": "PASS",
+     "message": "SNR 26.2 >= 7.1"
+    },
+    "odd_even": {
+     "status": "PASS",
+     "message": "odd/even depth difference 1.04 sigma (<= 3.0)"
+    },
+    "secondary_eclipse": {
+     "status": "PASS",
+     "message": "no significant dip or brightening at phase 0.5 (0.16 sigma)"
+    },
+    "plausibility": {
+     "status": "PASS",
+     "message": "companion radius 0.19 R_Jup and duration ratio 0.39 are plausible"
+    },
+    "centroid_shift": {
+     "status": "PASS",
+     "message": "transit source consistent with the target (offset 2.9 arcsec, 0.0 sigma, 10 sectors); a PASS does not exclude unresolved blends closer than 10.3 arcsec"
+    },
+    "aperture_depth": {
+     "status": "PASS",
+     "message": "depth does not grow with the aperture (ratio 0.98, -0.2 sigma; transit detected at 19.1 sigma)"
+    },
+    "nearby_contamination": {
+     "status": "PASS",
+     "message": "TIC cone query of 120 arcsec returned 31 source(s): 1 within 21 arcsec, none could produce the signal; median CROWDSAP 1.00"
+    },
+    "period_alias": {
+     "status": "PASS",
+     "message": "the dip needs a transit on top of a sinusoid (BIC gain 602, 1873 in-transit cadences); not near a known systematic period"
+    },
+    "systematics": {
+     "status": "INCONCLUSIVE",
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.877 < 0.95) (no problem in 3 sub-checks: momentum dumps (293 in the quality column), SAP versus PDCSAP, background)"
+    },
+    "single_event": {
+     "status": "PASS",
+     "message": "largest single-event SNR 0.24 of the total (<= 0.88)"
+    },
+    "event_consistency": {
+     "status": "INCONCLUSIVE",
+     "message": "PASS refused: insufficient sensitivity: one event off the common depth by a full depth 484.517 ppm not detectable (0.008 < 0.95) (per-event depths: chi2 48.3 for 58 dof, p = 0.81)"
+    },
+    "edge_events": {
+     "status": "PASS",
+     "message": "2 of 59 events near a segment edge (3%)"
+    },
+    "sinusoid": {
+     "status": "PASS",
+     "message": "no significant sinusoid at P/2, P or 2P"
+    },
+    "duty_cycle": {
+     "status": "PASS",
+     "message": "duration over period 0.011 (<= 0.5)"
+    }
+   },
+   "systematics": {
+    "status": "INCONCLUSIVE",
+    "sensitivity": {
+     "dumps": {
+      "category": "fraction",
+      "reason": "fraction of the transits near momentum dumps, against 0.5"
+     },
+     "sap": {
+      "effect": "SAP relative depth difference",
+      "alternative": 0.8,
+      "unit": "fraction",
+      "rule_id": "compound-sim-1",
+      "probability": 0.9995,
+      "required_probability": 0.95,
+      "detectable": true
+     },
+     "background": {
+      "effect": "background rise in transit",
+      "alternative": 0.8,
+      "unit": "fraction of the depth",
+      "rule_id": "compound-sim-1",
+      "probability": 0.877,
+      "required_probability": 0.95,
+      "detectable": false
+     }
+    },
+    "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.877 < 0.95) (no problem in 3 sub-checks: momentum dumps (293 in the quality column), SAP versus PDCSAP, background)"
+   },
+   "downloaded_bytes": 0,
+   "reused_bytes": 491048640,
+   "cpu_seconds": 133.53125,
+   "reason": null,
+   "environment": {
+    "git_commit": "fdc4e8be36b7ba43927ad8f6aaa84ffa3fa7adc7",
+    "uv_lock_sha256": "767bbb387b0f6c58e9c66048ad80f33651a52954bb444a525235ec5425e0865d",
+    "python": "3.13.16",
+    "packages": {
+     "numpy": "2.5.3",
+     "scipy": "1.18.1",
+     "astropy": "8.0.1",
+     "lightkurve": "2.6.0",
+     "astroquery": "0.4.11"
+    },
+    "runners_sha256": {
+     "part_b_run.py": "247c93439a4839310e3bf628b8dd50691973cb039e99a918fbf485ae44f016fe",
+     "seeded_run.py": "94d476b146a1935acbf8ec05bcce1cbdb1be8de3544bf5f6b0641fcfcbcf508a"
+    }
+   }
+  },
+  {
+   "tic_id": 274138511,
+   "toi": "506.01",
+   "mode": "search",
+   "run": 1,
+   "started_utc": "2026-11-23T15:09:48Z",
+   "status": "OK",
+   "outcome": "INCONCLUSIVE",
+   "candidate": {
+    "period_days": 2.775482306214686,
+    "t0_btjd": 1492.496171043581,
+    "snr": 15.545973999971151
+   },
+   "tests": {
+    "snr": {
+     "status": "PASS",
+     "message": "SNR 15.5 >= 7.1"
+    },
+    "odd_even": {
+     "status": "PASS",
+     "message": "odd/even depth difference 1.38 sigma (<= 3.0)"
+    },
+    "secondary_eclipse": {
+     "status": "PASS",
+     "message": "no significant dip or brightening at phase 0.5 (0.89 sigma)"
+    },
+    "plausibility": {
+     "status": "PASS",
+     "message": "companion radius 0.45 R_Jup and duration ratio 0.45 are plausible"
+    },
+    "centroid_shift": {
+     "status": "INCONCLUSIVE",
+     "message": "qualification failed: 1 of 2 sector(s) do not qualify"
+    },
+    "aperture_depth": {
+     "status": "INCONCLUSIVE",
+     "message": "PASS refused: insufficient sensitivity: large-to-core depth ratio 1.5 ratio not detectable (0.196 < 0.95) (depth does not grow with the aperture (ratio 1.00, 0.0 sigma; transit detected at 7.9 sigma))"
+    },
+    "nearby_contamination": {
+     "status": "FAIL",
+     "message": "3 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 74 source(s))"
+    },
+    "period_alias": {
+     "status": "PASS",
+     "message": "the dip needs a transit on top of a sinusoid (BIC gain 190, 1104 in-transit cadences); not near a known systematic period"
+    },
+    "systematics": {
+     "status": "INCONCLUSIVE",
+     "message": "PASS refused: insufficient sensitivity: SAP relative depth difference 0.8 fraction not detectable (0.945 < 0.95) (no problem in 3 sub-checks: momentum dumps (72 in the quality column), SAP versus PDCSAP, background)"
+    },
+    "single_event": {
+     "status": "PASS",
+     "message": "largest single-event SNR 0.33 of the total (<= 0.88)"
+    },
+    "event_consistency": {
+     "status": "INCONCLUSIVE",
+     "message": "PASS refused: insufficient sensitivity: one event off the common depth by a full depth 609.716 ppm not detectable (0.087 < 0.95) (per-event depths: chi2 8.6 for 15 dof, p = 0.9)"
+    },
+    "edge_events": {
+     "status": "PASS",
+     "message": "0 of 16 events near a segment edge (0%)"
+    },
+    "sinusoid": {
+     "status": "PASS",
+     "message": "no significant sinusoid at P/2, P or 2P"
+    },
+    "duty_cycle": {
+     "status": "PASS",
+     "message": "duration over period 0.035 (<= 0.5)"
+    }
+   },
+   "systematics": {
+    "status": "INCONCLUSIVE",
+    "sensitivity": {
+     "dumps": {
+      "category": "fraction",
+      "reason": "fraction of the transits near momentum dumps, against 0.5"
+     },
+     "sap": {
+      "effect": "SAP relative depth difference",
+      "alternative": 0.8,
+      "unit": "fraction",
+      "rule_id": "compound-sim-1",
+      "probability": 0.9445,
+      "required_probability": 0.95,
+      "detectable": false
+     },
+     "background": {
+      "effect": "background rise in transit",
+      "alternative": 0.8,
+      "unit": "fraction of the depth",
+      "rule_id": "compound-sim-1",
+      "probability": 0.9995,
+      "required_probability": 0.95,
+      "detectable": true
+     }
+    },
+    "message": "PASS refused: insufficient sensitivity: SAP relative depth difference 0.8 fraction not detectable (0.945 < 0.95) (no problem in 3 sub-checks: momentum dumps (72 in the quality column), SAP versus PDCSAP, background)"
+   },
+   "downloaded_bytes": 87822720,
+   "reused_bytes": 3646080,
+   "cpu_seconds": 31.203125,
+   "reason": null,
+   "environment": {
+    "git_commit": "fdc4e8be36b7ba43927ad8f6aaa84ffa3fa7adc7",
+    "uv_lock_sha256": "767bbb387b0f6c58e9c66048ad80f33651a52954bb444a525235ec5425e0865d",
+    "python": "3.13.16",
+    "packages": {
+     "numpy": "2.5.3",
+     "scipy": "1.18.1",
+     "astropy": "8.0.1",
+     "lightkurve": "2.6.0",
+     "astroquery": "0.4.11"
+    },
+    "runners_sha256": {
+     "part_b_run.py": "247c93439a4839310e3bf628b8dd50691973cb039e99a918fbf485ae44f016fe",
+     "seeded_run.py": "94d476b146a1935acbf8ec05bcce1cbdb1be8de3544bf5f6b0641fcfcbcf508a"
+    }
+   }
+  },
+  {
+   "tic_id": 274138511,
+   "toi": "506.01",
+   "mode": "seeded",
+   "run": 1,
+   "started_utc": "2026-11-23T15:10:53Z",
+   "status": "OK",
+   "outcome": "INCONCLUSIVE",
+   "candidate": {
+    "period_days": 2.774152566662539,
+    "t0_btjd": 1492.4990735019144,
+    "duration_hours": 2.27388675,
+    "depth": 0.0003261548432966852,
+    "depth_err": 3.983144825735879e-05,
+    "snr": 8.18837520517293
+   },
+   "tests": {
+    "snr": {
+     "status": "PASS",
+     "message": "SNR 8.2 >= 7.1"
+    },
+    "odd_even": {
+     "status": "INCONCLUSIVE",
+     "message": "PASS refused: insufficient sensitivity: odd/even depth difference 326.155 ppm not detectable (0.127 < 0.95) (odd/even depth difference 0.54 sigma (<= 3.0))"
+    },
+    "secondary_eclipse": {
+     "status": "PASS",
+     "message": "no significant dip or brightening at phase 0.5 (1.22 sigma)"
+    },
+    "plausibility": {
+     "status": "PASS",
+     "message": "companion radius 0.33 R_Jup and duration ratio 0.45 are plausible"
+    },
+    "centroid_shift": {
+     "status": "INCONCLUSIVE",
+     "message": "qualification failed: 2 of 2 sector(s) do not qualify"
+    },
+    "aperture_depth": {
+     "status": "INCONCLUSIVE",
+     "message": "PASS refused: insufficient sensitivity: large-to-core depth ratio 1.5 ratio not detectable (0.095 < 0.95) (depth does not grow with the aperture (ratio 0.78, -0.7 sigma; transit detected at 5.4 sigma))"
+    },
+    "nearby_contamination": {
+     "status": "FAIL",
+     "message": "3 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 74 source(s))"
+    },
+    "period_alias": {
+     "status": "PASS",
+     "message": "the dip needs a transit on top of a sinusoid (BIC gain 37, 1087 in-transit cadences); not near a known systematic period"
+    },
+    "systematics": {
+     "status": "INCONCLUSIVE",
+     "message": "PASS refused: insufficient sensitivity: SAP relative depth difference 0.8 fraction not detectable (0.226 < 0.95) (no problem in 3 sub-checks: momentum dumps (72 in the quality column), SAP versus PDCSAP, background)"
+    },
+    "single_event": {
+     "status": "PASS",
+     "message": "largest single-event SNR 0.60 of the total (<= 0.88)"
+    },
+    "event_consistency": {
+     "status": "FAIL",
+     "message": "per-event depths: chi2 51.1 for 15 dof, p = 7.9e-06"
+    },
+    "edge_events": {
+     "status": "PASS",
+     "message": "0 of 16 events near a segment edge (0%)"
+    },
+    "sinusoid": {
+     "status": "PASS",
+     "message": "no significant sinusoid at P/2, P or 2P"
+    },
+    "duty_cycle": {
+     "status": "PASS",
+     "message": "duration over period 0.034 (<= 0.5)"
+    }
+   },
+   "systematics": {
+    "status": "INCONCLUSIVE",
+    "sensitivity": {
+     "dumps": {
+      "category": "fraction",
+      "reason": "fraction of the transits near momentum dumps, against 0.5"
+     },
+     "sap": {
+      "effect": "SAP relative depth difference",
+      "alternative": 0.8,
+      "unit": "fraction",
+      "rule_id": "compound-sim-1",
+      "probability": 0.226,
+      "required_probability": 0.95,
+      "detectable": false
+     },
+     "background": {
+      "effect": "background rise in transit",
+      "alternative": 0.8,
+      "unit": "fraction of the depth",
+      "rule_id": "compound-sim-1",
+      "probability": 0.992,
+      "required_probability": 0.95,
+      "detectable": true
+     }
+    },
+    "message": "PASS refused: insufficient sensitivity: SAP relative depth difference 0.8 fraction not detectable (0.226 < 0.95) (no problem in 3 sub-checks: momentum dumps (72 in the quality column), SAP versus PDCSAP, background)"
+   },
+   "downloaded_bytes": 0,
+   "reused_bytes": 91468800,
+   "cpu_seconds": 25.84375,
+   "reason": null,
+   "environment": {
+    "git_commit": "fdc4e8be36b7ba43927ad8f6aaa84ffa3fa7adc7",
+    "uv_lock_sha256": "767bbb387b0f6c58e9c66048ad80f33651a52954bb444a525235ec5425e0865d",
+    "python": "3.13.16",
+    "packages": {
+     "numpy": "2.5.3",
+     "scipy": "1.18.1",
+     "astropy": "8.0.1",
+     "lightkurve": "2.6.0",
+     "astroquery": "0.4.11"
+    },
+    "runners_sha256": {
+     "part_b_run.py": "247c93439a4839310e3bf628b8dd50691973cb039e99a918fbf485ae44f016fe",
+     "seeded_run.py": "94d476b146a1935acbf8ec05bcce1cbdb1be8de3544bf5f6b0641fcfcbcf508a"
+    }
+   }
+  },
+  {
+   "tic_id": 274138511,
+   "toi": "506.01",
+   "mode": "search",
+   "run": 2,
+   "started_utc": "2026-11-23T15:11:24Z",
+   "status": "OK",
+   "outcome": "INCONCLUSIVE",
+   "candidate": {
+    "period_days": 2.775482306214686,
+    "t0_btjd": 1492.496171043581,
+    "snr": 15.545973999971151
+   },
+   "tests": {
+    "snr": {
+     "status": "PASS",
+     "message": "SNR 15.5 >= 7.1"
+    },
+    "odd_even": {
+     "status": "PASS",
+     "message": "odd/even depth difference 1.38 sigma (<= 3.0)"
+    },
+    "secondary_eclipse": {
+     "status": "PASS",
+     "message": "no significant dip or brightening at phase 0.5 (0.89 sigma)"
+    },
+    "plausibility": {
+     "status": "PASS",
+     "message": "companion radius 0.45 R_Jup and duration ratio 0.45 are plausible"
+    },
+    "centroid_shift": {
+     "status": "INCONCLUSIVE",
+     "message": "qualification failed: 1 of 2 sector(s) do not qualify"
+    },
+    "aperture_depth": {
+     "status": "INCONCLUSIVE",
+     "message": "PASS refused: insufficient sensitivity: large-to-core depth ratio 1.5 ratio not detectable (0.196 < 0.95) (depth does not grow with the aperture (ratio 1.00, 0.0 sigma; transit detected at 7.9 sigma))"
+    },
+    "nearby_contamination": {
+     "status": "FAIL",
+     "message": "3 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 74 source(s))"
+    },
+    "period_alias": {
+     "status": "PASS",
+     "message": "the dip needs a transit on top of a sinusoid (BIC gain 190, 1104 in-transit cadences); not near a known systematic period"
+    },
+    "systematics": {
+     "status": "INCONCLUSIVE",
+     "message": "PASS refused: insufficient sensitivity: SAP relative depth difference 0.8 fraction not detectable (0.945 < 0.95) (no problem in 3 sub-checks: momentum dumps (72 in the quality column), SAP versus PDCSAP, background)"
+    },
+    "single_event": {
+     "status": "PASS",
+     "message": "largest single-event SNR 0.33 of the total (<= 0.88)"
+    },
+    "event_consistency": {
+     "status": "INCONCLUSIVE",
+     "message": "PASS refused: insufficient sensitivity: one event off the common depth by a full depth 609.716 ppm not detectable (0.087 < 0.95) (per-event depths: chi2 8.6 for 15 dof, p = 0.9)"
+    },
+    "edge_events": {
+     "status": "PASS",
+     "message": "0 of 16 events near a segment edge (0%)"
+    },
+    "sinusoid": {
+     "status": "PASS",
+     "message": "no significant sinusoid at P/2, P or 2P"
+    },
+    "duty_cycle": {
+     "status": "PASS",
+     "message": "duration over period 0.035 (<= 0.5)"
+    }
+   },
+   "systematics": {
+    "status": "INCONCLUSIVE",
+    "sensitivity": {
+     "dumps": {
+      "category": "fraction",
+      "reason": "fraction of the transits near momentum dumps, against 0.5"
+     },
+     "sap": {
+      "effect": "SAP relative depth difference",
+      "alternative": 0.8,
+      "unit": "fraction",
+      "rule_id": "compound-sim-1",
+      "probability": 0.9445,
+      "required_probability": 0.95,
+      "detectable": false
+     },
+     "background": {
+      "effect": "background rise in transit",
+      "alternative": 0.8,
+      "unit": "fraction of the depth",
+      "rule_id": "compound-sim-1",
+      "probability": 0.9995,
+      "required_probability": 0.95,
+      "detectable": true
+     }
+    },
+    "message": "PASS refused: insufficient sensitivity: SAP relative depth difference 0.8 fraction not detectable (0.945 < 0.95) (no problem in 3 sub-checks: momentum dumps (72 in the quality column), SAP versus PDCSAP, background)"
+   },
+   "downloaded_bytes": 0,
+   "reused_bytes": 91468800,
+   "cpu_seconds": 31.78125,
+   "reason": null,
+   "environment": {
+    "git_commit": "fdc4e8be36b7ba43927ad8f6aaa84ffa3fa7adc7",
+    "uv_lock_sha256": "767bbb387b0f6c58e9c66048ad80f33651a52954bb444a525235ec5425e0865d",
+    "python": "3.13.16",
+    "packages": {
+     "numpy": "2.5.3",
+     "scipy": "1.18.1",
+     "astropy": "8.0.1",
+     "lightkurve": "2.6.0",
+     "astroquery": "0.4.11"
+    },
+    "runners_sha256": {
+     "part_b_run.py": "247c93439a4839310e3bf628b8dd50691973cb039e99a918fbf485ae44f016fe",
+     "seeded_run.py": "94d476b146a1935acbf8ec05bcce1cbdb1be8de3544bf5f6b0641fcfcbcf508a"
+    }
+   }
+  },
+  {
+   "tic_id": 274138511,
+   "toi": "506.01",
+   "mode": "seeded",
+   "run": 2,
+   "started_utc": "2026-11-23T15:12:01Z",
+   "status": "OK",
+   "outcome": "INCONCLUSIVE",
+   "candidate": {
+    "period_days": 2.774152566662539,
+    "t0_btjd": 1492.4990735019144,
+    "duration_hours": 2.27388675,
+    "depth": 0.0003261548432966852,
+    "depth_err": 3.983144825735879e-05,
+    "snr": 8.18837520517293
+   },
+   "tests": {
+    "snr": {
+     "status": "PASS",
+     "message": "SNR 8.2 >= 7.1"
+    },
+    "odd_even": {
+     "status": "INCONCLUSIVE",
+     "message": "PASS refused: insufficient sensitivity: odd/even depth difference 326.155 ppm not detectable (0.127 < 0.95) (odd/even depth difference 0.54 sigma (<= 3.0))"
+    },
+    "secondary_eclipse": {
+     "status": "PASS",
+     "message": "no significant dip or brightening at phase 0.5 (1.22 sigma)"
+    },
+    "plausibility": {
+     "status": "PASS",
+     "message": "companion radius 0.33 R_Jup and duration ratio 0.45 are plausible"
+    },
+    "centroid_shift": {
+     "status": "INCONCLUSIVE",
+     "message": "qualification failed: 2 of 2 sector(s) do not qualify"
+    },
+    "aperture_depth": {
+     "status": "INCONCLUSIVE",
+     "message": "PASS refused: insufficient sensitivity: large-to-core depth ratio 1.5 ratio not detectable (0.095 < 0.95) (depth does not grow with the aperture (ratio 0.78, -0.7 sigma; transit detected at 5.4 sigma))"
+    },
+    "nearby_contamination": {
+     "status": "FAIL",
+     "message": "3 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 74 source(s))"
+    },
+    "period_alias": {
+     "status": "PASS",
+     "message": "the dip needs a transit on top of a sinusoid (BIC gain 37, 1087 in-transit cadences); not near a known systematic period"
+    },
+    "systematics": {
+     "status": "INCONCLUSIVE",
+     "message": "PASS refused: insufficient sensitivity: SAP relative depth difference 0.8 fraction not detectable (0.226 < 0.95) (no problem in 3 sub-checks: momentum dumps (72 in the quality column), SAP versus PDCSAP, background)"
+    },
+    "single_event": {
+     "status": "PASS",
+     "message": "largest single-event SNR 0.60 of the total (<= 0.88)"
+    },
+    "event_consistency": {
+     "status": "FAIL",
+     "message": "per-event depths: chi2 51.1 for 15 dof, p = 7.9e-06"
+    },
+    "edge_events": {
+     "status": "PASS",
+     "message": "0 of 16 events near a segment edge (0%)"
+    },
+    "sinusoid": {
+     "status": "PASS",
+     "message": "no significant sinusoid at P/2, P or 2P"
+    },
+    "duty_cycle": {
+     "status": "PASS",
+     "message": "duration over period 0.034 (<= 0.5)"
+    }
+   },
+   "systematics": {
+    "status": "INCONCLUSIVE",
+    "sensitivity": {
+     "dumps": {
+      "category": "fraction",
+      "reason": "fraction of the transits near momentum dumps, against 0.5"
+     },
+     "sap": {
+      "effect": "SAP relative depth difference",
+      "alternative": 0.8,
+      "unit": "fraction",
+      "rule_id": "compound-sim-1",
+      "probability": 0.226,
+      "required_probability": 0.95,
+      "detectable": false
+     },
+     "background": {
+      "effect": "background rise in transit",
+      "alternative": 0.8,
+      "unit": "fraction of the depth",
+      "rule_id": "compound-sim-1",
+      "probability": 0.992,
+      "required_probability": 0.95,
+      "detectable": true
+     }
+    },
+    "message": "PASS refused: insufficient sensitivity: SAP relative depth difference 0.8 fraction not detectable (0.226 < 0.95) (no problem in 3 sub-checks: momentum dumps (72 in the quality column), SAP versus PDCSAP, background)"
+   },
+   "downloaded_bytes": 0,
+   "reused_bytes": 91468800,
+   "cpu_seconds": 25.90625,
+   "reason": null,
+   "environment": {
+    "git_commit": "fdc4e8be36b7ba43927ad8f6aaa84ffa3fa7adc7",
+    "uv_lock_sha256": "767bbb387b0f6c58e9c66048ad80f33651a52954bb444a525235ec5425e0865d",
+    "python": "3.13.16",
+    "packages": {
+     "numpy": "2.5.3",
+     "scipy": "1.18.1",
+     "astropy": "8.0.1",
+     "lightkurve": "2.6.0",
+     "astroquery": "0.4.11"
+    },
+    "runners_sha256": {
+     "part_b_run.py": "247c93439a4839310e3bf628b8dd50691973cb039e99a918fbf485ae44f016fe",
+     "seeded_run.py": "94d476b146a1935acbf8ec05bcce1cbdb1be8de3544bf5f6b0641fcfcbcf508a"
+    }
+   }
+  }
+ ]
+}
