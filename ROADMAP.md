@@ -51,7 +51,7 @@ how later work is done.
 **v0.5.7 The TOI's own signal** (opened on 2026-11-23 by the maintainer's decision received at
 10:41 local, #218, comment 7102888515, under the amended advance rule; see
 [the section below](#v057-the-tois-own-signal)). Exploratory: the v0.5 battery, unchanged and with
-its limits label, on the TOI's own ephemeris. Plan: [docs/plans/v0.5.7-plan.md](docs/plans/v0.5.7-plan.md).
+its limits label, seeded by the TOI's own ephemeris. Plan: [docs/plans/v0.5.7-plan.md](docs/plans/v0.5.7-plan.md).
 
 ### Previous phase record: v0.5.6 Apply with declared limits
 
@@ -1048,14 +1048,18 @@ recommendation, stored unchanged in [docs/plans/v0.5.7-consensus/](docs/plans/v0
 Run the v0.5 battery's tests, unchanged and with the limits label ('WEAKENED; does not meet D1, D2,
 D4, T2a'), on the TOI's ephemeris instead of the search's strongest signal, for the same 540 TOIs as
 v0.5.6, and publish what each test says.
-- **In fixed mode,** the TOI's period stays fixed and its epoch is refined only inside a window of ±
-  one TOI duration.
+- **TOI-seeded** (the maintainer's design decision received at 11:01 local, comment 7103371874,
+  which revoked the opening's "the period fixed, the epoch held in a window"; a recorded
+  correction): the TOI's ephemeris seeds the unchanged battery, which refits it before any test.
+  Every record says whether the fit stayed on the TOI ephemeris, and every door is counted in
+  total and over those that stayed.
 - **Everything is exploratory:** never a verdict, a candidate or a disposition.
 - **No change** in `src/`, rules, thresholds, sensitivity refusals or aggregation.
 - `method_status: not_validated`.
 
 **Exit criteria** (detail in the plan)
-- [ ] The runner, the four doors and the report script are committed before the first result.
+- [ ] The runner, the four doors (both versions) and the report script are committed before the
+      first result.
 - [ ] The pilot of 10 TOIs that matched in search mode reproduces at least 9, test by test;
       otherwise STOP.
 - [ ] The 540 records exist, each with a machine `started_utc`, `mode: exploratory`, the limits

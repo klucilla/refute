@@ -40,3 +40,9 @@ The other four blocking items are implementation corrections, to apply before an
 - binding the pilot to its historical inputs;
 - validating the cohort in the doors;
 - the operational limits and cache isolation.
+**The maintainer's decision on the design** (received at 11:01 local, #218, comment 7103371874):
+- **Mode A, TOI-seeded.** The opening's item 2 is revoked. The battery runs unchanged, seeded by the TOI's ephemeris.
+- **Every record** keeps the ephemeris fields and `stayed_on_toi_ephemeris`.
+- **Every door** is counted in total and over the records that stayed.
+- **The round's other four blocking items** are applied before the pilot.
+- **There is no new Codex round:** the pilot is the check.
