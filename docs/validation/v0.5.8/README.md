@@ -17,6 +17,7 @@ Plan: [docs/plans/v0.5.8-plan.md](../../plans/v0.5.8-plan.md). Tracking: #218.
 | `stability-records.json` | The 167 TOI-seeded records and the 167 TPF deletion records, unchanged, each with the SHA-256 of its file. |
 | `stability-ledger.json` | The run's ledger: five batches, CPU, downloads, disk and the terminal state. |
 | `stability-report.json`, `stability-report.md` | The doors in total and over provenance `same`, with the flips per output and per test and Wilson 95 % intervals. |
+| `snr_direction_recount.py`, `snr-direction-recount.json` | Added on 2026-11-23 for the report's second correction: the direction of the SNRs that moved by more than 10 %, recounted from the committed records with the report script's own rule. |
 
 The tests of the runner and the report are in `tests/v058/`.
 
@@ -25,6 +26,10 @@ The tests of the runner and the report are in `tests/v058/`.
   [docs/reports/v0.5.8-report-correction-2026-11-23.md](../../reports/v0.5.8-report-correction-2026-11-23.md):
   - it answers the gate review's important finding (#219);
   - it is a new file, and the approved report is not edited;
+- and its second dated correction
+  [docs/reports/v0.5.8-report-correction-2-2026-11-23.md](../../reports/v0.5.8-report-correction-2-2026-11-23.md)
+  (the direction of the 15 SNRs that moved: 13 lower and 2 higher, not 12 lower; #59). It is
+  checked by `snr_direction_recount.py` and its output `snr-direction-recount.json`, both here;
 - [docs/reports/v0.5.8-stability-note.md](../../reports/v0.5.8-stability-note.md), "How stable is a
   Refute output?".
 

@@ -48,8 +48,24 @@ how later work is done.
 
 ## Current phase
 
-**None open: the next phase is the maintainer's decision** (since v0.5.8 closed on 2026-11-23, by
-the maintainer's decision received at 17:15 local, #218, comment 7112815055).
+**v0.5.9 Ephemeris entry: exploratory prototype** (opened on 2026-11-23 by the maintainer's
+decision received at 19:28 local, #218, comment 7115813315; see
+[the section below](#v059-ephemeris-entry-exploratory-prototype)).
+- **Exploratory from start to end:** nothing is a verdict; no lock, no drand round, no change in
+  `src/`, no new target. Every record carries the label 'WEAKENED; does not meet D1, D2, D4, T2a'
+  and `method_status: not_validated`.
+- **The question:** when the v0.5 battery enters through the TOI's ephemeris, with a bounded and
+  declared refit, and its output is checked on a declared set of local perturbations, do the cases
+  that changed class in v0.5.8 stabilise, and at what cost in decidability and CPU?
+- **The set:** 24 TOIs already exposed: the 13 decided class changes of v0.5.8's completed runs, the
+  one change the other way (TOI-6450.01), the 2 numerical ERRORs (TOI-734.01, TOI-5218.01), and 8
+  unchanged controls with provenance `same`, drawn per class with a committed rule and seed. Both
+  entry modes (E, the TOI's ephemeris; S, the battery's own search) run on all 24, on the same
+  input bytes.
+- **Caps:** 15 GB of downloads, 8 CPU-h, 10 GB of disk peak. No dependency changes.
+- **The run starts only with the maintainer's recorded approval.**
+- **Since the previous phase:** a second dated correction to the v0.5.8 report,
+  [docs/reports/v0.5.8-report-correction-2-2026-11-23.md](docs/reports/v0.5.8-report-correction-2-2026-11-23.md).
 
 ### Previous phase record: v0.5.8 Output stability
 
@@ -1167,6 +1183,10 @@ maintainer's decision received at 17:15 local (#218, comment 7112815055).
   [docs/reports/v0.5.8-report-correction-2026-11-23.md](docs/reports/v0.5.8-report-correction-2026-11-23.md).
   It reads door 1 as the note does, records the 4 fits that left the TOI ephemeris, and corrects
   the header and stage 0's wording;
+- its second dated correction (a new file; neither the report nor the first correction is edited):
+  [docs/reports/v0.5.8-report-correction-2-2026-11-23.md](docs/reports/v0.5.8-report-correction-2-2026-11-23.md).
+  Of the 15 SNRs that moved by more than 10 %, 13 were lower and 2 higher, not 12 lower. No door
+  or verdict changes (#59; the maintainer's decision of 2026-11-23, comment 7115813315);
 - the note "How stable is a Refute output?":
   [docs/reports/v0.5.8-stability-note.md](docs/reports/v0.5.8-stability-note.md). Its facts were
   checked in one Codex round, whose corrections were applied
@@ -1217,6 +1237,57 @@ item 3, #218, with the evidence below; the gate review checked each one)
 - public text;
 - publishing on Zenodo;
 - the site's merge and deploy;
+- third-party code;
+- dependencies;
+- changing old targets;
+- deletions outside `.cache`.
+
+---
+
+## v0.5.9 Ephemeris entry: exploratory prototype
+
+Tracking: #218. Opened on 2026-11-23 by the maintainer's decision received at 19:28 local (comment
+7115813315). Plan: [docs/plans/v0.5.9-plan.md](docs/plans/v0.5.9-plan.md). Origin: a proposal of a
+full battery version 5, which Codex's round returned `REFUTED`; by the most conservative option,
+the phase is its smaller alternative, an exploratory prototype. Both are stored unchanged in
+[docs/plans/v0.5.9-consensus/](docs/plans/v0.5.9-consensus/README.md).
+
+**The question:** when the v0.5 battery enters through the TOI's ephemeris, with a bounded and
+declared refit, and its output is checked on a declared set of local perturbations, do the cases
+that changed class in v0.5.8 stabilise, and at what cost in decidability and CPU?
+
+**The set:** 24 TOIs already exposed (the plan, "The set"): the 13 decided class changes of
+v0.5.8's completed runs; the change the other way (TOI-6450.01); the 2 numerical ERRORs (TOI-734.01,
+TOI-5218.01); 8 unchanged controls with provenance `same`, 2 per class, drawn with a rule and seed
+committed before the draw. The 3 network ERRORs are not repeated.
+
+**What runs:** two entry modes on all 24, on the same input bytes (SHA-256 checked): E (the TOI's
+ephemeris, a bounded two-pass refit) and S (the battery's own search). Per TOI and mode: the base
+output and the output with the consensus rule over six local probes; the fit's identity; the first
+disagreeing probe; the measured costs. A new script in `docs/validation/v0.5.9/` imports the
+battery's functions without editing `src/`, and handles Codex's first three blocking items at
+prototype level. If the prototype needed a change in `src/`, the work would STOP.
+
+**Caps:** 15 GB of downloads, 8 CPU-h, 10 GB of disk peak. No dependency changes.
+
+**Exit criteria** (detail in the plan)
+- [ ] The consensus record and correction 2 of the v0.5.8 report are committed.
+- [ ] The plan, the control rule, the seed, the script and the report script are committed, and the
+      pushed SHA checked with `gh api`, before the run.
+- [ ] The 48 records (24 TOIs × 2 modes) exist, each with a machine `started_utc`,
+      `mode: exploratory`, the label, coverage and provenance.
+- [ ] A report with Q1 to Q5 marked and the costs measured.
+- [ ] A version-5 specification draft (`docs/plans/battery-v5-spec.md`) that answers Codex's 7
+      blocking items.
+- [ ] One Codex round on the round's work, and a short gate review.
+
+**Stops that stay the maintainer's:**
+- running the run;
+- any change in `src/`;
+- locks and drand rounds;
+- reruns beyond the approved set;
+- public text and the site;
+- Zenodo (a token, a draft or a publication);
 - third-party code;
 - dependencies;
 - changing old targets;

@@ -1,0 +1,47 @@
+{
+  "schema": "refute-v058-snr-direction-recount-1",
+  "mode": "exploratory",
+  "limits_label": "WEAKENED; does not meet D1, D2, D4, T2a",
+  "method_status": "not_validated",
+  "records_sha256": "4993d9a77a68c4ae961fb92007fa53ab7eac15d99b27ced0f46225bdbd7c9b5a",
+  "report_script_sha256": "d19db982dc8ed19d342b5716208310f9346eff479ec25e8e7f9834fdb51a4515",
+  "records": 167,
+  "total": {
+    "moved": 15,
+    "lower": 13,
+    "higher": 2,
+    "higher_targets": [
+      {
+        "target_key": "TIC-158561566",
+        "toi": "1267.01",
+        "snr_v056": "64.38512077009868",
+        "snr_v058": "86.80338283162712"
+      },
+      {
+        "target_key": "TIC-463681005",
+        "toi": "3060.01",
+        "snr_v056": "9.004406431558388",
+        "snr_v058": "11.790205191380375"
+      }
+    ]
+  },
+  "same": {
+    "moved": 12,
+    "lower": 11,
+    "higher": 1,
+    "higher_targets": [
+      {
+        "target_key": "TIC-463681005",
+        "toi": "3060.01",
+        "snr_v056": "9.004406431558388",
+        "snr_v058": "11.790205191380375"
+      }
+    ]
+  },
+  "decided_changed_in_completed_runs": {
+    "moved": 7,
+    "lower": 7,
+    "higher": 0,
+    "higher_targets": []
+  }
+}
