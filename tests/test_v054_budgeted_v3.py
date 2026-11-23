@@ -39,7 +39,12 @@ SHARDS = [(f"s{i:03d}", i) for i in range(20)]
 SHARDS60 = [(f"s{i:03d}", i) for i in range(60)]  # a checkpoint of three shards
 SECTION, PART = "test", "p"
 ALLOCATION = 0.05
-CRASH = driver.CHARGE_SECONDS  # with max_shard_seconds=1.0, a crash costs 21 s per worker
+CRASH = driver.CHARGE_SECONDS  # a crash costs MAX_SHARD + 20 s per worker
+# The real-pool tests' shard limit, in seconds of wall time. It was 1.0 until 2026-11-23, when the
+# Windows CI runners took longer than a second to start and finish one 0.3-s shard in four runs.
+# The maintainer's decision of that day, item 6 (#218), gave margin to this wall-time limit only.
+# It is a harness limit, not a scientific one; the deterministic batch keeps its own 1.0 (EKW).
+MAX_SHARD = 10.0
 
 
 def job(i: int) -> bytes:
@@ -55,7 +60,7 @@ def sunday() -> dt.datetime:
     return dt.datetime(2026, 11, 8, 22, 0, tzinfo=driver.BRT)
 
 
-KW = dict(clock=sunday, check_placement=PLACED, max_shard_seconds=1.0, batch_seconds=30.0)
+KW = dict(clock=sunday, check_placement=PLACED, max_shard_seconds=MAX_SHARD, batch_seconds=30.0)
 
 
 @pytest.fixture
@@ -136,10 +141,10 @@ def test_a_real_interruption_before_the_checkpoint_resumes_under_v3(ledger, kill
     row = _row()
     run = driver.Run(out, job, SHARDS60, "fp", 1.0, 1, **KW)
     assert len(run._done()) == len(SHARDS60)
-    assert budgeted_v3.crash_seconds(run) == pytest.approx(1 * (1.0 + CRASH))
+    assert budgeted_v3.crash_seconds(run) == pytest.approx(1 * (MAX_SHARD + CRASH))
     # the crash charge is consumed: in the row, and so in the line and every caller's cap
     assert row["spent_hours"] * 3600.0 == pytest.approx(run.spent_seconds())
-    assert row["spent_hours"] * 3600.0 >= 1.0 + CRASH
+    assert row["spent_hours"] * 3600.0 >= MAX_SHARD + CRASH
     assert row["projection_hours"] < budgeted.STOP_FACTOR * ALLOCATION
     _no_live_worker(out)
 
@@ -153,7 +158,7 @@ def test_the_same_interruption_stops_under_v052(ledger, killed_after_one_shard):
     row = _row()
     share = row["checkpoint_shards"] / len(SHARDS60)
     assert row["projection_hours"] == pytest.approx(row["spent_hours"] / share)
-    assert row["spent_hours"] * 3600.0 >= 1.0 + CRASH
+    assert row["spent_hours"] * 3600.0 >= MAX_SHARD + CRASH
     allowed = budgeted.STOP_FACTOR * ALLOCATION
     assert row["projection_hours"] > allowed
     assert state == (
@@ -222,7 +227,7 @@ EKW = dict(clock=sunday, check_placement=False, max_shard_seconds=1.0, batch_sec
 
 
 def _exact_run(execute, out, workers=2, **extra) -> str:
-    return execute(SECTION, PART, out, quick, SHARDS60, "fp", workers, **EKW, **extra)
+    return execute(SECTION, PART, out, quick, SHARDS60, "fp", workers, **{**EKW, **extra})
 
 
 def test_without_an_interruption_v3_matches_v052_exactly(ledger, exact):
@@ -240,12 +245,16 @@ def test_without_an_interruption_v3_matches_v052_exactly(ledger, exact):
     assert old["projection_hours"] == pytest.approx(3.0 / (3 / 60) / 3600.0)
 
 
-def test_an_exact_interruption_v052_stops_and_v3_completes(ledger, exact):
-    crash = 2 * (1.0 + CRASH)  # two workers
+@pytest.mark.parametrize("limit", [1.0, MAX_SHARD])
+def test_an_exact_interruption_v052_stops_and_v3_completes(ledger, exact, limit):
+    """At both shard limits (Codex's round on the CI margin, 2026-11-23): the crash charge follows
+    the limit, and the v3 projection is the same exact value at each, so a partial leak of the
+    crash charge into the projection would show."""
+    crash = 2 * (limit + CRASH)  # two workers
     exact.crash_after = 1
     with pytest.raises(Killed):
-        _exact_run(budgeted.execute, ledger / "a")
-    state = _exact_run(budgeted.execute, ledger / "a")
+        _exact_run(budgeted.execute, ledger / "a", max_shard_seconds=limit)
+    state = _exact_run(budgeted.execute, ledger / "a", max_shard_seconds=limit)
     spent = 1.0 + crash + 2.0  # the shard before the crash, its charge, the checkpoint's other two
     assert _row()["projection_hours"] == pytest.approx(spent / (3 / 60) / 3600.0)
     projection = _row()["projection_hours"]
@@ -258,8 +267,8 @@ def test_an_exact_interruption_v052_stops_and_v3_completes(ledger, exact):
     budgeted.save(book)
     exact.crash_after = 1
     with pytest.raises(Killed):
-        _exact_run(budgeted_v3.execute, ledger / "b")
-    assert _exact_run(budgeted_v3.execute, ledger / "b") == "complete"
+        _exact_run(budgeted_v3.execute, ledger / "b", max_shard_seconds=limit)
+    assert _exact_run(budgeted_v3.execute, ledger / "b", max_shard_seconds=limit) == "complete"
     row = _row()
     assert row["projection_hours"] == pytest.approx(3.0 / (3 / 60) / 3600.0)
     assert row["spent_hours"] == pytest.approx((60.0 + crash) / 3600.0)  # the crash consumed
