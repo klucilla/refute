@@ -48,10 +48,21 @@ how later work is done.
 
 ## Current phase
 
-**v0.5.7 The TOI's own signal** (opened on 2026-11-23 by the maintainer's decision received at
-10:41 local, #218, comment 7102888515, under the amended advance rule; see
-[the section below](#v057-the-tois-own-signal)). Exploratory: the v0.5 battery, unchanged and with
-its limits label, seeded by the TOI's own ephemeris. Plan: [docs/plans/v0.5.7-plan.md](docs/plans/v0.5.7-plan.md).
+**None open: the next phase is the maintainer's decision** (since v0.5.7 closed at its pilot gate
+on 2026-11-23, by the maintainer's decision received at 11:55 local, #218, comment 7104767892).
+
+### Previous phase record: v0.5.7 The TOI's own signal
+
+**v0.5.7 The TOI's own signal: closed at the pilot gate, with declared limits, on 2026-11-23** (the
+amended advance rule, case (c); see [the section below](#v057-the-tois-own-signal)).
+- **The pilot:** the TOI-seeded pilot reproduced 8 of 10 TOIs test by test, against the 9 required,
+  so the 540 TOIs were not run. The rule was kept as written.
+- **The diagnostic:** an approved rerun traced both flips to the seeding, not to the environment or
+  to nondeterminism.
+- **Unmet exit criteria:** 2 to 5, listed in the section. None is ticked without evidence.
+- **The draft report** awaits the maintainer's approval. It is committed as
+  `docs/reports/v0.5.7-report.md` only once approved.
+- `method_status: not_validated` stands, and no earlier verdict changes.
 
 ### Previous phase record: v0.5.6 Apply with declared limits
 
@@ -1041,6 +1052,16 @@ any change in `src/`, public text and deploys, third-party code, dependencies.
 
 ## v0.5.7 The TOI's own signal
 
+**Closed at the pilot gate, with declared limits, on 2026-11-23** (the maintainer's decision
+received at 11:55 local, #218, comment 7104767892).
+- **The pilot:** 8 of 10 reproduced, against 9 required
+  ([seeded-pilot.json](docs/validation/v0.5.7/seeded-pilot.json)). The rule was kept as written,
+  and the 540 were not run.
+- **The diagnostic rerun** (procedure in comment 7104767892) found the seeding to be the cause for
+  both differing TOIs ([diagnostic-rerun.md](docs/validation/v0.5.7/diagnostic-rerun.md)).
+- **Draft report:** it awaits the maintainer's approval, and is committed as
+  `docs/reports/v0.5.7-report.md` only once approved.
+
 Tracking: #218. Opened on 2026-11-23 by the maintainer's decision received at 10:41 local (comment
 7102888515). Plan: [docs/plans/v0.5.7-plan.md](docs/plans/v0.5.7-plan.md). Basis: an independent
 recommendation, stored unchanged in [docs/plans/v0.5.7-consensus/](docs/plans/v0.5.7-consensus/README.md).
@@ -1058,15 +1079,21 @@ v0.5.6, and publish what each test says.
 - `method_status: not_validated`.
 
 **Exit criteria** (detail in the plan)
-- [ ] The runner, the four doors (both versions) and the report script are committed before the
+- [x] The runner, the four doors (both versions) and the report script are committed before the
       first result.
+      *Evidence:* `seeded_run.py`, `seeded_report.py` and `tests/v057` were committed in fdafa8a.
+      The pilot's results came after it, in 4201b40.
 - [ ] The pilot of 10 TOIs that matched in search mode reproduces at least 9, test by test;
-      otherwise STOP.
+      otherwise STOP. **Not met:** 8 of 10
+      ([seeded-pilot.json](docs/validation/v0.5.7/seeded-pilot.json)). The run stopped there.
 - [ ] The 540 records exist, each with a machine `started_utc`, `mode: exploratory`, the limits
-      label and coverage.
-- [ ] An exploratory report holds the paired table (search against fixed) and marks each door
-      found or not found.
-- [ ] One Codex round on the design (before the pilot) and a short gate review.
+      label and coverage. **Not met:** they were not run, because the pilot stopped the phase.
+- [ ] An exploratory report holds the paired table (search against TOI-seeded) and marks each
+      door found or not found, in both versions (total and stayed). **Not met:** without the 540, no door can be marked. The draft report
+      covers the pilot and the diagnostic only.
+- [ ] One Codex round on the design (before the pilot) and a short gate review. **Not met:** the
+      design round ran (OVERALL: REFUTED, then the maintainer's decision), but no gate review was
+      run.
 
 **Stops that stay the maintainer's:**
 - any change in `src/`;
