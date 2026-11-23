@@ -1,0 +1,43 @@
+{
+ "schema": "refute-v056-part-b-strata-1",
+ "role": "descriptive only: the drawn sample, never the TOI population",
+ "limits_label": "WEAKENED; does not meet D1, D2, D4, T2a",
+ "method_status": "not_validated",
+ "source": {
+  "draw": "calibration/v0.5.6/part-b-draw.json",
+  "draw_sha256": "4610c70d60157269ca6a212d6c0b7a8449fc5e741582a56786be4e962db1170b",
+  "values": "the chosen entries' depth_ppm and period_days (NASA Exoplanet Archive TOI table, copied from the frozen frame)",
+  "quartiles": "statistics.quantiles(n=4, method='inclusive')"
+ },
+ "code_sha256": "c7b0cf290cc80c45761352a05739942e04c038b2a1a0bf60cfaadd1257fdc85a",
+ "strata": {
+  "planet": {
+   "depth_ppm": {
+    "n": 150,
+    "median": 1410.06508885,
+    "q1": 709.401040275,
+    "q3": 6039.5
+   },
+   "period_days": {
+    "n": 150,
+    "median": 5.2882452,
+    "q1": 2.741823325,
+    "q3": 11.702806725
+   }
+  },
+  "fp": {
+   "depth_ppm": {
+    "n": 150,
+    "median": 1810.0,
+    "q1": 586.484106125,
+    "q3": 8619.643016575
+   },
+   "period_days": {
+    "n": 150,
+    "median": 2.2226822999999998,
+    "q1": 1.0442893,
+    "q3": 5.157775925
+   }
+  }
+ }
+}

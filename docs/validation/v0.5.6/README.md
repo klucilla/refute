@@ -20,6 +20,11 @@ battery carries its limits label, **"WEAKENED; does not meet D1, D2, D4, T2a"**.
 | `part_b_prep.py`, `part-b-prep.json`, `part-b-prep.md` | Part B's exploratory step: the REFUTED cases one by one and identity against outcome. Its prior-exposure section is superseded by `part-b-exposure.*`. |
 | `part_b_exposure.py`, `part-b-exposure.json`, `part-b-exposure.md` | The prior-exposure scan, second version: all evidence per TIC, catalogue copies excluded by a written list. |
 | `part-b-records.json`, `part-b-tpf-deletions.json` | Part B's 300 confirmatory records and 300 TPF deletion records (unchanged, each with the SHA-256 of its file); two files, so that each stays under 5 MB. Per-target outputs are never verdicts on a TOI. |
+| `part_b_strata.py`, `part-b-strata.json` | Part B's two strata described: median and quartiles of the drawn TOIs' depth and period, from the draw (descriptive only; the maintainer's decision of 2026-11-23, item 1 (c)). |
+| `verify_part_b_draw.py` | Checks part B's draw from public sources: the BLS signature, the order rebuilt from the randomness, the drawn TOIs, and (with the network) the round against the lock's time on GitHub and the drand network. |
+
+**The phase's public report:** [docs/reports/v0.5.6-report.md](../../reports/v0.5.6-report.md)
+(approved by the maintainer on 2026-11-23, #218).
 
 ## Part B
 

@@ -946,6 +946,10 @@ Nothing depends on `tfopwg_disp` until NExScI answers. `method_status: not_valid
   Part B is instead a claim of **agreement** with TFOPWG dispositions (FP against the planet arm,
   in the confirmation half), suggested by part A's table and disclosed as such:
   `calibration/v0.5.6/claim.yaml`. Its lock and drand round wait for the maintainer.
+- **Part B's verdict** (2026-11-23, #218): `SURVIVED` under the limits label (lock fdd87e7, draw
+  185fd91, verdict 57c4160): [calibration/v0.5.6/part-b-verdict.md](calibration/v0.5.6/part-b-verdict.md).
+- **The phase's public report** (approved by the maintainer on 2026-11-23, #218):
+  [docs/reports/v0.5.6-report.md](docs/reports/v0.5.6-report.md). Nothing on the site yet.
 
 **Exit criteria** (detail in the plan)
 - [ ] Part A ran on the set and within the cost the maintainer approved; the frame, the split by
