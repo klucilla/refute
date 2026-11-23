@@ -48,8 +48,16 @@ how later work is done.
 
 ## Current phase
 
-**None open: the next phase is the maintainer's decision** (since v0.5.7 closed at its pilot gate
-on 2026-11-23, by the maintainer's decision received at 11:55 local, #218, comment 7104767892).
+**v0.5.8 Output stability** (opened on 2026-11-23 by the maintainer's decision received at 13:27
+local, #218, comment 7107165120; see [the section below](#v058-output-stability)).
+- **The goal:** measure how many outputs and test statuses of the v0.5 battery change when the
+  same TOI signal is refitted from another seed, and publish that per test.
+- **Another question, the same mode:** the phase reuses v0.5.7's TOI-seeded mode for stability,
+  not equivalence.
+- **v0.5.7's stop stands.**
+- **The old runner is not edited:** its stop guard is unchanged, and a new script imports its
+  functions.
+- **Plan:** [docs/plans/v0.5.8-plan.md](docs/plans/v0.5.8-plan.md).
 
 ### Previous phase record: v0.5.7 The TOI's own signal
 
@@ -1106,6 +1114,47 @@ v0.5.6, and publish what each test says.
 - deletions outside `.cache`.
 
 This phase has no lock and no drand round.
+
+---
+
+## v0.5.8 Output stability
+
+Tracking: #218. Opened on 2026-11-23 by the maintainer's decision received at 13:27 local (comment
+7107165120). Plan: [docs/plans/v0.5.8-plan.md](docs/plans/v0.5.8-plan.md). Basis: an independent
+recommendation, stored unchanged in [docs/plans/v0.5.8-consensus/](docs/plans/v0.5.8-consensus/README.md).
+
+**The goal:** measure how many outputs and test statuses of the v0.5 battery change when the same
+TOI signal is refitted from another seed, and publish that per test.
+
+**The opening text:**
+- **Another question, the same mode:** the phase reuses v0.5.7's TOI-seeded mode for another
+  question, stability rather than equivalence.
+- **v0.5.7's stop stands.**
+- **The old runner is not edited:** the stop guard of `seeded_run.py` is unchanged, and a new script
+  in `docs/validation/v0.5.8/` imports its functions.
+
+**The rule:** nothing changes in the v0.5 battery or in any verdict, and any proposal of a new
+threshold ends the phase. Everything is exploratory, and `method_status: not_validated` stands.
+
+**Exit criteria** (detail in the plan)
+- [ ] The scripts, the draw of the 60 and the doors are committed before the first result.
+- [ ] Stage 0 reproduces the table of section 1 of the recommendation, or records the difference.
+- [ ] The stage-1 records exist, with a machine `started_utc`, `mode: exploratory`, the limits
+      label, coverage and provenance.
+- [ ] A report with flips per test and per output, Wilson intervals, and every door marked (in
+      total and over provenance `same`).
+- [ ] One Codex round on the design, and a short gate review.
+
+**Stops that stay the maintainer's:**
+- any change in `src/`;
+- a change of rule or threshold;
+- public text;
+- publishing on Zenodo;
+- the site's merge and deploy;
+- third-party code;
+- dependencies;
+- changing old targets;
+- deletions outside `.cache`.
 
 ---
 
