@@ -951,17 +951,46 @@ Nothing depends on `tfopwg_disp` until NExScI answers. `method_status: not_valid
 - **The phase's public report** (approved by the maintainer on 2026-11-23, #218):
   [docs/reports/v0.5.6-report.md](docs/reports/v0.5.6-report.md). Nothing on the site yet.
 
-**Exit criteria** (detail in the plan)
-- [ ] Part A ran on the set and within the cost the maintainer approved; the frame, the split by
+**Exit criteria** (detail in the plan; ticked on 2026-11-23 by the maintainer's decision of 08:30,
+item 2, #218, where the evidence exists)
+- [x] Part A ran on the set and within the cost the maintainer approved; the frame, the split by
       TIC and the draw were committed before any light curve was read; every output carries its
       coverage, "exploratory" and the limits label.
-- [ ] An exploratory report is committed, with each pre-written "door" marked found or not found.
-- [ ] Either a part B claim was locked before its targets were read, ran once and its verdict is
+      *Evidence:*
+      - Order: the frame and the split were committed in 099c67c and the draw in 2f0d95e. Both
+        precede the pilot (1d4bdcf) and the run (2e734b5, 240 records).
+      - Cost: 5.95 CPU-h charged against the 50 CPU-h cap, and a disk peak of 9.14 GB against
+        20 GB ([part-a-ledger.json](docs/validation/v0.5.6/part-a-ledger.json)). This came after
+        the pilot's stop on disk and the maintainer's decision of 2026-11-22 (09:00).
+      - Labels and coverage: every record is `exploratory`, with the limits label and
+        `not_validated`. Every test of the 239 OK records carries its coverage. The one ERROR is
+        counted as a coverage loss ([part-a-records.json](docs/validation/v0.5.6/part-a-records.json),
+        [part-a-report.md](docs/validation/v0.5.6/part-a-report.md)).
+- [x] An exploratory report is committed, with each pre-written "door" marked found or not found.
+      *Evidence:* [part-a-report.md](docs/validation/v0.5.6/part-a-report.md) (2e734b5). Door 1
+      and door 2 were not found; door 3 was found and, by the maintainer's decision of 2026-11-22
+      (13:00), not pursued.
+- [x] Either a part B claim was locked before its targets were read, ran once and its verdict is
       reported as it came, or no door was found and the phase closes with declared limits. A door
       found whose part B cannot be locked or run is reported as incomplete, and this criterion
       stays open.
-- [ ] A public report is drafted for the maintainer's approval, with the limits label and v0.5's
+      *Evidence:*
+      - The round: drand round 6665418 was fixed in the claim (fd62b0a) before the lock.
+      - The lock: fdd87e7, whose time on GitHub is 2026-11-22T23:56:20Z (CI push run
+        45085907521).
+      - The round was published at 2026-11-23T00:26:00Z, after the lock.
+      - The draw (185fd91) was committed and pushed before any light curve was read.
+      - One execution: terminal state `complete`, with no rerun
+        ([part-b-ledger.json](calibration/v0.5.6/part-b-ledger.json)).
+      - The verdict, `SURVIVED`, is reported as it came
+        ([part-b-verdict.md](calibration/v0.5.6/part-b-verdict.md), 57c4160; #218).
+- [x] A public report is drafted for the maintainer's approval, with the limits label and v0.5's
       failed targets in view.
+      *Evidence:* the draft was approved with five changes by the maintainer's decision of
+      2026-11-23 (08:30, #218). The report is [docs/reports/v0.5.6-report.md](docs/reports/v0.5.6-report.md).
+      Its facts, numbers and quotations were checked against the records in one Codex round, and
+      its blocking items were applied
+      ([report-round-1-answer.md](docs/plans/v0.5.5-consensus/report-round-1-answer.md)).
 - [ ] Codex's review (up to three rounds, one conversation) and a gate review.
 
 **Stops that stay the maintainer's:** running part A (its set and cost), drand rounds and locks,

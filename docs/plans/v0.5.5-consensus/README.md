@@ -471,3 +471,24 @@ Round 5 used 11,340,476 input tokens (10,852,864 cached) and 48,099 output token
 **One non-blocking item, on #59:** on a resumed run with every record present and an earlier failure, the ledger can show `state: complete` beside `kind: other`, and the runner can exit with success. The evaluation refuses that ledger, so the verdict and the loss rule are kept. The state and the runner's exit should follow the kind.
 
 **By the decision (item 3), round 5 is SURVIVED in A, B and C with no blocking item, so the lock may proceed** under the lock plan.
+
+## v0.5.6: the public report's text, one round
+
+The maintainer's decision of 2026-11-23 (08:30), item 1 (#218, comment 7099686672), approved the phase's public report with five changes and asked for one Codex round on the text: its facts, numbers and quotations against the records. The round reviewed commit 3665521 (`docs/reports/v0.5.6-report.md`), in a new conversation `report` (thread `01a2082d-49a2-7470-a2be-84ead7802e46`). Codex CLI 0.167.0-alpha.3.2, model gpt-6.2-sol, effort high. The answer is stored unchanged.
+
+| Round | File | Reviewed | Verdicts | SHA-256 |
+|---|---|---|---|---|
+| 1 | [report-round-1-answer.md](report-round-1-answer.md) | 3665521 | items 2 and 5 SURVIVED; 1, 4, 6 and 7 WEAKENED; 3 REFUTED (a quartile rounded 587 for 586); **OVERALL: WEAKENED**, seven blocking items | `de85a0842f6634ae90df74760f0a3e2e13d7597e64d429b3cac2610990f09049` |
+
+The round used 2,016,354 input tokens (1,891,456 cached) and 17,298 output tokens. The conversation counts **142,196** review tokens: the uncached input plus the output.
+
+**Applied as Codex wrote them** (the more conservative option in each case):
+- the rules are called "summarized", and the rules' applicability conditions are added;
+- the correction rounds are worded as "none achieved acceptance", and D4's two forecasts are named;
+- the quartile is 586, and part A's comparison is named as the open arm's FP-dispositioned TOIs;
+- the seed formula is given in full, and the MAST metadata trail is named;
+- part A's consumption is split into recorded and charged;
+- the catalogue retrieval time is given;
+- the three statements that went beyond the evidence are narrowed.
+
+The round was one round, as decided, so there is no second round on the corrections.
