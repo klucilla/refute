@@ -1,0 +1,10 @@
+{
+ "name": "commit-check",
+ "question": "Commit the staged changes through scripts/commit_checked.py (privacy check and ruff on the staged files), so that this local work is metered.",
+ "choices": "The extra arguments are -F and the message file. A tree unit: the same staged state is the same unit.",
+ "argv": ["{python}", "scripts/commit_checked.py"],
+ "identity": ["scripts/commit_checked.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 300, "transfer_bytes": 50000000, "disk_bytes": 50000000},
+ "network": false
+}

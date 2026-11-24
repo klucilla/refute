@@ -73,17 +73,24 @@ how later work is done.
 
 ## Current phase
 
-**None is open.** Opening the next phase is the maintainer's decision.
-
-- **Proposed, not open:** the charter of v0.5.11 Battery version 5: specification and software,
-  [docs/plans/v0.5.11-charter.md](docs/plans/v0.5.11-charter.md), written on the maintainer's
-  decision of 2026-11-24 received at 19:33 local (#218, comment 7146372481, items 1 and 2).
-  - It is cut from a draft that Codex found `REFUTED` as drafted, which the maintainer split.
-    The record is in [docs/plans/v0.5.11-consensus/](docs/plans/v0.5.11-consensus/README.md).
-  - The phase opens only when the maintainer approves the charter in #218, citing its commit
-    SHA.
-  - What the split moved out is in
-    [docs/plans/v0.5.12-proposal.md](docs/plans/v0.5.12-proposal.md), a proposal only.
+**v0.5.11 Battery version 5: specification and software** (exploratory), **open since
+2026-11-24 at 22:58Z.**
+- **The charter:** [docs/plans/v0.5.11-charter.md](docs/plans/v0.5.11-charter.md) at
+  `eb70c13e04e910bb9cbd547c85c488a58ef9f0a4`. The maintainer approved it at that SHA after the
+  adviser's review (#218, comment 7146858167).
+- **The time box:** seven days, so execution stops at 2026-12-01 22:58Z unless an extension is
+  recorded first.
+- **The checkpoints:** the specification by day 2, step 1's push by day 4, and step 2's stop by
+  day 5.
+- **Stops:**
+  - the frozen specification goes on without a stop if its core is not empty;
+  - work **stops before the first commit in `src/`**, with the diff and Codex's review.
+- **Every local unit** runs through the metered launcher
+  [docs/validation/v0.5.11/tools/launch.py](docs/validation/v0.5.11/tools/launch.py). Its journal
+  is `docs/validation/v0.5.11/log.jsonl`, and its ledger is `caps-ledger.json`.
+- **The record of the split:**
+  [docs/plans/v0.5.11-consensus/](docs/plans/v0.5.11-consensus/README.md). What it moved out is
+  in [docs/plans/v0.5.12-proposal.md](docs/plans/v0.5.12-proposal.md), a proposal only.
 
 ### Previous phase record: v0.5.10 Census and feasibility
 

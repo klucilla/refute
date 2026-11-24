@@ -1,0 +1,10 @@
+{
+ "name": "fetch-papers",
+ "question": "Download the primary papers K25 (arXiv 2509.10619v1), T18 (arXiv 1710.06758) and SM03 (arXiv astro-ph/0206228), so that step 0 checks every equation and threshold against the paper itself.",
+ "choices": "arXiv PDFs only; up to 3 tries inside one attempt, each logged; files kept under .cache/v0511/papers, never committed.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.11/tools/fetch_papers.py"],
+ "identity": ["docs/validation/v0.5.11/tools/fetch_papers.py"],
+ "reserve": {"cpu_s": 120, "transfer_bytes": 200000000, "disk_bytes": 100000000},
+ "network": true,
+ "outputs": ["docs/validation/v0.5.11/papers/fetch-record.json"]
+}
