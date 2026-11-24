@@ -1,0 +1,49 @@
+{
+ "phase": "v0.5.11",
+ "purpose": "Step 1's record of the expected test IDs and their intended failure reasons, committed with the tests before any src/ change (Codex's item 2 of the charter round). After step 2 the markers are removed in the diff, and every ID below must pass in JUnit.",
+ "labels": ["exploratory", "method_status: not_validated", "software acceptance"],
+ "strict_expected_failures": {
+  "tests/test_v0511_screen.py": {
+   "reason": "ModuleNotFoundError: refute.packs.tess.screen_d5 does not exist before step 2 (xfail strict, raises=ModuleNotFoundError)",
+   "ids": [
+    "test_f1_reproduces_the_reference_decisions_on_the_calibration_fixtures[white]",
+    "test_f1_reproduces_the_reference_decisions_on_the_calibration_fixtures[correlated]",
+    "test_f1_passes_a_planet_and_fails_a_binary_at_half_the_period",
+    "test_f1_not_assessed_paths",
+    "test_ineligible_gives_a_null_outcome_and_empty_maps",
+    "test_precedence_and_a4_on_the_screen[pass-retained]",
+    "test_precedence_and_a4_on_the_screen[fail-rejected]",
+    "test_precedence_and_a4_on_the_screen[not_assessed-unassessed]",
+    "test_a_report_only_failure_changes_only_its_own_record",
+    "test_report_only_unavailable_paths",
+    "test_the_screen_record_and_its_determinism",
+    "test_the_screen_reads_the_curve_without_writing_it"
+   ]
+  },
+  "tests/test_v0511_identity.py": {
+   "reason": "pydantic ValidationError: discovery version 5 is not accepted before step 2 (xfail strict, raises=ValidationError)",
+   "ids": [
+    "test_version_5_requires_entry_search",
+    "test_version_5_equals_version_2_through_analyze_and_build_result[planet_three_years]",
+    "test_version_5_equals_version_2_through_analyze_and_build_result[eb_odd_even]",
+    "test_version_5_equals_version_2_through_analyze_and_build_result[noise]",
+    "test_version_5_equals_version_2_through_the_measurement_chain[1]",
+    "test_version_5_equals_version_2_through_the_measurement_chain[2]",
+    "test_version_5_equals_version_2_in_the_error_record",
+    "test_version_5_keeps_the_legacy_error_type_and_message",
+    "test_version_5_is_deterministic",
+    "test_the_version_5_plan_dump_differs_from_version_2_only_by_version_and_entry"
+   ]
+  }
+ },
+ "must_pass_now_and_after": {
+  "tests/test_v0511_identity.py": [
+   "test_versions_1_to_4_give_the_baseline_bytes",
+   "test_an_authored_entry_is_refused_for_versions_1_to_4 (4 cases)",
+   "test_versions_1_to_4_dump_no_entry (4 cases)",
+   "test_a4_an_inconclusive_or_missing_decisive_test_never_gives_survived"
+  ],
+  "tests/test_v0511_f1_calibration.py": ["test_the_f1_calibration_rule_holds[white]", "test_the_f1_calibration_rule_holds[correlated]"],
+  "tests/test_v0511_claim_hashes.py": ["test_the_committed_claim_keeps_its_resolved_hash (one case per committed claim)"]
+ }
+}
