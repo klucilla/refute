@@ -1,0 +1,10 @@
+{
+ "name": "recount",
+ "question": "Step 0, item 2: recount joint assessability and retention of the recorded legacy tests (odd_even, secondary_eclipse, plausibility) by host and population, in the v0.5.6 part B and v0.5 C2 T2a records, with missing coverage and the new tests' assessability marked unknown.",
+ "choices": "The rules R1 to R7 of docs/validation/v0.5.11/recount/RULES.md, committed before this run. Read-only; a data unit.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.11/tools/recount.py"],
+ "identity": ["docs/validation/v0.5.11/tools/recount.py", "docs/validation/v0.5.11/recount/RULES.md", "docs/validation/v0.5.6/part-b-records.json", "calibration/v0.5/runs/c2/records.jsonl", "calibration/v0.5/runs/c2-prefix/records.jsonl"],
+ "reserve": {"cpu_s": 300, "transfer_bytes": 50000000, "disk_bytes": 50000000},
+ "network": false,
+ "outputs": ["docs/validation/v0.5.11/recount/recount.json", "docs/validation/v0.5.11/recount/recount.md"]
+}

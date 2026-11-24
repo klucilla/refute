@@ -1,0 +1,56 @@
+{
+ "labels": [
+  "exploratory"
+ ],
+ "user_agent": "refute-research-fetch/0.5.11 (paper reading for a specification)",
+ "papers": [
+  {
+   "paper": "K25",
+   "url": "https://arxiv.org/pdf/2509.10619v1",
+   "final_url": "https://arxiv.org/pdf/2509.10619v1",
+   "file": "k25-2509.10619v1.pdf",
+   "tries": [
+    {
+     "try": 1,
+     "utc": "2026-11-24T23:01:38Z",
+     "outcome": "ok"
+    }
+   ],
+   "retrieved_utc": "2026-11-24T23:01:38Z",
+   "bytes": 5988975,
+   "sha256": "a7f848f9a01b5e70b8b97b145de1ac7819834b7108971fd13d457c75c4437d8c"
+  },
+  {
+   "paper": "T18",
+   "url": "https://arxiv.org/pdf/1710.06758",
+   "final_url": "https://arxiv.org/pdf/1710.06758",
+   "file": "t18-1710.06758.pdf",
+   "tries": [
+    {
+     "try": 1,
+     "utc": "2026-11-24T23:01:39Z",
+     "outcome": "ok"
+    }
+   ],
+   "retrieved_utc": "2026-11-24T23:01:39Z",
+   "bytes": 5797502,
+   "sha256": "876d603eb9342bddd5b34be64b7d6ac91355b340e1874dcaa63e2a6a795f78fd"
+  },
+  {
+   "paper": "SM03",
+   "url": "https://arxiv.org/pdf/astro-ph/0206228",
+   "final_url": "https://arxiv.org/pdf/astro-ph/0206228",
+   "file": "sm03-astro-ph-0206228.pdf",
+   "tries": [
+    {
+     "try": 1,
+     "utc": "2026-11-24T23:01:40Z",
+     "outcome": "ok"
+    }
+   ],
+   "retrieved_utc": "2026-11-24T23:01:40Z",
+   "bytes": 516987,
+   "sha256": "280f302f757b07d077344c8ec29e2a1ef5e523ec688e7e0f662436f4c40be891"
+  }
+ ]
+}

@@ -1,0 +1,39 @@
+{
+ "phase": "v0.5.11",
+ "labels": [
+  "exploratory",
+  "method_status: not_validated"
+ ],
+ "caps": {
+  "cpu_s": 36000.0,
+  "transfer_bytes": 5000000000,
+  "disk_bytes": 10000000000
+ },
+ "used": {
+  "cpu_s": 0.219,
+  "transfer_bytes": 80038971,
+  "disk_peak_bytes": 12303464
+ },
+ "within_caps": true,
+ "telemetry_complete": true,
+ "transfer_note": "an upper bound: the machine's netstat -e bytes during each unit",
+ "outside_meter": [
+  "GitHub CI (remote)",
+  "the Codex review processes (reported apart, with their tokens)",
+  "the Claude gate (reported apart)",
+  "the agent's reads and inspection commands: git status, log, diff and show; file reads; GitHub comments"
+ ],
+ "rows": [
+  {
+   "unit": "fetch-papers",
+   "label": null,
+   "instance_key": "b034bb9bf4cd163e38bd2548f0a38d69fed530263087550829f98e1d5dc659a1",
+   "start": "2026-11-24T23:01:38Z",
+   "status": "ok",
+   "cpu_s": 0.219,
+   "transfer_bytes_upper": 80038971,
+   "disk_peak_bytes": 12303464,
+   "telemetry_complete": true
+  }
+ ]
+}
