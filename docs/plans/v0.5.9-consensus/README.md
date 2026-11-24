@@ -232,7 +232,9 @@ stored unchanged.
 
 **The eight blocks, all applied** in the commit after `cc282b8`, each in its most conservative
 form. The counts of block 6 and the power of block 7 were checked by
-`.cache/v059/tools/check_codex4.py`.
+`check_codex4.py`, which ran from `.cache/v059/tools/` and is committed, with the same output, as
+[docs/validation/v0.5.9/check_codex4.py](../../validation/v0.5.9/check_codex4.py) (the gate
+review, finding 5).
 1. **The pilot's scope.** It was three batches (3 fetches, 6 bases and 18 probes), and it checked
    only that the accounting agrees under the observed load. No cap or allowance was reached.
 2. **Q3.** Three of the four bases triggered the guard. TOI-734.01 E was INCONCLUSIVE from sector

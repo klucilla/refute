@@ -6,6 +6,10 @@
 > names in `src/` is a maintainer stop. It opens no phase. Opening one is the maintainer's
 > decision; a phase opened from now on follows Process diet 2 (a charter first).
 >
+> **Not reviewed after Codex's round:** the edits that applied Codex's 8 blocks of the review
+> round (`7af787a`), and the corrections after the gate review, were not reviewed by Codex
+> ([record](v0.5.9-consensus/README.md); [gate review](../gates/v0.5.9-review.md), finding 8).
+>
 > **Limits label: 'WEAKENED; does not meet D1, D2, D4, T2a'.** It applies while version 5 uses
 > the v0.5 tests (the advance rule's case (c)). `method_status: not_validated`. No earlier verdict
 > changes.
@@ -115,7 +119,7 @@ rejected, and as unassessed.
 
 **3.7 Calibration samples, sized by independent detections.**
 - **Two-sided 95 % Wilson intervals,** as declared in section 4.5. At 250 independent cases per
-  endpoint (checked by `.cache/v059/tools/wilson_check.py`):
+  endpoint (checked by `docs/validation/v0.5.9/wilson_check.py`):
   - completeness of at least 0.85 at the lower bound needs **224 of 250** retained injections;
   - effectiveness of at least 0.90 at the lower bound needs **235 of 250** rejected null
     detections;
@@ -238,7 +242,8 @@ rejected, and as unassessed.
     Their count is reported, and a loss rate above a declared ceiling fails the run's acceptance.
 - **Both arms' decision rates** are reported over all drawn targets.
 - **The guard on the decision rate.** The 0.10 floor is kept only as a declared operational
-  floor, with its reason; it is not a scientific threshold.
+  floor; it is not a scientific threshold. Its reason is not written here: it is question 4 of
+  section 8.
 - **Improvement claims.** A claim of improvement over version 2, or one that credits a specific
   change, pre-registers the same-input comparator first. Agreement between E and S can be
   falsified on its own, even though each arm's consensus is enforced by construction.
@@ -246,7 +251,7 @@ rejected, and as unassessed.
 ### 4.5 Thresholds, power and stopping (item 5)
 
 - **The interval convention, declared:** two-sided 95 % Wilson, z = 1.959964.
-- **What the convention implies** (checked by `.cache/v059/tools/wilson_check.py`):
+- **What the convention implies** (checked by `docs/validation/v0.5.9/wilson_check.py`):
 
 | Pairs | Largest flip count whose upper bound is at most 0.10 |
 |---|---|
@@ -259,7 +264,8 @@ rejected, and as unassessed.
 | 400 | 28 |
 
   At 5 of 107 the upper bound is 10.48 %, so that pair count fails.
-- **0.10 is a tolerance,** justified as an operational one, never a property of a planet.
+- **0.10 is a tolerance,** an operational one, never a property of a planet. Its justification
+  is not written here: it is question 4 of section 8.
 - **An upper bound above 0.10** means the claim was not established at that precision. It is a
   failed acceptance criterion, not a scientific REFUTED. REFUTED is reserved for evidence that
   the flip rate is above 0.10, with the lower bound above it.
@@ -373,7 +379,7 @@ They are exploratory and post hoc, so they only shape the hypotheses below.
 
 A planning model for the next phase, not a result. It uses the v0.5.9 run's measured unit costs
 (`docs/reports/v0.5.9-report.md`, Q5) and the Wilson convention of section 4.5. The arithmetic is
-in `.cache/v059/tools/yield_model.py`. Nothing is drawn.
+in `docs/validation/v0.5.9/yield_model.py`. Nothing is drawn.
 
 **6.1 Cost per drawn target.** These are the run's measured means:
 - one fetch: 8 CPU-s and 0.245 GB;
@@ -417,7 +423,7 @@ uncertainty of the yield and of the losses.
 
 **6.3 What the prototype adds, as a warning.**
 - **On these 24 TOIs,** with the section 4.4 rule (decided on the catalog signal; checked by
-  `.cache/v059/tools/check_codex4.py`):
+  `docs/validation/v0.5.9/check_codex4.py`):
   - without consensus: 16 informative pairs, 6 of them flips;
   - with consensus: 9 informative pairs, 1 flip.
 - **Comparing raw classes,** without the identity rule, gives 10 of 20 and 4 of 12. Those raw
@@ -456,3 +462,6 @@ uncertainty of the yield and of the losses.
    calibration? The proposal puts route (e) and the screen first.
 3. What flip rate matters scientifically for the paired claim? It sets the panel's size
    (section 6).
+4. What is the reason for 0.10, both as the floor on the decision rate (section 4.4) and as the
+   tolerance on the flip rate (section 4.5)? Codex's items 4 and 5 ask for it; this draft states
+   both as operational and gives no reason (the gate review, finding 8).
