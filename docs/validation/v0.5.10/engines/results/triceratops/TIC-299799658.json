@@ -1,0 +1,40 @@
+{
+ "target": "TIC-299799658",
+ "toi": "1062.01",
+ "engine": "triceratops",
+ "status": "ok",
+ "cpu_seconds": 395.73,
+ "wall_seconds": 399.136,
+ "result": {
+  "engine": "triceratops",
+  "mode": "exploratory",
+  "metrics": {
+   "FPP": 0.13478959189138295,
+   "NFPP": 1.587375982158192e-05,
+   "folded_depth_observed": 0.0004647598267990549,
+   "catalog_depth_used": 0.0005389646334,
+   "stars_considered": 2
+  },
+  "versions": {
+   "triceratops": "1.1.0 (pinned)"
+  },
+  "coverage": {
+   "folded_points": 10967,
+   "bins_with_data": 100,
+   "sectors_with_pixels": [
+    1,
+    13,
+    27,
+    28,
+    66,
+    67,
+    68,
+    93,
+    94,
+    95
+   ]
+  },
+  "status": "ok",
+  "worker_process_cpu_seconds": 394.21875
+ }
+}

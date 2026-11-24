@@ -1,0 +1,24 @@
+{
+ "target": "TIC-295354126",
+ "toi": "1965.01",
+ "engine": "leo",
+ "status": "unavailable",
+ "cpu_seconds": 6.73,
+ "wall_seconds": 7.265,
+ "result": {
+  "engine": "leo-vetter",
+  "mode": "exploratory",
+  "metrics": {},
+  "coverage": {
+   "stellar_inputs_missing": [
+    "rad",
+    "mass",
+    "logg",
+    "rho"
+   ]
+  },
+  "status": "unavailable",
+  "reason": "stellar inputs missing in the TIC row: rad, mass, logg, rho",
+  "worker_process_cpu_seconds": 6.25
+ }
+}

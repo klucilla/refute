@@ -1,0 +1,156 @@
+{
+ "schema": "refute-v0510-tfopwg-1",
+ "mode": "exploratory",
+ "use": "description only (G3); never a verdict, never a label for a TOI in Refute's terms",
+ "source": {
+  "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+toi%2C+tid%2C+tfopwg_disp%2C+rowupdate+from+toi+where+toi+in+%28%271062.01%27%2C%271288.01%27%2C%271965.01%27%2C%272111.01%27%2C%272193.01%27%2C%272357.01%27%2C%272407.01%27%2C%272415.01%27%2C%272427.01%27%2C%272803.01%27%2C%273040.01%27%2C%273165.01%27%2C%27357.01%27%2C%273753.01%27%2C%27399.01%27%2C%27488.01%27%2C%275135.01%27%2C%275218.01%27%2C%275515.01%27%2C%276086.01%27%2C%276450.01%27%2C%27734.01%27%2C%277716.01%27%2C%27923.01%27%29&format=csv",
+  "retrieved_utc": "2026-11-24T18:53:26Z",
+  "rows": 24
+ },
+ "targets": {
+  "TIC-124206468": {
+   "toi": "2357.01",
+   "tfopwg_disp": "PC",
+   "rowupdate": "2024-11-18 12:03:12",
+   "tid_matches": true
+  },
+  "TIC-142937186": {
+   "toi": "2427.01",
+   "tfopwg_disp": "CP",
+   "rowupdate": "2021-10-29 12:59:15",
+   "tid_matches": true
+  },
+  "TIC-153078576": {
+   "toi": "2407.01",
+   "tfopwg_disp": "CP",
+   "rowupdate": "2025-07-22 12:04:25",
+   "tid_matches": true
+  },
+  "TIC-219388773": {
+   "toi": "399.01",
+   "tfopwg_disp": "FP",
+   "rowupdate": "2024-09-19 10:08:01",
+   "tid_matches": true
+  },
+  "TIC-220016044": {
+   "toi": "357.01",
+   "tfopwg_disp": "FP",
+   "rowupdate": "2024-09-19 10:08:01",
+   "tid_matches": true
+  },
+  "TIC-299799658": {
+   "toi": "1062.01",
+   "tfopwg_disp": "CP",
+   "rowupdate": "2026-08-13 16:00:02",
+   "tid_matches": true
+  },
+  "TIC-356235833": {
+   "toi": "2111.01",
+   "tfopwg_disp": "FP",
+   "rowupdate": "2024-08-13 10:08:02",
+   "tid_matches": true
+  },
+  "TIC-365733349": {
+   "toi": "1288.01",
+   "tfopwg_disp": "CP",
+   "rowupdate": "2024-08-24 10:08:02",
+   "tid_matches": true
+  },
+  "TIC-372596795": {
+   "toi": "3040.01",
+   "tfopwg_disp": "PC",
+   "rowupdate": "2024-08-22 10:08:01",
+   "tid_matches": true
+  },
+  "TIC-401604346": {
+   "toi": "2193.01",
+   "tfopwg_disp": "CP",
+   "rowupdate": "2023-03-03 12:03:04",
+   "tid_matches": true
+  },
+  "TIC-419858461": {
+   "toi": "3165.01",
+   "tfopwg_disp": "FP",
+   "rowupdate": "2025-12-11 16:00:01",
+   "tid_matches": true
+  },
+  "TIC-467783290": {
+   "toi": "3753.01",
+   "tfopwg_disp": "FP",
+   "rowupdate": "2024-08-22 10:08:01",
+   "tid_matches": true
+  },
+  "TIC-55275863": {
+   "toi": "5515.01",
+   "tfopwg_disp": "PC",
+   "rowupdate": "2023-11-26 12:02:43",
+   "tid_matches": true
+  },
+  "TIC-47244580": {
+   "toi": "6450.01",
+   "tfopwg_disp": "CP",
+   "rowupdate": "2026-08-25 12:05:28",
+   "tid_matches": true
+  },
+  "TIC-146846569": {
+   "toi": "734.01",
+   "tfopwg_disp": "FP",
+   "rowupdate": "2025-09-04 16:00:02",
+   "tid_matches": true
+  },
+  "TIC-259172249": {
+   "toi": "5218.01",
+   "tfopwg_disp": "CP",
+   "rowupdate": "2025-04-21 12:03:49",
+   "tid_matches": true
+  },
+  "TIC-452866790": {
+   "toi": "488.01",
+   "tfopwg_disp": "CP",
+   "rowupdate": "2024-02-15 10:08:02",
+   "tid_matches": true
+  },
+  "TIC-46432937": {
+   "toi": "7716.01",
+   "tfopwg_disp": "KP",
+   "rowupdate": "2026-08-11 12:04:23",
+   "tid_matches": true
+  },
+  "TIC-161223358": {
+   "toi": "2415.01",
+   "tfopwg_disp": "FP",
+   "rowupdate": "2026-08-14 16:00:02",
+   "tid_matches": true
+  },
+  "TIC-124379043": {
+   "toi": "2803.01",
+   "tfopwg_disp": "CP",
+   "rowupdate": "2024-08-22 10:08:01",
+   "tid_matches": true
+  },
+  "TIC-172110606": {
+   "toi": "5135.01",
+   "tfopwg_disp": "FP",
+   "rowupdate": "2024-01-30 16:02:02",
+   "tid_matches": true
+  },
+  "TIC-295354126": {
+   "toi": "1965.01",
+   "tfopwg_disp": "FP",
+   "rowupdate": "2021-10-29 12:59:15",
+   "tid_matches": true
+  },
+  "TIC-301051430": {
+   "toi": "923.01",
+   "tfopwg_disp": "FP",
+   "rowupdate": "2024-08-15 10:08:02",
+   "tid_matches": true
+  },
+  "TIC-18318288": {
+   "toi": "6086.01",
+   "tfopwg_disp": "CP",
+   "rowupdate": "2025-04-21 12:03:49",
+   "tid_matches": true
+  }
+ }
+}

@@ -1,0 +1,123 @@
+{
+ "target": "TIC-452866790",
+ "toi": "488.01",
+ "engine": "exovetter",
+ "status": "ok",
+ "cpu_seconds": 35.52,
+ "wall_seconds": 36.049,
+ "result": {
+  "engine": "exovetter",
+  "mode": "exploratory",
+  "metrics": {},
+  "vetters": {
+   "ModShift": {
+    "status": "ok",
+    "native": {
+     "pri": 1.0,
+     "phase_pri": 0.004047295945945946,
+     "sec": 180.0,
+     "phase_sec": 0.7285132702702702,
+     "ter": 119.0,
+     "phase_ter": 0.4816282175675676,
+     "pos": 236.0,
+     "phase_pos": 0.9551618432432432,
+     "sigma_pri": -19365.541873956827,
+     "sigma_sec": -3304.7868019346147,
+     "sigma_ter": -2423.4892652433737,
+     "sigma_pos": 3913.793872492417,
+     "false_alarm_threshold": 2.1239514815810714,
+     "Fred": 146.53360478440246
+    }
+   },
+   "OddEven": {
+    "status": "ok",
+    "native": {
+     "oe_sigma": 0.06612721241828257,
+     "odd_depth": [
+      0.9993532369066239,
+      0.0020791180971780425
+     ],
+     "even_depth": [
+      0.9991588019390734,
+      0.0020791180971780425
+     ]
+    }
+   },
+   "TransitPhaseCoverage": {
+    "status": "ok",
+    "native": {
+     "transit_phase_coverage": 1.0
+    }
+   },
+   "Sweet": {
+    "status": "ok",
+    "native": {
+     "msg": "WARN: SWEET test finds signal at HALF transit period\r\nWARN: SWEET test finds signal at the transit period",
+     "amp_half_period": [
+      4.17301486168594e-05,
+      1.1681119390375816e-05,
+      3.572444319954581
+     ],
+     "amp_period": [
+      4.513173796667656e-05,
+      1.1680899015555495e-05,
+      3.8637212689343916
+     ],
+     "amp_twice_period": [
+      1.4995009176615427e-05,
+      1.1682104875879561e-05,
+      1.283587960897024
+     ]
+    }
+   },
+   "Lpp": {
+    "status": "unavailable",
+    "reason": "its map file is remote and was not staged as a verified local input"
+   },
+   "Centroid": {
+    "status": "per_sector",
+    "sectors": [
+     {
+      "file": "tess2019006130736-s0007-0000000452866790-0131-s_tp.fits",
+      "status": "ok",
+      "offset_pix": 0.39023590338526126,
+      "significance": 0.9285172260341444
+     },
+     {
+      "file": "tess2021014023720-s0034-0000000452866790-0204-s_tp.fits",
+      "status": "ok",
+      "offset_pix": 0.3839398971508674,
+      "significance": 0.8886888762746586
+     },
+     {
+      "file": "tess2023018032328-s0061-0000000452866790-0250-s_tp.fits",
+      "status": "ok",
+      "offset_pix": 0.37905389795737926,
+      "significance": 0.9638365530231222
+     },
+     {
+      "file": "tess2025014115807-s0088-0000000452866790-0285-s_tp.fits",
+      "status": "ok",
+      "offset_pix": 0.34381005487456956,
+      "significance": 0.9482824603573352
+     }
+    ]
+   }
+  },
+  "versions": {
+   "exovetter": "0.0.16",
+   "lightkurve": "2.6.0"
+  },
+  "coverage": {
+   "cadences": 65337,
+   "sectors": [
+    7,
+    34,
+    61,
+    88
+   ]
+  },
+  "status": "ok",
+  "worker_process_cpu_seconds": 34.4375
+ }
+}

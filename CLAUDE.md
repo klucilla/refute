@@ -406,6 +406,14 @@ Only files in use, or planned for use in an open task, stay in the project folde
   unused downloads; anything with value is archived first, as above): deleted
   without archiving; inside `.cache/` without a prior approval round. Every deleted
   path is listed in the report of that round.
+- **Already integrated or incorporated** (the maintainer's decision of 2026-11-24, #218
+  comment 7139692729, item 4): discarded like what is no longer used, by the rules above. It
+  is archived first if it has value, and deleted outside `.cache/` only with the maintainer's
+  approval.
+  - **Merged branches:** a branch already merged into `main` may be deleted without a new
+    approval, once checked that it is merged: its tip is an ancestor of `main`
+    (`git merge-base --is-ancestor <branch> main`).
+  - **Not covered:** a branch that is not merged stays under the rule of "GitHub operations".
 - **How:** deletion only by full literal path, with a guard that the path is inside the
   project folder; never from a broad root and never with `git clean -x`. A deletion
   outside `.cache/` still needs the maintainer's approval (see "Working mode

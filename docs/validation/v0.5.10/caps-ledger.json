@@ -1,0 +1,35 @@
+{
+ "schema": "refute-v0510-caps-ledger-1",
+ "mode": "exploratory",
+ "caps": {
+  "cpu_hours": 6.0,
+  "downloads_bytes": 10000000000,
+  "disk_peak_bytes": 10000000000
+ },
+ "cpu_seconds_metered": 20238.0,
+ "cpu_hours_metered": 5.622,
+ "cpu_by_group_seconds": {
+  "exovetter": 781.6,
+  "leo": 1141.0,
+  "synthetic and checks": 539.6,
+  "tls": 6652.2,
+  "triceratops": 11123.5
+ },
+ "cpu_not_metered": "parts (a) to (d), the catalog staging, the data fetch, the wheelhouse and the cleanup ran in the project's environment and were not metered (metadata queries and hashing; minutes of wall time each)",
+ "downloads_bytes": {
+  "wheelhouse": 226735971,
+  "light curves and pixel files": 5845999680,
+  "catalog staging (TIC, Gaia), measured on disk": 16384426,
+  "census and route (e) caches, measured on disk": 29726841
+ },
+ "downloads_total_bytes": 6118846918,
+ "disk_peak_bytes_measured": {
+  ".cache/v0510/data": 5845999680,
+  ".cache/v0510/engines": 957283811,
+  ".cache/v0510/runs": 252718111,
+  "the rest of .cache/v0510": 49059994
+ },
+ "disk_peak_total_bytes": 7105061596,
+ "disk_note": "measured with du -sb after the last engine run, when .cache/v0510 held everything at once; the first install was hardlinked and took no extra space",
+ "within_caps": true
+}

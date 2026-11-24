@@ -1,0 +1,102 @@
+{
+ "target": "TIC-47244580",
+ "toi": "6450.01",
+ "engine": "exovetter",
+ "status": "ok",
+ "cpu_seconds": 29.66,
+ "wall_seconds": 30.222,
+ "result": {
+  "engine": "exovetter",
+  "mode": "exploratory",
+  "metrics": {},
+  "vetters": {
+   "ModShift": {
+    "status": "ok",
+    "native": {
+     "pri": 0.0,
+     "phase_pri": 0.0,
+     "sec": 223.0,
+     "phase_sec": 2.211171509615385,
+     "ter": 293.0,
+     "phase_ter": 2.905261221153846,
+     "pos": 193.0,
+     "phase_pos": 1.9137044903846154,
+     "sigma_pri": -3706.1784331382246,
+     "sigma_sec": -696.4225678728234,
+     "sigma_ter": -620.1920036657201,
+     "sigma_pos": 606.418287136089,
+     "false_alarm_threshold": 2.205352107660753,
+     "Fred": 60.168017395315815
+    }
+   },
+   "OddEven": {
+    "status": "ok",
+    "native": {
+     "oe_sigma": 0.015462411038991262,
+     "odd_depth": [
+      0.9956671094255537,
+      0.0059474997969268225
+     ],
+     "even_depth": [
+      0.9955370545470528,
+      0.0059474997969268225
+     ]
+    }
+   },
+   "TransitPhaseCoverage": {
+    "status": "ok",
+    "native": {
+     "transit_phase_coverage": 1.0
+    }
+   },
+   "Sweet": {
+    "status": "ok",
+    "native": {
+     "msg": "WARN: SWEET test finds signal at HALF transit period\r\nWARN: SWEET test finds signal at the transit period",
+     "amp_half_period": [
+      0.0002732052311643337,
+      6.78555232501776e-05,
+      4.026278452780462
+     ],
+     "amp_period": [
+      0.0002914261606954282,
+      6.785013923138306e-05,
+      4.2951446230877215
+     ],
+     "amp_twice_period": [
+      7.533092425744154e-05,
+      6.78900235112716e-05,
+      1.1096022708687756
+     ]
+    }
+   },
+   "Lpp": {
+    "status": "unavailable",
+    "reason": "its map file is remote and was not staged as a verified local input"
+   },
+   "Centroid": {
+    "status": "per_sector",
+    "sectors": [
+     {
+      "file": "tess2025014115807-s0088-0000000047244580-0285-s_tp.fits",
+      "status": "ok",
+      "offset_pix": 1.0739950647386223,
+      "significance": 1.2078755538074002e-12
+     }
+    ]
+   }
+  },
+  "versions": {
+   "exovetter": "0.0.16",
+   "lightkurve": "2.6.0"
+  },
+  "coverage": {
+   "cadences": 14335,
+   "sectors": [
+    88
+   ]
+  },
+  "status": "ok",
+  "worker_process_cpu_seconds": 28.46875
+ }
+}

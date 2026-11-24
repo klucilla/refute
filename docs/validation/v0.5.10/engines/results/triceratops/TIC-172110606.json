@@ -1,0 +1,9 @@
+{
+ "target": "TIC-172110606",
+ "toi": "5135.01",
+ "engine": "triceratops",
+ "status": "unavailable_timeout",
+ "cpu_seconds": 895.25,
+ "wall_seconds": 900.022,
+ "result": null
+}

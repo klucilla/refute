@@ -1,0 +1,31 @@
+{
+ "target": "TIC-295354126",
+ "toi": "1965.01",
+ "engine": "triceratops",
+ "status": "failed",
+ "cpu_seconds": 225.86,
+ "wall_seconds": 227.182,
+ "result": {
+  "engine": "triceratops",
+  "mode": "exploratory",
+  "metrics": {},
+  "versions": {
+   "triceratops": "1.1.0 (pinned)"
+  },
+  "coverage": {
+   "folded_points": 6857,
+   "bins_with_data": 100,
+   "sectors_with_pixels": [
+    38
+   ]
+  },
+  "status": "failed",
+  "error": "ValueError: can only convert an array of size 1 to a Python scalar",
+  "traceback_tail": [
+   "    u1s_comp[i], u2s_comp[i] = u1s_at_Z[mask].item(), u2s_at_Z[mask].item()",
+   "                               ^^^^^^^^^^^^^^^^^^^^^",
+   "ValueError: can only convert an array of size 1 to a Python scalar"
+  ],
+  "worker_process_cpu_seconds": 224.6875
+ }
+}

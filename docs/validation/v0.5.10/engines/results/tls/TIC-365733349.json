@@ -1,0 +1,52 @@
+{
+ "target": "TIC-365733349",
+ "toi": "1288.01",
+ "engine": "tls",
+ "status": "ok",
+ "cpu_seconds": 407.72,
+ "wall_seconds": 76.594,
+ "result": {
+  "engine": "wotan+transitleastsquares",
+  "mode": "exploratory",
+  "metrics": {
+   "window_length_days": 0.276,
+   "periods_tested": 186968,
+   "period_days": 2.6998065422786692,
+   "t0_btjd": 1712.3686284124617,
+   "duration_hours": 2.2193380053335248,
+   "depth_fraction": 0.0018233548192189142,
+   "sde": 188.1678075918488,
+   "snr": 128.26059905943222,
+   "transit_count": 713,
+   "distinct_transit_count": 105,
+   "odd_even_mismatch_sigma": 0.42607253834291836
+  },
+  "versions": {
+   "wotan": "2.1 (pinned)",
+   "transitleastsquares": "Transit Least Squares TLS 2.3.0 (12 Nov 2026)",
+   "numpy": "1.26.4"
+  },
+  "coverage": {
+   "cadences": 204953,
+   "sectors": [
+    15,
+    16,
+    17,
+    18,
+    24,
+    56,
+    57,
+    58,
+    76,
+    77,
+    78,
+    83,
+    85
+   ],
+   "points_searched": 41385,
+   "span_days": 1924.6738909629205
+  },
+  "status": "ok",
+  "worker_process_cpu_seconds": 39.234375
+ }
+}

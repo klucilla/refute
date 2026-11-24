@@ -32,6 +32,7 @@ from __future__ import annotations
 import ctypes
 import os
 import subprocess
+import threading
 import time
 from ctypes import wintypes
 from pathlib import Path
@@ -39,6 +40,7 @@ from pathlib import Path
 PROJECT = Path(__file__).resolve().parents[4]
 CACHE_ROOT = (PROJECT / ".cache" / "v0510").resolve()
 CONTAINER_NAME = "refute.v0510.engines"
+_PROFILE_LOCK = threading.Lock()
 AFFINITY_MASK = 0xFFFFFF00  # processors 8 to 31
 
 kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
@@ -199,6 +201,11 @@ def _check(ok, what: str):
 
 def ensure_profile() -> str:
     """Create the AppContainer profile with no capability, once; return 'created' or 'existed'."""
+    with _PROFILE_LOCK:
+        return _ensure_profile()
+
+
+def _ensure_profile() -> str:
     psid = ctypes.c_void_p()
     hr = userenv.CreateAppContainerProfile(
         CONTAINER_NAME,

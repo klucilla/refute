@@ -1,0 +1,10 @@
+{
+ "target": "TIC-299799658",
+ "toi": "1062.01",
+ "engine": "exovetter",
+ "status": "failed_launcher",
+ "cpu_seconds": 0.0,
+ "wall_seconds": 0.0,
+ "result": null,
+ "note": "the launcher raised before the worker was created; not repeated (log.jsonl)"
+}

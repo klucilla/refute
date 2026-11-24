@@ -37,7 +37,7 @@ SETTINGS = HERE / "settings.json"
 WORKERS = CACHE / "workers"
 RUNS = CACHE / "runs"
 RESULTS = HERE / "results"
-CAP_CPU_SECONDS = 6 * 3600.0
+CAP_CPU_SECONDS = 6 * 3600.0 - 600.0  # the cap, less a reserve for the cleanup's hashing
 PY = CACHE / "engines" / "venv" / "Scripts" / "python.exe"
 
 
@@ -87,7 +87,7 @@ def run_one(
             f"refused: phase CPU {used:.0f} s + allowance {allowance_s:.0f} s passes the cap"
         )
     wpath, wsha = stage_worker(worker)
-    run_dir = RUNS / run_name
+    run_dir = RUNS / run_name.replace(":", "__")
     run_dir.mkdir(parents=True, exist_ok=True)
     sandbox.grant(run_dir, write=True)
     job = dict(job)
@@ -225,6 +225,7 @@ def toi(engine: str, only: list[str]) -> None:
     cat = catalog()
     fls = files()
     sandbox.grant(STAGED)
+    sandbox.ensure_profile()  # once, before the pool (two threads at once failed)
     threads = settings["threads"][engine]
     allowance = float(settings["allowances_cpu_seconds"][engine])
     parallel = 1 if threads > 1 else 10
@@ -250,16 +251,30 @@ def toi(engine: str, only: list[str]) -> None:
                 return {"run": key, "status": "not_run_cap"}
             IN_FLIGHT[0] += allowance
         try:
-            r = run_one(
-                f"{engine}:{key}",
-                worker,
-                job,
-                threads=threads,
-                allowance_s=allowance,
-                timeout_s=allowance,
-                note=f"part (f) named rerun (charter section 9): {engine} on {key} "
-                f"(TOI {cat[key]['toi']}), once, settings.json as committed",
-            )
+            try:
+                r = run_one(
+                    f"{engine}:{key}",
+                    worker,
+                    job,
+                    threads=threads,
+                    allowance_s=allowance,
+                    timeout_s=allowance,
+                    note=f"part (f) named rerun (charter section 9): {engine} on {key} "
+                    f"(TOI {cat[key]['toi']}), once, settings.json as committed",
+                )
+            except Exception as exc:  # a launcher failure: logged, never repeated
+                phase_log.log(
+                    "after",
+                    f"{engine}:{key}",
+                    text=f"status failed_launcher: {type(exc).__name__}: {exc}",
+                    status="failed_launcher",
+                    cpu_seconds=0.0,
+                )
+                r = {
+                    "status": "failed_launcher",
+                    "launcher": {"cpu_seconds": 0.0, "wall_seconds": 0.0},
+                    "result": None,
+                }
         finally:
             with LOCK:
                 IN_FLIGHT[0] -= allowance

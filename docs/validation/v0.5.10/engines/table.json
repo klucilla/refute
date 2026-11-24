@@ -1,0 +1,2701 @@
+{
+ "schema": "refute-v0510-engine-table-1",
+ "mode": "exploratory",
+ "method_status": "not_validated",
+ "limits_label": "WEAKENED; does not meet D1, D2, D4, T2a",
+ "post_hoc": "comparisons are exploratory and post hoc; v0.5.9's classes are shown beside, never replaced or re-scored; no replacement class and no vote",
+ "rows": [
+  {
+   "target": "TIC-124206468",
+   "toi": "2357.01",
+   "tfopwg_disp": "PC",
+   "v059": {
+    "E": "INCONCLUSIVE",
+    "S": "SURVIVED",
+    "E_consensus": "INCONCLUSIVE",
+    "S_consensus": "INCONCLUSIVE",
+    "E_inconclusive_tests": [
+     "centroid_shift",
+     "systematics"
+    ]
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_met"
+   },
+   "leo": {
+    "class": "PC",
+    "flags": {
+     "FA:weak": "threshold_not_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_not_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_not_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_not_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_not_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_not_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_not_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_not_met",
+     "FP:secondary": "threshold_not_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "threshold_met",
+    "NFPP>0.1": "threshold_not_met"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "ok",
+    "triceratops": "ok"
+   },
+   "cpu_seconds": {
+    "tls": 232.7,
+    "exovetter": 31.17,
+    "leo": 28.78,
+    "triceratops": 499.14
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.358625,
+     "periods_tested": 107831,
+     "period_days": 7.09245752128164,
+     "t0_btjd": 3046.079539629954,
+     "duration_hours": 2.729200421892605,
+     "depth_fraction": 0.004201113136551915,
+     "sde": 80.66191678220744,
+     "snr": 43.77605038823832,
+     "transit_count": 156,
+     "distinct_transit_count": 10,
+     "odd_even_mismatch_sigma": 1.5204646343486399
+    },
+    "triceratops": {
+     "FPP": 0.00956762796552324,
+     "NFPP": 0.0,
+     "folded_depth_observed": 0.004704133852153292,
+     "catalog_depth_used": 0.00554,
+     "stars_considered": 2
+    }
+   }
+  },
+  {
+   "target": "TIC-142937186",
+   "toi": "2427.01",
+   "tfopwg_disp": "CP",
+   "v059": {
+    "E": "INCONCLUSIVE",
+    "S": "SURVIVED",
+    "E_consensus": "INCONCLUSIVE",
+    "S_consensus": "SURVIVED",
+    "E_inconclusive_tests": [
+     "aperture_depth",
+     "centroid_shift"
+    ]
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_not_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_not_met"
+   },
+   "leo": {
+    "class": "FA",
+    "flags": {
+     "FA:weak": "threshold_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_not_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_not_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_not_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_not_met",
+     "FP:secondary": "threshold_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "threshold_not_met",
+    "NFPP>0.1": "threshold_not_met"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "ok",
+    "triceratops": "ok"
+   },
+   "cpu_seconds": {
+    "tls": 244.48,
+    "exovetter": 36.53,
+    "leo": 33.41,
+    "triceratops": 465.16
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.07925,
+     "periods_tested": 208493,
+     "period_days": 1.3060290153477578,
+     "t0_btjd": 2144.7944989361345,
+     "duration_hours": 0.7331079404779568,
+     "depth_fraction": 0.00029619433068328593,
+     "sde": 65.70338986015445,
+     "snr": 14.674291302393106,
+     "transit_count": 1644,
+     "distinct_transit_count": 65,
+     "odd_even_mismatch_sigma": 0.2246773471659935
+    },
+    "triceratops": {
+     "FPP": 0.24357100108988539,
+     "NFPP": 0.0,
+     "folded_depth_observed": 0.00021993845569034942,
+     "catalog_depth_used": 0.00056,
+     "stars_considered": 1
+    }
+   }
+  },
+  {
+   "target": "TIC-153078576",
+   "toi": "2407.01",
+   "tfopwg_disp": "CP",
+   "v059": {
+    "E": "SURVIVED",
+    "S": "SURVIVED",
+    "E_consensus": "SURVIVED",
+    "S_consensus": "SURVIVED",
+    "E_inconclusive_tests": [
+     "event_consistency"
+    ]
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_not_met"
+   },
+   "leo": {
+    "class": "PC",
+    "flags": {
+     "FA:weak": "threshold_not_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_not_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_not_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_not_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_not_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_not_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_not_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_not_met",
+     "FP:secondary": "threshold_not_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "threshold_not_met",
+    "NFPP>0.1": "threshold_not_met"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "ok",
+    "triceratops": "ok"
+   },
+   "cpu_seconds": {
+    "tls": 325.77,
+    "exovetter": 34.31,
+    "leo": 37.19,
+    "triceratops": 342.02
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.21248302499999996,
+     "periods_tested": 208318,
+     "period_days": 2.7029568090651304,
+     "t0_btjd": 2116.6276886012943,
+     "duration_hours": 1.6683096905257009,
+     "depth_fraction": 0.0036620385251727727,
+     "sde": 141.5466866208222,
+     "snr": 30.56336296440785,
+     "transit_count": 794,
+     "distinct_transit_count": 40,
+     "odd_even_mismatch_sigma": 0.9748930303067074
+    },
+    "triceratops": {
+     "FPP": 1.0,
+     "NFPP": 5.680871653990532e-37,
+     "folded_depth_observed": 0.003946703195763734,
+     "catalog_depth_used": 0.0051326782833999995,
+     "stars_considered": 5
+    }
+   }
+  },
+  {
+   "target": "TIC-219388773",
+   "toi": "399.01",
+   "tfopwg_disp": "FP",
+   "v059": {
+    "E": "INCONCLUSIVE",
+    "S": "WEAKENED",
+    "E_consensus": "INCONCLUSIVE",
+    "S_consensus": "INCONCLUSIVE",
+    "E_inconclusive_tests": []
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_not_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_not_met"
+   },
+   "leo": {
+    "class": "FA",
+    "flags": {
+     "FA:weak": "threshold_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_not_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_not_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_not_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_not_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_not_met",
+     "FP:secondary": "threshold_not_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "threshold_met",
+    "NFPP>0.1": "threshold_not_met"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "ok",
+    "triceratops": "ok"
+   },
+   "cpu_seconds": {
+    "tls": 233.17,
+    "exovetter": 37.08,
+    "leo": 63.73,
+    "triceratops": 430.55
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.2459031,
+     "periods_tested": 79334,
+     "period_days": 1.5714999306445825,
+     "t0_btjd": 1412.391874368323,
+     "duration_hours": 1.423100827130254,
+     "depth_fraction": 0.0004759193056628197,
+     "sde": 82.71637812127356,
+     "snr": 17.712438127955032,
+     "transit_count": 519,
+     "distinct_transit_count": 90,
+     "odd_even_mismatch_sigma": 0.4813025812782718
+    },
+    "triceratops": {
+     "FPP": 0.0015584876042217255,
+     "NFPP": 0.0009788815345167872,
+     "folded_depth_observed": 0.0003332382797978095,
+     "catalog_depth_used": 0.0007434097278000001,
+     "stars_considered": 2
+    }
+   }
+  },
+  {
+   "target": "TIC-220016044",
+   "toi": "357.01",
+   "tfopwg_disp": "FP",
+   "v059": {
+    "E": "INCONCLUSIVE",
+    "S": "WEAKENED",
+    "E_consensus": "INCONCLUSIVE",
+    "S_consensus": "INCONCLUSIVE",
+    "E_inconclusive_tests": [
+     "aperture_depth",
+     "centroid_shift",
+     "odd_even",
+     "systematics"
+    ]
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_not_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_not_met"
+   },
+   "leo": {
+    "class": "FA",
+    "flags": {
+     "FA:weak": "threshold_not_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_not_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_not_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_not_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_not_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_not_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_not_met",
+     "FP:secondary": "threshold_not_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "unavailable",
+    "NFPP>0.1": "unavailable"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "ok",
+    "triceratops": "unavailable_timeout"
+   },
+   "cpu_seconds": {
+    "tls": 237.23,
+    "exovetter": 37.41,
+    "leo": 34.14,
+    "triceratops": 894.66
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.1403115,
+     "periods_tested": 108628,
+     "period_days": 0.9398567682221287,
+     "t0_btjd": 2088.395822042115,
+     "duration_hours": 1.028303562873437,
+     "depth_fraction": 0.00041116966424747936,
+     "sde": 43.4734222455632,
+     "snr": 12.60067009783856,
+     "transit_count": 1190,
+     "distinct_transit_count": 73,
+     "odd_even_mismatch_sigma": 0.26927893794753205
+    },
+    "triceratops": null
+   }
+  },
+  {
+   "target": "TIC-299799658",
+   "toi": "1062.01",
+   "tfopwg_disp": "CP",
+   "v059": {
+    "E": "INCONCLUSIVE",
+    "S": "SURVIVED",
+    "E_consensus": "INCONCLUSIVE",
+    "S_consensus": "INCONCLUSIVE",
+    "E_inconclusive_tests": [
+     "event_consistency",
+     "systematics"
+    ]
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "unavailable",
+    "OddEven": "unavailable",
+    "TransitPhaseCoverage": "unavailable",
+    "Sweet": "unavailable",
+    "Lpp": "unavailable",
+    "Centroid": "unavailable"
+   },
+   "leo": {
+    "class": "PC",
+    "flags": {
+     "FA:weak": "threshold_not_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_not_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_not_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_not_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_not_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_not_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_not_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_not_met",
+     "FP:secondary": "threshold_not_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "threshold_not_met",
+    "NFPP>0.1": "threshold_not_met"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "failed_launcher",
+    "leo": "ok",
+    "triceratops": "ok"
+   },
+   "cpu_seconds": {
+    "tls": 379.58,
+    "exovetter": 0.0,
+    "leo": 50.03,
+    "triceratops": 395.73
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.1323032625,
+     "periods_tested": 250799,
+     "period_days": 4.115065652992189,
+     "t0_btjd": 1325.4216374606233,
+     "duration_hours": 1.0769690718802998,
+     "depth_fraction": 0.00034626678696092483,
+     "sde": 125.4537269815663,
+     "snr": 15.277759068832584,
+     "transit_count": 628,
+     "distinct_transit_count": 58,
+     "odd_even_mismatch_sigma": 0.4120447479644896
+    },
+    "triceratops": {
+     "FPP": 0.13478959189138295,
+     "NFPP": 1.587375982158192e-05,
+     "folded_depth_observed": 0.0004647598267990549,
+     "catalog_depth_used": 0.0005389646334,
+     "stars_considered": 2
+    }
+   }
+  },
+  {
+   "target": "TIC-356235833",
+   "toi": "2111.01",
+   "tfopwg_disp": "FP",
+   "v059": {
+    "E": "INCONCLUSIVE",
+    "S": "REFUTED",
+    "E_consensus": "INCONCLUSIVE",
+    "S_consensus": "REFUTED",
+    "E_inconclusive_tests": []
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_not_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_not_met"
+   },
+   "leo": {
+    "class": "PC",
+    "flags": {
+     "FA:weak": "threshold_not_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_not_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_not_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_not_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_not_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_not_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_not_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_not_met",
+     "FP:secondary": "threshold_not_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "threshold_not_met",
+    "NFPP>0.1": "threshold_not_met"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "ok",
+    "triceratops": "ok"
+   },
+   "cpu_seconds": {
+    "tls": 220.88,
+    "exovetter": 33.52,
+    "leo": 30.92,
+    "triceratops": 711.58
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.128375,
+     "periods_tested": 73774,
+     "period_days": 1.2691256109627655,
+     "t0_btjd": 1984.3774105143382,
+     "duration_hours": 0.7844715386386307,
+     "depth_fraction": 0.0004804013237597049,
+     "sde": 41.860976655218344,
+     "snr": 18.183263390668262,
+     "transit_count": 598,
+     "distinct_transit_count": 42,
+     "odd_even_mismatch_sigma": 1.475283300908355
+    },
+    "triceratops": {
+     "FPP": 0.1729476160640725,
+     "NFPP": 0.0023998986751355353,
+     "folded_depth_observed": 0.0003778985023855652,
+     "catalog_depth_used": 0.000538,
+     "stars_considered": 5
+    }
+   }
+  },
+  {
+   "target": "TIC-365733349",
+   "toi": "1288.01",
+   "tfopwg_disp": "CP",
+   "v059": {
+    "E": "INCONCLUSIVE",
+    "S": "SURVIVED",
+    "E_consensus": "INCONCLUSIVE",
+    "S_consensus": "INCONCLUSIVE",
+    "E_inconclusive_tests": [
+     "centroid_shift",
+     "systematics"
+    ]
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_met"
+   },
+   "leo": {
+    "class": "PC",
+    "flags": {
+     "FA:weak": "threshold_not_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_not_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_not_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_not_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_not_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_not_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_not_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_not_met",
+     "FP:secondary": "threshold_not_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "threshold_not_met",
+    "NFPP>0.1": "threshold_not_met"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "ok",
+    "triceratops": "ok"
+   },
+   "cpu_seconds": {
+    "tls": 407.72,
+    "exovetter": 38.64,
+    "leo": 122.12,
+    "triceratops": 721.31
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.276,
+     "periods_tested": 186968,
+     "period_days": 2.6998065422786692,
+     "t0_btjd": 1712.3686284124617,
+     "duration_hours": 2.2193380053335248,
+     "depth_fraction": 0.0018233548192189142,
+     "sde": 188.1678075918488,
+     "snr": 128.26059905943222,
+     "transit_count": 713,
+     "distinct_transit_count": 105,
+     "odd_even_mismatch_sigma": 0.42607253834291836
+    },
+    "triceratops": {
+     "FPP": 0.9315176576216586,
+     "NFPP": 5.325769594852835e-268,
+     "folded_depth_observed": 0.0020738264461480638,
+     "catalog_depth_used": 0.0027979999999999997,
+     "stars_considered": 4
+    }
+   }
+  },
+  {
+   "target": "TIC-372596795",
+   "toi": "3040.01",
+   "tfopwg_disp": "PC",
+   "v059": {
+    "E": "WEAKENED",
+    "S": "WEAKENED",
+    "E_consensus": "INCONCLUSIVE",
+    "S_consensus": "INCONCLUSIVE",
+    "E_inconclusive_tests": []
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_met"
+   },
+   "leo": {
+    "class": "PC",
+    "flags": {
+     "FA:weak": "threshold_not_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_not_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_not_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_not_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_not_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_not_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_not_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_not_met",
+     "FP:secondary": "threshold_not_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "threshold_not_met",
+    "NFPP>0.1": "threshold_not_met"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "ok",
+    "triceratops": "ok"
+   },
+   "cpu_seconds": {
+    "tls": 225.55,
+    "exovetter": 31.94,
+    "leo": 37.17,
+    "triceratops": 639.38
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.323375,
+     "periods_tested": 73818,
+     "period_days": 3.5366014588203534,
+     "t0_btjd": 3017.5261687676434,
+     "duration_hours": 2.4015661266627544,
+     "depth_fraction": 0.009557426880848041,
+     "sde": 104.02905067256187,
+     "snr": 78.2459529371769,
+     "transit_count": 215,
+     "distinct_transit_count": 28,
+     "odd_even_mismatch_sigma": 0.7668706679982765
+    },
+    "triceratops": {
+     "FPP": 0.07627672880459191,
+     "NFPP": 0.07623047101208157,
+     "folded_depth_observed": 0.010496290068153002,
+     "catalog_depth_used": 0.01266,
+     "stars_considered": 7
+    }
+   }
+  },
+  {
+   "target": "TIC-401604346",
+   "toi": "2193.01",
+   "tfopwg_disp": "CP",
+   "v059": {
+    "E": "INCONCLUSIVE",
+    "S": "WEAKENED",
+    "E_consensus": "INCONCLUSIVE",
+    "S_consensus": "WEAKENED",
+    "E_inconclusive_tests": []
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_not_met"
+   },
+   "leo": {
+    "class": "FA",
+    "flags": {
+     "FA:weak": "threshold_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_not_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_not_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_not_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_not_met",
+     "FP:secondary": "threshold_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "threshold_not_met",
+    "NFPP>0.1": "threshold_not_met"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "ok",
+    "triceratops": "ok"
+   },
+   "cpu_seconds": {
+    "tls": 400.12,
+    "exovetter": 36.12,
+    "leo": 47.62,
+    "triceratops": 443.11
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.1981920625,
+     "periods_tested": 210630,
+     "period_days": 2.1225680248324768,
+     "t0_btjd": 2037.5688922128436,
+     "duration_hours": 1.1925302936490552,
+     "depth_fraction": 0.0063221643300729324,
+     "sde": 225.86807890476902,
+     "snr": 108.92146444113406,
+     "transit_count": 1021,
+     "distinct_transit_count": 58,
+     "odd_even_mismatch_sigma": 0.29445735850199933
+    },
+    "triceratops": {
+     "FPP": 0.002110793432117619,
+     "NFPP": 0.0019375103157942956,
+     "folded_depth_observed": 0.004225283709289762,
+     "catalog_depth_used": 0.0080563340252,
+     "stars_considered": 2
+    }
+   }
+  },
+  {
+   "target": "TIC-419858461",
+   "toi": "3165.01",
+   "tfopwg_disp": "FP",
+   "v059": {
+    "E": "INCONCLUSIVE",
+    "S": "REFUTED",
+    "E_consensus": "INCONCLUSIVE",
+    "S_consensus": "INCONCLUSIVE",
+    "E_inconclusive_tests": [
+     "centroid_shift",
+     "plausibility"
+    ]
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_not_met"
+   },
+   "leo": {
+    "class": "FP",
+    "flags": {
+     "FA:weak": "threshold_not_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_not_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_not_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_not_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_not_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_not_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_not_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_met",
+     "FP:secondary": "threshold_not_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "unavailable",
+    "NFPP>0.1": "unavailable"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "ok",
+    "triceratops": "unavailable_timeout"
+   },
+   "cpu_seconds": {
+    "tls": 269.92,
+    "exovetter": 33.5,
+    "leo": 49.81,
+    "triceratops": 895.8
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.4026764,
+     "periods_tested": 105324,
+     "period_days": 2.5436295840485537,
+     "t0_btjd": 3041.9682437061033,
+     "duration_hours": 2.301758736403425,
+     "depth_fraction": 0.03815972830089687,
+     "sde": 111.51246036533092,
+     "snr": 59.28387125242469,
+     "transit_count": 426,
+     "distinct_transit_count": 37,
+     "odd_even_mismatch_sigma": 0.99662539845976
+    },
+    "triceratops": null
+   }
+  },
+  {
+   "target": "TIC-467783290",
+   "toi": "3753.01",
+   "tfopwg_disp": "FP",
+   "v059": {
+    "E": "REFUTED",
+    "S": "REFUTED",
+    "E_consensus": "INCONCLUSIVE",
+    "S_consensus": "REFUTED",
+    "E_inconclusive_tests": []
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_met"
+   },
+   "leo": {
+    "class": "FP",
+    "flags": {
+     "FA:weak": "threshold_not_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_not_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_not_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_not_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_not_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_not_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_met",
+     "FP:secondary": "threshold_not_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "threshold_not_met",
+    "NFPP>0.1": "threshold_not_met"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "ok",
+    "triceratops": "ok"
+   },
+   "cpu_seconds": {
+    "tls": 236.05,
+    "exovetter": 31.05,
+    "leo": 43.92,
+    "triceratops": 380.56
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.31325,
+     "periods_tested": 76278,
+     "period_days": 3.650187308408353,
+     "t0_btjd": 2477.7165070514634,
+     "duration_hours": 1.6949228144680402,
+     "depth_fraction": 0.007253969207750455,
+     "sde": 100.97072944090141,
+     "snr": 43.3880769259028,
+     "transit_count": 215,
+     "distinct_transit_count": 22,
+     "odd_even_mismatch_sigma": 2.5098506490300134
+    },
+    "triceratops": {
+     "FPP": 0.9999995962623688,
+     "NFPP": 8.182637191417687e-131,
+     "folded_depth_observed": 0.009547510044474738,
+     "catalog_depth_used": 0.009,
+     "stars_considered": 2
+    }
+   }
+  },
+  {
+   "target": "TIC-55275863",
+   "toi": "5515.01",
+   "tfopwg_disp": "PC",
+   "v059": {
+    "E": "INCONCLUSIVE",
+    "S": "SURVIVED",
+    "E_consensus": "INCONCLUSIVE",
+    "S_consensus": "INCONCLUSIVE",
+    "E_inconclusive_tests": [
+     "aperture_depth",
+     "event_consistency"
+    ]
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_not_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_not_met"
+   },
+   "leo": {
+    "class": "PC",
+    "flags": {
+     "FA:weak": "threshold_not_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_not_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_not_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_not_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_not_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_not_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_not_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_not_met",
+     "FP:secondary": "threshold_not_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "threshold_not_met",
+    "NFPP>0.1": "threshold_not_met"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "ok",
+    "triceratops": "ok"
+   },
+   "cpu_seconds": {
+    "tls": 221.3,
+    "exovetter": 30.05,
+    "leo": 41.45,
+    "triceratops": 239.2
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.42324635000000005,
+     "periods_tested": 76279,
+     "period_days": 8.592769009956923,
+     "t0_btjd": 2508.667641357391,
+     "duration_hours": 3.008777118484451,
+     "depth_fraction": 0.0006538435606248116,
+     "sde": 34.45216650381383,
+     "snr": 12.033780518454495,
+     "transit_count": 91,
+     "distinct_transit_count": 9,
+     "odd_even_mismatch_sigma": 0.12557748608903885
+    },
+    "triceratops": {
+     "FPP": 0.03966001003011732,
+     "NFPP": 2.6820848234089595e-11,
+     "folded_depth_observed": 0.0009680324452675526,
+     "catalog_depth_used": 0.0008855569232,
+     "stars_considered": 2
+    }
+   }
+  },
+  {
+   "target": "TIC-47244580",
+   "toi": "6450.01",
+   "tfopwg_disp": "CP",
+   "v059": {
+    "E": "INCONCLUSIVE",
+    "S": "INCONCLUSIVE",
+    "E_consensus": "INCONCLUSIVE",
+    "S_consensus": "INCONCLUSIVE",
+    "E_inconclusive_tests": [
+     "centroid_shift",
+     "secondary_eclipse"
+    ]
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_met"
+   },
+   "leo": {
+    "class": "PC",
+    "flags": {
+     "FA:weak": "threshold_not_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_not_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_not_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_not_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_not_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_not_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_not_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_not_met",
+     "FP:secondary": "threshold_not_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "threshold_not_met",
+    "NFPP>0.1": "threshold_not_met"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "ok",
+    "triceratops": "ok"
+   },
+   "cpu_seconds": {
+    "tls": 191.52,
+    "exovetter": 29.66,
+    "leo": 35.94,
+    "triceratops": 281.27
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.297,
+     "periods_tested": 2057,
+     "period_days": 3.610368218035737,
+     "t0_btjd": 3695.1933306162473,
+     "duration_hours": 2.434261799090428,
+     "depth_fraction": 0.005104050622702472,
+     "sde": 16.18651132507944,
+     "snr": 15.322924038487951,
+     "transit_count": 7,
+     "distinct_transit_count": 6,
+     "odd_even_mismatch_sigma": 0.9099206413287836
+    },
+    "triceratops": {
+     "FPP": 0.018134423474412298,
+     "NFPP": 5.616108648153475e-11,
+     "folded_depth_observed": 0.007170477486006743,
+     "catalog_depth_used": 0.006974999999999999,
+     "stars_considered": 2
+    }
+   }
+  },
+  {
+   "target": "TIC-146846569",
+   "toi": "734.01",
+   "tfopwg_disp": "FP",
+   "v059": {
+    "E": "WEAKENED",
+    "S": "WEAKENED",
+    "E_consensus": "WEAKENED",
+    "S_consensus": "WEAKENED",
+    "E_inconclusive_tests": [
+     "centroid_shift"
+    ]
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_met"
+   },
+   "leo": {
+    "class": "FP",
+    "flags": {
+     "FA:weak": "threshold_not_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_not_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_not_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_not_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_not_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_not_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_not_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_not_met",
+     "FP:secondary": "threshold_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "threshold_not_met",
+    "NFPP>0.1": "threshold_met"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "ok",
+    "triceratops": "ok"
+   },
+   "cpu_seconds": {
+    "tls": 386.19,
+    "exovetter": 27.2,
+    "leo": 43.2,
+    "triceratops": 32.89
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.1363245625,
+     "periods_tested": 216701,
+     "period_days": 4.7535686996727575,
+     "t0_btjd": 1545.4459040556492,
+     "duration_hours": 0.934171970466218,
+     "depth_fraction": 0.13639083520379502,
+     "sde": 199.05802917964968,
+     "snr": 55.327314438374756,
+     "transit_count": 470,
+     "distinct_transit_count": 24,
+     "odd_even_mismatch_sigma": 0.4927250998827048
+    },
+    "triceratops": {
+     "FPP": 0.8571428571428572,
+     "NFPP": 0.2857142857142857,
+     "folded_depth_observed": 0.20479945703246794,
+     "catalog_depth_used": 0.2257931060958,
+     "stars_considered": 3
+    }
+   }
+  },
+  {
+   "target": "TIC-259172249",
+   "toi": "5218.01",
+   "tfopwg_disp": "CP",
+   "v059": {
+    "E": "INCONCLUSIVE",
+    "S": "INCONCLUSIVE",
+    "E_consensus": "INCONCLUSIVE",
+    "S_consensus": "INCONCLUSIVE",
+    "E_inconclusive_tests": [
+     "centroid_shift",
+     "event_consistency",
+     "systematics"
+    ]
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_met"
+   },
+   "leo": {
+    "class": "PC",
+    "flags": {
+     "FA:weak": "threshold_not_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_not_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_not_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_not_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_not_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_not_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_not_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_not_met",
+     "FP:secondary": "threshold_not_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "threshold_met",
+    "NFPP>0.1": "threshold_not_met"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "ok",
+    "triceratops": "ok"
+   },
+   "cpu_seconds": {
+    "tls": 426.02,
+    "exovetter": 35.95,
+    "leo": 121.56,
+    "triceratops": 335.95
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.2932832,
+     "periods_tested": 81364,
+     "period_days": 4.291387085277313,
+     "t0_btjd": 2825.4018068440314,
+     "duration_hours": 1.983246866710361,
+     "depth_fraction": 0.014655924003974086,
+     "sde": 102.41674679550425,
+     "snr": 38.342644425572516,
+     "transit_count": 196,
+     "distinct_transit_count": 87,
+     "odd_even_mismatch_sigma": 0.5797857630394642
+    },
+    "triceratops": {
+     "FPP": 0.0036952664728483464,
+     "NFPP": 1.1241993134011299e-07,
+     "folded_depth_observed": 0.017116144139020517,
+     "catalog_depth_used": 0.019180723377499997,
+     "stars_considered": 5
+    }
+   }
+  },
+  {
+   "target": "TIC-452866790",
+   "toi": "488.01",
+   "tfopwg_disp": "CP",
+   "v059": {
+    "E": "SURVIVED",
+    "S": "SURVIVED",
+    "E_consensus": "SURVIVED",
+    "S_consensus": "SURVIVED",
+    "E_inconclusive_tests": [
+     "event_consistency"
+    ]
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_not_met"
+   },
+   "leo": {
+    "class": "PC",
+    "flags": {
+     "FA:weak": "threshold_not_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_not_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_not_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_not_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_not_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_not_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_not_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_not_met",
+     "FP:secondary": "threshold_not_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "threshold_not_met",
+    "NFPP>0.1": "threshold_not_met"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "ok",
+    "triceratops": "ok"
+   },
+   "cpu_seconds": {
+    "tls": 291.0,
+    "exovetter": 35.52,
+    "leo": 43.97,
+    "triceratops": 411.06
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.1210250375,
+     "periods_tested": 216175,
+     "period_days": 1.1980067488331425,
+     "t0_btjd": 1492.2021103644026,
+     "duration_hours": 0.8951855990809064,
+     "depth_fraction": 0.00089095745373724,
+     "sde": 102.95391585314296,
+     "snr": 16.575034673244947,
+     "transit_count": 1858,
+     "distinct_transit_count": 76,
+     "odd_even_mismatch_sigma": 0.5992054095813636
+    },
+    "triceratops": {
+     "FPP": 0.004324307074125344,
+     "NFPP": 0.0012978750525005098,
+     "folded_depth_observed": 0.0013436987672109657,
+     "catalog_depth_used": 0.0011503177297,
+     "stars_considered": 3
+    }
+   }
+  },
+  {
+   "target": "TIC-46432937",
+   "toi": "7716.01",
+   "tfopwg_disp": "KP",
+   "v059": {
+    "E": "SURVIVED",
+    "S": "SURVIVED",
+    "E_consensus": "SURVIVED",
+    "S_consensus": "SURVIVED",
+    "E_inconclusive_tests": [
+     "centroid_shift"
+    ]
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_met"
+   },
+   "leo": {
+    "class": "PC",
+    "flags": {
+     "FA:weak": "threshold_not_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_not_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_not_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_not_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_not_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_not_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_not_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_not_met",
+     "FP:secondary": "threshold_not_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "unavailable",
+    "NFPP>0.1": "unavailable"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "ok",
+    "triceratops": "ok"
+   },
+   "cpu_seconds": {
+    "tls": 208.58,
+    "exovetter": 32.64,
+    "leo": 36.62,
+    "triceratops": 359.39
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.153675825,
+     "periods_tested": 29364,
+     "period_days": 1.4405104045559558,
+     "t0_btjd": 3989.4046257629548,
+     "duration_hours": 1.075836650414918,
+     "depth_fraction": 0.034758817750244586,
+     "sde": 108.81037027215619,
+     "snr": 250.56220913789642,
+     "transit_count": 210,
+     "distinct_transit_count": 45,
+     "odd_even_mismatch_sigma": 0.05377213325937814
+    },
+    "triceratops": {
+     "FPP": -1.7763568394002505e-15,
+     "NFPP": 0.0,
+     "folded_depth_observed": 0.04652911135336468,
+     "catalog_depth_used": 0.047151646855699995,
+     "stars_considered": 2
+    }
+   }
+  },
+  {
+   "target": "TIC-161223358",
+   "toi": "2415.01",
+   "tfopwg_disp": "FP",
+   "v059": {
+    "E": "WEAKENED",
+    "S": "WEAKENED",
+    "E_consensus": "WEAKENED",
+    "S_consensus": "WEAKENED",
+    "E_inconclusive_tests": [
+     "centroid_shift",
+     "event_consistency"
+    ]
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_met"
+   },
+   "leo": {
+    "class": "FP",
+    "flags": {
+     "FA:weak": "threshold_not_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_not_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_not_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_not_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_not_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_not_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_not_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_not_met",
+     "FP:secondary": "threshold_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "threshold_met",
+    "NFPP>0.1": "threshold_not_met"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "ok",
+    "triceratops": "ok"
+   },
+   "cpu_seconds": {
+    "tls": 443.59,
+    "exovetter": 49.53,
+    "leo": 78.8,
+    "triceratops": 668.58
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.125,
+     "periods_tested": 210894,
+     "period_days": 1.0307365837231093,
+     "t0_btjd": 2062.0159506284676,
+     "duration_hours": 0.8471337227566049,
+     "depth_fraction": 0.03590367908125336,
+     "sde": 148.16077076267413,
+     "snr": 59.6280773309018,
+     "transit_count": 2107,
+     "distinct_transit_count": 144,
+     "odd_even_mismatch_sigma": 0.5617545806647959
+    },
+    "triceratops": {
+     "FPP": 7.316369732279782e-14,
+     "NFPP": 0.0,
+     "folded_depth_observed": 0.04064830805123243,
+     "catalog_depth_used": 0.037197885787099996,
+     "stars_considered": 2
+    }
+   }
+  },
+  {
+   "target": "TIC-124379043",
+   "toi": "2803.01",
+   "tfopwg_disp": "CP",
+   "v059": {
+    "E": "WEAKENED",
+    "S": "WEAKENED",
+    "E_consensus": "WEAKENED",
+    "S_consensus": "WEAKENED",
+    "E_inconclusive_tests": [
+     "centroid_shift"
+    ]
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_not_met"
+   },
+   "leo": {
+    "class": "PC",
+    "flags": {
+     "FA:weak": "threshold_not_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_not_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_not_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_not_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_not_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_not_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_not_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_not_met",
+     "FP:secondary": "threshold_not_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "threshold_met",
+    "NFPP>0.1": "threshold_not_met"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "ok",
+    "triceratops": "ok"
+   },
+   "cpu_seconds": {
+    "tls": 224.52,
+    "exovetter": 29.92,
+    "leo": 35.47,
+    "triceratops": 393.61
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.366875,
+     "periods_tested": 60693,
+     "period_days": 1.9622801160938512,
+     "t0_btjd": 3667.634693229627,
+     "duration_hours": 2.6014579542249963,
+     "depth_fraction": 0.016465919054136302,
+     "sde": 112.12263332429258,
+     "snr": 109.34469395009064,
+     "transit_count": 318,
+     "distinct_transit_count": 20,
+     "odd_even_mismatch_sigma": 1.2418529620026078
+    },
+    "triceratops": {
+     "FPP": 7.071010443837622e-13,
+     "NFPP": 8.804635947356727e-20,
+     "folded_depth_observed": 0.01752139005428377,
+     "catalog_depth_used": 0.020909999999999998,
+     "stars_considered": 2
+    }
+   }
+  },
+  {
+   "target": "TIC-172110606",
+   "toi": "5135.01",
+   "tfopwg_disp": "FP",
+   "v059": {
+    "E": "REFUTED",
+    "S": "REFUTED",
+    "E_consensus": "REFUTED",
+    "S_consensus": "REFUTED",
+    "E_inconclusive_tests": [
+     "aperture_depth",
+     "centroid_shift",
+     "systematics"
+    ]
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_not_met"
+   },
+   "leo": {
+    "class": "PC",
+    "flags": {
+     "FA:weak": "threshold_not_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_not_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_not_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_not_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_not_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_not_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_not_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_not_met",
+     "FP:secondary": "threshold_not_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "unavailable",
+    "NFPP>0.1": "unavailable"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "ok",
+    "triceratops": "unavailable_timeout"
+   },
+   "cpu_seconds": {
+    "tls": 253.94,
+    "exovetter": 32.61,
+    "leo": 47.36,
+    "triceratops": 895.25
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.320375,
+     "periods_tested": 142814,
+     "period_days": 2.0197253145495586,
+     "t0_btjd": 1844.3830798803072,
+     "duration_hours": 2.4341826024965973,
+     "depth_fraction": 0.0002310149533082395,
+     "sde": 57.13267820792547,
+     "snr": 18.14058558844792,
+     "transit_count": 727,
+     "distinct_transit_count": 53,
+     "odd_even_mismatch_sigma": 1.7570933411078973
+    },
+    "triceratops": null
+   }
+  },
+  {
+   "target": "TIC-295354126",
+   "toi": "1965.01",
+   "tfopwg_disp": "FP",
+   "v059": {
+    "E": "REFUTED",
+    "S": "REFUTED",
+    "E_consensus": "REFUTED",
+    "S_consensus": "REFUTED",
+    "E_inconclusive_tests": [
+     "aperture_depth",
+     "centroid_shift",
+     "plausibility",
+     "systematics"
+    ]
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_not_met"
+   },
+   "leo": {
+    "class": "unavailable",
+    "flags": {}
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "unavailable",
+    "NFPP>0.1": "unavailable"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "unavailable",
+    "triceratops": "failed"
+   },
+   "cpu_seconds": {
+    "tls": 193.95,
+    "exovetter": 29.8,
+    "leo": 6.73,
+    "triceratops": 225.86
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.4015,
+     "periods_tested": 2426,
+     "period_days": 2.278538656836816,
+     "t0_btjd": 2334.6196100225707,
+     "duration_hours": 2.8977691006470656,
+     "depth_fraction": 0.0007771699763964302,
+     "sde": 14.96709059461021,
+     "snr": 44.48373511483889,
+     "transit_count": 12,
+     "distinct_transit_count": 12,
+     "odd_even_mismatch_sigma": 3.6288217511382603
+    },
+    "triceratops": {}
+   }
+  },
+  {
+   "target": "TIC-301051430",
+   "toi": "923.01",
+   "tfopwg_disp": "FP",
+   "v059": {
+    "E": "INCONCLUSIVE",
+    "S": "INCONCLUSIVE",
+    "E_consensus": "INCONCLUSIVE",
+    "S_consensus": "INCONCLUSIVE",
+    "E_inconclusive_tests": [
+     "aperture_depth",
+     "event_consistency",
+     "systematics"
+    ]
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_not_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_not_met"
+   },
+   "leo": {
+    "class": "PC",
+    "flags": {
+     "FA:weak": "threshold_not_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_not_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_not_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_not_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_not_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_not_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_not_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_not_met",
+     "FP:secondary": "threshold_not_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "threshold_not_met",
+    "NFPP>0.1": "threshold_not_met"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "ok",
+    "triceratops": "ok"
+   },
+   "cpu_seconds": {
+    "tls": 161.83,
+    "exovetter": 31.19,
+    "leo": 31.98,
+    "triceratops": 461.44
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.19370813749999996,
+     "periods_tested": 5252,
+     "period_days": 3.273933756071884,
+     "t0_btjd": 2117.396418266875,
+     "duration_hours": 1.4764556905125377,
+     "depth_fraction": 0.0006542912248899135,
+     "sde": 19.05962031482797,
+     "snr": 8.001426261800443,
+     "transit_count": 17,
+     "distinct_transit_count": 16,
+     "odd_even_mismatch_sigma": 0.9877155369242048
+    },
+    "triceratops": {
+     "FPP": 0.0646305834030837,
+     "NFPP": 0.0007221925764385518,
+     "folded_depth_observed": 0.0014210278119946018,
+     "catalog_depth_used": 0.0009180803144,
+     "stars_considered": 3
+    }
+   }
+  },
+  {
+   "target": "TIC-18318288",
+   "toi": "6086.01",
+   "tfopwg_disp": "CP",
+   "v059": {
+    "E": "INCONCLUSIVE",
+    "S": "INCONCLUSIVE",
+    "E_consensus": "INCONCLUSIVE",
+    "S_consensus": "INCONCLUSIVE",
+    "E_inconclusive_tests": [
+     "aperture_depth",
+     "event_consistency",
+     "systematics"
+    ]
+   },
+   "tls": {
+    "detection": "threshold_met",
+    "recovery": "threshold_met"
+   },
+   "exovetter": {
+    "ModShift": "no_published_threshold",
+    "OddEven": "no_published_threshold",
+    "TransitPhaseCoverage": "no_published_threshold",
+    "Sweet": "threshold_not_met",
+    "Lpp": "unavailable",
+    "Centroid": "threshold_not_met"
+   },
+   "leo": {
+    "class": "FA",
+    "flags": {
+     "FA:weak": "threshold_not_met",
+     "FA:invalid_transits": "threshold_not_met",
+     "FA:bad_shape": "threshold_not_met",
+     "FA:non_unique": "threshold_not_met",
+     "FA:chases": "threshold_not_met",
+     "FA:dmm": "threshold_not_met",
+     "FA:single_event": "threshold_not_met",
+     "FA:bad_fit": "threshold_not_met",
+     "FA:sinusoidal": "threshold_not_met",
+     "FA:unphysical_duration": "threshold_not_met",
+     "FA:asymmetric": "threshold_not_met",
+     "FA:chi": "threshold_met",
+     "FA:data_gapped": "threshold_not_met",
+     "FP:odd_even": "threshold_not_met",
+     "FP:vshaped": "threshold_not_met",
+     "FP:large": "threshold_not_met",
+     "FP:secondary": "threshold_not_met"
+    }
+   },
+   "triceratops": {
+    "FPP<0.015 and NFPP<0.001": "unavailable",
+    "NFPP>0.1": "unavailable"
+   },
+   "status": {
+    "tls": "ok",
+    "exovetter": "ok",
+    "leo": "ok",
+    "triceratops": "not_run"
+   },
+   "cpu_seconds": {
+    "tls": 236.58,
+    "exovetter": 36.28,
+    "leo": 39.12,
+    "triceratops": null
+   },
+   "native": {
+    "tls": {
+     "window_length_days": 0.103337525,
+     "periods_tested": 147919,
+     "period_days": 1.3888663117292894,
+     "t0_btjd": 1984.7610484763845,
+     "duration_hours": 0.7092446485231355,
+     "depth_fraction": 0.0011822717089071677,
+     "sde": 33.97154883805657,
+     "snr": 8.562503875359816,
+     "transit_count": 1096,
+     "distinct_transit_count": 74,
+     "odd_even_mismatch_sigma": 0.4424090754776963
+    },
+    "triceratops": null
+   }
+  }
+ ],
+ "G1": {
+  "E": {
+   "inconclusive_tois": 14,
+   "outputs": {
+    "tls:detection": {
+     "n": 14,
+     "reached": 14
+    },
+    "tls:recovery": {
+     "n": 14,
+     "reached": 14
+    },
+    "exovetter:ModShift": {
+     "n": 14,
+     "reached": 0
+    },
+    "exovetter:OddEven": {
+     "n": 14,
+     "reached": 0
+    },
+    "exovetter:TransitPhaseCoverage": {
+     "n": 14,
+     "reached": 0
+    },
+    "exovetter:Sweet": {
+     "n": 14,
+     "reached": 13
+    },
+    "exovetter:Lpp": {
+     "n": 14,
+     "reached": 0
+    },
+    "exovetter:Centroid": {
+     "n": 14,
+     "reached": 13
+    },
+    "leo:FA:weak": {
+     "n": 14,
+     "reached": 14
+    },
+    "leo:FA:invalid_transits": {
+     "n": 14,
+     "reached": 14
+    },
+    "leo:FA:bad_shape": {
+     "n": 14,
+     "reached": 14
+    },
+    "leo:FA:non_unique": {
+     "n": 14,
+     "reached": 14
+    },
+    "leo:FA:chases": {
+     "n": 14,
+     "reached": 14
+    },
+    "leo:FA:dmm": {
+     "n": 14,
+     "reached": 14
+    },
+    "leo:FA:single_event": {
+     "n": 14,
+     "reached": 14
+    },
+    "leo:FA:bad_fit": {
+     "n": 14,
+     "reached": 14
+    },
+    "leo:FA:sinusoidal": {
+     "n": 14,
+     "reached": 14
+    },
+    "leo:FA:unphysical_duration": {
+     "n": 14,
+     "reached": 14
+    },
+    "leo:FA:asymmetric": {
+     "n": 14,
+     "reached": 14
+    },
+    "leo:FA:chi": {
+     "n": 14,
+     "reached": 14
+    },
+    "leo:FA:data_gapped": {
+     "n": 14,
+     "reached": 14
+    },
+    "leo:FP:odd_even": {
+     "n": 14,
+     "reached": 14
+    },
+    "leo:FP:vshaped": {
+     "n": 14,
+     "reached": 14
+    },
+    "leo:FP:large": {
+     "n": 14,
+     "reached": 14
+    },
+    "leo:FP:secondary": {
+     "n": 14,
+     "reached": 14
+    },
+    "leo:class": {
+     "n": 14,
+     "reached": 14
+    },
+    "triceratops:FPP<0.015 and NFPP<0.001": {
+     "n": 14,
+     "reached": 11
+    },
+    "triceratops:NFPP>0.1": {
+     "n": 14,
+     "reached": 11
+    }
+   }
+  },
+  "E_consensus": {
+   "inconclusive_tois": 16,
+   "outputs": {
+    "tls:detection": {
+     "n": 16,
+     "reached": 16
+    },
+    "tls:recovery": {
+     "n": 16,
+     "reached": 16
+    },
+    "exovetter:ModShift": {
+     "n": 16,
+     "reached": 0
+    },
+    "exovetter:OddEven": {
+     "n": 16,
+     "reached": 0
+    },
+    "exovetter:TransitPhaseCoverage": {
+     "n": 16,
+     "reached": 0
+    },
+    "exovetter:Sweet": {
+     "n": 16,
+     "reached": 15
+    },
+    "exovetter:Lpp": {
+     "n": 16,
+     "reached": 0
+    },
+    "exovetter:Centroid": {
+     "n": 16,
+     "reached": 15
+    },
+    "leo:FA:weak": {
+     "n": 16,
+     "reached": 16
+    },
+    "leo:FA:invalid_transits": {
+     "n": 16,
+     "reached": 16
+    },
+    "leo:FA:bad_shape": {
+     "n": 16,
+     "reached": 16
+    },
+    "leo:FA:non_unique": {
+     "n": 16,
+     "reached": 16
+    },
+    "leo:FA:chases": {
+     "n": 16,
+     "reached": 16
+    },
+    "leo:FA:dmm": {
+     "n": 16,
+     "reached": 16
+    },
+    "leo:FA:single_event": {
+     "n": 16,
+     "reached": 16
+    },
+    "leo:FA:bad_fit": {
+     "n": 16,
+     "reached": 16
+    },
+    "leo:FA:sinusoidal": {
+     "n": 16,
+     "reached": 16
+    },
+    "leo:FA:unphysical_duration": {
+     "n": 16,
+     "reached": 16
+    },
+    "leo:FA:asymmetric": {
+     "n": 16,
+     "reached": 16
+    },
+    "leo:FA:chi": {
+     "n": 16,
+     "reached": 16
+    },
+    "leo:FA:data_gapped": {
+     "n": 16,
+     "reached": 16
+    },
+    "leo:FP:odd_even": {
+     "n": 16,
+     "reached": 16
+    },
+    "leo:FP:vshaped": {
+     "n": 16,
+     "reached": 16
+    },
+    "leo:FP:large": {
+     "n": 16,
+     "reached": 16
+    },
+    "leo:FP:secondary": {
+     "n": 16,
+     "reached": 16
+    },
+    "leo:class": {
+     "n": 16,
+     "reached": 16
+    },
+    "triceratops:FPP<0.015 and NFPP<0.001": {
+     "n": 16,
+     "reached": 13
+    },
+    "triceratops:NFPP>0.1": {
+     "n": 16,
+     "reached": 13
+    }
+   }
+  },
+  "S": {
+   "inconclusive_tois": 4,
+   "outputs": {
+    "tls:detection": {
+     "n": 4,
+     "reached": 4
+    },
+    "tls:recovery": {
+     "n": 4,
+     "reached": 4
+    },
+    "exovetter:ModShift": {
+     "n": 4,
+     "reached": 0
+    },
+    "exovetter:OddEven": {
+     "n": 4,
+     "reached": 0
+    },
+    "exovetter:TransitPhaseCoverage": {
+     "n": 4,
+     "reached": 0
+    },
+    "exovetter:Sweet": {
+     "n": 4,
+     "reached": 4
+    },
+    "exovetter:Lpp": {
+     "n": 4,
+     "reached": 0
+    },
+    "exovetter:Centroid": {
+     "n": 4,
+     "reached": 4
+    },
+    "leo:FA:weak": {
+     "n": 4,
+     "reached": 4
+    },
+    "leo:FA:invalid_transits": {
+     "n": 4,
+     "reached": 4
+    },
+    "leo:FA:bad_shape": {
+     "n": 4,
+     "reached": 4
+    },
+    "leo:FA:non_unique": {
+     "n": 4,
+     "reached": 4
+    },
+    "leo:FA:chases": {
+     "n": 4,
+     "reached": 4
+    },
+    "leo:FA:dmm": {
+     "n": 4,
+     "reached": 4
+    },
+    "leo:FA:single_event": {
+     "n": 4,
+     "reached": 4
+    },
+    "leo:FA:bad_fit": {
+     "n": 4,
+     "reached": 4
+    },
+    "leo:FA:sinusoidal": {
+     "n": 4,
+     "reached": 4
+    },
+    "leo:FA:unphysical_duration": {
+     "n": 4,
+     "reached": 4
+    },
+    "leo:FA:asymmetric": {
+     "n": 4,
+     "reached": 4
+    },
+    "leo:FA:chi": {
+     "n": 4,
+     "reached": 4
+    },
+    "leo:FA:data_gapped": {
+     "n": 4,
+     "reached": 4
+    },
+    "leo:FP:odd_even": {
+     "n": 4,
+     "reached": 4
+    },
+    "leo:FP:vshaped": {
+     "n": 4,
+     "reached": 4
+    },
+    "leo:FP:large": {
+     "n": 4,
+     "reached": 4
+    },
+    "leo:FP:secondary": {
+     "n": 4,
+     "reached": 4
+    },
+    "leo:class": {
+     "n": 4,
+     "reached": 4
+    },
+    "triceratops:FPP<0.015 and NFPP<0.001": {
+     "n": 4,
+     "reached": 3
+    },
+    "triceratops:NFPP>0.1": {
+     "n": 4,
+     "reached": 3
+    }
+   }
+  },
+  "S_consensus": {
+   "inconclusive_tois": 12,
+   "outputs": {
+    "tls:detection": {
+     "n": 12,
+     "reached": 12
+    },
+    "tls:recovery": {
+     "n": 12,
+     "reached": 12
+    },
+    "exovetter:ModShift": {
+     "n": 12,
+     "reached": 0
+    },
+    "exovetter:OddEven": {
+     "n": 12,
+     "reached": 0
+    },
+    "exovetter:TransitPhaseCoverage": {
+     "n": 12,
+     "reached": 0
+    },
+    "exovetter:Sweet": {
+     "n": 12,
+     "reached": 11
+    },
+    "exovetter:Lpp": {
+     "n": 12,
+     "reached": 0
+    },
+    "exovetter:Centroid": {
+     "n": 12,
+     "reached": 11
+    },
+    "leo:FA:weak": {
+     "n": 12,
+     "reached": 12
+    },
+    "leo:FA:invalid_transits": {
+     "n": 12,
+     "reached": 12
+    },
+    "leo:FA:bad_shape": {
+     "n": 12,
+     "reached": 12
+    },
+    "leo:FA:non_unique": {
+     "n": 12,
+     "reached": 12
+    },
+    "leo:FA:chases": {
+     "n": 12,
+     "reached": 12
+    },
+    "leo:FA:dmm": {
+     "n": 12,
+     "reached": 12
+    },
+    "leo:FA:single_event": {
+     "n": 12,
+     "reached": 12
+    },
+    "leo:FA:bad_fit": {
+     "n": 12,
+     "reached": 12
+    },
+    "leo:FA:sinusoidal": {
+     "n": 12,
+     "reached": 12
+    },
+    "leo:FA:unphysical_duration": {
+     "n": 12,
+     "reached": 12
+    },
+    "leo:FA:asymmetric": {
+     "n": 12,
+     "reached": 12
+    },
+    "leo:FA:chi": {
+     "n": 12,
+     "reached": 12
+    },
+    "leo:FA:data_gapped": {
+     "n": 12,
+     "reached": 12
+    },
+    "leo:FP:odd_even": {
+     "n": 12,
+     "reached": 12
+    },
+    "leo:FP:vshaped": {
+     "n": 12,
+     "reached": 12
+    },
+    "leo:FP:large": {
+     "n": 12,
+     "reached": 12
+    },
+    "leo:FP:secondary": {
+     "n": 12,
+     "reached": 12
+    },
+    "leo:class": {
+     "n": 12,
+     "reached": 12
+    },
+    "triceratops:FPP<0.015 and NFPP<0.001": {
+     "n": 12,
+     "reached": 9
+    },
+    "triceratops:NFPP>0.1": {
+     "n": 12,
+     "reached": 9
+    }
+   }
+  }
+ },
+ "G2": {
+  "centroid: exovetter Centroid vs TRICERATOPS NFPP>0.1": {
+   "both_reached": 17,
+   "agree": 10
+  },
+  "variability: exovetter Sweet vs LEO FA:sinusoidal": {
+   "both_reached": 22,
+   "agree": 7
+  },
+  "detection: TLS SDE>=9 vs LEO FA:weak (inverted)": {
+   "both_reached": 23,
+   "agree": 20
+  }
+ },
+ "G3": {
+  "PC": {
+   "n": 3,
+   "leo_class": {
+    "PC": 3
+   },
+   "triceratops_both": {
+    "threshold_met": 1,
+    "threshold_not_met": 2
+   }
+  },
+  "CP": {
+   "n": 10,
+   "leo_class": {
+    "FA": 3,
+    "PC": 7
+   },
+   "triceratops_both": {
+    "threshold_not_met": 7,
+    "threshold_met": 2,
+    "unavailable": 1
+   }
+  },
+  "FP": {
+   "n": 10,
+   "leo_class": {
+    "FA": 2,
+    "PC": 3,
+    "FP": 4,
+    "unavailable": 1
+   },
+   "triceratops_both": {
+    "threshold_met": 2,
+    "unavailable": 4,
+    "threshold_not_met": 4
+   }
+  },
+  "KP": {
+   "n": 1,
+   "leo_class": {
+    "PC": 1
+   },
+   "triceratops_both": {
+    "unavailable": 1
+   }
+  }
+ },
+ "G4": {
+  "tls": {
+   "runs": 24,
+   "cpu_seconds_total": 6652.2,
+   "median": 236.9,
+   "max": 443.6
+  },
+  "exovetter": {
+   "runs": 24,
+   "cpu_seconds_total": 781.6,
+   "median": 33.1,
+   "max": 49.5
+  },
+  "leo": {
+   "runs": 24,
+   "cpu_seconds_total": 1141.0,
+   "median": 40.3,
+   "max": 122.1
+  },
+  "triceratops": {
+   "runs": 23,
+   "cpu_seconds_total": 11123.5,
+   "median": 430.6,
+   "max": 895.8
+  }
+ },
+ "G5": {
+  "tls:detection": {
+   "threshold_met": 24
+  },
+  "tls:recovery": {
+   "threshold_met": 24
+  },
+  "exovetter:ModShift": {
+   "no_published_threshold": 23,
+   "unavailable": 1
+  },
+  "exovetter:OddEven": {
+   "no_published_threshold": 23,
+   "unavailable": 1
+  },
+  "exovetter:TransitPhaseCoverage": {
+   "no_published_threshold": 23,
+   "unavailable": 1
+  },
+  "exovetter:Sweet": {
+   "threshold_met": 16,
+   "threshold_not_met": 7,
+   "unavailable": 1
+  },
+  "exovetter:Lpp": {
+   "unavailable": 24
+  },
+  "exovetter:Centroid": {
+   "threshold_met": 9,
+   "threshold_not_met": 14,
+   "unavailable": 1
+  },
+  "leo:FA:weak": {
+   "threshold_not_met": 20,
+   "threshold_met": 3
+  },
+  "leo:FA:invalid_transits": {
+   "threshold_not_met": 23
+  },
+  "leo:FA:bad_shape": {
+   "threshold_not_met": 23
+  },
+  "leo:FA:non_unique": {
+   "threshold_not_met": 21,
+   "threshold_met": 2
+  },
+  "leo:FA:chases": {
+   "threshold_not_met": 23
+  },
+  "leo:FA:dmm": {
+   "threshold_not_met": 21,
+   "threshold_met": 2
+  },
+  "leo:FA:single_event": {
+   "threshold_not_met": 23
+  },
+  "leo:FA:bad_fit": {
+   "threshold_not_met": 22,
+   "threshold_met": 1
+  },
+  "leo:FA:sinusoidal": {
+   "threshold_not_met": 23
+  },
+  "leo:FA:unphysical_duration": {
+   "threshold_not_met": 22,
+   "threshold_met": 1
+  },
+  "leo:FA:asymmetric": {
+   "threshold_not_met": 23
+  },
+  "leo:FA:chi": {
+   "threshold_not_met": 19,
+   "threshold_met": 4
+  },
+  "leo:FA:data_gapped": {
+   "threshold_not_met": 23
+  },
+  "leo:FP:odd_even": {
+   "threshold_not_met": 22,
+   "threshold_met": 1
+  },
+  "leo:FP:vshaped": {
+   "threshold_not_met": 23
+  },
+  "leo:FP:large": {
+   "threshold_not_met": 21,
+   "threshold_met": 2
+  },
+  "leo:FP:secondary": {
+   "threshold_not_met": 19,
+   "threshold_met": 4
+  },
+  "leo:class": {
+   "threshold_met": 23,
+   "unavailable": 1
+  },
+  "triceratops:FPP<0.015 and NFPP<0.001": {
+   "threshold_met": 5,
+   "threshold_not_met": 13,
+   "unavailable": 6
+  },
+  "triceratops:NFPP>0.1": {
+   "threshold_not_met": 17,
+   "unavailable": 6,
+   "threshold_met": 1
+  }
+ }
+}

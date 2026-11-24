@@ -1,0 +1,109 @@
+{
+ "target": "TIC-301051430",
+ "toi": "923.01",
+ "engine": "exovetter",
+ "status": "ok",
+ "cpu_seconds": 31.19,
+ "wall_seconds": 31.764,
+ "result": {
+  "engine": "exovetter",
+  "mode": "exploratory",
+  "metrics": {},
+  "vetters": {
+   "ModShift": {
+    "status": "ok",
+    "native": {
+     "pri": 0.0,
+     "phase_pri": 0.0,
+     "sec": 262.0,
+     "phase_sec": 1.6921306173570019,
+     "ter": 139.0,
+     "phase_ter": 0.8977334191321499,
+     "pos": 149.0,
+     "phase_pos": 0.962318557199211,
+     "sigma_pri": -3644.6141781006195,
+     "sigma_sec": -1059.3781518564283,
+     "sigma_ter": -979.2484510873417,
+     "sigma_pos": 1082.5428388610294,
+     "false_alarm_threshold": 2.3316511008486493,
+     "Fred": 65.9324855498136
+    }
+   },
+   "OddEven": {
+    "status": "ok",
+    "native": {
+     "oe_sigma": 0.11897771599572031,
+     "odd_depth": [
+      0.9992503835681156,
+      0.0017689301841359959
+     ],
+     "even_depth": [
+      0.9995480235832647,
+      0.0017689301841359959
+     ]
+    }
+   },
+   "TransitPhaseCoverage": {
+    "status": "ok",
+    "native": {
+     "transit_phase_coverage": 1.0
+    }
+   },
+   "Sweet": {
+    "status": "ok",
+    "native": {
+     "msg": "OK: SWEET finds no out-of-transit variability at transit period",
+     "amp_half_period": [
+      2.9712750625846418e-05,
+      1.3333343283489604e-05,
+      2.228454633928093
+     ],
+     "amp_period": [
+      1.7383367418745754e-05,
+      1.3333990115830145e-05,
+      1.303688338429783
+     ],
+     "amp_twice_period": [
+      7.08847330636049e-06,
+      1.3334278216168197e-05,
+      0.5315978256524985
+     ]
+    }
+   },
+   "Lpp": {
+    "status": "unavailable",
+    "reason": "its map file is remote and was not staged as a verified local input"
+   },
+   "Centroid": {
+    "status": "per_sector",
+    "sectors": [
+     {
+      "file": "tess2020266004630-s0030-0000000301051430-0195-s_tp.fits",
+      "status": "ok",
+      "offset_pix": 0.48981889437596093,
+      "significance": 0.35827671601714295
+     },
+     {
+      "file": "tess2020294194027-s0031-0000000301051430-0198-s_tp.fits",
+      "status": "ok",
+      "offset_pix": 0.2507430436325399,
+      "significance": 0.6724295020501126
+     }
+    ]
+   }
+  },
+  "versions": {
+   "exovetter": "0.0.16",
+   "lightkurve": "2.6.0"
+  },
+  "coverage": {
+   "cadences": 33533,
+   "sectors": [
+    30,
+    31
+   ]
+  },
+  "status": "ok",
+  "worker_process_cpu_seconds": 30.109375
+ }
+}
