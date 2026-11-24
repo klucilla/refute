@@ -96,3 +96,18 @@ source commit, the correction and its impact.
   `MANIFEST-sha256.json`, and the Drive copy was renamed to match. Its bytes and SHA-256 are
   unchanged, and the local and Drive manifests are equal.
 - **Impact:** none: the file was a helper of the redaction of errata entry 1.
+
+## 2026-11-24: entry 9, the report corrected in place before its approval
+
+- **Source:** `docs/reports/v0.5.10-report.md` at `d5a564d`, a working report, not yet approved.
+- **Correction,** by the maintainer's decision of 2026-11-24 received at 17:50 local (#218, comment
+  7144131066):
+  - **Added:**
+    - section 8, "Declared limits", with each criterion not met in three groups;
+    - section 9, "Rules carried into the next phase";
+    - the approval header;
+    - a note that part (f) is exploratory and post hoc and not used as evidence.
+  - **Exit-criteria table:** marked as the gate found it.
+  - **Wording:** "five third-party engines" became "five third-party tools, run as four engines".
+- **Impact:** no value changes, and no query, tool or recount ran. The report is approved after this
+  correction.

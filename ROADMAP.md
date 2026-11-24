@@ -73,13 +73,28 @@ how later work is done.
 
 ## Current phase
 
-**v0.5.10 Census and feasibility** (opened on 2026-11-24 at 15:52Z, when the maintainer's decision
-received at 12:51 local approved its charter in commit `b71fa48`, #218, comments 7136727624 and
-7136761163; see [the section below](#v0510-census-and-feasibility)).
-- **Charter:** [docs/plans/v0.5.10-charter.md](docs/plans/v0.5.10-charter.md) (Process diet 2).
-- **Exploratory from start to end:** counts, feasibility and an engine trial; nothing is a
-  verdict, a candidate or a claim. No lock, no drand round, no change in `src/`.
-- **Caps:** 6 CPU-h, 10 GB of downloads, 10 GB of disk peak. **Time box:** to 2026-12-01.
+**None is open.** Opening the next phase is the maintainer's decision.
+
+### Previous phase record: v0.5.10 Census and feasibility
+
+**v0.5.10 Census and feasibility: closed on 2026-11-24 with declared limits (gate `REFUTED`)**, by
+the maintainer's decision received at 17:50 local (#218, comment 7144131066), with no new gate.
+It had opened on 2026-11-24 at 15:52Z (charter `b71fa48`, amendment `d1301ad`); see
+[the section below](#v0510-census-and-feasibility).
+- **The phase's answer is the ranking of the routes,** which is provisional: (d1) first, then (e),
+  then the Kepler field. It is exit criterion 6, the only one the gate found met.
+- **The limits are declared** in the report's section 8: what is not feasible now, the record gaps
+  and the deviations.
+  - **The limits label:** 'closed with declared limits (gate REFUTED); does not meet criteria 1,
+    2, 3, 4, 5, 7, 8, 9, 10'. Every later result that uses this phase's counts or tables carries
+    it.
+- **The engine trial (part f) is exploratory and post hoc,** and none of it is used as evidence.
+- **The report:** [docs/reports/v0.5.10-report.md](docs/reports/v0.5.10-report.md), approved by the
+  maintainer on 2026-11-24 (#218, comment 7144131066).
+- **The gate review:** [docs/gates/v0.5.10-review.md](docs/gates/v0.5.10-review.md), a fresh Codex
+  session, `REFUTED`. Its findings were tracked in #221.
+- **The rules carried into the next charter** are in the report's section 9 and in
+  [docs/plans/next-phases-2026-11-24.md](docs/plans/next-phases-2026-11-24.md).
 - **The version-5 specification stays a draft:**
   [docs/plans/battery-v5-spec.md](docs/plans/battery-v5-spec.md). Nothing in it is adopted.
 
@@ -1410,6 +1425,25 @@ recount of the research's diagnosis, and (f) an engine trial of third-party vett
 (including the CRLF `a0.py`), third-party code beyond part (f), the project's dependencies, locks
 and drand rounds, reruns, public text and the site, Zenodo, changing old targets, and deletions
 outside `.cache`.
+
+**Closed on 2026-11-24 with declared limits (gate `REFUTED`)** (#218, comment 7144131066). The
+exit criteria of the charter's section 5, as the gate found them
+([docs/gates/v0.5.10-review.md](docs/gates/v0.5.10-review.md)). The limits are in the report's
+section 8.
+- [ ] 1. The diagnosis recounted: not met. Some explicit quantities of the research's section 2
+  are not recounted.
+- [ ] 2. Route (e) counted: not met. The expected 2-minute product is not determined.
+- [ ] 3. The directed evaluator's acceptance designed: not met. The minimum coverage and the
+  product cutoff are left open.
+- [ ] 4. Route (d1) counted: not met in the gate. The exposure check was widened afterwards.
+- [ ] 5. The Kepler field counted: not met. TGLC is not determined.
+- [x] 6. The routes ranked: met. The ranking is provisional:
+  [report, section 3](docs/reports/v0.5.10-report.md).
+- [ ] 7. The records complete: not demonstrated. CPU and disk were measured in part.
+- [ ] 8. The gate reviewed: circular. The review is stored unchanged after it.
+- [ ] 9. The engine trial run and recorded: not met. G3 is partial, the G5 denominators differ,
+  and five runs have no provenance.
+- [ ] 10. The incorporation plan written: not met in the gate.
 
 ---
 

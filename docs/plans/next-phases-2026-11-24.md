@@ -36,3 +36,21 @@ follow "Process diet 2" (CLAUDE.md and ROADMAP.md).
 
 The licences stay "not confirmed" until a `sources/` record holds each one's URL, retrieval date
 and a literal excerpt (CLAUDE.md, rule of issue #34).
+
+## Rules carried from v0.5.10 (added 2026-11-24)
+
+By the maintainer's decision of 2026-11-24 received at 17:50 local (#218, comment 7144131066),
+item 3. v0.5.10 closed with declared limits (gate `REFUTED`; its report, section 8). These rules
+are to be written into the next charter:
+- **(a) Route (d1)'s groups are derived again,** with full provenance, and frozen before any lock.
+  v0.5.10's counts are not used as the frame.
+- **(b) Every aggregation, invalid-value and availability rule is fixed and committed before the
+  first run.**
+- **(c) One immutable copy per version of each worker,** with its hash and the configuration's hash
+  recorded in every run.
+- **(d) Any repetition, including after a bug, needs prior approval in an issue.**
+- **(e) CPU, downloads and disk are measured along the whole path,** not only in the tools.
+
+**v0.5.10's ranking of the routes is provisional:** (d1) first, then (e), then the Kepler field
+([docs/reports/v0.5.10-report.md](../reports/v0.5.10-report.md), sections 3 and 5). It replaces
+nothing in the order above; the next charter chooses.
