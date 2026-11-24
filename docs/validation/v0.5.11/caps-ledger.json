@@ -10,8 +10,8 @@
   "disk_bytes": 10000000000
  },
  "charged": {
-  "cpu_s": 1023.358,
-  "transfer_bytes": 351667880,
+  "cpu_s": 1044.39,
+  "transfer_bytes": 360115146,
   "disk_peak_bytes": 100000000
  },
  "within_caps": "not demonstrated",
@@ -209,6 +209,42 @@
    "cpu_s": 0.125,
    "transfer_bytes_upper": 78912,
    "disk_peak_bytes": 13402439,
+   "telemetry_complete": true,
+   "overrun": []
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "2bbfec82482f4f19a11e494356fdaa78",
+   "launcher": "launch_v3.py",
+   "start": "2026-11-24T23:24:10Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 50000000,
+    "transfer_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 2.891,
+   "transfer_bytes_upper": 2402673,
+   "disk_peak_bytes": 13404953,
+   "telemetry_complete": true,
+   "overrun": []
+  },
+  {
+   "unit": "f1-calibration",
+   "label": null,
+   "attempt": "a2798b4d59c84ee6af269779e8f0f031",
+   "launcher": "launch_v3.py",
+   "start": "2026-11-24T23:24:18Z",
+   "reserve": {
+    "cpu_s": 600,
+    "disk_bytes": 50000000,
+    "transfer_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 18.141,
+   "transfer_bytes_upper": 6044593,
+   "disk_peak_bytes": 13405872,
    "telemetry_complete": true,
    "overrun": []
   }

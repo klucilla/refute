@@ -1,0 +1,9 @@
+{
+ "name": "golden-local",
+ "question": "Proof (i) of the charter's section 2.3, the local record: the outputs of versions 1 to 4 (tests/baseline_code_v0511.py, outputs()) on this machine, before the src/ change (label before) and after it (label after), to be compared byte for byte.",
+ "choices": "The extra argument is the label; the outputs go under .cache/v0511/golden/<label> and their SHA-256 into docs/validation/v0.5.11/step1/golden-<label>.json. Each label is its own data unit, run once.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.11/tools/golden_local.py"],
+ "identity": ["docs/validation/v0.5.11/tools/golden_local.py", "tests/baseline_code_v0511.py"],
+ "reserve": {"cpu_s": 3600, "transfer_bytes": 50000000, "disk_bytes": 200000000},
+ "network": false
+}
