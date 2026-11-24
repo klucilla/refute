@@ -1,0 +1,10 @@
+{
+ "name": "inspect",
+ "question": "Run one read-only inspection script (its path and arguments are the extra arguments), so that ad hoc inspection is metered and not a gap.",
+ "choices": "A tree unit: the same script, arguments and code state is the same unit. The script must read only; its output is its stdout under .cache/v0511/runs.",
+ "argv": ["{python}", "-I", "-B"],
+ "identity": [],
+ "key": "tree",
+ "reserve": {"cpu_s": 120, "transfer_bytes": 50000000, "disk_bytes": 50000000},
+ "network": false
+}

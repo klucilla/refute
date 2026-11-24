@@ -1,0 +1,13 @@
+{
+ "phase": "v0.5.11",
+ "purpose": "Work done outside the metered launcher since the phase opened (2026-11-24 22:58Z), recorded as coverage gaps (Codex's blocking item 5 of step 0's first round). While any gap remains, the ledger's within_caps is 'not demonstrated' and exit criterion 6 is not met.",
+ "rule": "append-only; a gap is never removed, only reconciled by a later row that cites original evidence",
+ "gaps": [
+  {"id": "G1", "utc_window": "2026-11-24T22:59Z to 23:00Z", "what": "the check of commit dbdd78d (scripts/commit_checked.py: privacy check and ruff), which added the launcher (the bootstrap)", "estimate": "under 5 CPU-s, no transfer, no disk"},
+  {"id": "G2", "utc_window": "2026-11-24T23:00Z to 23:02Z", "what": "inspection commands before the first unit: netstat -e, uv cache dir, a Python import check for PDF libraries, git checkout of ROADMAP.md's line endings", "estimate": "under 5 CPU-s, no transfer"},
+  {"id": "G3", "utc_window": "2026-11-24T23:02Z to 23:20Z", "what": "the retrieval of three HTML renderings (K25 arXiv HTML, T18 and SM03 ar5iv) by the agent's remote web tool, and their local conversion to markdown under .cache/v0511/papers by an ad hoc script (three runs)", "estimate": "local: under 5 CPU-s, about 0.6 MB written; the remote retrieval's transfer to this machine was the JSON results, about 0.6 MB"},
+  {"id": "G4", "utc_window": "2026-11-24T23:05Z to 23:20Z", "what": "ad hoc inspection scripts outside a unit: a text search of the papers (two runs), a JSON shape listing, two Python inspections of the part B and C2 records", "estimate": "under 10 CPU-s, no transfer"},
+  {"id": "G5", "utc_window": "2026-11-24T23:30Z to 23:40Z", "what": "the token sum of Codex's first step-0 round (an ad hoc script over its event file)", "estimate": "under 2 CPU-s"},
+  {"id": "G6", "utc_window": "2026-11-24T23:01Z to 23:25Z", "what": "the units run by launch.py version 1 (fetch-papers, commit-check, recount): their transfer was taken modulo 2^32 and their disk scans skipped errors, so their telemetry is not counted as complete; the ledger charges each the larger of its reservation and its measured use", "estimate": "measured: under 3 CPU-s in total"}
+ ]
+}
