@@ -368,6 +368,13 @@ and review (the standing approval of 2026-10-14 and 2026-10-15).
 7. CI waits, when there are any, run in the background with a time limit. A **short**
    status summary at the end of each round.
 
+   **The session does not wait for CI to stop** (the maintainer's decision of 2026-11-24,
+   #218 comment 7136727624, item 1).
+   - At each stop it gives the link of the last CI run and its state at that moment.
+   - A failure becomes a fix in the next round ("fix forward").
+   - **The exception:** locks, tags, releases, acceptances and dependency changes still require
+     `scripts/ci_evidence.py <sha> --level full` to pass on the exact commit **before** the step.
+
 ## Tech standards
 
 - Python 3.12+, `pyproject.toml`, `uv` as package manager.

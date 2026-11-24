@@ -73,16 +73,13 @@ how later work is done.
 
 ## Current phase
 
-**No phase is open** (since 2026-11-24, when v0.5.9 closed; the maintainer's decision received at
-09:03 local, #218, comment 7130900283, item 4).
-- **The next phase** follows the proposal
-  [docs/plans/next-phases-2026-11-24.md](docs/plans/next-phases-2026-11-24.md), from the research
-  of 2026-11-23 ([record](docs/plans/research-2026-11-23/README.md)). Opening it is the
-  maintainer's decision. A phase opened from now on follows Process diet 2: a charter first.
-- **Proposed, not open:** the charter of v0.5.10 Census and feasibility,
-  [docs/plans/v0.5.10-charter.md](docs/plans/v0.5.10-charter.md), written on the maintainer's
-  decision of 2026-11-24 received at 11:09 local (#218, comment 7133936093, item 3). The phase
-  opens only when the maintainer approves the charter in #218, citing its commit SHA.
+**v0.5.10 Census and feasibility** (opened on 2026-11-24 at 15:52Z, when the maintainer's decision
+received at 12:51 local approved its charter in commit `b71fa48`, #218, comments 7136727624 and
+7136761163; see [the section below](#v0510-census-and-feasibility)).
+- **Charter:** [docs/plans/v0.5.10-charter.md](docs/plans/v0.5.10-charter.md) (Process diet 2).
+- **Exploratory from start to end:** counts, feasibility and an engine trial; nothing is a
+  verdict, a candidate or a claim. No lock, no drand round, no change in `src/`.
+- **Caps:** 6 CPU-h, 10 GB of downloads, 10 GB of disk peak. **Time box:** to 2026-12-01.
 - **The version-5 specification stays a draft:**
   [docs/plans/battery-v5-spec.md](docs/plans/battery-v5-spec.md). Nothing in it is adopted.
 
@@ -1393,6 +1390,26 @@ item 4, #218, with the evidence below; the gate review checked each one)
 - dependencies;
 - changing old targets;
 - deletions outside `.cache`.
+
+---
+
+## v0.5.10 Census and feasibility
+
+Tracking: #218. Opened on 2026-11-24 at 15:52Z by the maintainer's decision received at 12:51
+local (comment 7136727624), which approved the charter in commit `b71fa48` under a deterministic
+condition checked by `docs/validation/v0.5.10/check_charter_diff.py` (comment 7136761163).
+Charter: [docs/plans/v0.5.10-charter.md](docs/plans/v0.5.10-charter.md); its exit criteria are
+in its section 5. Records: `docs/validation/v0.5.10/` (with the append-only log `log.jsonl`).
+
+**The question:** which route to an independent result, (e), (d1) or the Kepler field, has enough
+usable targets, at what cost and in what time, to be worth a first locked result? With (a) a
+recount of the research's diagnosis, and (f) an engine trial of third-party vetting tools on the
+24 TOIs of v0.5.9.
+
+**Stops that stay the maintainer's:** those of the charter's section 7, and any change in `src/`
+(including the CRLF `a0.py`), third-party code beyond part (f), the project's dependencies, locks
+and drand rounds, reruns, public text and the site, Zenodo, changing old targets, and deletions
+outside `.cache`.
 
 ---
 
