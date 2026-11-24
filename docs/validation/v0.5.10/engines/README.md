@@ -1,5 +1,12 @@
 # v0.5.10, part (f): the engine trial, isolation and plan
 
+> **Status (2026-11-24, later): resumed as a named rerun** under the charter's amendment
+> (section 9, `d1301ad`; #218 comments 7139692729 and 7139748298). The workers run in an
+> AppContainer with no capability (#218 comment 7140572901; `sandbox.py`,
+> `isolation-test.json`); the profile it needs stays for the maintainer to remove with
+> `delete_profile.py`. The thresholds are fixed in `settings.json`, committed before the first run
+> on a TOI. The earlier stop is kept below as written.
+>
 > **Status (2026-11-24): stopped for the maintainer before any engine was installed or run.**
 > - **The stop:** Codex's round on part (f) returned `WEAKENED`
 >   ([record](../../../plans/v0.5.10-consensus/README.md)). Its blocking item 9 changes the

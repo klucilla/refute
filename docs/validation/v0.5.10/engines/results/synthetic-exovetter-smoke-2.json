@@ -1,0 +1,94 @@
+{
+ "run": "synthetic-exovetter-smoke-2",
+ "status": "ok",
+ "result": {
+  "engine": "exovetter",
+  "mode": "exploratory",
+  "metrics": {},
+  "vetters": {
+   "ModShift": {
+    "status": "ok",
+    "native": {
+     "pri": 0.0,
+     "phase_pri": 0.0,
+     "sec": 87.0,
+     "phase_sec": 0.7989795918367347,
+     "ter": 117.0,
+     "phase_ter": 1.0744897959183675,
+     "pos": 145.0,
+     "phase_pos": 1.3316326530612246,
+     "sigma_pri": -30435.54124346659,
+     "sigma_sec": -765.0348514545926,
+     "sigma_ter": -620.1162430718197,
+     "sigma_pos": 607.6292017055796,
+     "false_alarm_threshold": 2.1206577162506535,
+     "Fred": 81.44983357986081
+    }
+   },
+   "OddEven": {
+    "status": "ok",
+    "native": {
+     "oe_sigma": 0.06710063239440779,
+     "odd_depth": [
+      0.9980262427519493,
+      0.0010124781258128508
+     ],
+     "even_depth": [
+      0.9979301640205114,
+      0.0010124781258128508
+     ]
+    }
+   },
+   "TransitPhaseCoverage": {
+    "status": "ok",
+    "native": {
+     "transit_phase_coverage": 1.0
+    }
+   },
+   "Sweet": {
+    "status": "ok",
+    "native": {
+     "msg": "WARN: SWEET test finds signal at HALF transit period\r\nWARN: SWEET test finds signal at the transit period",
+     "amp_half_period": [
+      9.667325242840016e-05,
+      7.380905472667749e-06,
+      13.097749698379303
+     ],
+     "amp_period": [
+      9.640205008029022e-05,
+      7.380730596623197e-06,
+      13.061315383113389
+     ],
+     "amp_twice_period": [
+      2.285674596354407e-06,
+      7.397180635395424e-06,
+      0.3089926701826748
+     ]
+    }
+   },
+   "Lpp": {
+    "status": "unavailable",
+    "reason": "its map file is remote and was not staged as a verified local input"
+   },
+   "Centroid": {
+    "status": "per_sector",
+    "sectors": []
+   }
+  },
+  "versions": {
+   "exovetter": "0.0.16",
+   "lightkurve": "2.6.0"
+  },
+  "coverage": {
+   "cadences": 38880,
+   "sectors": [
+    0,
+    1
+   ]
+  },
+  "status": "ok",
+  "worker_process_cpu_seconds": 22.65625
+ },
+ "cpu_seconds": 23.625,
+ "wall_seconds": 24.218
+}

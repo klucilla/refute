@@ -1,0 +1,256 @@
+{
+ "schema": "refute-v0510-isolation-test-1",
+ "mode": "exploratory",
+ "decision": "#218 comment 7140572901",
+ "utc": "2026-11-24T18:28:17Z",
+ "appcontainer": {
+  "name": "refute.v0510.engines",
+  "sid": "S-1-15-2-4226191699-715435344-2775245104-2426805901-559800584-3921387816-812206418",
+  "capabilities": [],
+  "profile": "existed",
+  "created_outside_the_project": [
+   "HKCU registry key: Software/Classes/Local Settings/Software/Microsoft/Windows/CurrentVersion/AppContainer/Mappings/S-1-15-2-4226191699-715435344-2775245104-2426805901-559800584-3921387816-812206418",
+   "folder: <local application-data folder>/Packages/refute.v0510.engines"
+  ],
+  "removal": "the maintainer's, with delete_profile.py; the session never deletes it",
+  "redaction": "the variable name of the local application-data folder was replaced by a description before the first commit, because the privacy check bars it; nothing else changed (errata.md, 2026-11-24)"
+ },
+ "grants": {
+  "read": [
+   ".cache/v0510/engines",
+   ".cache/v0510/data",
+   ".cache/v0510/workers"
+  ],
+  "write": [
+   ".cache/v0510/runs/isolation-test"
+  ]
+ },
+ "probe_sha256": "fe8b0269ff567e7393eb281e0aa303b2ba0e9630e6524f77a37df2f1b0190ff3",
+ "sandboxed_run": {
+  "pid": 22784,
+  "exit_code": 0,
+  "timed_out": false,
+  "leftover_processes_ended": 0,
+  "cpu_seconds": 11.46875,
+  "processes": 4,
+  "wall_seconds": 36.949
+ },
+ "control": {
+  "network": {
+   "tcp_loopback_listener": "ok",
+   "tcp_1.1.1.1_443": "ok",
+   "tcp_pypi.org_443": "ok",
+   "dns_getaddrinfo_pypi.org": "ok",
+   "udp_dns_1.1.1.1_53": "ok"
+  },
+  "read": {},
+  "write": {},
+  "imports": {}
+ },
+ "observed": {
+  "network": {
+   "tcp_loopback_listener": "TimeoutError errno=None",
+   "tcp_1.1.1.1_443": "PermissionError errno=13",
+   "tcp_pypi.org_443": "gaierror errno=11001",
+   "dns_getaddrinfo_pypi.org": "gaierror errno=11001",
+   "udp_dns_1.1.1.1_53": "TimeoutError errno=None"
+  },
+  "read": {
+   "data_light_curve": "ok",
+   "engines_python": "ok",
+   "project_pyproject": "PermissionError errno=13",
+   "project_venv_cfg": "PermissionError errno=13",
+   "cache_outside_grants": "PermissionError errno=13"
+  },
+  "write": {
+   "own_run_folder": "ok",
+   "data_folder": "PermissionError errno=13",
+   "engines_folder": "PermissionError errno=13",
+   "cache_not_granted": "PermissionError errno=13"
+  },
+  "imports": {
+   "numpy": "ok",
+   "astropy": "ok",
+   "numba": "ok",
+   "lightkurve": "ok",
+   "exovetter": "ok",
+   "wotan": "ok",
+   "transitleastsquares": "ok"
+  },
+  "python": {
+   "version": "3.12.15 (main, Oct  3 2026, 01:05:37) [MSC v.1944 64 bit (AMD64)]",
+   "isolated_flag": 1
+  }
+ },
+ "checks": [
+  {
+   "where": "sandbox",
+   "check": "network.tcp_loopback_listener",
+   "expected": "fail",
+   "observed": "TimeoutError errno=None",
+   "holds": true
+  },
+  {
+   "where": "sandbox",
+   "check": "network.tcp_1.1.1.1_443",
+   "expected": "fail",
+   "observed": "PermissionError errno=13",
+   "holds": true
+  },
+  {
+   "where": "sandbox",
+   "check": "network.tcp_pypi.org_443",
+   "expected": "fail",
+   "observed": "gaierror errno=11001",
+   "holds": true
+  },
+  {
+   "where": "sandbox",
+   "check": "network.dns_getaddrinfo_pypi.org",
+   "expected": "fail",
+   "observed": "gaierror errno=11001",
+   "holds": true
+  },
+  {
+   "where": "sandbox",
+   "check": "network.udp_dns_1.1.1.1_53",
+   "expected": "fail",
+   "observed": "TimeoutError errno=None",
+   "holds": true
+  },
+  {
+   "where": "sandbox",
+   "check": "read.data_light_curve",
+   "expected": "ok",
+   "observed": "ok",
+   "holds": true
+  },
+  {
+   "where": "sandbox",
+   "check": "read.engines_python",
+   "expected": "ok",
+   "observed": "ok",
+   "holds": true
+  },
+  {
+   "where": "sandbox",
+   "check": "read.project_pyproject",
+   "expected": "fail",
+   "observed": "PermissionError errno=13",
+   "holds": true
+  },
+  {
+   "where": "sandbox",
+   "check": "read.project_venv_cfg",
+   "expected": "fail",
+   "observed": "PermissionError errno=13",
+   "holds": true
+  },
+  {
+   "where": "sandbox",
+   "check": "read.cache_outside_grants",
+   "expected": "fail",
+   "observed": "PermissionError errno=13",
+   "holds": true
+  },
+  {
+   "where": "sandbox",
+   "check": "write.own_run_folder",
+   "expected": "ok",
+   "observed": "ok",
+   "holds": true
+  },
+  {
+   "where": "sandbox",
+   "check": "write.data_folder",
+   "expected": "fail",
+   "observed": "PermissionError errno=13",
+   "holds": true
+  },
+  {
+   "where": "sandbox",
+   "check": "write.engines_folder",
+   "expected": "fail",
+   "observed": "PermissionError errno=13",
+   "holds": true
+  },
+  {
+   "where": "sandbox",
+   "check": "write.cache_not_granted",
+   "expected": "fail",
+   "observed": "PermissionError errno=13",
+   "holds": true
+  },
+  {
+   "where": "sandbox",
+   "check": "imports.numpy",
+   "expected": "ok",
+   "observed": "ok",
+   "holds": true
+  },
+  {
+   "where": "sandbox",
+   "check": "imports.astropy",
+   "expected": "ok",
+   "observed": "ok",
+   "holds": true
+  },
+  {
+   "where": "sandbox",
+   "check": "imports.numba",
+   "expected": "ok",
+   "observed": "ok",
+   "holds": true
+  },
+  {
+   "where": "sandbox",
+   "check": "imports.lightkurve",
+   "expected": "ok",
+   "observed": "ok",
+   "holds": true
+  },
+  {
+   "where": "sandbox",
+   "check": "imports.exovetter",
+   "expected": "ok",
+   "observed": "ok",
+   "holds": true
+  },
+  {
+   "where": "sandbox",
+   "check": "imports.wotan",
+   "expected": "ok",
+   "observed": "ok",
+   "holds": true
+  },
+  {
+   "where": "sandbox",
+   "check": "imports.transitleastsquares",
+   "expected": "ok",
+   "observed": "ok",
+   "holds": true
+  },
+  {
+   "where": "control",
+   "check": "network.tcp_loopback_listener",
+   "expected": "ok",
+   "observed": "ok",
+   "holds": true
+  },
+  {
+   "where": "control",
+   "check": "network.tcp_1.1.1.1_443",
+   "expected": "ok",
+   "observed": "ok",
+   "holds": true
+  },
+  {
+   "where": "listener",
+   "check": "connections accepted from the sandboxed run",
+   "expected": 0,
+   "observed": 0,
+   "holds": true
+  }
+ ],
+ "passed": true
+}

@@ -1,0 +1,94 @@
+{
+ "run": "synthetic-exovetter-smoke",
+ "status": "ok",
+ "result": {
+  "engine": "exovetter",
+  "mode": "exploratory",
+  "metrics": {},
+  "vetters": {
+   "ModShift": {
+    "status": "ok",
+    "native": {
+     "pri": 131.0,
+     "phase_pri": 1.203061224489796,
+     "sec": 248.0,
+     "phase_sec": 2.2775510204081635,
+     "ter": 217.0,
+     "phase_ter": 1.992857142857143,
+     "pos": 176.0,
+     "phase_pos": 1.616326530612245,
+     "sigma_pri": -28166.850664591315,
+     "sigma_sec": -685.1773916772402,
+     "sigma_ter": -636.0344072005832,
+     "sigma_pos": 627.4393963965615,
+     "false_alarm_threshold": 2.1206577162506535,
+     "Fred": 83.85183392228208
+    }
+   },
+   "OddEven": {
+    "status": "ok",
+    "native": {
+     "oe_sigma": 0.005723609402172115,
+     "odd_depth": [
+      0.9999555142400431,
+      0.0010210176493826368
+     ],
+     "even_depth": [
+      0.9999472497086127,
+      0.0010210176493826368
+     ]
+    }
+   },
+   "TransitPhaseCoverage": {
+    "status": "ok",
+    "native": {
+     "transit_phase_coverage": 1.0
+    }
+   },
+   "Sweet": {
+    "status": "ok",
+    "native": {
+     "msg": "WARN: SWEET test finds signal at HALF transit period\r\nWARN: SWEET test finds signal at the transit period",
+     "amp_half_period": [
+      5.0301015734719685e-05,
+      7.884211173132155e-06,
+      6.379968094479214
+     ],
+     "amp_period": [
+      4.463802077798528e-05,
+      7.885145296238379e-06,
+      5.661027045282212
+     ],
+     "amp_twice_period": [
+      1.2624101976031925e-06,
+      7.888460876800068e-06,
+      0.16003251043761094
+     ]
+    }
+   },
+   "Lpp": {
+    "status": "unavailable",
+    "reason": "its map file is remote and was not staged as a verified local input"
+   },
+   "Centroid": {
+    "status": "per_sector",
+    "sectors": []
+   }
+  },
+  "versions": {
+   "exovetter": "0.0.16",
+   "lightkurve": "2.6.0"
+  },
+  "coverage": {
+   "cadences": 38880,
+   "sectors": [
+    0,
+    1
+   ]
+  },
+  "status": "ok",
+  "worker_process_cpu_seconds": 22.578125
+ },
+ "cpu_seconds": 23.546875,
+ "wall_seconds": 24.142
+}

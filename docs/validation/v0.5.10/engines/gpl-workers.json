@@ -1,0 +1,30 @@
+{
+ "schema": "refute-v0510-gpl-workers-1",
+ "mode": "exploratory",
+ "why_not_committed": "Codex's blocking item 5 and the charter, part (f): the workers that import GPL code (LEO-Vetter, batman; TRICERATOPS through PyTransit) stay outside the repository; their hashes and calls are recorded here",
+ "utc": "2026-11-24T18:50:24Z",
+ "workers": {
+  "worker_leo.py": {
+   "sha256": "62077ee500be437086f5b6535898b61a0d34e46234a9d0c67c4998f70fba10bd",
+   "calls": [
+    "leo_vetter.main.TCELightCurve(tic, time, raw, flux, flux_err, per, epo, dur)",
+    "TCELightCurve.compute_flux_metrics(star, verbose=False)",
+    "leo_vetter.stellar.quadratic_ldc(Teff, logg)",
+    "leo_vetter.thresholds.<each FA and FP test>(metrics, _default_thresholds)",
+    "leo_vetter.thresholds.check_thresholds(metrics, 'FA'|'FP')"
+   ],
+   "inputs": "the verified SPOC light curves (raw normalized and wotan-detrended), the catalog ephemeris, the target's own row of the staged TIC table (rad, mass, Teff, logg, rho and errors)",
+   "exports": "LEO-Vetter's metrics, each test's flag, and its own class (FA, FP or PC); no TIC row"
+  },
+  "worker_triceratops.py": {
+   "sha256": "da0418921f91920a0127b1320e7e368e439a23077780842b969f6a7e0fa3ac97",
+   "calls": [
+    "triceratops.triceratops.target(ID, sectors, search_radius=10) with Catalogs.query_object, Gaia.launch_job and lightkurve.search_tesscut replaced by the staged tables and the verified local pixel files",
+    "target.calc_depths(tdepth=catalog depth, all_ap_pixels=SPOC apertures)",
+    "target.calc_probs(time, flux_0, flux_err_0, P_orb, N=1e6, parallel=False, verbose=0)"
+   ],
+   "inputs": "the verified SPOC light curves (wotan-detrended, folded on the catalog ephemeris within 3 durations, 100 bins), the verified pixel files (mean image, WCS, SPOC aperture, padded to 22 by 22), the staged TIC and Gaia DR3 tables",
+   "exports": "target-level FPP and NFPP, the folded depth, the number of stars considered; no star-indexed table, no TIC or Gaia row"
+  }
+ }
+}

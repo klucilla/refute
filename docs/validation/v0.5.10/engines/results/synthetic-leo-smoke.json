@@ -1,0 +1,22 @@
+{
+ "run": "synthetic-leo-smoke",
+ "status": "failed",
+ "result": {
+  "engine": "leo-vetter",
+  "mode": "exploratory",
+  "metrics": {},
+  "coverage": {
+   "stellar_inputs_missing": []
+  },
+  "status": "failed",
+  "error": "KeyError: 'light_curves'",
+  "traceback_tail": [
+   "    lc = common.load_light_curves(job[\"light_curves\"])",
+   "                                  ~~~^^^^^^^^^^^^^^^^",
+   "KeyError: 'light_curves'"
+  ],
+  "worker_process_cpu_seconds": 5.9375
+ },
+ "cpu_seconds": 6.34375,
+ "wall_seconds": 7.49
+}

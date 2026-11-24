@@ -1,0 +1,226 @@
+{
+ "schema": "refute-v0510-staged-catalogs-1",
+ "mode": "exploratory",
+ "utc": "2026-11-24T18:39:43Z",
+ "tic_query": "astroquery.mast.Catalogs.query_object('TIC<id>', radius=202.5 arcsec, catalog='TIC') (MAST, https://mast.stsci.edu)",
+ "gaia_query": "SELECT phot_g_mean_mag, phot_bp_mean_mag, phot_rp_mean_mag, parallax, parallax_over_error FROM gaiadr3.gaia_source WHERE 1 = CONTAINS(POINT('ICRS', ra, dec), CIRCLE('ICRS', <ra>, <dec>, sqrt(0.1/pi))) AND phot_g_mean_mag < 21.0 (ESA Gaia archive, https://gea.esac.esa.int/archive/)",
+ "terms": "Gaia DR3 rows and TIC rows are kept under .cache only and never committed; Gaia: ESA/Gaia/DPAC credit, terms recorded in docs/data-publication.md as restricted",
+ "targets": [
+  {
+   "target": "TIC-124206468",
+   "tic_rows": 107,
+   "target_first": true,
+   "tic_sha256": "268492a52544cf4fbd5360c5bf322a4c0bb09056859d53f6fdf94ef71920b72b",
+   "gaia_rows": 1199,
+   "gaia_sha256": "21ce783b3399c84be3f3b2b0067c84b03824fbbc5124c7697ada900bd3b6ea35",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-142937186",
+   "tic_rows": 26,
+   "target_first": true,
+   "tic_sha256": "11f8d7d173ea018d23170ac510e276015b2dcbf70cd272cae9f7774d77299159",
+   "gaia_rows": 283,
+   "gaia_sha256": "89e59224278d8c51de2a839409421cddf7c2382280162aa212991a7143edaf73",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-153078576",
+   "tic_rows": 52,
+   "target_first": true,
+   "tic_sha256": "ad5da41955870d50b7e17d0a15d5f4f95963dffdddca9d066e7f397f6cf4d258",
+   "gaia_rows": 352,
+   "gaia_sha256": "b21bad874434b3d079377c9b9cdbc8671e1faaec79ae9e3927b3a0bab578e2a5",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-219388773",
+   "tic_rows": 63,
+   "target_first": true,
+   "tic_sha256": "50c1cfe14102df1d2963126a0aa41170deab6c7f5dbcea2426e3b4a88fb5e0cd",
+   "gaia_rows": 560,
+   "gaia_sha256": "4e0faff3952a25582712b3adbe3cb2f105e7808542bf8e2dea6783f95d3f95f2",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-220016044",
+   "tic_rows": 38,
+   "target_first": true,
+   "tic_sha256": "e481be64d8ba60223ded89711777efa68a6934e6f0ce0bd3dff11a0c3bdbfde7",
+   "gaia_rows": 338,
+   "gaia_sha256": "7706d04ba6c6063feaebf91e35b88a29d10ab8aa714f3650295595fb2714508e",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-299799658",
+   "tic_rows": 82,
+   "target_first": true,
+   "tic_sha256": "a46728435866e53f06b4139d7d60405874ba6fba8744db9f141a66a2d01977f2",
+   "gaia_rows": 789,
+   "gaia_sha256": "df608f47a7084721625c644e805180ea514e91fab79fbc821e57e4f2cab6d7dc",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-356235833",
+   "tic_rows": 187,
+   "target_first": true,
+   "tic_sha256": "bce84d33000c308b5ccdc436007687356a33db55086075705505eb3b677043bd",
+   "gaia_rows": 1587,
+   "gaia_sha256": "dc30528ffbc09ea43fe18ffaa1de19919dd821af1788cbf2aa42c8fa1b241910",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-365733349",
+   "tic_rows": 282,
+   "target_first": true,
+   "tic_sha256": "300a851f009da84809012f82ff7f7d5288a80a394d9554a687c27a4202cfac26",
+   "gaia_rows": 2679,
+   "gaia_sha256": "4b2f871fe157d28d5f8797f98b855e7db2541f7bcc08b136f6026c72042053d6",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-372596795",
+   "tic_rows": 957,
+   "target_first": true,
+   "tic_sha256": "6588013ffdc7a923f7fdd030b20ff856656d752f220c59e4683afe93d394eb96",
+   "gaia_rows": 9370,
+   "gaia_sha256": "72443b1f0c0234b5b7e47c68f6f6f1a6b737a121bfa9b36f3d69f343a2ee93a5",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-401604346",
+   "tic_rows": 125,
+   "target_first": true,
+   "tic_sha256": "0ed367ebb7afba9b2fbb70aa963378fc5961570dc49fd5a8effd537ca97630b5",
+   "gaia_rows": 1167,
+   "gaia_sha256": "4db8330078ed7e61d23d8e58453a9c6ef3c7eff4182a4ff144433a70bdc4fb93",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-419858461",
+   "tic_rows": 3467,
+   "target_first": true,
+   "tic_sha256": "65926519da9dd6102323e7a1df0bf951118d7b64c24825b8a23a08455b6020d1",
+   "gaia_rows": 33615,
+   "gaia_sha256": "c8588eb65e36e0180f9ce7be9c84dab5cf76a03be09840291582990626cb390a",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-467783290",
+   "tic_rows": 188,
+   "target_first": true,
+   "tic_sha256": "66c5deb20e69c602f0ce453a5f699d40517ddc15882723399876f09f6f3cb500",
+   "gaia_rows": 1855,
+   "gaia_sha256": "71e425839530f510be3adcf4f98ea175fee75b7bba06c9f55d604b4d0cb7f174",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-55275863",
+   "tic_rows": 34,
+   "target_first": true,
+   "tic_sha256": "71c37ad3195ca4dd8bbad766a0bd0ad4caa12e7c6d8c24603afe1cf35c52ad31",
+   "gaia_rows": 366,
+   "gaia_sha256": "675a6756b848e53371d939602f0f867a2d05546d17ed8edde8aa375f67118628",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-47244580",
+   "tic_rows": 88,
+   "target_first": true,
+   "tic_sha256": "c81918b100863b719c4a81d424ab23ec70bbffd7f7218550fd4a8045cc0d401b",
+   "gaia_rows": 831,
+   "gaia_sha256": "738cd5b119bac4e40865072ec9a3a175f219be811df0aa2042516de6ef8d00e8",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-146846569",
+   "tic_rows": 393,
+   "target_first": true,
+   "tic_sha256": "e6d02c5996ffa68b945dc0547bcdd23ed060c3492122f2585832198d624fab20",
+   "gaia_rows": 3723,
+   "gaia_sha256": "ab65ff9302021abfefe8b25b7d08bdf9075d3b4c2c2853ac7c98f9f9f52fdaa5",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-259172249",
+   "tic_rows": 132,
+   "target_first": true,
+   "tic_sha256": "a349d84b3eb4e1c82466553dcfcb963bc6a3f6c1e028f1ec92bbdf9e3da4f5f2",
+   "gaia_rows": 1058,
+   "gaia_sha256": "0dfa53e8d23211688fdba2db6dcbeedb8bf0fe1d8146b7b72b5142382baf48dc",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-452866790",
+   "tic_rows": 146,
+   "target_first": true,
+   "tic_sha256": "872174b8935d2fa8860c4dd5b6fe7c0c8f3f4f0a84e15720b0a2e05063f4caaf",
+   "gaia_rows": 1424,
+   "gaia_sha256": "8282c4e4d099b8eaca197b3bbf5482bad72c5d8da0555e01adbdc417a7a3521b",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-46432937",
+   "tic_rows": 114,
+   "target_first": true,
+   "tic_sha256": "f8294fbe1889968b98e6f7e61fab5c2039b735bb40dd1345bca0ce80f6ee876f",
+   "gaia_rows": 951,
+   "gaia_sha256": "e87b902619b683106ef50f4ed3fe8bdb25f1de109b7cbefbb2d09b7ddbc4b52d",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-161223358",
+   "tic_rows": 51,
+   "target_first": true,
+   "tic_sha256": "62aa9cfdff97564089f242891c10cbbe21a261525880a41c012f10b192f82446",
+   "gaia_rows": 514,
+   "gaia_sha256": "582d1ecc131af9548773b21fab106e3cf4a05871a3f8db54752076bb86c57451",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-124379043",
+   "tic_rows": 164,
+   "target_first": true,
+   "tic_sha256": "4432d78e0f464909b960fe2e285954287f2db990026b3c590702e67d94459eac",
+   "gaia_rows": 1695,
+   "gaia_sha256": "efda1480522bc186aba57ecee75883fe73ec54697dc417dabc14cb3bbae4b7f5",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-172110606",
+   "tic_rows": 246,
+   "target_first": true,
+   "tic_sha256": "26b0a989f85521315451ebc47017d301ceb149027b1e768b94b08b3b9faf29e9",
+   "gaia_rows": 2451,
+   "gaia_sha256": "40968650f301e31c91b16a5dc4b32c3862b7a432134200a3678902dbca5e6591",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-295354126",
+   "tic_rows": 4677,
+   "target_first": true,
+   "tic_sha256": "31bb945d015f5e3fa0bcb596331d241f62e5c3dc9c210dbcf19d39ce6b25823e",
+   "gaia_rows": 48779,
+   "gaia_sha256": "dc36ad76c45517322bef5a43de3927c95861def666dba233d8977dcebd1703e0",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-301051430",
+   "tic_rows": 45,
+   "target_first": true,
+   "tic_sha256": "f149e2e8546e926619bed7333b88b19d461978cbb118e622794540d970203393",
+   "gaia_rows": 316,
+   "gaia_sha256": "0c69d226f0c3969f1cc8fbc48e934a2bd22b4ddd72cfe3e611c59eeceb70c5af",
+   "status": "staged"
+  },
+  {
+   "target": "TIC-18318288",
+   "tic_rows": 150,
+   "target_first": true,
+   "tic_sha256": "adc744655512ed123a096dcbcd49a1cbf059eb485f35bc69d04604a61cac46a9",
+   "gaia_rows": 1422,
+   "gaia_sha256": "612889857ba85d594df4ebd395bc9254c6ea574d016614740c466f890774307e",
+   "status": "staged"
+  }
+ ]
+}

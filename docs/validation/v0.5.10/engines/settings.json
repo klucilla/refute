@@ -1,0 +1,91 @@
+{
+ "schema": "refute-v0510-engine-settings-1",
+ "mode": "exploratory",
+ "method_status": "not_validated",
+ "fixed_before_any_toi_run": "this file is committed before the first run of any engine on any of the 24 TOIs (the charter's amendment, section 9: thresholds fixed before the run); no value here is changed after a TOI result is seen",
+ "input": {
+  "light_curves": "SPOC 2-minute PDCSAP_FLUX of the verified files (data-check.json), QUALITY == 0, finite; each sector divided by its median",
+  "ephemeris": "each TOI's catalog values as v0.5.9 used them: period_days, epoch_bjd - 2457000, duration_hours, depth_ppm from the v0.5.6 draws (docs/validation/v0.5.6/part-a-draw.json, calibration/v0.5.6/part-b-draw.json)",
+  "detrending": "wotan biweight, the same for every engine that takes a detrended curve"
+ },
+ "wotan_window_durations": 3.0,
+ "wotan_window_min_days": 0.0,
+ "wotan_window_source": "window about 3 times the transit duration, as recommended by Hippke, David, Mulders & Heller 2019, AJ 158, 143 (wotan); not confirmed: the paper was not re-read in this phase",
+ "wotan_break_tolerance_days": 0.5,
+ "tls_bin_minutes": 10,
+ "tls_bin_reason": "cost: the unbinned search was estimated at about 21,000 CPU-s for the 24 TOIs (synthetic calibration, results/synthetic-tls-cost-4s-nobin-b.json), above the phase cap; 10-minute bins (5 SPOC cadences) give about 4,200 CPU-s",
+ "tls_period_min_days": 0.4,
+ "tls_period_max_days": 20.0,
+ "tls_period_range_reason": "covers twice the longest catalog period of the 24 (8.59 d) and half the shortest (0.515 d is above 0.4); fixed from catalog values, not from results",
+ "tls_oversampling_factor": 3,
+ "triceratops_search_radius_pix": 10,
+ "triceratops_N": 1000000,
+ "triceratops_fold_half_window_durations": 3.0,
+ "triceratops_fold_bins": 100,
+ "triceratops_fold_reason": "TRICERATOPS takes a phase-folded light curve; the fold is binned, as in the tool's examples, so that the cost stays within the cap",
+ "allowances_cpu_seconds": {
+  "tls": 1500,
+  "exovetter": 600,
+  "leo": 600,
+  "triceratops": 900
+ },
+ "threads": {
+  "tls": 10,
+  "exovetter": 1,
+  "leo": 1,
+  "triceratops": 1
+ },
+ "thresholds": {
+  "tls": {
+   "detection": {
+    "rule": "SDE >= 9",
+    "source": "Hippke & Heller 2019, A&A 623, A39 (TLS): SDE >= 9 as the detection threshold; not confirmed: the paper was not re-read in this phase"
+   },
+   "recovery": {
+    "rule": "the TLS period P equals the catalog period times one of 1/3, 1/2, 1, 2, 3 within a relative tolerance of 0.001",
+    "source": "Refute's own matching rule (v0.5.6, seeded_run.IDENTITY_TOLERANCE and FACTORS), applied unchanged; not a TLS threshold"
+   }
+  },
+  "exovetter": {
+   "Sweet": {
+    "rule": "warning when any amplitude-to-uncertainty ratio at P/2, P or 2P exceeds 3",
+    "source": "exovetter 0.0.16, vetters.Sweet(threshold_sigma=3) default and sweet.construct_message"
+   },
+   "Centroid": {
+    "rule": "significance below 1e-3 suggests that the target is not the source",
+    "source": "exovetter 0.0.16, vetters.Centroid.run docstring: 'Values less than ~1e-3 suggest the target is not the source of the transit'"
+   },
+   "ModShift": {
+    "rule": "none published by exovetter: the metrics and its false_alarm_threshold are recorded; outcome 'no_published_threshold'",
+    "source": "exovetter 0.0.16, vetters.ModShift.run returns the metrics only"
+   },
+   "OddEven": {
+    "rule": "none published by exovetter: oe_sigma is recorded; outcome 'no_published_threshold'",
+    "source": "exovetter 0.0.16, vetters.OddEven.run returns the metrics only"
+   },
+   "TransitPhaseCoverage": {
+    "rule": "none published by exovetter: the coverage fraction is recorded; outcome 'no_published_threshold'",
+    "source": "exovetter 0.0.16"
+   },
+   "Lpp": {
+    "rule": "not run: its map file is remote and was not staged as a verified local input; outcome 'unavailable'",
+    "source": "Codex's blocking item 3 (docs/plans/v0.5.10-consensus/)"
+   }
+  },
+  "triceratops": {
+   "rule": "FPP < 0.015 and NFPP < 0.001; separately, NFPP > 0.1 (two thresholds, each recorded as met or not met)",
+   "source": "Giacalone et al. 2021, AJ 161, 24 (TRICERATOPS); not confirmed: the paper was not re-read in this phase"
+  },
+  "leo": {
+   "rule": "LEO-Vetter's own default thresholds (leo_vetter.thresholds._default_thresholds) and its own class: any FA test flag gives FA, else any FP test flag gives FP, else PC",
+   "source": "LEO-Vetter 1.2.0, leo_vetter/thresholds.py and leo_vetter/main.py, read in the installed package on 2026-11-24"
+  }
+ },
+ "outcome_vocabulary": [
+  "threshold_met",
+  "threshold_not_met",
+  "no_published_threshold",
+  "unavailable"
+ ],
+ "wording_rule": "report-facing fields never use 'validated', 'likely a nearby false positive', 'confirmed' or 'decide'; a tool's native labels are kept as attributed observations"
+}

@@ -1,0 +1,31 @@
+{
+ "run": "synthetic-tls-cost-4s-nobin",
+ "status": "failed",
+ "result": {
+  "engine": "wotan+transitleastsquares",
+  "mode": "exploratory",
+  "metrics": {},
+  "versions": {
+   "wotan": "2.1 (pinned)",
+   "transitleastsquares": "Transit Least Squares TLS 2.3.0 (12 Nov 2026)",
+   "numpy": "1.26.4"
+  },
+  "coverage": {
+   "cadences": 77760,
+   "sectors": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "points_searched": 77760,
+   "span_days": 356.99861111071823
+  },
+  "status": "failed",
+  "error": "PermissionError: [WinError 5] Acesso negado",
+  "traceback": "Traceback (most recent call last):\n  File \"C:\\Projetos\\refute\\.cache\\v0510\\workers\\worker_tls.py\", line 127, in main\n    r = model.power(\n        ^^^^^^^^^^^^\n  File \"C:\\Projetos\\refute\\.cache\\v0510\\engines\\venv\\Lib\\site-packages\\transitleastsquares\\main.py\", line 238, in power\n    found = self._search(backend, periods, lc_cache_overview, lc_arr)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Projetos\\refute\\.cache\\v0510\\engines\\venv\\Lib\\site-packages\\transitleastsquares\\main.py\", line 189, in _search\n    found_all = backend.search_many(\n                ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Projetos\\refute\\.cache\\v0510\\engines\\venv\\Lib\\site-packages\\transitleastsquares\\backends\\pool.py\", line 329, in search_many\n    return self._search_tasks(tasks, use_threads, progress, defer_join)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Projetos\\refute\\.cache\\v0510\\engines\\venv\\Lib\\site-packages\\transitleastsquares\\backends\\pool.py\", line 381, in _search_tasks\n    pool = _Persistent.acquire(ctx, use_threads, self)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Projetos\\refute\\.cache\\v0510\\engines\\venv\\Lib\\site-packages\\transitleastsquares\\backends\\pool.py\", line 174, in acquire\n    cls.pool = ctx.Pool(processes=processes)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Projetos\\refute\\.cache\\v0510\\engines\\base\\Lib\\multiprocessing\\context.py\", line 119, in Pool\n    return Pool(processes, initializer, initargs, maxtasksperchild,\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Projetos\\refute\\.cache\\v0510\\engines\\base\\Lib\\multiprocessing\\pool.py\", line 191, in __init__\n    self._setup_queues()\n  File \"C:\\Projetos\\refute\\.cache\\v0510\\engines\\base\\Lib\\multiprocessing\\pool.py\", line 346, in _setup_queues\n    self._inqueue = self._ctx.SimpleQueue()\n                    ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Projetos\\refute\\.cache\\v0510\\engines\\base\\Lib\\multiprocessing\\context.py\", line 113, in SimpleQueue\n    return SimpleQueue(ctx=self.get_context())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Projetos\\refute\\.cache\\v0510\\engines\\base\\Lib\\multiprocessing\\queues.py\", line 362, in __init__\n    self._reader, self._writer = connection.Pipe(duplex=False)\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Projetos\\refute\\.cache\\v0510\\engines\\base\\Lib\\multiprocessing\\connection.py\", line 566, in Pipe\n    h1 = _winapi.CreateNamedPipe(\n         ^^^^^^^^^^^^^^^^^^^^^^^^\nPermissionError: [WinError 5] Acesso negado\n",
+  "worker_process_cpu_seconds": 28.625
+ },
+ "cpu_seconds": 29.234375,
+ "wall_seconds": 28.801
+}

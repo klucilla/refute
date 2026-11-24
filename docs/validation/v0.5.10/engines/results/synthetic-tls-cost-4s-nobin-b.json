@@ -1,0 +1,41 @@
+{
+ "run": "synthetic-tls-cost-4s-nobin-b",
+ "status": "ok",
+ "result": {
+  "engine": "wotan+transitleastsquares",
+  "mode": "exploratory",
+  "metrics": {
+   "window_length_days": 0.275,
+   "periods_tested": 34680,
+   "period_days": 2.7000393336090873,
+   "t0_btjd": 1502.4973281186415,
+   "duration_hours": 2.2237729587477575,
+   "depth_fraction": 0.0022625748127009793,
+   "sde": 75.81329181115643,
+   "snr": 99.5447367981305,
+   "transit_count": 132,
+   "distinct_transit_count": 40,
+   "odd_even_mismatch_sigma": 0.8020605668903642
+  },
+  "versions": {
+   "wotan": "2.1 (pinned)",
+   "transitleastsquares": "Transit Least Squares TLS 2.3.0 (12 Nov 2026)",
+   "numpy": "1.26.4"
+  },
+  "coverage": {
+   "cadences": 77760,
+   "sectors": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "points_searched": 77760,
+   "span_days": 356.99861111071823
+  },
+  "status": "ok",
+  "worker_process_cpu_seconds": 28.328125
+ },
+ "cpu_seconds": 199.734375,
+ "wall_seconds": 46.296
+}

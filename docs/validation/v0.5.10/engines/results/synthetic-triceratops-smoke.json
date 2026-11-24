@@ -1,0 +1,29 @@
+{
+ "run": "synthetic-triceratops-smoke",
+ "status": "ok",
+ "result": {
+  "engine": "triceratops",
+  "mode": "exploratory",
+  "metrics": {
+   "FPP": 0.000548974866277474,
+   "NFPP": 3.8861744146401693e-59,
+   "folded_depth_observed": 0.00240096988674654,
+   "catalog_depth_used": 0.0028,
+   "stars_considered": 2
+  },
+  "versions": {
+   "triceratops": "1.1.0 (pinned)"
+  },
+  "coverage": {
+   "folded_points": 3960,
+   "bins_with_data": 100,
+   "sectors_with_pixels": [
+    1
+   ]
+  },
+  "status": "ok",
+  "worker_process_cpu_seconds": 231.03125
+ },
+ "cpu_seconds": 232.09375,
+ "wall_seconds": 234.264
+}
