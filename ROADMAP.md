@@ -88,7 +88,10 @@ decision received at 19:28 local, #218, comment 7115813315; see
   entry modes (E, the TOI's ephemeris; S, the battery's own search) run on all 24, on the same
   input bytes.
 - **Caps:** 15 GB of downloads, 8 CPU-h, 10 GB of disk peak. No dependency changes.
-- **The run starts only with the maintainer's recorded approval.**
+- **The run** was approved at `331ca03` (#218, comment 7125778250). It ran on 2026-11-24 after a
+  pilot that passed (comment 7126035677), and it is **complete**: 252 units, 4.12 CPU-h, 5.87 GB.
+  - Report draft: [docs/reports/v0.5.9-report.md](docs/reports/v0.5.9-report.md).
+  - Version-5 specification draft: [docs/plans/battery-v5-spec.md](docs/plans/battery-v5-spec.md).
 - **Since the previous phase:** a second dated correction to the v0.5.8 report,
   [docs/reports/v0.5.8-report-correction-2-2026-11-23.md](docs/reports/v0.5.8-report-correction-2-2026-11-23.md).
 - **After v0.5.9, a proposal only (no phase is opened):**

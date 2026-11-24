@@ -13,7 +13,10 @@ Plan: [docs/plans/v0.5.9-plan.md](../../plans/v0.5.9-plan.md). Tracking: #218.
 | `prototype_run.py` | The prototype: the set's draw, the two entry modes, the fixed evaluation, the six probes, the consensus rule and the centroid guard, with the run's caps. It imports v0.5.7's `seeded_run.py`, v0.5.8's `stability_report.py` and the battery without editing them. Steps: `draw`, `run`, `bundle`, `clean`. |
 | `prototype_report.py` | The five questions and their counting rules, fixed before any result. |
 | `prototype-set.json` | The 24 TOIs, written once by `draw` after the seed was committed. *(Added by the draw.)* |
-| `prototype-ledger.json`, `prototype-records.json`, `prototype-units.json`, `prototype-report.json`, `prototype-report.md` | The run's ledger, the 48 mode records, the unit records and the report. *(Written by the run, after the maintainer's approval.)* |
+| `prototype-ledger.json`, `prototype-records.json`, `prototype-units.json`, `prototype-report.json`, `prototype-report.md` | The run's ledger, the 48 mode records, the 252 unit records and the script's report. Written by the run of 2026-11-24 (complete), approved at `331ca03` (#218, comment 7125778250). |
+| `pilot_run.py`, `pilot_observe.py`, `pilot-comparison.json` | The pilot of the approval: the first batch on three TOIs, and the supervisor's account compared with an independent measure (Windows process CPU, file sizes). It passed (#218, comment 7126035677). |
+
+The phase report is [docs/reports/v0.5.9-report.md](../../reports/v0.5.9-report.md).
 
 The tests are in `tests/v059/`.
 

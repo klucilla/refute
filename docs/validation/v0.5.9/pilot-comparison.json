@@ -1,0 +1,49 @@
+{
+ "schema": "refute-v059-pilot-comparison-1",
+ "mode": "exploratory",
+ "limits_label": "WEAKENED; does not meet D1, D2, D4, T2a",
+ "method_status": "not_validated",
+ "written_utc": "2026-11-24T08:21:08Z",
+ "decision": "#218, comment 7125778250, item 2",
+ "pilot_tois": [
+  "2357.01",
+  "734.01",
+  "5218.01"
+ ],
+ "tolerance": 0.1,
+ "observer": {
+  "started_utc": "2026-11-24T08:12:33Z",
+  "ended_utc": "2026-11-24T08:21:03Z",
+  "polls": 993,
+  "poll_seconds": 0.5
+ },
+ "attempts": 27,
+ "unsettled": [],
+ "missing_measure": [],
+ "cpu_seconds": {
+  "supervisor_workers": 2029.03125,
+  "independent_workers": 2002.046875,
+  "supervisor_controller": 7.9056,
+  "independent_driver_process": 10.0
+ },
+ "bytes": {
+  "supervisor_charged": 1157852626,
+  "independent_files": 1155265920,
+  "files": 48
+ },
+ "relative_difference": {
+  "cpu_workers": 0.013478393206952259,
+  "cpu_total": 0.012370474718686686,
+  "bytes": 0.002239056787895206
+ },
+ "caps": {
+  "cpu_hours_charged": 0.5658157916666666,
+  "cpu_cap": 8.0,
+  "download_bytes_charged": 1157852626,
+  "download_cap": 15000000000.0,
+  "disk_peak_bytes": 1168526606,
+  "disk_cap": 10000000000.0
+ },
+ "passed": true,
+ "reasons": []
+}

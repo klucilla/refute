@@ -1,0 +1,808 @@
+{
+ "schema": "refute-v059-prototype-report-2",
+ "mode": "exploratory",
+ "limits_label": "WEAKENED; does not meet D1, D2, D4, T2a",
+ "method_status": "not_validated",
+ "code_sha256": "dccc9749996966e2584ab4b6fbcdca438083c1e2a20f1412712ea848ba83fdea",
+ "set_sha256": "9ed47ad182754065f69dea4814c5fe7858d3374a39cb928b0a5c39f8802fd450",
+ "records_sha256": "bd5a4f4548a1ba2048810b01b115b1b3939137502770ae4b573ab5d8b87ac4f7",
+ "run_state": "complete",
+ "records": 48,
+ "structurally_valid": true,
+ "completeness_problems": [],
+ "incomplete_tois": [],
+ "complete": true,
+ "q1": {
+  "base": {
+   "same_decided_class": {
+    "k": 3,
+    "n": 14,
+    "rate": 0.21428571428571427,
+    "wilson95": [
+     0.07571386712693184,
+     0.47589230586600295
+    ]
+   },
+   "both_inconclusive": {
+    "k": 1,
+    "n": 14,
+    "rate": 0.07142857142857142,
+    "wilson95": [
+     0.012722215247890939,
+     0.31468704424151117
+    ]
+   },
+   "same_class": {
+    "k": 4,
+    "n": 14,
+    "rate": 0.2857142857142857,
+    "wilson95": [
+     0.11721378644576919,
+     0.5464908432989318
+    ]
+   },
+   "identity_matched_pairs": {
+    "n": 9,
+    "same_decided_class": 3,
+    "both_inconclusive": 1
+   },
+   "per_toi": {
+    "TIC-124206468": {
+     "E": "INCONCLUSIVE",
+     "S": "SURVIVED"
+    },
+    "TIC-142937186": {
+     "E": "INCONCLUSIVE",
+     "S": "SURVIVED"
+    },
+    "TIC-153078576": {
+     "E": "SURVIVED",
+     "S": "SURVIVED"
+    },
+    "TIC-219388773": {
+     "E": "INCONCLUSIVE",
+     "S": "WEAKENED"
+    },
+    "TIC-220016044": {
+     "E": "INCONCLUSIVE",
+     "S": "WEAKENED"
+    },
+    "TIC-299799658": {
+     "E": "INCONCLUSIVE",
+     "S": "SURVIVED"
+    },
+    "TIC-356235833": {
+     "E": "INCONCLUSIVE",
+     "S": "REFUTED"
+    },
+    "TIC-365733349": {
+     "E": "INCONCLUSIVE",
+     "S": "SURVIVED"
+    },
+    "TIC-372596795": {
+     "E": "WEAKENED",
+     "S": "WEAKENED"
+    },
+    "TIC-401604346": {
+     "E": "INCONCLUSIVE",
+     "S": "WEAKENED"
+    },
+    "TIC-419858461": {
+     "E": "INCONCLUSIVE",
+     "S": "REFUTED"
+    },
+    "TIC-467783290": {
+     "E": "REFUTED",
+     "S": "REFUTED"
+    },
+    "TIC-55275863": {
+     "E": "INCONCLUSIVE",
+     "S": "SURVIVED"
+    },
+    "TIC-47244580": {
+     "E": "INCONCLUSIVE",
+     "S": "INCONCLUSIVE"
+    }
+   }
+  },
+  "consensus": {
+   "same_decided_class": {
+    "k": 1,
+    "n": 14,
+    "rate": 0.07142857142857142,
+    "wilson95": [
+     0.012722215247890939,
+     0.31468704424151117
+    ]
+   },
+   "both_inconclusive": {
+    "k": 9,
+    "n": 14,
+    "rate": 0.6428571428571429,
+    "wilson95": [
+     0.38764423103907397,
+     0.8365526824644587
+    ]
+   },
+   "same_class": {
+    "k": 10,
+    "n": 14,
+    "rate": 0.7142857142857143,
+    "wilson95": [
+     0.4535091567010681,
+     0.8827862135542308
+    ]
+   },
+   "identity_matched_pairs": {
+    "n": 9,
+    "same_decided_class": 1,
+    "both_inconclusive": 7
+   },
+   "per_toi": {
+    "TIC-124206468": {
+     "E": "INCONCLUSIVE",
+     "S": "INCONCLUSIVE"
+    },
+    "TIC-142937186": {
+     "E": "INCONCLUSIVE",
+     "S": "SURVIVED"
+    },
+    "TIC-153078576": {
+     "E": "SURVIVED",
+     "S": "SURVIVED"
+    },
+    "TIC-219388773": {
+     "E": "INCONCLUSIVE",
+     "S": "INCONCLUSIVE"
+    },
+    "TIC-220016044": {
+     "E": "INCONCLUSIVE",
+     "S": "INCONCLUSIVE"
+    },
+    "TIC-299799658": {
+     "E": "INCONCLUSIVE",
+     "S": "INCONCLUSIVE"
+    },
+    "TIC-356235833": {
+     "E": "INCONCLUSIVE",
+     "S": "REFUTED"
+    },
+    "TIC-365733349": {
+     "E": "INCONCLUSIVE",
+     "S": "INCONCLUSIVE"
+    },
+    "TIC-372596795": {
+     "E": "INCONCLUSIVE",
+     "S": "INCONCLUSIVE"
+    },
+    "TIC-401604346": {
+     "E": "INCONCLUSIVE",
+     "S": "WEAKENED"
+    },
+    "TIC-419858461": {
+     "E": "INCONCLUSIVE",
+     "S": "INCONCLUSIVE"
+    },
+    "TIC-467783290": {
+     "E": "INCONCLUSIVE",
+     "S": "REFUTED"
+    },
+    "TIC-55275863": {
+     "E": "INCONCLUSIVE",
+     "S": "INCONCLUSIVE"
+    },
+    "TIC-47244580": {
+     "E": "INCONCLUSIVE",
+     "S": "INCONCLUSIVE"
+    }
+   }
+  }
+ },
+ "q2": {
+  "base": {
+   "k": 8,
+   "n": 8,
+   "rate": 1.0,
+   "wilson95": [
+    0.6755924351161198,
+    1.0
+   ]
+  },
+  "consensus": {
+   "k": 8,
+   "n": 8,
+   "rate": 1.0,
+   "wilson95": [
+    0.6755924351161198,
+    1.0
+   ]
+  },
+  "kept_base": [
+   "TIC-452866790",
+   "TIC-46432937",
+   "TIC-161223358",
+   "TIC-124379043",
+   "TIC-172110606",
+   "TIC-295354126",
+   "TIC-301051430",
+   "TIC-18318288"
+  ],
+  "kept_consensus": [
+   "TIC-452866790",
+   "TIC-46432937",
+   "TIC-161223358",
+   "TIC-124379043",
+   "TIC-172110606",
+   "TIC-295354126",
+   "TIC-301051430",
+   "TIC-18318288"
+  ]
+ },
+ "q3": {
+  "rows": [
+   {
+    "target_key": "TIC-146846569",
+    "toi": "734.01",
+    "entry_mode": "E",
+    "status": "OK",
+    "outcome": "WEAKENED",
+    "reason": "warning failure in: nearby_contamination",
+    "ended_with_status_and_reason": true,
+    "evaluated": true,
+    "centroid_shift": {
+     "status": "INCONCLUSIVE",
+     "message": "sectors disagree (heterogeneity p = 1.6e-33)"
+    },
+    "guarded_numerical_failures": {
+     "p1:centroid_shift": "numerical failure, INCONCLUSIVE by the v0.5.9 prototype's guard: sector 63's sky covariance (observed) is not positive definite",
+     "p2:centroid_shift": "numerical failure, INCONCLUSIVE by the v0.5.9 prototype's guard: sector 63's sky covariance (observed) is not positive definite",
+     "p3:centroid_shift": "numerical failure, INCONCLUSIVE by the v0.5.9 prototype's guard: sector 90's sky covariance (observed) is not positive definite",
+     "p4:centroid_shift": "numerical failure, INCONCLUSIVE by the v0.5.9 prototype's guard: sector 63's sky covariance (observed) is not positive definite",
+     "p5:centroid_shift": "numerical failure, INCONCLUSIVE by the v0.5.9 prototype's guard: sector 90's sky covariance (observed) is not positive definite",
+     "p6:centroid_shift": "numerical failure, INCONCLUSIVE by the v0.5.9 prototype's guard: sector 63's sky covariance (observed) is not positive definite"
+    }
+   },
+   {
+    "target_key": "TIC-146846569",
+    "toi": "734.01",
+    "entry_mode": "S",
+    "status": "OK",
+    "outcome": "WEAKENED",
+    "reason": "warning failure in: nearby_contamination",
+    "ended_with_status_and_reason": true,
+    "evaluated": true,
+    "centroid_shift": {
+     "status": "INCONCLUSIVE",
+     "message": "numerical failure, INCONCLUSIVE by the v0.5.9 prototype's guard: sector 90's sky covariance (observed) is not positive definite"
+    },
+    "guarded_numerical_failures": {
+     "base:centroid_shift": "numerical failure, INCONCLUSIVE by the v0.5.9 prototype's guard: sector 90's sky covariance (observed) is not positive definite",
+     "p1:centroid_shift": "numerical failure, INCONCLUSIVE by the v0.5.9 prototype's guard: sector 90's sky covariance (observed) is not positive definite",
+     "p2:centroid_shift": "numerical failure, INCONCLUSIVE by the v0.5.9 prototype's guard: sector 63's sky covariance (observed) is not positive definite",
+     "p3:centroid_shift": "numerical failure, INCONCLUSIVE by the v0.5.9 prototype's guard: sector 63's sky covariance (observed) is not positive definite",
+     "p4:centroid_shift": "numerical failure, INCONCLUSIVE by the v0.5.9 prototype's guard: sector 90's sky covariance (observed) is not positive definite",
+     "p5:centroid_shift": "numerical failure, INCONCLUSIVE by the v0.5.9 prototype's guard: sector 63's sky covariance (observed) is not positive definite",
+     "p6:centroid_shift": "numerical failure, INCONCLUSIVE by the v0.5.9 prototype's guard: sector 90's sky covariance (observed) is not positive definite"
+    }
+   },
+   {
+    "target_key": "TIC-259172249",
+    "toi": "5218.01",
+    "entry_mode": "E",
+    "status": "OK",
+    "outcome": "INCONCLUSIVE",
+    "reason": "could not be decided: systematics",
+    "ended_with_status_and_reason": true,
+    "evaluated": true,
+    "centroid_shift": {
+     "status": "INCONCLUSIVE",
+     "message": "numerical failure, INCONCLUSIVE by the v0.5.9 prototype's guard: sector 78's sky covariance (observed) is not positive definite"
+    },
+    "guarded_numerical_failures": {
+     "base:centroid_shift": "numerical failure, INCONCLUSIVE by the v0.5.9 prototype's guard: sector 78's sky covariance (observed) is not positive definite"
+    }
+   },
+   {
+    "target_key": "TIC-259172249",
+    "toi": "5218.01",
+    "entry_mode": "S",
+    "status": "OK",
+    "outcome": "INCONCLUSIVE",
+    "reason": "could not be decided: systematics",
+    "ended_with_status_and_reason": true,
+    "evaluated": true,
+    "centroid_shift": {
+     "status": "INCONCLUSIVE",
+     "message": "numerical failure, INCONCLUSIVE by the v0.5.9 prototype's guard: sector 78's sky covariance (observed) is not positive definite"
+    },
+    "guarded_numerical_failures": {
+     "base:centroid_shift": "numerical failure, INCONCLUSIVE by the v0.5.9 prototype's guard: sector 78's sky covariance (observed) is not positive definite"
+    }
+   }
+  ],
+  "all_ended": true,
+  "all_evaluated": true
+ },
+ "q4": {
+  "all_24": {
+   "E": {
+    "base": {
+     "k": 10,
+     "n": 24,
+     "rate": 0.4166666666666667,
+     "wilson95": [
+      0.24467602609811764,
+      0.6116533413477124
+     ]
+    },
+    "consensus": {
+     "k": 8,
+     "n": 24,
+     "rate": 0.3333333333333333,
+     "wilson95": [
+      0.1797219032729775,
+      0.5329368316186824
+     ]
+    },
+    "lost_to_consensus": 2
+   },
+   "S": {
+    "base": {
+     "k": 20,
+     "n": 24,
+     "rate": 0.8333333333333334,
+     "wilson95": [
+      0.6414692935030095,
+      0.9332132367136705
+     ]
+    },
+    "consensus": {
+     "k": 12,
+     "n": 24,
+     "rate": 0.5,
+     "wilson95": [
+      0.3142742581957335,
+      0.6857257418042665
+     ]
+    },
+    "lost_to_consensus": 8
+   }
+  },
+  "changes_14": {
+   "E": {
+    "base": {
+     "k": 3,
+     "n": 14,
+     "rate": 0.21428571428571427,
+     "wilson95": [
+      0.07571386712693184,
+      0.47589230586600295
+     ]
+    },
+    "consensus": {
+     "k": 1,
+     "n": 14,
+     "rate": 0.07142857142857142,
+     "wilson95": [
+      0.012722215247890939,
+      0.31468704424151117
+     ]
+    },
+    "lost_to_consensus": 2
+   },
+   "S": {
+    "base": {
+     "k": 13,
+     "n": 14,
+     "rate": 0.9285714285714286,
+     "wilson95": [
+      0.6853129557584889,
+      0.9872777847521093
+     ]
+    },
+    "consensus": {
+     "k": 5,
+     "n": 14,
+     "rate": 0.35714285714285715,
+     "wilson95": [
+      0.1634473175355414,
+      0.612355768960926
+     ]
+    },
+    "lost_to_consensus": 8
+   }
+  }
+ },
+ "q5": {
+  "probe_unit_cpu_seconds_per_axis": {
+   "epoch": {
+    "n": 60,
+    "mean": 59.17942708333333,
+    "median": 59.0703125,
+    "max": 184.609375,
+    "sum": 3550.765625
+   },
+   "period": {
+    "n": 60,
+    "mean": 58.991145833333334,
+    "median": 59.625,
+    "max": 184.859375,
+    "sum": 3539.46875
+   },
+   "duration": {
+    "n": 60,
+    "mean": 58.54635416666667,
+    "median": 58.171875,
+    "max": 183.578125,
+    "sum": 3512.78125
+   }
+  },
+  "probe_evaluation_cpu_seconds_per_axis": {
+   "epoch": {
+    "n": 60,
+    "mean": 56.74453125,
+    "median": 56.515625,
+    "max": 180.875,
+    "sum": 3404.671875
+   },
+   "period": {
+    "n": 60,
+    "mean": 56.55885416666667,
+    "median": 57.2109375,
+    "max": 180.84375,
+    "sum": 3393.53125
+   },
+   "duration": {
+    "n": 60,
+    "mean": 56.11328125,
+    "median": 55.578125,
+    "max": 179.6875,
+    "sum": 3366.796875
+   }
+  },
+  "fit_cpu_seconds": {
+   "E": {
+    "n": 24,
+    "mean": 14.659505208333334,
+    "median": 9.5390625,
+    "max": 67.96875,
+    "sum": 351.828125
+   },
+   "S": {
+    "n": 24,
+    "mean": 16.690755208333332,
+    "median": 14.5390625,
+    "max": 44.046875,
+    "sum": 400.578125
+   }
+  },
+  "base_evaluation_cpu_seconds": {
+   "E": {
+    "n": 21,
+    "mean": 59.34375,
+    "median": 42.984375,
+    "max": 204.640625,
+    "sum": 1246.21875
+   },
+   "S": {
+    "n": 24,
+    "mean": 59.076171875,
+    "median": 43.1328125,
+    "max": 204.90625,
+    "sum": 1417.828125
+   }
+  },
+  "fetch_cpu_seconds": {
+   "n": 24,
+   "mean": 8.40234375,
+   "median": 7.90625,
+   "max": 15.1875,
+   "sum": 201.65625
+  },
+  "downloaded_gb_per_toi": {
+   "n": 24,
+   "mean": 0.24358332000000002,
+   "median": 0.20015424,
+   "max": 0.7716096,
+   "sum": 5.84599968
+  },
+  "metered_gb_per_toi": {
+   "n": 24,
+   "mean": 0.24458269641666666,
+   "median": 0.2023464175,
+   "max": 0.772472348,
+   "sum": 5.869984714
+  },
+  "ledger": {
+   "cpu_hours_charged": 4.1216,
+   "downloaded_bytes_charged": null,
+   "disk_peak_bytes": 4773538245,
+   "batches": 6,
+   "state": "complete",
+   "state_reason": "every required unit of the set is recorded"
+  }
+ },
+ "describe": {
+  "entry_unresolved": {
+   "E": 3
+  },
+  "stayed_on_toi_ephemeris": {
+   "E": 21,
+   "S": 20
+  },
+  "first_disagreeing_axis": {
+   "S:period": 1,
+   "S:epoch": 7,
+   "E:epoch": 1,
+   "E:duration": 1
+  },
+  "all_24": {
+   "complete_pairs": 24,
+   "incomplete_pairs": 0,
+   "base": {
+    "same_decided_class": {
+     "k": 10,
+     "n": 24,
+     "rate": 0.4166666666666667,
+     "wilson95": [
+      0.24467602609811764,
+      0.6116533413477124
+     ]
+    },
+    "both_inconclusive": {
+     "k": 4,
+     "n": 24,
+     "rate": 0.16666666666666666,
+     "wilson95": [
+      0.06678676328632951,
+      0.3585307064969906
+     ]
+    },
+    "same_class": {
+     "k": 14,
+     "n": 24,
+     "rate": 0.5833333333333334,
+     "wilson95": [
+      0.3883466586522876,
+      0.7553239739018824
+     ]
+    },
+    "identity_matched_pairs": {
+     "n": 19,
+     "same_decided_class": 10,
+     "both_inconclusive": 4
+    },
+    "per_toi": {
+     "TIC-124206468": {
+      "E": "INCONCLUSIVE",
+      "S": "SURVIVED"
+     },
+     "TIC-142937186": {
+      "E": "INCONCLUSIVE",
+      "S": "SURVIVED"
+     },
+     "TIC-153078576": {
+      "E": "SURVIVED",
+      "S": "SURVIVED"
+     },
+     "TIC-219388773": {
+      "E": "INCONCLUSIVE",
+      "S": "WEAKENED"
+     },
+     "TIC-220016044": {
+      "E": "INCONCLUSIVE",
+      "S": "WEAKENED"
+     },
+     "TIC-299799658": {
+      "E": "INCONCLUSIVE",
+      "S": "SURVIVED"
+     },
+     "TIC-356235833": {
+      "E": "INCONCLUSIVE",
+      "S": "REFUTED"
+     },
+     "TIC-365733349": {
+      "E": "INCONCLUSIVE",
+      "S": "SURVIVED"
+     },
+     "TIC-372596795": {
+      "E": "WEAKENED",
+      "S": "WEAKENED"
+     },
+     "TIC-401604346": {
+      "E": "INCONCLUSIVE",
+      "S": "WEAKENED"
+     },
+     "TIC-419858461": {
+      "E": "INCONCLUSIVE",
+      "S": "REFUTED"
+     },
+     "TIC-467783290": {
+      "E": "REFUTED",
+      "S": "REFUTED"
+     },
+     "TIC-55275863": {
+      "E": "INCONCLUSIVE",
+      "S": "SURVIVED"
+     },
+     "TIC-47244580": {
+      "E": "INCONCLUSIVE",
+      "S": "INCONCLUSIVE"
+     },
+     "TIC-146846569": {
+      "E": "WEAKENED",
+      "S": "WEAKENED"
+     },
+     "TIC-259172249": {
+      "E": "INCONCLUSIVE",
+      "S": "INCONCLUSIVE"
+     },
+     "TIC-452866790": {
+      "E": "SURVIVED",
+      "S": "SURVIVED"
+     },
+     "TIC-46432937": {
+      "E": "SURVIVED",
+      "S": "SURVIVED"
+     },
+     "TIC-161223358": {
+      "E": "WEAKENED",
+      "S": "WEAKENED"
+     },
+     "TIC-124379043": {
+      "E": "WEAKENED",
+      "S": "WEAKENED"
+     },
+     "TIC-172110606": {
+      "E": "REFUTED",
+      "S": "REFUTED"
+     },
+     "TIC-295354126": {
+      "E": "REFUTED",
+      "S": "REFUTED"
+     },
+     "TIC-301051430": {
+      "E": "INCONCLUSIVE",
+      "S": "INCONCLUSIVE"
+     },
+     "TIC-18318288": {
+      "E": "INCONCLUSIVE",
+      "S": "INCONCLUSIVE"
+     }
+    }
+   },
+   "consensus": {
+    "same_decided_class": {
+     "k": 8,
+     "n": 24,
+     "rate": 0.3333333333333333,
+     "wilson95": [
+      0.1797219032729775,
+      0.5329368316186824
+     ]
+    },
+    "both_inconclusive": {
+     "k": 12,
+     "n": 24,
+     "rate": 0.5,
+     "wilson95": [
+      0.3142742581957335,
+      0.6857257418042665
+     ]
+    },
+    "same_class": {
+     "k": 20,
+     "n": 24,
+     "rate": 0.8333333333333334,
+     "wilson95": [
+      0.6414692935030095,
+      0.9332132367136705
+     ]
+    },
+    "identity_matched_pairs": {
+     "n": 19,
+     "same_decided_class": 8,
+     "both_inconclusive": 10
+    },
+    "per_toi": {
+     "TIC-124206468": {
+      "E": "INCONCLUSIVE",
+      "S": "INCONCLUSIVE"
+     },
+     "TIC-142937186": {
+      "E": "INCONCLUSIVE",
+      "S": "SURVIVED"
+     },
+     "TIC-153078576": {
+      "E": "SURVIVED",
+      "S": "SURVIVED"
+     },
+     "TIC-219388773": {
+      "E": "INCONCLUSIVE",
+      "S": "INCONCLUSIVE"
+     },
+     "TIC-220016044": {
+      "E": "INCONCLUSIVE",
+      "S": "INCONCLUSIVE"
+     },
+     "TIC-299799658": {
+      "E": "INCONCLUSIVE",
+      "S": "INCONCLUSIVE"
+     },
+     "TIC-356235833": {
+      "E": "INCONCLUSIVE",
+      "S": "REFUTED"
+     },
+     "TIC-365733349": {
+      "E": "INCONCLUSIVE",
+      "S": "INCONCLUSIVE"
+     },
+     "TIC-372596795": {
+      "E": "INCONCLUSIVE",
+      "S": "INCONCLUSIVE"
+     },
+     "TIC-401604346": {
+      "E": "INCONCLUSIVE",
+      "S": "WEAKENED"
+     },
+     "TIC-419858461": {
+      "E": "INCONCLUSIVE",
+      "S": "INCONCLUSIVE"
+     },
+     "TIC-467783290": {
+      "E": "INCONCLUSIVE",
+      "S": "REFUTED"
+     },
+     "TIC-55275863": {
+      "E": "INCONCLUSIVE",
+      "S": "INCONCLUSIVE"
+     },
+     "TIC-47244580": {
+      "E": "INCONCLUSIVE",
+      "S": "INCONCLUSIVE"
+     },
+     "TIC-146846569": {
+      "E": "WEAKENED",
+      "S": "WEAKENED"
+     },
+     "TIC-259172249": {
+      "E": "INCONCLUSIVE",
+      "S": "INCONCLUSIVE"
+     },
+     "TIC-452866790": {
+      "E": "SURVIVED",
+      "S": "SURVIVED"
+     },
+     "TIC-46432937": {
+      "E": "SURVIVED",
+      "S": "SURVIVED"
+     },
+     "TIC-161223358": {
+      "E": "WEAKENED",
+      "S": "WEAKENED"
+     },
+     "TIC-124379043": {
+      "E": "WEAKENED",
+      "S": "WEAKENED"
+     },
+     "TIC-172110606": {
+      "E": "REFUTED",
+      "S": "REFUTED"
+     },
+     "TIC-295354126": {
+      "E": "REFUTED",
+      "S": "REFUTED"
+     },
+     "TIC-301051430": {
+      "E": "INCONCLUSIVE",
+      "S": "INCONCLUSIVE"
+     },
+     "TIC-18318288": {
+      "E": "INCONCLUSIVE",
+      "S": "INCONCLUSIVE"
+     }
+    }
+   }
+  }
+ }
+}
