@@ -75,6 +75,16 @@ how later work is done.
 
 **None is open.** Opening the next phase is the maintainer's decision.
 
+- **Proposed, not open:** the charter of v0.5.11 Battery version 5: specification and software,
+  [docs/plans/v0.5.11-charter.md](docs/plans/v0.5.11-charter.md), written on the maintainer's
+  decision of 2026-11-24 received at 19:33 local (#218, comment 7146372481, items 1 and 2).
+  - It is cut from a draft that Codex found `REFUTED` as drafted, which the maintainer split.
+    The record is in [docs/plans/v0.5.11-consensus/](docs/plans/v0.5.11-consensus/README.md).
+  - The phase opens only when the maintainer approves the charter in #218, citing its commit
+    SHA.
+  - What the split moved out is in
+    [docs/plans/v0.5.12-proposal.md](docs/plans/v0.5.12-proposal.md), a proposal only.
+
 ### Previous phase record: v0.5.10 Census and feasibility
 
 **v0.5.10 Census and feasibility: closed on 2026-11-24 with declared limits (gate `REFUTED`)**, by

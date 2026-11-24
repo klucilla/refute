@@ -16,6 +16,8 @@ docs/validation/v0.5.8/zenodo/** -text
 # the process-diet-2 and research records, stored byte for byte
 docs/plans/process-diet-2/** -text
 docs/plans/research-2026-11-23/** -text
+# the v0.5.11 consensus record (the draft charter, its cover and Codex's rounds), stored byte for byte
+docs/plans/v0.5.11-consensus/** -text
 # the byte-for-byte copies of the .cache cleanups' scripts and records of 2026-11-24 (#220)
 docs/maintenance/cache-archive-2026-11-24/a/** -text
 docs/maintenance/cache-archive-2026-11-24/b/** -text
