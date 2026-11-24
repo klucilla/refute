@@ -59,3 +59,14 @@ By the maintainer's decision received at 17:50 local (#218, comment 7144131066),
 - **Kept:** the folders of other phases that are still in use (`lock-compat`, `maint1120`,
   `tools`, `v04`, `v055`, `vm`, `wt-v021`) and the AppContainer profile, which the maintainer
   removes.
+
+## The cleanup of `.cache/r1124d` (2026-11-24, after the closing stop)
+
+By the maintainer's decision received at 18:59 local (#218, comment 7145663950), item 2.
+[cleanup_r1124d.py](cleanup_r1124d.py) wrote [r1124d-record.json](r1124d-record.json).
+- **The folder:** `.cache/r1124d` was the working folder of the closing stop. It held the commit
+  messages of the closing cleanup and of the site draft, and the two helper scripts that edited the
+  site's draft branch.
+- **The files:** 4 files (9,245 bytes) were copied to
+  `K:/Meu Drive/Pessoal/Projetos/refute/cache-archive-2026-11-24-v0510-r1124d`, all matching. They
+  were then deleted by literal path, and the folder was removed.

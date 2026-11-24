@@ -1,0 +1,45 @@
+{
+ "utc": "2026-11-24T22:01:32Z",
+ "decision": "#218, comment 7145663950, item 2",
+ "drive": "K:/Meu Drive/Pessoal/Projetos/refute/cache-archive-2026-11-24-v0510-r1124d",
+ "files": 4,
+ "bytes": 9245,
+ "all_match": true,
+ "folders_removed": [
+  ".cache/r1124d/"
+ ],
+ "rows": [
+  {
+   "path": ".cache/r1124d/msg-clean.txt",
+   "bytes": 821,
+   "sha256": "4f9d49b3a872a51bcdcbdeecae71ef5121fda66c8d0c771e9febe9df717def9d",
+   "destination_sha256": "4f9d49b3a872a51bcdcbdeecae71ef5121fda66c8d0c771e9febe9df717def9d",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/r1124d/msg-site.txt",
+   "bytes": 1914,
+   "sha256": "eeb716d46a2c72ef7f2d71e8f4016d4ae505f24ba7f6105c201318ade99b4791",
+   "destination_sha256": "eeb716d46a2c72ef7f2d71e8f4016d4ae505f24ba7f6105c201318ade99b4791",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/r1124d/site_edit.py",
+   "bytes": 4621,
+   "sha256": "939ba588ff01c83a9cec00312cbb23d4e4aa71a9a339450377b139c9bb6b1135",
+   "destination_sha256": "939ba588ff01c83a9cec00312cbb23d4e4aa71a9a339450377b139c9bb6b1135",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/r1124d/site_tests.py",
+   "bytes": 1889,
+   "sha256": "73f400d625a953e69893ff3e50fdee11da99d7ca573f877da875a0229846b98e",
+   "destination_sha256": "73f400d625a953e69893ff3e50fdee11da99d7ca573f877da875a0229846b98e",
+   "match": true,
+   "status": "deleted, archived"
+  }
+ ]
+}
