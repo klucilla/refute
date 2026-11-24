@@ -1,0 +1,210 @@
+{
+ "mode": "exploratory",
+ "method_status": "not_validated",
+ "limits_label": "WEAKENED; does not meet D1, D2, D4, T2a",
+ "written_utc": "2026-11-24T16:21:26Z",
+ "arms": {
+  "kelt_fp": {
+   "rows": 1128,
+   "with_tic": 1128,
+   "unique_tics": 1126,
+   "spoc_2min": 310,
+   "not_exposed": 1123,
+   "usable": 307,
+   "toi_overlap": 7,
+   "usable_that_are_tois": 4,
+   "usable_toi_dispositions": {
+    "APC": 4
+   },
+   "usable_support": {
+    "period_days": {
+     "n": 308,
+     "p10": 1.198064,
+     "p50": 4.53442,
+     "p90": 16.46661
+    },
+    "depth": {
+     "n": 307,
+     "p10": 5.2,
+     "p50": 15.4,
+     "p90": 33.2
+    },
+    "depth_unit": "mmag (KELT)",
+    "magnitude": {
+     "n": 308,
+     "p10": 8.83,
+     "p50": 10.81,
+     "p90": 12.0
+    },
+    "magnitude_band": "V"
+   }
+  },
+  "planets_not_tess": {
+   "rows": 3805,
+   "with_tic": 3803,
+   "unique_tics": 2849,
+   "spoc_2min": 2651,
+   "not_exposed": 2576,
+   "usable": 2380,
+   "toi_overlap": 621,
+   "usable_that_are_tois": 347,
+   "usable_toi_dispositions": {
+    "": 2,
+    "CP": 39,
+    "KP": 330,
+    "PC": 10
+   },
+   "usable_support": {
+    "period_days": {
+     "n": 3290,
+     "p10": 2.421937,
+     "p50": 9.84564,
+     "p90": 53.5293487
+    },
+    "depth": {
+     "n": 3144,
+     "p10": 0.0121,
+     "p50": 0.052,
+     "p90": 0.43197
+    },
+    "depth_unit": "percent",
+    "magnitude": {
+     "n": 3290,
+     "p10": 11.4605,
+     "p50": 13.597,
+     "p90": 14.9133
+    },
+    "magnitude_band": "TESS"
+   },
+   "usable_by_facility": {
+    "Kepler": 2540,
+    "K2": 520,
+    "HATSouth": 53,
+    "CoRoT": 29,
+    "HATNet": 22,
+    "SuperWASP": 19,
+    "Multiple Observatories": 19,
+    "Next-Generation Transit Survey (NGTS)": 18,
+    "SuperWASP-South": 12,
+    "La Silla Observatory": 9,
+    "OGLE": 8,
+    "Qatar": 7,
+    "Roque de los Muchachos Observatory": 4,
+    "CHaracterising ExOPlanets Satellite (CHEOPS)": 3,
+    "Haute-Provence Observatory": 3,
+    "WASP-South": 3,
+    "United Kingdom Infrared Telescope": 2,
+    "SuperWASP-North": 2,
+    "Haleakala Observatory": 2,
+    "SPECULOOS Southern Observatory": 1,
+    "Cerro Tololo Inter-American Observatory": 1,
+    "MEarth Project": 1,
+    "Spitzer Space Telescope": 1,
+    "Las Campanas Observatory": 1,
+    "European Space Agency (ESA) Gaia Satellite": 1,
+    "McDonald Observatory": 1,
+    "Paranal Observatory": 1,
+    "Acton Sky Portal Observatory": 1,
+    "Multiple Facilities": 1,
+    "KELT": 1,
+    "W. M. Keck Observatory": 1,
+    "Subaru Telescope": 1,
+    "XO": 1,
+    "Zwicky Transient Facility": 1
+   },
+   "usable_ground_based": {
+    "rule": "discovery facility names none of: Kepler, K2, CoRoT, Spitzer, Hubble, James Webb, CHEOPS, Gaia",
+    "usable": 181,
+    "period_days": {
+     "n": 196,
+     "p10": 1.6091788,
+     "p50": 3.352057,
+     "p90": 11.57797
+    },
+    "depth_percent": {
+     "n": 180,
+     "p10": 0.3375,
+     "p50": 1.2,
+     "p90": 2.5455085
+    },
+    "magnitude_tess": {
+     "n": 196,
+     "p10": 8.27468,
+     "p50": 12.4474,
+     "p90": 14.1266
+    }
+   }
+  }
+ },
+ "kelt_fp_types": {
+  "NEB": 378,
+  "SB1": 307,
+  "SB2": 140,
+  "EB1": 130,
+  "BEB": 90,
+  "Giant": 29,
+  "EB2": 25,
+  "Variable": 16,
+  "RV0": 13
+ },
+ "kelt_fp_total": {
+  "rows": 1128,
+  "research_sum_of_seven_types": 1099,
+  "the_other_types": {
+   "RV0": 13,
+   "Variable": 16
+  },
+  "reconciled": true
+ },
+ "provenance": {
+  "kelt_fp": {
+   "url": "https://arxiv.org/e-print/1803.01869v2",
+   "file": "KELT_False_Positive_Catalog_20180531.csv",
+   "sha256": "72b21cce9115f3a667ab9866f391ad461a2f6ea001bd07a87786a17a386e7386",
+   "read_utc": "2026-11-24",
+   "licence": "not confirmed"
+  },
+  "pscomppars": {
+   "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2C+hostname%2C+tic_id%2C+disc_facility%2C+discoverymethod%2C+pl_orbper%2C+pl_trandep%2C+sy_tmag%2C+sy_vmag+from+pscomppars+where+tran_flag%3D1&format=csv",
+   "retrieved_utc": "2026-11-24T16:12:17Z",
+   "rows": 4830,
+   "licence": "not confirmed"
+  },
+  "toi": {
+   "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+tid%2C+toi%2C+tfopwg_disp+from+toi&format=csv",
+   "retrieved_utc": "2026-11-24T16:12:19Z",
+   "rows": 8175,
+   "licence": "not confirmed"
+  },
+  "mast": {
+   "criteria": {
+    "obs_collection": "TESS",
+    "dataproduct_type": "timeseries",
+    "provenance_name": "SPOC",
+    "t_exptime": [
+     119,
+     121
+    ]
+   },
+   "service": "MAST CAOM via astroquery.mast.Observations",
+   "started_utc": "2026-11-24T16:21:07Z",
+   "targets_queried": 3975
+  },
+  "exposure": {
+   "rule": "v0.5.6 part-b-exposure.json exposed_tics, plus every tic_id in the JSON records of docs/validation/v0.5.6 to v0.5.9",
+   "files": [
+    "docs/validation/v0.5.6/part-a-draw.json",
+    "docs/validation/v0.5.6/part-a-pilot.json",
+    "docs/validation/v0.5.6/part-a-records.json",
+    "docs/validation/v0.5.6/part-b-prep.json",
+    "docs/validation/v0.5.6/part-b-records.json",
+    "docs/validation/v0.5.6/part-b-tpf-deletions.json",
+    "docs/validation/v0.5.7/diagnostic-rerun.json",
+    "docs/validation/v0.5.7/seeded-pilot-records.json",
+    "docs/validation/v0.5.8/stability-records.json",
+    "docs/validation/v0.5.9/prototype-units.json"
+   ],
+   "tics": 1484
+  }
+ }
+}

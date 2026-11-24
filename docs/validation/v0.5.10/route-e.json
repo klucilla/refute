@@ -1,0 +1,371 @@
+{
+ "mode": "exploratory",
+ "method_status": "not_validated",
+ "limits_label": "WEAKENED; does not meet D1, D2, D4, T2a",
+ "written_utc": "2026-11-24T16:29:58Z",
+ "new_sectors": {
+  "110": {
+   "start": "2026-10-31",
+   "end": "2026-11-26",
+   "cameras": {
+    "1": [
+     75.883,
+     -2.692,
+     -38.493
+    ],
+    "2": [
+     95.35,
+     -17.205,
+     -35.07
+    ],
+    "3": [
+     117.853,
+     -29.568,
+     154.012
+    ],
+    "4": [
+     145.21,
+     -37.287,
+     169.319
+    ]
+   }
+  },
+  "111": {
+   "start": "2026-11-26",
+   "end": "2026-12-22",
+   "cameras": {
+    "1": [
+     99.361,
+     -2.264,
+     -48.761
+    ],
+    "2": [
+     115.938,
+     -19.981,
+     -45.502
+    ],
+    "3": [
+     136.513,
+     -35.79,
+     144.295
+    ],
+    "4": [
+     165.256,
+     -46.62,
+     163.54
+    ]
+   }
+  },
+  "112": {
+   "start": "2026-12-22",
+   "end": "2027-01-17",
+   "cameras": {
+    "1": [
+     122.947,
+     -6.035,
+     -58.504
+    ],
+    "2": [
+     136.642,
+     -26.164,
+     -54.631
+    ],
+    "3": [
+     155.905,
+     -44.467,
+     136.719
+    ],
+    "4": [
+     188.867,
+     -57.028,
+     162.677
+    ]
+   }
+  },
+  "113": {
+   "start": "2027-01-17",
+   "end": "2027-02-13",
+   "cameras": {
+    "1": [
+     146.727,
+     -13.636,
+     -66.246
+    ],
+    "2": [
+     158.3,
+     -35.251,
+     -61.357
+    ],
+    "3": [
+     178.153,
+     -54.962,
+     132.986
+    ],
+    "4": [
+     222.788,
+     -66.752,
+     172.628
+    ]
+   }
+  },
+  "114": {
+   "start": "2027-02-13",
+   "end": "2027-03-14",
+   "cameras": {
+    "1": [
+     171.264,
+     -24.0,
+     -70.443
+    ],
+    "2": [
+     182.608,
+     -46.196,
+     -63.782
+    ],
+    "3": [
+     208.572,
+     -65.768,
+     138.166
+    ],
+    "4": [
+     275.743,
+     -70.804,
+     -158.443
+    ]
+   }
+  },
+  "115": {
+   "start": "2027-03-14",
+   "end": "2027-04-12",
+   "cameras": {
+    "1": [
+     185.767,
+     -2.475,
+     -24.311
+    ],
+    "2": [
+     208.03,
+     -11.931,
+     -21.475
+    ],
+    "3": [
+     231.711,
+     -19.545,
+     165.049
+    ],
+    "4": [
+     257.159,
+     -23.861,
+     174.602
+    ]
+   }
+  },
+  "116": {
+   "start": "2027-04-12",
+   "end": "2027-05-10",
+   "cameras": {
+    "1": [
+     248.941,
+     -22.605,
+     -9.038
+    ],
+    "2": [
+     275.073,
+     -24.213,
+     1.499
+    ],
+    "3": [
+     300.968,
+     -21.405,
+     -168.312
+    ],
+    "4": [
+     325.305,
+     -14.874,
+     -160.618
+    ]
+   }
+  },
+  "117": {
+   "start": "2027-05-10",
+   "end": "2027-06-07",
+   "cameras": {
+    "1": [
+     244.323,
+     -3.056,
+     79.558
+    ],
+    "2": [
+     248.838,
+     20.532,
+     78.857
+    ],
+    "3": [
+     255.107,
+     43.958,
+     -104.561
+    ],
+    "4": [
+     270.005,
+     66.564,
+     -117.067
+    ]
+   }
+  },
+  "118": {
+   "start": "2027-06-07",
+   "end": "2027-07-03",
+   "cameras": {
+    "1": [
+     268.686,
+     -5.429,
+     89.448
+    ],
+    "2": [
+     268.923,
+     18.57,
+     89.42
+    ],
+    "3": [
+     269.243,
+     42.568,
+     -90.746
+    ],
+    "4": [
+     270.005,
+     66.564,
+     -91.381
+    ]
+   }
+  },
+  "119": {
+   "start": "2027-07-03",
+   "end": "2027-07-29",
+   "cameras": {
+    "1": [
+     286.855,
+     26.913,
+     100.121
+    ],
+    "2": [
+     280.417,
+     50.403,
+     104.232
+    ],
+    "3": [
+     260.665,
+     72.789,
+     -58.023
+    ],
+    "4": [
+     155.283,
+     77.091,
+     45.459
+    ]
+   }
+  },
+  "120": {
+   "start": "2027-07-29",
+   "end": "2027-08-23",
+   "cameras": {
+    "1": [
+     304.52,
+     31.118,
+     110.091
+    ],
+    "2": [
+     291.08,
+     53.048,
+     119.289
+    ],
+    "3": [
+     254.249,
+     70.614,
+     -27.627
+    ],
+    "4": [
+     183.425,
+     67.571,
+     39.573
+    ]
+   }
+  }
+ },
+ "lists": {
+  "eumemic": {
+   "targets": 725,
+   "with_coordinates": 725,
+   "on_silicon_yes": 265,
+   "on_silicon_unknown_only": 69,
+   "with_transit_on_silicon": 205,
+   "transits_on_silicon": 2454,
+   "with_2min_history": 162,
+   "with_transit_on_silicon_and_2min_history": 50,
+   "timing_sigma_minutes": {
+    "median": 6.8,
+    "p90": 23.9
+   }
+  },
+  "ctoi": {
+   "targets": 5139,
+   "with_coordinates": 5139,
+   "on_silicon_yes": 1507,
+   "on_silicon_unknown_only": 400,
+   "with_transit_on_silicon": 1222,
+   "transits_on_silicon": 21456,
+   "with_2min_history": 2952,
+   "with_transit_on_silicon_and_2min_history": 682,
+   "timing_sigma_minutes": {
+    "median": 57.66611251520377,
+    "p90": 2274.412445906399
+   }
+  },
+  "refute_own": {
+   "targets": 3,
+   "with_coordinates": 3,
+   "on_silicon_yes": 0,
+   "on_silicon_unknown_only": 0,
+   "with_transit_on_silicon": 0,
+   "transits_on_silicon": 0,
+   "with_2min_history": 3,
+   "with_transit_on_silicon_and_2min_history": 0,
+   "timing_sigma_minutes": null
+  }
+ },
+ "provenance": {
+  "sectors": "https://tess.mit.edu/observations/sector-<N>/ (110 to 120), read 2026-11-24",
+  "eumemic": {
+   "repository": "https://github.com/eumemic/exoplanets",
+   "file": "candidates/predictions.csv",
+   "commit": "e2eee928fd621f75c1621f6b4206d34bb222ae59",
+   "licence": "not confirmed (repository LICENSE: MIT; results' licence unread)"
+  },
+  "ctoi": {
+   "url": "https://exofop.ipac.caltech.edu/tess/download_ctoi.php?sort=ctoi&output=csv",
+   "retrieved": "2026-11-24",
+   "licence": "not confirmed"
+  },
+  "refute_own": "calibration/v0.4/runs/promotion.json (promoted) and results/ledger.jsonl",
+  "coordinates": "MAST TIC catalog (astroquery.mast.Catalogs), for lists without RA/Dec",
+  "mast": {
+   "criteria": {
+    "obs_collection": "TESS",
+    "dataproduct_type": "timeseries",
+    "provenance_name": "SPOC",
+    "t_exptime": [
+     119,
+     121
+    ]
+   },
+   "service": "MAST CAOM via astroquery.mast.Observations",
+   "started_utc": "2026-11-24T16:21:07Z",
+   "targets_queried": 5646
+  },
+  "geometry": {
+   "half_field_deg": 12.0,
+   "margin_deg": 0.5,
+   "gap_deg": 0.25,
+   "roll": "both sign conventions; disagreement is unknown"
+  }
+ }
+}

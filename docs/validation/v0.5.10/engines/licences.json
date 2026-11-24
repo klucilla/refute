@@ -1,0 +1,954 @@
+[
+ {
+  "name": "aiobotocore",
+  "version": "3.10.0",
+  "license": "Apache-2.0",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "aiohappyeyeballs",
+  "version": "2.7.1",
+  "license": "PSF-2.0",
+  "classifiers": [
+   "Python Software Foundation License"
+  ],
+  "home": null
+ },
+ {
+  "name": "aiohttp",
+  "version": "3.14.5",
+  "license": "Apache-2.0 AND MIT",
+  "classifiers": [],
+  "home": "https://github.com/aio-libs/aiohttp"
+ },
+ {
+  "name": "aioitertools",
+  "version": "0.13.0",
+  "license": "MIT",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "aiosignal",
+  "version": "1.4.0",
+  "license": "Apache 2.0",
+  "classifiers": [
+   "Apache Software License"
+  ],
+  "home": "https://github.com/aio-libs/aiosignal"
+ },
+ {
+  "name": "annotated-types",
+  "version": "0.8.0",
+  "license": "MIT",
+  "classifiers": [
+   "MIT License"
+  ],
+  "home": "https://github.com/annotated-types/annotated-types"
+ },
+ {
+  "name": "anyio",
+  "version": "4.16.0",
+  "license": "MIT",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "arviz",
+  "version": "0.23.4",
+  "license": "Apache-2.0",
+  "classifiers": [
+   "Apache Software License"
+  ],
+  "home": "http://github.com/arviz-devs/arviz"
+ },
+ {
+  "name": "asteval",
+  "version": "1.0.10",
+  "license": "MIT",
+  "classifiers": [],
+  "home": "https://github.com/lmfit/asteval"
+ },
+ {
+  "name": "astropy",
+  "version": "7.2.3",
+  "license": "BSD-3-Clause",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "astropy-iers-data",
+  "version": "0.2026.11.16.0.37.44",
+  "license": "BSD-3-Clause",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "astroquery",
+  "version": "0.4.11",
+  "license": "BSD",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": null
+ },
+ {
+  "name": "attrs",
+  "version": "26.1.0",
+  "license": "MIT",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "batman-package",
+  "version": "2.5.3",
+  "license": "GNU GPLv3",
+  "classifiers": [],
+  "home": "https://github.com/lkreidberg/batman"
+ },
+ {
+  "name": "beautifulsoup4",
+  "version": "4.15.0",
+  "license": "MIT License",
+  "classifiers": [
+   "MIT License"
+  ],
+  "home": "https://www.crummy.com/software/BeautifulSoup/bs4/"
+ },
+ {
+  "name": "blosc2",
+  "version": "4.15.0",
+  "license": "BSD-3-Clause",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "bokeh",
+  "version": "3.10.2",
+  "license": "BSD-3-Clause",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "botocore",
+  "version": "1.43.117",
+  "license": "Apache-2.0",
+  "classifiers": [],
+  "home": "https://github.com/boto/botocore"
+ },
+ {
+  "name": "brokenaxes",
+  "version": "0.6.2",
+  "license": "",
+  "classifiers": [
+   "MIT License"
+  ],
+  "home": "https://github.com/bendichter/brokenaxes"
+ },
+ {
+  "name": "celerite",
+  "version": "0.4.3",
+  "license": "MIT",
+  "classifiers": [
+   "MIT License"
+  ],
+  "home": "https://github.com/dfm/celerite"
+ },
+ {
+  "name": "certifi",
+  "version": "2026.10.23",
+  "license": "MPL-2.0",
+  "classifiers": [
+   "Mozilla Public License 2.0 (MPL 2.0)"
+  ],
+  "home": "https://github.com/certifi/python-certifi"
+ },
+ {
+  "name": "charset-normalizer",
+  "version": "3.5.2",
+  "license": "MIT",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "cloudpickle",
+  "version": "3.1.2",
+  "license": "BSD-3-Clause",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": "https://github.com/cloudpipe/cloudpickle"
+ },
+ {
+  "name": "colorama",
+  "version": "0.4.6",
+  "license": "",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": "https://github.com/tartley/colorama"
+ },
+ {
+  "name": "contourpy",
+  "version": "1.3.3",
+  "license": "BSD 3-Clause License",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": "https://github.com/contourpy/contourpy"
+ },
+ {
+  "name": "corner",
+  "version": "2.3.0",
+  "license": "BSD 2-Clause License",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": "https://corner.readthedocs.io"
+ },
+ {
+  "name": "cycler",
+  "version": "0.12.1",
+  "license": "Copyright (c) 2015, matplotlib project All rights reserved.  Redistribution and ",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": null
+ },
+ {
+  "name": "dill",
+  "version": "0.4.1",
+  "license": "BSD-3-Clause",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": "https://github.com/uqfoundation/dill"
+ },
+ {
+  "name": "emcee",
+  "version": "3.1.6",
+  "license": "MIT",
+  "classifiers": [
+   "MIT License"
+  ],
+  "home": "https://emcee.readthedocs.io"
+ },
+ {
+  "name": "exovetter",
+  "version": "0.0.16",
+  "license": "BSD 3-Clause",
+  "classifiers": [],
+  "home": "https://github.com/spacetelescope/exovetter"
+ },
+ {
+  "name": "fbpca",
+  "version": "1.0",
+  "license": "BSD License",
+  "classifiers": [
+   "OSI Approved"
+  ],
+  "home": "https://www.facebook.com"
+ },
+ {
+  "name": "fonttools",
+  "version": "4.68.0",
+  "license": "MIT",
+  "classifiers": [],
+  "home": "http://github.com/fonttools/fonttools"
+ },
+ {
+  "name": "frozenlist",
+  "version": "1.8.0",
+  "license": "Apache-2.0",
+  "classifiers": [],
+  "home": "https://github.com/aio-libs/frozenlist"
+ },
+ {
+  "name": "fsspec",
+  "version": "2026.9.0",
+  "license": "BSD-3-Clause",
+  "classifiers": [],
+  "home": "https://github.com/fsspec/filesystem_spec"
+ },
+ {
+  "name": "h11",
+  "version": "0.16.0",
+  "license": "MIT",
+  "classifiers": [
+   "MIT License"
+  ],
+  "home": "https://github.com/python-hyper/h11"
+ },
+ {
+  "name": "h2",
+  "version": "4.4.1",
+  "license": "MIT",
+  "classifiers": [],
+  "home": "https://github.com/python-hyper/h2/"
+ },
+ {
+  "name": "h5netcdf",
+  "version": "1.8.3",
+  "license": "Copyright (c) 2015, h5netcdf developers",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": null
+ },
+ {
+  "name": "h5py",
+  "version": "3.16.0",
+  "license": "BSD-3-Clause",
+  "classifiers": [],
+  "home": "https://www.h5py.org/"
+ },
+ {
+  "name": "hpack",
+  "version": "4.2.0",
+  "license": "MIT",
+  "classifiers": [],
+  "home": "https://github.com/python-hyper/hpack/"
+ },
+ {
+  "name": "html5lib",
+  "version": "1.1",
+  "license": "MIT License",
+  "classifiers": [
+   "MIT License"
+  ],
+  "home": "https://github.com/html5lib/html5lib-python"
+ },
+ {
+  "name": "httpcore",
+  "version": "1.0.9",
+  "license": "BSD-3-Clause",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": "https://www.encode.io/httpcore/"
+ },
+ {
+  "name": "httpx",
+  "version": "0.28.1",
+  "license": "BSD-3-Clause",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": "https://github.com/encode/httpx"
+ },
+ {
+  "name": "hyperframe",
+  "version": "6.1.0",
+  "license": "The MIT License (MIT)  Copyright (c) 2014 Cory Benfield  Permission is hereby gr",
+  "classifiers": [
+   "MIT License"
+  ],
+  "home": "https://github.com/python-hyper/hyperframe/"
+ },
+ {
+  "name": "idna",
+  "version": "3.20",
+  "license": "BSD-3-Clause",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "jaraco-classes",
+  "version": "3.4.0",
+  "license": "",
+  "classifiers": [
+   "MIT License"
+  ],
+  "home": "https://github.com/jaraco/jaraco.classes"
+ },
+ {
+  "name": "jaraco-context",
+  "version": "6.1.2",
+  "license": "MIT",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "jaraco-functools",
+  "version": "4.6.0",
+  "license": "MIT",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "jinja2",
+  "version": "3.1.6",
+  "license": "",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": null
+ },
+ {
+  "name": "jmespath",
+  "version": "1.1.0",
+  "license": "MIT",
+  "classifiers": [
+   "MIT License"
+  ],
+  "home": "https://github.com/jmespath/jmespath.py"
+ },
+ {
+  "name": "joblib",
+  "version": "1.6.0",
+  "license": "BSD-3-Clause",
+  "classifiers": [],
+  "home": "https://joblib.readthedocs.io"
+ },
+ {
+  "name": "keyring",
+  "version": "25.7.0",
+  "license": "MIT",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "kiwisolver",
+  "version": "1.5.1",
+  "license": "=========================",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": null
+ },
+ {
+  "name": "leo-vetter",
+  "version": "1.2.0",
+  "license": "GPLv3",
+  "classifiers": [
+   "GNU General Public License v3 or later (GPLv3+)"
+  ],
+  "home": "https://github.com/mkunimoto/LEO-Vetter"
+ },
+ {
+  "name": "lightkurve",
+  "version": "2.6.0",
+  "license": "MIT",
+  "classifiers": [
+   "MIT License"
+  ],
+  "home": "https://lightkurve.github.io/lightkurve/"
+ },
+ {
+  "name": "llvmlite",
+  "version": "0.50.0",
+  "license": "BSD-2-Clause AND Apache-2.0 WITH LLVM-exception",
+  "classifiers": [],
+  "home": "http://llvmlite.readthedocs.io"
+ },
+ {
+  "name": "lmfit",
+  "version": "1.3.4",
+  "license": "BSD-3-Clause",
+  "classifiers": [],
+  "home": "https://lmfit.github.io//lmfit-py/"
+ },
+ {
+  "name": "lxml",
+  "version": "6.1.3",
+  "license": "BSD-3-Clause",
+  "classifiers": [],
+  "home": "https://lxml.de/"
+ },
+ {
+  "name": "markdown-it-py",
+  "version": "4.3.0",
+  "license": "",
+  "classifiers": [
+   "MIT License"
+  ],
+  "home": "https://github.com/executablebooks/markdown-it-py"
+ },
+ {
+  "name": "markupsafe",
+  "version": "3.0.4",
+  "license": "BSD-3-Clause",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "matplotlib",
+  "version": "3.11.2",
+  "license": "License agreement for matplotlib versions 1.3.0 and later",
+  "classifiers": [
+   "Python Software Foundation License"
+  ],
+  "home": "https://matplotlib.org"
+ },
+ {
+  "name": "mdurl",
+  "version": "0.1.2",
+  "license": "",
+  "classifiers": [
+   "MIT License"
+  ],
+  "home": "https://github.com/executablebooks/mdurl"
+ },
+ {
+  "name": "mechanicalsoup",
+  "version": "1.4.0",
+  "license": "MIT",
+  "classifiers": [
+   "MIT License"
+  ],
+  "home": "https://mechanicalsoup.readthedocs.io/"
+ },
+ {
+  "name": "memoization",
+  "version": "0.3.2",
+  "license": "MIT",
+  "classifiers": [
+   "MIT License"
+  ],
+  "home": "https://github.com/lonelyenvoy/python-memoization"
+ },
+ {
+  "name": "more-itertools",
+  "version": "11.2.1",
+  "license": "MIT",
+  "classifiers": [],
+  "home": "https://github.com/more-itertools/more-itertools"
+ },
+ {
+  "name": "msgpack",
+  "version": "1.2.4",
+  "license": "Apache-2.0",
+  "classifiers": [],
+  "home": "https://msgpack.org/"
+ },
+ {
+  "name": "multidict",
+  "version": "7.2.1",
+  "license": "Apache-2.0",
+  "classifiers": [],
+  "home": "https://github.com/aio-libs/multidict"
+ },
+ {
+  "name": "multipledispatch",
+  "version": "1.0.0",
+  "license": "BSD",
+  "classifiers": [],
+  "home": "http://github.com/mrocklin/multipledispatch/"
+ },
+ {
+  "name": "narwhals",
+  "version": "2.28.0",
+  "license": "MIT",
+  "classifiers": [],
+  "home": "https://github.com/narwhals-dev/narwhals"
+ },
+ {
+  "name": "ndindex",
+  "version": "1.10.1",
+  "license": "MIT",
+  "classifiers": [],
+  "home": "https://quansight-labs.github.io/ndindex/"
+ },
+ {
+  "name": "numba",
+  "version": "0.68.1",
+  "license": "BSD",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": "https://numba.pydata.org"
+ },
+ {
+  "name": "numexpr",
+  "version": "2.14.2",
+  "license": "MIT",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "numpy",
+  "version": "1.26.4",
+  "license": "Copyright (c) 2005-2023, NumPy Developers. All rights reserved.  Redistribution ",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": "https://numpy.org"
+ },
+ {
+  "name": "packaging",
+  "version": "26.3",
+  "license": "Apache-2.0 OR BSD-2-Clause",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "pandas",
+  "version": "2.3.3",
+  "license": "BSD 3-Clause License",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": null
+ },
+ {
+  "name": "patsy",
+  "version": "1.0.3",
+  "license": "2-clause BSD",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": "https://github.com/pydata/patsy"
+ },
+ {
+  "name": "pillow",
+  "version": "13.0.0",
+  "license": "MIT-CMU",
+  "classifiers": [],
+  "home": "https://python-pillow.org"
+ },
+ {
+  "name": "platformdirs",
+  "version": "4.14.5",
+  "license": "MIT",
+  "classifiers": [],
+  "home": "https://github.com/tox-dev/platformdirs"
+ },
+ {
+  "name": "propcache",
+  "version": "0.5.4",
+  "license": "Apache-2.0",
+  "classifiers": [],
+  "home": "https://github.com/aio-libs/propcache"
+ },
+ {
+  "name": "py-cpuinfo",
+  "version": "9.0.0",
+  "license": "MIT",
+  "classifiers": [
+   "MIT License"
+  ],
+  "home": "https://github.com/workhorsy/py-cpuinfo"
+ },
+ {
+  "name": "pydantic",
+  "version": "2.14.3",
+  "license": "MIT",
+  "classifiers": [],
+  "home": "https://github.com/pydantic/pydantic"
+ },
+ {
+  "name": "pydantic-core",
+  "version": "2.50.4",
+  "license": "MIT",
+  "classifiers": [],
+  "home": "https://github.com/pydantic/pydantic"
+ },
+ {
+  "name": "pyerfa",
+  "version": "2.0.1.5",
+  "license": "BSD 3-Clause License",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": "https://github.com/liberfa/pyerfa"
+ },
+ {
+  "name": "pygments",
+  "version": "2.21.0",
+  "license": "BSD-2-Clause",
+  "classifiers": [],
+  "home": "https://pygments.org"
+ },
+ {
+  "name": "pyparsing",
+  "version": "3.3.3",
+  "license": "MIT",
+  "classifiers": [],
+  "home": "https://github.com/pyparsing/pyparsing/"
+ },
+ {
+  "name": "pyrr",
+  "version": "0.10.3",
+  "license": "BSD",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": "https://github.com/adamlwgriffiths/Pyrr"
+ },
+ {
+  "name": "python-dateutil",
+  "version": "2.9.0.post0",
+  "license": "Dual License",
+  "classifiers": [
+   "Apache Software License",
+   "BSD License"
+  ],
+  "home": "https://github.com/dateutil/dateutil"
+ },
+ {
+  "name": "pytransit",
+  "version": "2.2.0",
+  "license": "GPLv2",
+  "classifiers": [
+   "GNU General Public License v2 (GPLv2)"
+  ],
+  "home": "https://github.com/hpparvi/PyTransit"
+ },
+ {
+  "name": "pytz",
+  "version": "2026.6",
+  "license": "MIT",
+  "classifiers": [
+   "MIT License"
+  ],
+  "home": "http://pythonhosted.org/pytz"
+ },
+ {
+  "name": "pyvo",
+  "version": "1.10.0",
+  "license": "BSD-3-Clause",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "pywin32-ctypes",
+  "version": "0.2.3",
+  "license": "BSD-3-Clause",
+  "classifiers": [],
+  "home": "https://github.com/enthought/pywin32-ctypes"
+ },
+ {
+  "name": "pyyaml",
+  "version": "6.0.3",
+  "license": "MIT",
+  "classifiers": [
+   "MIT License"
+  ],
+  "home": "https://pyyaml.org/"
+ },
+ {
+  "name": "requests",
+  "version": "2.34.2",
+  "license": "Apache-2.0",
+  "classifiers": [
+   "Apache Software License"
+  ],
+  "home": null
+ },
+ {
+  "name": "rich",
+  "version": "15.0.0",
+  "license": "MIT",
+  "classifiers": [
+   "MIT License"
+  ],
+  "home": "https://github.com/Textualize/rich"
+ },
+ {
+  "name": "s3fs",
+  "version": "2026.9.0",
+  "license": "BSD",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": "http://github.com/fsspec/s3fs/"
+ },
+ {
+  "name": "scikit-learn",
+  "version": "1.9.1",
+  "license": "BSD-3-Clause",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "scipy",
+  "version": "1.13.1",
+  "license": "Copyright (c) 2001-2002 Enthought, Inc. 2003-2024, SciPy Developers. All rights ",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": "https://scipy.org/"
+ },
+ {
+  "name": "seaborn",
+  "version": "0.13.2",
+  "license": "",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": null
+ },
+ {
+  "name": "semantic-version",
+  "version": "2.10.0",
+  "license": "BSD",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": "https://github.com/rbarrois/python-semanticversion"
+ },
+ {
+  "name": "setuptools",
+  "version": "80.10.2",
+  "license": "MIT",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "six",
+  "version": "1.17.0",
+  "license": "MIT",
+  "classifiers": [
+   "MIT License"
+  ],
+  "home": "https://github.com/benjaminp/six"
+ },
+ {
+  "name": "soupsieve",
+  "version": "4.1.1",
+  "license": "MIT",
+  "classifiers": [
+   "MIT License"
+  ],
+  "home": "https://github.com/facelessuser/soupsieve"
+ },
+ {
+  "name": "tables",
+  "version": "3.11.1",
+  "license": "BSD 3-Clause License",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": null
+ },
+ {
+  "name": "threadpoolctl",
+  "version": "3.8.0",
+  "license": "BSD-3-Clause",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "tornado",
+  "version": "6.6.1",
+  "license": "Apache-2.0",
+  "classifiers": [
+   "Apache Software License"
+  ],
+  "home": "http://www.tornadoweb.org/"
+ },
+ {
+  "name": "tqdm",
+  "version": "4.70.1",
+  "license": "MPL-2.0 AND MIT",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "transitleastsquares",
+  "version": "2.3.0",
+  "license": "MIT",
+  "classifiers": [],
+  "home": "https://github.com/hippke/tls"
+ },
+ {
+  "name": "triceratops",
+  "version": "1.1.0",
+  "license": "",
+  "classifiers": [
+   "MIT License"
+  ],
+  "home": "https://github.com/stevengiacalone/triceratops"
+ },
+ {
+  "name": "typing-extensions",
+  "version": "4.16.0",
+  "license": "PSF-2.0",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "typing-inspection",
+  "version": "0.4.5",
+  "license": "MIT",
+  "classifiers": [],
+  "home": "https://github.com/pydantic/typing-inspection"
+ },
+ {
+  "name": "tzdata",
+  "version": "2026.6",
+  "license": "Apache-2.0",
+  "classifiers": [],
+  "home": "https://github.com/python/tzdata"
+ },
+ {
+  "name": "uncertainties",
+  "version": "3.2.3",
+  "license": "Revised BSD License",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": null
+ },
+ {
+  "name": "urllib3",
+  "version": "2.8.0",
+  "license": "MIT",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "webencodings",
+  "version": "0.6.1",
+  "license": "",
+  "classifiers": [
+   "BSD License"
+  ],
+  "home": "https://github.com/CourtBouillon/webencodings"
+ },
+ {
+  "name": "wotan",
+  "version": "2.1",
+  "license": "MIT",
+  "classifiers": [],
+  "home": "https://github.com/hippke/wotan"
+ },
+ {
+  "name": "wrapt",
+  "version": "2.5.2",
+  "license": "BSD-2-Clause",
+  "classifiers": [],
+  "home": "https://github.com/GrahamDumpleton/wrapt"
+ },
+ {
+  "name": "xarray",
+  "version": "2026.9.0",
+  "license": "Apache-2.0",
+  "classifiers": [],
+  "home": null
+ },
+ {
+  "name": "xarray-einstats",
+  "version": "0.9.1",
+  "license": "",
+  "classifiers": [
+   "Apache Software License"
+  ],
+  "home": null
+ },
+ {
+  "name": "xyzservices",
+  "version": "2026.9.1",
+  "license": "BSD-3-Clause",
+  "classifiers": [],
+  "home": "https://github.com/geopandas/xyzservices"
+ },
+ {
+  "name": "yarl",
+  "version": "1.25.1",
+  "license": "Apache-2.0",
+  "classifiers": [],
+  "home": "https://github.com/aio-libs/yarl"
+ }
+]

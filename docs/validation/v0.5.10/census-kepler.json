@@ -1,0 +1,228 @@
+{
+ "mode": "exploratory",
+ "method_status": "not_validated",
+ "limits_label": "WEAKENED; does not meet D1, D2, D4, T2a",
+ "written_utc": "2026-11-24T16:22:19Z",
+ "fpwg_status_counts": {
+  "NOT EXAMINED": 2081,
+  "CERTIFIED FP": 1808,
+  "POSSIBLE PLANET": 258,
+  "CERTIFIED FA": 140,
+  "DATA INCONCLUSIVE": 48
+ },
+ "arms": {
+  "certified_fp": {
+   "rows": 1808,
+   "with_tic": 1799,
+   "by_product": {
+    "spoc_2min": 289,
+    "tess_spoc_ffi": 348,
+    "tglc": 0
+   },
+   "any_product": 348,
+   "by_tmag": {
+    "-10": {
+     "n": 30,
+     "spoc_2min": 17,
+     "tess_spoc_ffi": 30,
+     "tglc": 0
+    },
+    "10-12": {
+     "n": 162,
+     "spoc_2min": 82,
+     "tess_spoc_ffi": 116,
+     "tglc": 0
+    },
+    "12-14": {
+     "n": 692,
+     "spoc_2min": 103,
+     "tess_spoc_ffi": 115,
+     "tglc": 0
+    },
+    "14-16": {
+     "n": 861,
+     "spoc_2min": 81,
+     "tess_spoc_ffi": 81,
+     "tglc": 0
+    },
+    "16-": {
+     "n": 54,
+     "spoc_2min": 6,
+     "tess_spoc_ffi": 6,
+     "tglc": 0
+    }
+   },
+   "by_depth_ppm": {
+    "-500": {
+     "n": 801,
+     "spoc_2min": 66,
+     "tess_spoc_ffi": 106,
+     "tglc": 0
+    },
+    "1000-5000": {
+     "n": 201,
+     "spoc_2min": 41,
+     "tess_spoc_ffi": 45,
+     "tglc": 0
+    },
+    "20000-": {
+     "n": 522,
+     "spoc_2min": 129,
+     "tess_spoc_ffi": 141,
+     "tglc": 0
+    },
+    "500-1000": {
+     "n": 140,
+     "spoc_2min": 18,
+     "tess_spoc_ffi": 19,
+     "tglc": 0
+    },
+    "5000-20000": {
+     "n": 127,
+     "spoc_2min": 34,
+     "tess_spoc_ffi": 35,
+     "tglc": 0
+    },
+    "unknown": {
+     "n": 8,
+     "spoc_2min": 1,
+     "tess_spoc_ffi": 2,
+     "tglc": 0
+    }
+   }
+  },
+  "kepler_planets": {
+   "rows": 2763,
+   "with_tic": 2763,
+   "by_product": {
+    "spoc_2min": 2548,
+    "tess_spoc_ffi": 2548,
+    "tglc": 0
+   },
+   "any_product": 2548,
+   "by_tmag": {
+    "-10": {
+     "n": 22,
+     "spoc_2min": 22,
+     "tess_spoc_ffi": 22,
+     "tglc": 0
+    },
+    "10-12": {
+     "n": 200,
+     "spoc_2min": 200,
+     "tess_spoc_ffi": 200,
+     "tglc": 0
+    },
+    "12-14": {
+     "n": 1104,
+     "spoc_2min": 1077,
+     "tess_spoc_ffi": 1077,
+     "tglc": 0
+    },
+    "14-16": {
+     "n": 1432,
+     "spoc_2min": 1249,
+     "tess_spoc_ffi": 1249,
+     "tglc": 0
+    },
+    "16-": {
+     "n": 5,
+     "spoc_2min": 0,
+     "tess_spoc_ffi": 0,
+     "tglc": 0
+    }
+   },
+   "by_depth_ppm": {
+    "-500": {
+     "n": 1476,
+     "spoc_2min": 1388,
+     "tess_spoc_ffi": 1388,
+     "tglc": 0
+    },
+    "1000-5000": {
+     "n": 436,
+     "spoc_2min": 397,
+     "tess_spoc_ffi": 397,
+     "tglc": 0
+    },
+    "20000-": {
+     "n": 5,
+     "spoc_2min": 5,
+     "tess_spoc_ffi": 5,
+     "tglc": 0
+    },
+    "500-1000": {
+     "n": 726,
+     "spoc_2min": 643,
+     "tess_spoc_ffi": 643,
+     "tglc": 0
+    },
+    "5000-20000": {
+     "n": 98,
+     "spoc_2min": 94,
+     "tess_spoc_ffi": 94,
+     "tglc": 0
+    },
+    "unknown": {
+     "n": 22,
+     "spoc_2min": 21,
+     "tess_spoc_ffi": 21,
+     "tglc": 0
+    }
+   }
+  }
+ },
+ "tglc_note": "TGLC: no MAST observation was found under a TIC target name for any target; whether MAST indexes TGLC under another target name (for example a Gaia DR3 id) was not confirmed on 2026-11-24, so the TGLC counts are NOT DETERMINED, not zero",
+ "provenance": {
+  "fpwg": {
+   "url": "https://exoplanetarchive.ipac.caltech.edu/cgi-bin/TblView/nph-tblView?app=ExoTbls&config=fpwg",
+   "read": "2026-11-24T16:02:48Z (rendered table view; TAP has no fpwg table)",
+   "licence": "not confirmed"
+  },
+  "cumulative": {
+   "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+kepoi_name%2C+kepid%2C+koi_depth%2C+koi_kepmag+from+cumulative&format=csv",
+   "retrieved_utc": "2026-11-24T16:13:46Z",
+   "rows": 9564,
+   "licence": "not confirmed"
+  },
+  "pscomppars": {
+   "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2C+hostname%2C+tic_id%2C+disc_facility%2C+discoverymethod%2C+pl_orbper%2C+pl_trandep%2C+sy_tmag%2C+sy_vmag+from+pscomppars+where+tran_flag%3D1&format=csv",
+   "retrieved_utc": "2026-11-24T16:12:17Z",
+   "rows": 4830,
+   "licence": "not confirmed"
+  },
+  "mast": [
+   {
+    "criteria": {
+     "obs_collection": "TESS",
+     "dataproduct_type": "timeseries",
+     "provenance_name": "SPOC",
+     "t_exptime": [
+      119,
+      121
+     ]
+    },
+    "service": "MAST CAOM via astroquery.mast.Observations",
+    "started_utc": "2026-11-24T16:21:07Z",
+    "targets_queried": 3738
+   },
+   {
+    "criteria": {
+     "provenance_name": "TESS-SPOC"
+    },
+    "service": "MAST CAOM via astroquery.mast.Observations",
+    "started_utc": "2026-11-24T16:21:38Z",
+    "targets_queried": 3738
+   },
+   {
+    "criteria": {
+     "provenance_name": "TGLC"
+    },
+    "service": "MAST CAOM via astroquery.mast.Observations",
+    "started_utc": "2026-11-24T16:21:47Z",
+    "targets_queried": 3738
+   }
+  ],
+  "tic_crossmatch": "MAST TIC catalog, KIC column (astroquery.mast.Catalogs)"
+ }
+}

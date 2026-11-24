@@ -1,0 +1,8 @@
+# v0.5.10, part (f), the engine trial: the tools, each at an exact version released at least
+# 7 days before 2026-11-24 (PyPI upload times read 2026-11-24). Resolved with
+# `uv pip compile --generate-hashes --only-binary :all: --exclude-newer 2026-11-17`.
+exovetter==0.0.16
+triceratops==1.1.0
+wotan==2.1
+transitleastsquares==2.3.0
+leo-vetter==1.2.0
