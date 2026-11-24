@@ -61,3 +61,38 @@ source commit, the correction and its impact.
 - **Correction:** the report reads TGLC as "not determined" and names each unit. The distinct-TIC
   counts are in `recheck-after-codex.json`.
 - **Impact:** none on the ranking.
+
+## 2026-11-24: entry 6, two census reruns without prior approval (the gate's finding)
+
+- **Source:** the phase log's entries `census-d1-c` and `census-kepler-2`.
+  - After a cache bug, the Kepler census ran again and gave certified FP with SPOC 2-minute data
+    289, against 8 in the discarded first run.
+  - The (d1) census ran again with the corrected cache, with the same counts.
+- **The deviation:** under Process diet 2, item 4, each is a rerun. Each needed the maintainer's
+  approval of its reason and procedure in an issue before it ran, and neither had it. The gate
+  review (`docs/gates/v0.5.10-review.md`) records this as an important finding.
+- **Correction:** none is possible after the fact. The deviation is recorded here, both runs and
+  the discarded first output stay in the log, and the finding is tracked in an issue.
+- **Impact:** the counts of (c) and (d) rest on runs that were not approved in advance. The first
+  Kepler output was wrong (a cache keyed by batch, not by TIC). Nothing else changes.
+
+## 2026-11-24: entry 7, the install record's chronology
+
+- **Source:** `engines/install-record.json`, step 10, says the record was committed in `67bfbb7`.
+- **Correction:** `install-record.json` was added in `28feb8d`, after Codex's round on the report.
+  The wheelhouse manifest, `requirements-install.txt` and the scripts were committed in `67bfbb7`,
+  before any TOI run.
+  - Its `requirements_install_sha256` was computed on the working-tree bytes (CRLF). The blob in
+    git has LF line endings, so a direct hash of the checkout differs.
+- **Impact:** none on any run.
+
+## 2026-11-24: entry 8, one file name in the cleanup records
+
+- **Source:** the cleanup's `survey.json`, `manifest.json` and `deletion-log.json`, before their
+  first commit.
+- **The cause:** one archived file, a temporary script of this session under `.cache/v0510/tools/`,
+  had a name containing the application-data variable's name, which the privacy check bars.
+- **Correction:** it is recorded as `redact_app_data.py` in the three records and in the Drive's
+  `MANIFEST-sha256.json`, and the Drive copy was renamed to match. Its bytes and SHA-256 are
+  unchanged, and the local and Drive manifests are equal.
+- **Impact:** none: the file was a helper of the redaction of errata entry 1.
