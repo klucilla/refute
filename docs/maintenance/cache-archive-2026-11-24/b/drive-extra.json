@@ -1,0 +1,30 @@
+{
+ "utc": "2026-11-24T12:08:52Z",
+ "files": [
+  {
+   "source": ".cache/v059/cleanup2/survey.json",
+   "bytes": 8555003,
+   "destination": "K:/Meu Drive/Pessoal/Projetos/refute/cache-archive-2026-11-24b/record/survey.json",
+   "source_sha256": "a284a67c2e97bd59e46f6b51ac69069bd905cf836f69a0f1bf5ce8b7e8f55e0f",
+   "destination_sha256": "a284a67c2e97bd59e46f6b51ac69069bd905cf836f69a0f1bf5ce8b7e8f55e0f",
+   "match": true
+  },
+  {
+   "source": ".cache/v059/cleanup2/classes.json",
+   "bytes": 11233208,
+   "destination": "K:/Meu Drive/Pessoal/Projetos/refute/cache-archive-2026-11-24b/record/classes.json",
+   "source_sha256": "e75c5c54bb2d514ccbe2b0da8dc0dda3bb61cd22d5b8320202065e42e2c1bda2",
+   "destination_sha256": "e75c5c54bb2d514ccbe2b0da8dc0dda3bb61cd22d5b8320202065e42e2c1bda2",
+   "match": true
+  },
+  {
+   "source": ".cache/v059/cleanup2/citations.json",
+   "bytes": 570254,
+   "destination": "K:/Meu Drive/Pessoal/Projetos/refute/cache-archive-2026-11-24b/record/citations.json",
+   "source_sha256": "600d5a2b8a7533745771db6a8acd6071e9f9fbcdcb3dc3d6cad466c837a58728",
+   "destination_sha256": "600d5a2b8a7533745771db6a8acd6071e9f9fbcdcb3dc3d6cad466c837a58728",
+   "match": true
+  }
+ ],
+ "all_match": true
+}

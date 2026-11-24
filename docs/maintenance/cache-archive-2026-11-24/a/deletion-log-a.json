@@ -1,0 +1,372 @@
+{
+ "utc": "2026-11-24T04:47:20Z",
+ "bytes_deleted": 10730844,
+ "entries": [
+  {
+   "path": ".cache/v059/plan-review/codex-answer.md",
+   "bytes": 12785,
+   "sha256": "06f2ee531d04c52b184b3687be4a8f0ece8eb78fa2d5289807fb071797e432d2",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/plan-review/codex-events.jsonl",
+   "bytes": 439200,
+   "sha256": "1ac8e174d23f4340e609e9502059fcf400cd817d6c2fb1b3990f00ca6c9e1a6e",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/plan-review/codex-prompt.md",
+   "bytes": 3810,
+   "sha256": "5e2b501ce27cd6cd8d75c0fc1a3782b779a07423c0a514a1304477d1aa503415",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/plan-review/codex-stderr.txt",
+   "bytes": 141,
+   "sha256": "0c8f236cad33c220019fc9b49b9c3837fa277805e604a452125b1b81916ea95b",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/plan-review/codex-stdout.txt",
+   "bytes": 21,
+   "sha256": "fd8411208acf4e075e5a661f83d3a30598ccc2d561f72580cad11e89521ceb98",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/plan-review/codex.pid",
+   "bytes": 7,
+   "sha256": "1ec1802e21624fc5382c606df6dd96a7386676a84892121394815b099c4f59c4",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/plan-review/fable-plan.md",
+   "bytes": 29084,
+   "sha256": "dc5756a4169cebe47441e6dea75122f90670727bfe59615536eef5985fc71386",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/plan-review",
+   "status": "folder removed"
+  },
+  {
+   "path": ".cache/v059/research/codex-answer.md",
+   "bytes": 10335,
+   "sha256": "d2760849eb09dc63d5500dcc8dd2106cc7861f851b4c95c6122b45692d463dd4",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/research/codex-events.jsonl",
+   "bytes": 1465044,
+   "sha256": "4ee9b7aeb9d85a3f96ba6d466108d2bb441f07e8dfede5f3e0cc6447bb138eef",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/research/codex-prompt.md",
+   "bytes": 3303,
+   "sha256": "471d9a5da0b8efc292f8206d6bcb76aea32b4994d0b6408949d106862c49cc82",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/research/codex-stderr.txt",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/research/codex-stdout.txt",
+   "bytes": 21,
+   "sha256": "fd8411208acf4e075e5a661f83d3a30598ccc2d561f72580cad11e89521ceb98",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/research/codex.pid",
+   "bytes": 7,
+   "sha256": "b041633a1b946687a22e4e1a1c2d85a09874fe264b429077b52834e18a7161eb",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/research/fable-research.md",
+   "bytes": 48004,
+   "sha256": "f280ac64dc7f797470e39e3ff7562b4fb19497016ced3077567aa062b591c07c",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/research",
+   "status": "folder removed"
+  },
+  {
+   "path": ".cache/v059/diet2/amendment-draft.md",
+   "bytes": 3048,
+   "sha256": "ac967d9fad00ea164664e2da7aebfb4e6647d98d60f9ba046acb287091f8b6ae",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/diet2/blind-review.md",
+   "bytes": 16702,
+   "sha256": "3922ffd684a24c3af3f90111b0ceb5f6a2157d543f27907fd3d2773ba12f0b88",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/diet2/codex-answer.md",
+   "bytes": 7160,
+   "sha256": "63d3273417706ec117370e89e79d1a908c03faf45f4597931d2044f8843219ee",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/diet2/codex-events.jsonl",
+   "bytes": 120532,
+   "sha256": "436688e2828335118cf0b489c074f7cb4836df048226d8b9d9aa13e00f1afd85",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/diet2/codex-final-text.md",
+   "bytes": 3898,
+   "sha256": "81c10591f9d906c21e611532ee7c12d34319d543c578494df5ab4ed49966d734",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/diet2/codex-prompt.md",
+   "bytes": 2175,
+   "sha256": "bf0de6c7821d6802861018f0a2f66f5fbdd5c8b8cbb45ed6bc82ecd980926196",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/diet2/codex-stderr.txt",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/diet2/codex-stdout.txt",
+   "bytes": 21,
+   "sha256": "fd8411208acf4e075e5a661f83d3a30598ccc2d561f72580cad11e89521ceb98",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/diet2/codex.pid",
+   "bytes": 7,
+   "sha256": "6c7c8d4fef77ae0ab24442a059b7c78773eeeef87d92808561d1c1b93ef412f8",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v059/diet2",
+   "status": "folder removed"
+  },
+  {
+   "path": ".cache/v058/zenodo/metadata.json",
+   "bytes": 1632,
+   "sha256": "2ca4ae02f1902c79872756e8f1f355dc0ddd498be220330835d9813053cbd9fd",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo/record/MANIFEST-sha256.json",
+   "bytes": 1889,
+   "sha256": "8b6bdbdea578e72beafc35ee32de155734a32bcefc0cb179c1b0fd79f6a6ed05",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo/record/stability-ledger.json",
+   "bytes": 8832,
+   "sha256": "47db28b220ce5ca6dc12f182838fde9ea5553b75f1629ac96811cb689ee7db42",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo/record/stability-records.json",
+   "bytes": 4037525,
+   "sha256": "4993d9a77a68c4ae961fb92007fa53ab7eac15d99b27ced0f46225bdbd7c9b5a",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo/record/stability-report.json",
+   "bytes": 11849,
+   "sha256": "a3feafd66600e06a8e0455299b2f59067b21fef79ccfe14f8ba35409cbf91b87",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo/record/stability-report.md",
+   "bytes": 5786,
+   "sha256": "f03aebeb1a4e67548d05f344fdaa026bfd43194c280642edd3250b3fe7e00134",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo/record/stability_report.py",
+   "bytes": 14355,
+   "sha256": "d19db982dc8ed19d342b5716208310f9346eff479ec25e8e7f9834fdb51a4515",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo/record/stability_run.py",
+   "bytes": 13208,
+   "sha256": "0ad5c9891e167f9c329d38c9f5a9c88d500aadba2cd39f449182baa6eee80b02",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo/record/stage0-records.json",
+   "bytes": 6003,
+   "sha256": "02ae8271784cf20b551edf15dff6569dffaa0601450d447aee481b81dbfea826",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo/record/stage0_records.py",
+   "bytes": 10953,
+   "sha256": "961f2792d054cddda513d80e7ef56da470c8479955b272c5a8c5ff571ac28be5",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo/record/stage1-set.json",
+   "bytes": 3765,
+   "sha256": "84c14aead346e5345fee3dbed42c69bab8143bc8f6cbaf2b0c5140f58d3edfe5",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo",
+   "status": "folder removed"
+  },
+  {
+   "path": ".cache/v058/zenodo-v2/draft.json",
+   "bytes": 65,
+   "sha256": "840f4403f344bb662be2b1362e148b276c1ec8d1855292929a1b13a78abde532",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo-v2/metadata.json",
+   "bytes": 3883,
+   "sha256": "55f60a93327ac139800080e6ceaf56ac3d7c16c5005421795ba8f3d73ed74a4a",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo-v2/record/LICENSE",
+   "bytes": 10764,
+   "sha256": "ded5d2dc8cc209e1e6cc03f7c259ceac510a2e20a0f2918f6972798a727c7f87",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo-v2/record/MANIFEST-sha256.json",
+   "bytes": 2616,
+   "sha256": "e67a27353434f21b1cd6d81c361f974ab3f53e4987766adaf406438640755753",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo-v2/record/stability-ledger.json",
+   "bytes": 8832,
+   "sha256": "47db28b220ce5ca6dc12f182838fde9ea5553b75f1629ac96811cb689ee7db42",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo-v2/record/stability-records.json",
+   "bytes": 4037525,
+   "sha256": "4993d9a77a68c4ae961fb92007fa53ab7eac15d99b27ced0f46225bdbd7c9b5a",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo-v2/record/stability-report.json",
+   "bytes": 11849,
+   "sha256": "a3feafd66600e06a8e0455299b2f59067b21fef79ccfe14f8ba35409cbf91b87",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo-v2/record/stability-report.md",
+   "bytes": 5786,
+   "sha256": "f03aebeb1a4e67548d05f344fdaa026bfd43194c280642edd3250b3fe7e00134",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo-v2/record/stability_report.py",
+   "bytes": 14355,
+   "sha256": "d19db982dc8ed19d342b5716208310f9346eff479ec25e8e7f9834fdb51a4515",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo-v2/record/stability_run.py",
+   "bytes": 13208,
+   "sha256": "0ad5c9891e167f9c329d38c9f5a9c88d500aadba2cd39f449182baa6eee80b02",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo-v2/record/stage0-records.json",
+   "bytes": 6003,
+   "sha256": "02ae8271784cf20b551edf15dff6569dffaa0601450d447aee481b81dbfea826",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo-v2/record/stage0_records.py",
+   "bytes": 10953,
+   "sha256": "961f2792d054cddda513d80e7ef56da470c8479955b272c5a8c5ff571ac28be5",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo-v2/record/stage1-set.json",
+   "bytes": 3765,
+   "sha256": "84c14aead346e5345fee3dbed42c69bab8143bc8f6cbaf2b0c5140f58d3edfe5",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo-v2",
+   "status": "folder removed"
+  },
+  {
+   "path": ".cache/v058/zenodo-review/codex-answer.md",
+   "bytes": 7894,
+   "sha256": "99db22c510dfd9d3ccf7e2c8a1a39452cc938e2574a9e3cefca25444aca05cfd",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo-review/codex-events.jsonl",
+   "bytes": 299693,
+   "sha256": "fff7fa3a6f84f806ab344ac2876962ff000f337d4c3f9563bcf63b24496f506f",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo-review/codex-prompt.md",
+   "bytes": 2883,
+   "sha256": "b2f1ed9a2ba31cc9a9a2f2836dc135a788014ef3ba1cfddcb2318c22a2add2df",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo-review/codex-stderr.txt",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo-review/codex-stdout.txt",
+   "bytes": 21,
+   "sha256": "fd8411208acf4e075e5a661f83d3a30598ccc2d561f72580cad11e89521ceb98",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo-review/codex.pid",
+   "bytes": 7,
+   "sha256": "aef41129f5a8121ffdc1b21ff4dab63f46a930da003894684e21281ee48c518d",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo-review",
+   "status": "folder removed"
+  },
+  {
+   "path": ".cache/v058/zenodo-v2-build.py",
+   "bytes": 5933,
+   "sha256": "75bde6a10bc78b7d57a53936306556b42c98acf1b0579d50e799b1ffc9a08f01",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo-v2-draft.py",
+   "bytes": 2937,
+   "sha256": "5c9ae50fc9c83e8dfcf67d3d87b7f22873be90efcd38b2ca67923a0848e178c7",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo-v2-draft.log",
+   "bytes": 770,
+   "sha256": "3c0f2bebb3952a9145d06dbbc4c3216dfe563f4124421c9de741264d5c75eb79",
+   "status": "deleted"
+  },
+  {
+   "path": ".cache/v058/zenodo-v2-draft.log.err",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": "deleted"
+  }
+ ]
+}

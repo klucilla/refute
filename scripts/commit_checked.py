@@ -64,6 +64,9 @@ EXCLUDE = (
     "docs/validation/v0.2.1/pre-document-runs",
     "docs/validation/v0.2.1/population",
     "docs/validation/v0.5.8/zenodo",  # the published Zenodo record's files, byte for byte
+    # the .cache cleanups' scripts and records of 2026-11-24, byte for byte (#220)
+    "docs/maintenance/cache-archive-2026-11-24/a",
+    "docs/maintenance/cache-archive-2026-11-24/b",
 )
 PYTHON_SUFFIXES = (".py", ".pyi", ".ipynb")
 CONFIG_NAMES = ("pyproject.toml", "ruff.toml", ".ruff.toml")

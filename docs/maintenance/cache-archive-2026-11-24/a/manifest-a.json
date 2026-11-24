@@ -1,0 +1,54 @@
+{
+ "utc": "2026-11-24T04:47:14Z",
+ "files": [
+  {
+   "source": ".cache/v059/plan-review/codex-events.jsonl",
+   "destination": "K:/Meu Drive/Pessoal/Projetos/refute/cache-archive-2026-11-24/v059/plan-review/codex-events.jsonl",
+   "bytes": 439200,
+   "source_sha256": "1ac8e174d23f4340e609e9502059fcf400cd817d6c2fb1b3990f00ca6c9e1a6e",
+   "destination_sha256": "1ac8e174d23f4340e609e9502059fcf400cd817d6c2fb1b3990f00ca6c9e1a6e",
+   "match": true
+  },
+  {
+   "source": ".cache/v059/research/codex-events.jsonl",
+   "destination": "K:/Meu Drive/Pessoal/Projetos/refute/cache-archive-2026-11-24/v059/research/codex-events.jsonl",
+   "bytes": 1465044,
+   "source_sha256": "4ee9b7aeb9d85a3f96ba6d466108d2bb441f07e8dfede5f3e0cc6447bb138eef",
+   "destination_sha256": "4ee9b7aeb9d85a3f96ba6d466108d2bb441f07e8dfede5f3e0cc6447bb138eef",
+   "match": true
+  },
+  {
+   "source": ".cache/v059/diet2/codex-events.jsonl",
+   "destination": "K:/Meu Drive/Pessoal/Projetos/refute/cache-archive-2026-11-24/v059/diet2/codex-events.jsonl",
+   "bytes": 120532,
+   "source_sha256": "436688e2828335118cf0b489c074f7cb4836df048226d8b9d9aa13e00f1afd85",
+   "destination_sha256": "436688e2828335118cf0b489c074f7cb4836df048226d8b9d9aa13e00f1afd85",
+   "match": true
+  },
+  {
+   "source": ".cache/v058/zenodo-review/codex-events.jsonl",
+   "destination": "K:/Meu Drive/Pessoal/Projetos/refute/cache-archive-2026-11-24/v058/zenodo-review/codex-events.jsonl",
+   "bytes": 299693,
+   "source_sha256": "fff7fa3a6f84f806ab344ac2876962ff000f337d4c3f9563bcf63b24496f506f",
+   "destination_sha256": "fff7fa3a6f84f806ab344ac2876962ff000f337d4c3f9563bcf63b24496f506f",
+   "match": true
+  },
+  {
+   "source": ".cache/v058/zenodo/metadata.json",
+   "destination": "K:/Meu Drive/Pessoal/Projetos/refute/cache-archive-2026-11-24/v058/zenodo/metadata.json",
+   "bytes": 1632,
+   "source_sha256": "2ca4ae02f1902c79872756e8f1f355dc0ddd498be220330835d9813053cbd9fd",
+   "destination_sha256": "2ca4ae02f1902c79872756e8f1f355dc0ddd498be220330835d9813053cbd9fd",
+   "match": true
+  },
+  {
+   "source": ".cache/v058/zenodo/record/MANIFEST-sha256.json",
+   "destination": "K:/Meu Drive/Pessoal/Projetos/refute/cache-archive-2026-11-24/v058/zenodo/record/MANIFEST-sha256.json",
+   "bytes": 1889,
+   "source_sha256": "8b6bdbdea578e72beafc35ee32de155734a32bcefc0cb179c1b0fd79f6a6ed05",
+   "destination_sha256": "8b6bdbdea578e72beafc35ee32de155734a32bcefc0cb179c1b0fd79f6a6ed05",
+   "match": true
+  }
+ ],
+ "all_match": true
+}

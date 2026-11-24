@@ -1,0 +1,51 @@
+{
+ "a": {
+  "decision": "#218 comment 7122240195, item 5",
+  "drive": "K:/Meu Drive/Pessoal/Projetos/refute/cache-archive-2026-11-24",
+  "archived": 6,
+  "archive_all_match": true,
+  "deleted_files": 57,
+  "deleted_bytes": 10730844,
+  "folders_removed": 6,
+  "deleted_cited": 40,
+  "deleted_stored_in_repository": 42
+ },
+ "b": {
+  "decision": "#218 comment 7125778250, item 4",
+  "drive": "K:/Meu Drive/Pessoal/Projetos/refute/cache-archive-2026-11-24b",
+  "archived": 10194,
+  "archived_bytes": 2912867864,
+  "archive_all_match": true,
+  "kept": [
+   ".cache/maint1120/site-synth/",
+   ".cache/v055/site-pause/",
+   ".cache/v055/tools/"
+  ],
+  "deleted_files": 10194,
+  "deleted_bytes": 2912867864,
+  "folders_removed": 314,
+  "every_deleted_file_archived_with_same_sha256": true,
+  "classes": {
+   "cited": 10069,
+   "regenerable": 36,
+   "value": 89
+  },
+  "cited_by_hash_or_path": 10069
+ },
+ "sha256": {
+  "README.md": "0a99da80ecb75a51b347c2c6bff1764b014b8afa6e3dcf72dd70a07afec8255f",
+  "a/archive_and_clean.py": "3ffbcbced88fc14b8d61369f6bc26dc69bedcc41ae6f46f88aa713577e3c1de5",
+  "a/citations-a.json": "0e24252fe7ca6f7144757f9954f61f596b8f24deab1c56fefd77b08cb74cf9f5",
+  "a/deletion-log-a.json": "682156b9e8a64e31aba5d392334a536e9195237344f03bfe1bc20a34aff50a7d",
+  "a/manifest-a.json": "874fa7ed2a6e6c402e6973de6326b70b467f4b04890b66ce32c2b06098d92a1a",
+  "b/citations-b.json": "eb98afabbd646f2d00e739436cadab2292305810e19c3053e047c93d67476d36",
+  "b/cleanup2.py": "674908f85959d0f522f4571f2c0d370dd55355deeffc5088684cf45569c1c29b",
+  "b/cleanup_citations.py": "79aee6ee701467f053220a37b0691639a1a711f3572ee186cebd5a1c71101100",
+  "b/cleanup_classify.py": "b8b20540d43c21af5c9ef13c9dd2ea03a707b7fa5be169efc775accd4e1eef6c",
+  "b/cleanup_survey.py": "5d6e4f4f246159d099a1122cfe25920969d60ec2ec85f131c69e1180b90c7995",
+  "b/deletion-log-b.json": "1ed59d40e13a3255be63ddaf570b9581a1d3d2000df276d526ed69b0cd7f4197",
+  "b/drive-extra.json": "6623309b1cd9f0c72301a9e0cf9b6db64192694235b7437b56dc633c28617854",
+  "b/manifest-b.json": "65de1f010e3ea3069b6d94f6233ffd7c944efd49642ca8a768e741c73c98d625",
+  "build_record.py": "f6f2201ce2620ccb6bbb014f68d1d741417f5df19335fd531b1424c4d890a843"
+ }
+}

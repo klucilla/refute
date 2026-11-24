@@ -1304,6 +1304,11 @@ prototype level. If the prototype needed a change in `src/`, the work would STOP
 
 **Caps:** 15 GB of downloads, 8 CPU-h, 10 GB of disk peak. No dependency changes.
 
+**The `.cache` cleanups of 2026-11-24** (two, during the phase): their record (the scripts, the
+citation lists, the manifests with source and destination SHA-256, and the Drive destinations) is
+in [docs/maintenance/cache-archive-2026-11-24/](docs/maintenance/cache-archive-2026-11-24/README.md),
+added after the gate review's finding 1 (#220).
+
 **Exit criteria** (detail in the plan)
 - [ ] The consensus record and correction 2 of the v0.5.8 report are committed.
 - [ ] The plan, the control rule, the seed, the script and the report script are committed, and the
