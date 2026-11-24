@@ -505,7 +505,10 @@ def _selftest_units(n: int, spin: float, allowance: float) -> list[dict]:
 @pytest.fixture
 def supervised(tmp_path, monkeypatch):
     """The supervisor's paths in a temporary folder (the workers write only their result files,
-    which the supervisor names)."""
+    which the supervisor names). The supervisor reads Windows process facts (CPU, creation time),
+    as ``seeded_run`` does; the run is on Windows, so these tests run only there."""
+    if sys.platform != "win32":
+        pytest.skip("the supervisor uses Windows process APIs (the run is on Windows)")
     for name, rel in (("WORK", "w"), ("RECORDS", "w/run/records"), ("ATTEMPTS", "w/run/attempts"),
                       ("RESULTS", "w/run/results"), ("DATA", "w/data")):  # fmt: skip
         monkeypatch.setattr(run, name, tmp_path / rel)
