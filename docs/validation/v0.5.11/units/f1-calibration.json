@@ -1,0 +1,10 @@
+{
+ "name": "f1-calibration",
+ "question": "Step 1: does the F1 calibration rule of the frozen specification (section 4) hold for the test-only reference evaluator, on 200 white and 200 correlated equal-depth synthetic planets?",
+ "choices": "The rule as frozen at ab828ce: every result assessed and at most 4 OE_box > 3 per family; if it fails, the core is empty and the phase stops before step 2. A data unit, run once.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.11/tools/f1_calibration.py"],
+ "identity": ["docs/validation/v0.5.11/tools/f1_calibration.py", "tests/screen_reference.py", "docs/plans/v0.5.11-spec.md", "src/refute/packs/tess/synthetic.py"],
+ "reserve": {"cpu_s": 600, "transfer_bytes": 50000000, "disk_bytes": 50000000},
+ "network": false,
+ "outputs": ["docs/validation/v0.5.11/step1/f1-calibration.json"]
+}

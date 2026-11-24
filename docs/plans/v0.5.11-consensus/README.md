@@ -78,3 +78,41 @@ file named.
 **The non-blocking caps finding** is applied in section 6 of the charter. The warm tag
 environments come first, any cold sync or full local suite is preflighted, and targeted local
 tests come before full CI.
+
+## Step 0: the two rounds on the specification (2026-11-24 and 25)
+
+These rounds ran after the phase opened (#218, comment 7146858167), on the same thread. They
+were stored by the metered unit `store-round`, with each SHA-256 checked on the copy.
+
+| File | Bytes | SHA-256 |
+|---|---|---|
+| [step0-r1-codex-prompt.md](step0-r1-codex-prompt.md) | 3,540 | `133dfb862b1b3ae9872817cf7ffc4d7f12702426ed8cd7acfeb7b283639244a9` |
+| [step0-r1-codex-answer.md](step0-r1-codex-answer.md) | 9,979 | `f0c35998277219a0e38006a9d09cbd2f07da5a65e4e6a57f0201d8af14c2dcf6` |
+| [step0-r2-codex-prompt.md](step0-r2-codex-prompt.md) | 3,241 | `5fc0bbb6e188e5e1c518412da55ab211d2714536f9aa7711f9622f0979c8ffae` |
+| [step0-r2-codex-answer.md](step0-r2-codex-answer.md) | 5,932 | `6c3e5c1b1a87107b5c68f7338c56c6c7f8afd8a7c7a93727959aa2d973dac8d4` |
+
+- **Codex:** CLI 0.167.0-alpha.3.2, gpt-6.2-sol, effort high, thread
+  `01a20fa7-804c-7150-aac0-6182fb57221b`.
+- **Round 1: `REFUTED`,** with 5 blocking items, on `d0d2ba1`. Tokens, the real sum of its
+  events: 5,176,274 input (4,929,792 cached) and 26,315 output, so **272,797**.
+- **Round 2: `WEAKENED`,** with 3 blocking items, on `f2e977c`. Tokens: 6,790,500 input
+  (6,503,424 cached) and 31,776 output, so **318,852**.
+- **No third round.** Every blocking item of round 2 was applied in Codex's own wording, so the
+  specification was frozen. The charter allowed up to three rounds.
+- **Thread total so far:** 141,197 + 194,054 + 272,797 + 318,852 = **926,900** review tokens.
+
+**What was done with each blocking item:**
+
+| Round, item | What | Where |
+|---|---|---|
+| 1.1 | F1 by OE_box alone; the rest report-only | spec, section 4 |
+| 1.2 | Frozen numerical choices; versions, hashes and literal equations | spec, section 5; the sources record |
+| 1.3 | The handoff, the `entry` field, A5's entry points | spec, sections 1 to 3 |
+| 1.4 | The recount's interpretation; the Markdown omission | spec, section 4; errata entry 1 |
+| 1.5 | The launcher's accounting | `tools/launch_v2.py` (`f2e977c`); `meter-gaps.json`; errata entry 2 |
+| 2.1 | An executable pre-source check (a test-only reference evaluator) | spec, sections 4 and 8, in Codex's wording |
+| 2.2 | Report-only coverage; the grid bound; null flags | spec, sections 5 and 6, in Codex's wording |
+| 2.3 | A meter that fails closed | `tools/launch_v3.py` (`ab828ce`) |
+
+**The frozen specification:** `docs/plans/v0.5.11-spec.md` at commit `ab828ce`, SHA-256
+`d498a82ada2e31a5b47768d58d6af2e19af0a3c5e35364693f04886068612f15`.
