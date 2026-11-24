@@ -1,0 +1,36 @@
+{
+ "phase": "v0.5.11",
+ "purpose": "The source manifest of the screen's implementer (the charter, step 0, item 1; Codex's blocking item 4 of the draft's review): every external page and every repository file read while the specification was written.",
+ "labels": ["exploratory", "method_status: not_validated"],
+ "external": [
+  {"what": "K25, LEO-Vetter, arXiv HTML", "url": "https://arxiv.org/html/2509.10619v1", "read": "2026-11-24", "sections": ["II.1", "II.2", "III.9", "IV.1 to IV.5"], "kind": "paper"},
+  {"what": "K25 PDF (hash only; not rendered)", "url": "https://arxiv.org/pdf/2509.10619v1", "read": "2026-11-24", "kind": "paper"},
+  {"what": "T18, ar5iv HTML", "url": "https://ar5iv.labs.arxiv.org/html/1710.06758", "read": "2026-11-24", "sections": ["A.3.4", "A.4.1.2", "A.4.1.3", "A.4.1.4", "A.4.3"], "kind": "paper"},
+  {"what": "T18 PDF (hash only; not rendered)", "url": "https://arxiv.org/pdf/1710.06758", "read": "2026-11-24", "kind": "paper"},
+  {"what": "SM03, ar5iv HTML", "url": "https://ar5iv.labs.arxiv.org/html/astro-ph/0206228", "read": "2026-11-24", "sections": ["2", "3.1", "3.2.1"], "kind": "paper"},
+  {"what": "SM03 PDF (hash only; not rendered)", "url": "https://arxiv.org/pdf/astro-ph/0206228", "read": "2026-11-24", "kind": "paper"}
+ ],
+ "repository": [
+  "docs/plans/v0.5.11-charter.md",
+  "docs/plans/battery-v5-spec.md (sections 1 to 3.7)",
+  "docs/plans/v0.5.11-consensus/charter-draft.md",
+  "docs/plans/v0.5.11-consensus/codex-answer.md",
+  "docs/plans/v0.5.11-consensus/round2-codex-answer.md",
+  "docs/reports/v0.5.10-report.md (section 9)",
+  "src/refute/core/verdict.py",
+  "src/refute/packs/tess/pipeline.py (v05_tests, analyze_data, conclude_analysis)",
+  "docs/validation/v0.5.6/part-b-records.json (through the recount)",
+  "calibration/v0.5/runs/c2/records.jsonl and c2-prefix/records.jsonl (through the recount)",
+  "docs/validation/v0.5.10/recount_section2.py (the C2 T2a set)",
+  "docs/validation/v0.5.10/engines/sandbox.py (the Job object pattern of the launcher)"
+ ],
+ "excluded": {
+  "rule": "No GPL implementation is opened, copied, imported or linked.",
+  "not_opened": [
+   "LEO-Vetter's code (GPL-3.0 or later)",
+   "batman, PyTransit (limb-darkened transit models)",
+   "Coughlin's Model-Shift code (named by T18)",
+   "exoVetter, TRICERATOPS"
+  ]
+ }
+}

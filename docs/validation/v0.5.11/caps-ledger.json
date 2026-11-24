@@ -9,31 +9,136 @@
   "transfer_bytes": 5000000000,
   "disk_bytes": 10000000000
  },
- "used": {
-  "cpu_s": 0.219,
-  "transfer_bytes": 80038971,
-  "disk_peak_bytes": 12303464
+ "charged": {
+  "cpu_s": 1020.156,
+  "transfer_bytes": 350126528,
+  "disk_peak_bytes": 100000000
  },
- "within_caps": true,
- "telemetry_complete": true,
+ "within_caps": "not demonstrated",
+ "telemetry_complete": false,
+ "gaps": 6,
+ "gaps_file": "docs/validation/v0.5.11/meter-gaps.json",
+ "charging_rule": "measured use for settled attempts with complete telemetry; otherwise the larger of the reservation and the measured use",
  "transfer_note": "an upper bound: the machine's netstat -e bytes during each unit",
  "outside_meter": [
   "GitHub CI (remote)",
   "the Codex review processes (reported apart, with their tokens)",
   "the Claude gate (reported apart)",
-  "the agent's reads and inspection commands: git status, log, diff and show; file reads; GitHub comments"
+  "remote page retrieval by the agent's web tool (its local conversion is a gap if done outside a unit)",
+  "the agent's reads: git status, log, diff and show; file reads by the agent's tools; GitHub comments"
  ],
  "rows": [
   {
    "unit": "fetch-papers",
    "label": null,
-   "instance_key": "b034bb9bf4cd163e38bd2548f0a38d69fed530263087550829f98e1d5dc659a1",
+   "attempt": "b034bb9bf4cd163e38bd2548f0a38d69fed530263087550829f98e1d5dc659a1",
+   "launcher": "launch.py (version 1)",
    "start": "2026-11-24T23:01:38Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 100000000,
+    "transfer_bytes": 200000000
+   },
    "status": "ok",
    "cpu_s": 0.219,
    "transfer_bytes_upper": 80038971,
    "disk_peak_bytes": 12303464,
-   "telemetry_complete": true
+   "telemetry_complete": false,
+   "overrun": null,
+   "note": "launch.py version 1: transfer modulo 2^32, scan errors skipped"
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "c486dc893d9b9d61ed2c00e16ca4397854d49492866614c2d7ea8fc5d171eb03",
+   "launcher": "launch.py (version 1)",
+   "start": "2026-11-24T23:05:42Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 50000000,
+    "transfer_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 2.125,
+   "transfer_bytes_upper": 1436591,
+   "disk_peak_bytes": 12824624,
+   "telemetry_complete": false,
+   "overrun": null,
+   "note": "launch.py version 1: transfer modulo 2^32, scan errors skipped"
+  },
+  {
+   "unit": "recount",
+   "label": null,
+   "attempt": "9b7ce5a96874716a13d322adc5360935a47655e85216330e60d96efc3de94a02",
+   "launcher": "launch.py (version 1)",
+   "start": "2026-11-24T23:05:50Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 50000000,
+    "transfer_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 0.188,
+   "transfer_bytes_upper": 468678,
+   "disk_peak_bytes": 12825300,
+   "telemetry_complete": false,
+   "overrun": null,
+   "note": "launch.py version 1: transfer modulo 2^32, scan errors skipped"
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "b26d5f314ad720a77f521079e63e40fc6b0aad94c3b164d68afd2624b1a56330",
+   "launcher": "launch.py (version 1)",
+   "start": "2026-11-24T23:15:27Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 50000000,
+    "transfer_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 2.0,
+   "transfer_bytes_upper": 1777994,
+   "disk_peak_bytes": 13247709,
+   "telemetry_complete": false,
+   "overrun": null,
+   "note": "launch.py version 1: transfer modulo 2^32, scan errors skipped"
+  },
+  {
+   "unit": "inspect",
+   "label": null,
+   "attempt": "3513db563b584b569045bd9ba786ef39",
+   "launcher": "launch_v2.py",
+   "start": "2026-11-24T23:17:05Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 50000000,
+    "transfer_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 0.094,
+   "transfer_bytes_upper": 59424,
+   "disk_peak_bytes": 13248455,
+   "telemetry_complete": true,
+   "overrun": []
+  },
+  {
+   "unit": "inspect",
+   "label": null,
+   "attempt": "dc01aa55937c4cd595635cac7ba2b3c4",
+   "launcher": "launch_v2.py",
+   "start": "2026-11-24T23:20:11Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 50000000,
+    "transfer_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 0.062,
+   "transfer_bytes_upper": 67104,
+   "disk_peak_bytes": 13398114,
+   "telemetry_complete": true,
+   "overrun": []
   }
  ]
 }

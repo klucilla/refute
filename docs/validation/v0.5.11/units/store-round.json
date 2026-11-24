@@ -1,0 +1,9 @@
+{
+ "name": "store-round",
+ "question": "Store review prompts and answers byte for byte in docs/plans/v0.5.11-consensus/, with their SHA-256 checked.",
+ "choices": "The extra arguments are SRC=NAME pairs, SRC under .cache/v0511; a data unit keyed by its arguments, so each round's files are a distinct unit.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.11/tools/store_round.py"],
+ "identity": ["docs/validation/v0.5.11/tools/store_round.py"],
+ "reserve": {"cpu_s": 60, "transfer_bytes": 50000000, "disk_bytes": 10000000},
+ "network": false
+}

@@ -1,0 +1,283 @@
+{
+ "labels": [
+  "exploratory",
+  "method_status: not_validated"
+ ],
+ "limits_label_p1": "WEAKENED; does not meet D1, D2, D4, T2a",
+ "rules_sha256": "f7d4fb27b289865b010fbf10bbaac4bfe48b47b4b768cad6cf9feafb3945fe8d",
+ "inputs_sha256": {
+  "docs/validation/v0.5.6/part-b-records.json": "d5a3ee8793ac1f9431b3ed532cae0d5c59477333e2b4bfab4214c3fd5a2a1782",
+  "calibration/v0.5/runs/c2/records.jsonl": "6504e3309de3d9e1223bbc6d148d1ebb8c4955ec24e2ae302b212975f87144b1",
+  "calibration/v0.5/runs/c2-prefix/records.jsonl": "95f3d8a4578c7968752d7306c1ef7b6698f4908f7b168729e9539bdcbbbf6401"
+ },
+ "P1_part_b": {
+  "all": {
+   "records": 295,
+   "per_test": {
+    "odd_even": {
+     "assessed_pass": 179,
+     "assessed_fail": 19,
+     "not_assessed": 97,
+     "unknown": 0
+    },
+    "secondary_eclipse": {
+     "assessed_pass": 221,
+     "assessed_fail": 27,
+     "not_assessed": 47,
+     "unknown": 0
+    },
+    "plausibility": {
+     "assessed_pass": 216,
+     "assessed_fail": 44,
+     "not_assessed": 35,
+     "unknown": 0
+    }
+   },
+   "joint": {
+    "rejected": 88,
+    "unassessed": 71,
+    "unknown": 0,
+    "retained": 136
+   },
+   "hosts": 295,
+   "records_per_host": {
+    "min": 1,
+    "median": 1,
+    "max": 1
+   },
+   "hosts_all_retained": 136,
+   "new_tests_assessability": {
+    "F1": "unknown",
+    "F2": "unknown",
+    "F3": "unknown",
+    "F4": "unknown",
+    "U1": "unknown"
+   }
+  },
+  "no_output": {
+   "planet": 2,
+   "fp": 3
+  },
+  "by_arm": {
+   "fp": {
+    "records": 147,
+    "per_test": {
+     "odd_even": {
+      "assessed_pass": 85,
+      "assessed_fail": 14,
+      "not_assessed": 48,
+      "unknown": 0
+     },
+     "secondary_eclipse": {
+      "assessed_pass": 100,
+      "assessed_fail": 23,
+      "not_assessed": 24,
+      "unknown": 0
+     },
+     "plausibility": {
+      "assessed_pass": 94,
+      "assessed_fail": 21,
+      "not_assessed": 32,
+      "unknown": 0
+     }
+    },
+    "joint": {
+     "rejected": 56,
+     "unassessed": 43,
+     "unknown": 0,
+     "retained": 48
+    },
+    "hosts": 147,
+    "records_per_host": {
+     "min": 1,
+     "median": 1,
+     "max": 1
+    },
+    "hosts_all_retained": 48,
+    "new_tests_assessability": {
+     "F1": "unknown",
+     "F2": "unknown",
+     "F3": "unknown",
+     "F4": "unknown",
+     "U1": "unknown"
+    }
+   },
+   "planet": {
+    "records": 148,
+    "per_test": {
+     "odd_even": {
+      "assessed_pass": 94,
+      "assessed_fail": 5,
+      "not_assessed": 49,
+      "unknown": 0
+     },
+     "secondary_eclipse": {
+      "assessed_pass": 121,
+      "assessed_fail": 4,
+      "not_assessed": 23,
+      "unknown": 0
+     },
+     "plausibility": {
+      "assessed_pass": 122,
+      "assessed_fail": 23,
+      "not_assessed": 3,
+      "unknown": 0
+     }
+    },
+    "joint": {
+     "rejected": 32,
+     "unassessed": 28,
+     "unknown": 0,
+     "retained": 88
+    },
+    "hosts": 148,
+    "records_per_host": {
+     "min": 1,
+     "median": 1.0,
+     "max": 1
+    },
+    "hosts_all_retained": 88,
+    "new_tests_assessability": {
+     "F1": "unknown",
+     "F2": "unknown",
+     "F3": "unknown",
+     "F4": "unknown",
+     "U1": "unknown"
+    }
+   }
+  },
+  "by_matched": {
+   "True": {
+    "records": 187,
+    "per_test": {
+     "odd_even": {
+      "assessed_pass": 152,
+      "assessed_fail": 7,
+      "not_assessed": 28,
+      "unknown": 0
+     },
+     "secondary_eclipse": {
+      "assessed_pass": 171,
+      "assessed_fail": 15,
+      "not_assessed": 1,
+      "unknown": 0
+     },
+     "plausibility": {
+      "assessed_pass": 165,
+      "assessed_fail": 3,
+      "not_assessed": 19,
+      "unknown": 0
+     }
+    },
+    "joint": {
+     "rejected": 24,
+     "unassessed": 37,
+     "unknown": 0,
+     "retained": 126
+    },
+    "hosts": 187,
+    "records_per_host": {
+     "min": 1,
+     "median": 1,
+     "max": 1
+    },
+    "hosts_all_retained": 126,
+    "new_tests_assessability": {
+     "F1": "unknown",
+     "F2": "unknown",
+     "F3": "unknown",
+     "F4": "unknown",
+     "U1": "unknown"
+    }
+   },
+   "False": {
+    "records": 108,
+    "per_test": {
+     "odd_even": {
+      "assessed_pass": 27,
+      "assessed_fail": 12,
+      "not_assessed": 69,
+      "unknown": 0
+     },
+     "secondary_eclipse": {
+      "assessed_pass": 50,
+      "assessed_fail": 12,
+      "not_assessed": 46,
+      "unknown": 0
+     },
+     "plausibility": {
+      "assessed_pass": 51,
+      "assessed_fail": 41,
+      "not_assessed": 16,
+      "unknown": 0
+     }
+    },
+    "joint": {
+     "rejected": 64,
+     "unassessed": 34,
+     "unknown": 0,
+     "retained": 10
+    },
+    "hosts": 108,
+    "records_per_host": {
+     "min": 1,
+     "median": 1.0,
+     "max": 1
+    },
+    "hosts_all_retained": 10,
+    "new_tests_assessability": {
+     "F1": "unknown",
+     "F2": "unknown",
+     "F3": "unknown",
+     "F4": "unknown",
+     "U1": "unknown"
+    }
+   }
+  }
+ },
+ "P2_c2_t2a": {
+  "all": {
+   "records": 637,
+   "per_test": {
+    "odd_even": {
+     "assessed_pass": 0,
+     "assessed_fail": 0,
+     "not_assessed": 34,
+     "unknown": 603
+    },
+    "secondary_eclipse": {
+     "assessed_pass": 0,
+     "assessed_fail": 0,
+     "not_assessed": 0,
+     "unknown": 637
+    },
+    "plausibility": {
+     "assessed_pass": 0,
+     "assessed_fail": 0,
+     "not_assessed": 0,
+     "unknown": 637
+    }
+   },
+   "joint": {
+    "rejected": 0,
+    "unassessed": 34,
+    "unknown": 603,
+    "retained": 0
+   },
+   "hosts": 87,
+   "records_per_host": {
+    "min": 2,
+    "median": 7,
+    "max": 10
+   },
+   "hosts_all_retained": 0,
+   "new_tests_assessability": {
+    "F1": "unknown",
+    "F2": "unknown",
+    "F3": "unknown",
+    "F4": "unknown",
+    "U1": "unknown"
+   }
+  }
+ }
+}
