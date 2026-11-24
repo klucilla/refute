@@ -202,3 +202,66 @@ review tokens. The three rounds on the prototype together: **1,531,127** review 
 Tests: `tests/v059`, JUnit 37 passed, 0 failed, 0 errors, 0 skipped (with real worker processes,
 the kernel's CPU limit and the stream limit). **By the decision, the work stops here, before the
 run:** these fixes have not been reviewed by Codex.
+
+## After the run: one round on the report and the specification
+
+The maintainer's decision of 2026-11-24, received at 05:07 local (#218, comment 7125778250):
+- item 1: no round 4 on the code; `331ca03` ran unreviewed, and a pilot checked its accounting;
+- item 3: one round on the report and the version-5 specification together.
+
+The round ran in the same conversation (thread `01a20a4f-3ec2-7cb2-8a0a-5990041bd6d7`) on
+`cc282b8d`: Codex CLI 0.167.0-alpha.3.2, model gpt-6.2-sol, effort high. Prompt and answer are
+stored unchanged.
+
+| Round | File | Verdicts | SHA-256 |
+|---|---|---|---|
+| review | [review-round-prompt.md](review-round-prompt.md) | the prompt | `61a3fc182577de36e1b9f955ed2755dcd89abfc1f1bd2b7f710a0eea9bd0c73a` |
+| review | [review-round-answer.md](review-round-answer.md) | blocking items 3, 6, 7 ANSWERED; 1, 2, 4, 5 PARTLY; **BLOCKS: 8; OVERALL: REFUTED** | `b9e55b7883e86c501800aaf0d2f337a31968cf5750002da5eb3c41e852137bf5` |
+
+- **Tokens:** 12,829,299 input (11,789,440 cached) and 53,670 output, so **1,093,529** review
+  tokens.
+- **All rounds of this conversation on v0.5.9,** the design round excluded: **2,624,656**
+  review tokens.
+
+**What Codex reproduced:**
+- the per-TOI table, Q1 to Q5 and the costs;
+- the pilot's three differences;
+- all 252 unit hashes;
+- that the pinned files equal `331ca03`;
+- every one of the 82 zero-coverage results is INCONCLUSIVE.
+
+**The eight blocks, all applied** in the commit after `cc282b8`, each in its most conservative
+form. The counts of block 6 and the power of block 7 were checked by
+`.cache/v059/tools/check_codex4.py`.
+1. **The pilot's scope.** It was three batches (3 fetches, 6 bases and 18 probes), and it checked
+   only that the accounting agrees under the observed load. No cap or allowance was reached.
+2. **Q3.** Three of the four bases triggered the guard. TOI-734.01 E was INCONCLUSIVE from sector
+   heterogeneity (82,558 cadences, p = 1.6×10⁻³³), and all 12 of its probes triggered the guard.
+   The run did not reproduce v0.5.8's original failures.
+3. **The post-hoc observations.** They give a class pattern with no cause:
+   - byte identity with v0.5.6 is unknown for 4 of the 13;
+   - 8 of the 10 first disagreements were on epoch probes, in a fixed order;
+   - 6 of the 10 crossed the background threshold;
+   - `aperture_depth` alone determined TOI-399.01 S/p2's REFUTED.
+4. **The screen's semantics.** An explicit rule for when a test is assessed, a sensitivity
+   refusal counting as not assessed; screen-only tests kept out of `aggregate`; configured roles
+   kept; the consensus named as a rule change that needs a blind review.
+5. **E's pre-fit grid,** defined from the frozen inputs and the raw span (with its one coarsening
+   case), and separated from the probe offsets of the final fit.
+6. **The paired endpoint.** It is now "decided on the catalog signal". With that rule the
+   prototype gives 6 flips in 16 informative pairs before consensus and 1 in 9 after; the 10 of
+   20 and 4 of 12 were raw comparisons. Yield uses the identity-qualified rates and cost the raw
+   ones.
+7. **Fixed-draw sizing.** It now has n_min, the decision-floor denominator and consequence, and
+   the criteria that block the lock. The "400 or more" requirement is removed: 320 pairs give a
+   conditional power of 0.916 at f = 0.05.
+8. **The historical baseline.** It is now 24 of 100 decidable, and 23 of 100 retained.
+
+**Non-blocking:**
+- Applied: the report links to the script's full intervals and per-axis breakdown, and the
+  specification states that the route (e) and (d1) gates remain open.
+- Recorded on #59.
+
+**No further round.** The rule is one round for exploratory work, and the decision asked for one.
+The applied fixes are not reviewed by Codex. Where the answer and the drafts disagreed, the drafts
+took Codex's more conservative wording.

@@ -42,8 +42,12 @@ Version 5 keeps today's verdict as it is and adds two things around it.
 | 1, screen | `screen` (new, not a verdict) | "no assessed core test failed" | Section 3 | in a population: completeness, effectiveness |
 | 2, verdict | `verdict` (unchanged vocabulary) | today's certificate | `aggregate` unchanged: SURVIVED only with every test decided, covered and sensitive | per signal; decidability reported |
 
-- **The verdict is not redefined.** SURVIVED keeps its meaning. A redefinition would be a rule
-  change that needs a blind review; it is not proposed here.
+- **The base aggregate is not redefined.** At each arm's final ephemeris, `aggregate` keeps
+  today's semantics, with today's test roles.
+- **The consensus is a rule change.** It is the final step, and it can demote the base aggregate
+  to INCONCLUSIVE, so the returned verdict is no longer the base aggregate alone. Adopting it
+  needs a blind rule review and the maintainer's decision, like any redefinition of SURVIVED.
+  Codex's design review (decision 3) recommended it as a rule after acceptance.
 - **"Not assessed" is never a PASS.** A test with zero coverage stays INCONCLUSIVE in the
   verdict. In the screen it is "unassessed", and it is counted.
 
@@ -57,6 +61,19 @@ This section answers the blocking items of Codex's review of the research
 - **`rejected`:** at least one required core test was assessed and failed;
 - **`unassessed`:** no required core test failed, but at least one was not assessed (zero
   coverage, a missing input, or a guarded numerical failure).
+
+**3.1a When a core test is assessed.** A required core test is *assessed* only when all four
+hold:
+- its `TestResult` reports coverage above zero;
+- its status is PASS or FAIL;
+- `enforce_coverage` did not turn it to INCONCLUSIVE;
+- it raised no guarded numerical failure.
+
+Anything else is *not assessed*, and that includes a valid measurement refused by the
+sensitivity rule. A sensitivity refusal says the test could not have caught the alternative it
+was required to catch, so it is never a PASS, in the screen as in the verdict. A FAIL with
+coverage is assessed even if the test's sensitivity is low: a measured failure needs no power
+argument. These definitions are frozen before any tuning.
 
 **3.2 Precedence.** Rules apply in this order, and the first that applies decides:
 1. the gate fails: the signal is not eligible, and the screen is not computed;
@@ -79,9 +96,17 @@ This section answers the blocking items of Codex's review of the research
 neither as retained nor as rejected. Each rate is reported three ways: as retained, as
 rejected, and as unassessed.
 
-**3.5 The verdict is preserved.** The screen reads the same inputs, test roles and results as the
-verdict, and never changes them. A record holds both fields. The verdict is computed exactly as
-today, and a test asserts it is byte-identical with and without the screen.
+**3.5 The verdict is preserved.**
+- The screen reads the same inputs, test roles and results as the verdict, and never changes
+  them. A record holds both fields.
+- **Screen-only tests stay out of the legacy aggregation.** The new false-alarm tests feed the
+  screen only. They get no decisive or diagnostic role in `aggregate`, so they cannot change a
+  verdict.
+- **Configured roles are kept,** including a diagnostic `centroid_shift` where the claim's test
+  plan makes it diagnostic. A diagnostic FAIL rejects in the screen only if the acceptance
+  document lists that test as a core test with that role. That choice is fixed before any data.
+- **A test enforces it.** The base aggregate is computed exactly as today, and the test asserts it
+  is byte-identical with and without the screen.
 
 **3.6 Scope of adoption.**
 - **An exploratory field** may be added after an approved `src/` change.
@@ -106,6 +131,9 @@ today, and a test asserts it is byte-identical with and without the screen.
   - the minimum yield and the power are pre-registered.
 - **Flux injection cannot validate pixel tests.** The pixel tests (centroid) need their own
   evidence; see section 4.3.
+- **Still open, outside this specification.** The research review's gates for route (e) (the
+  directed-holdout evaluator and its data) and for route (d1) (an independent cohort: provenance,
+  coverage and power) belong to those routes' own phases.
 
 ## 4. Codex's 7 blocking items, one by one
 
@@ -114,7 +142,8 @@ today, and a test asserts it is byte-identical with and without the screen.
 - **Version checks made explicit.**
   - `schema.py` (`_validate_discover`) treats every version 3 or above as needing
     `duration_excess`. It becomes explicit for versions 3 and 4.
-  - Version 5 declares its own expected tests: the v2 test path, plus the screen's core tests.
+  - Version 5 declares its own expected tests: the v2 test path, with the v2 roles. Screen-only
+    tests are listed apart and are not in the role check (section 3.5).
   - The same audit covers the version checks in `params.py`.
 - **One path for every caller.** The entry and the consensus go through `TessAnalyzer.analyze`,
   `analyze_data` and `build_result`, and through `discover.measure.chain`. A caller that cannot
@@ -144,13 +173,30 @@ today, and a test asserts it is byte-identical with and without the screen.
   - the tie rule: the first maximum in period, epoch, duration order;
   - the boundary rule: an optimum on the period or epoch edge is an unresolved entry;
   - the inputs both arms share: the files, the test plan and the stage.
-- **The grid actually used.**
-  - The steps are computed from the raw light curve's span and the final fit, not from the input
-    hints.
-  - The period step is at most the battery's fine step, with exact window ends.
-  - Every record holds the steps it used.
-- **The probes** are described as local probes, not as a resolution argument: epoch ±D/20, period
-  ±one fine step, duration ±D/20, in a frozen order.
+- **E's refit grid, before the fit.** It is defined only from fixed inputs: the frozen catalog
+  period P₀, epoch T₀ and duration D₀, and the raw light curve's span. Nothing found by the fit
+  sets the grid that finds it. As in the prototype:
+  - **The bounds:**
+    - the period within P₀(1 ± 0.001);
+    - the epoch within ±D₀/2 of T₀, propagated to the pivot cycle nearest the middle of the light
+      curve.
+  - **The period:**
+    - fine = D₀·P₀/(6·span)/10;
+    - n = ceil(half-width / fine) equal steps per side, with both window ends exact trials;
+    - n is capped at 2,000. Above it, the step coarsens to half-width / 2,000. That is the only
+      case where the grid may coarsen, and the record says so.
+  - **The epoch:** steps of D₀/20, with exact ends at ±D₀/2.
+  - **The duration:** 21 values over 0.5 D₀ to 1.5 D₀.
+  - Every record holds the grid it used.
+- **S's grid** is the battery's own search and refit, unchanged. Its hints are the search's.
+- **The probes, after the fit.** Their offsets are a separate definition, applied to the final fit
+  (P, T, D) of each arm:
+  - epoch ±D/20;
+  - period ±D·P/(6·span)/10;
+  - duration ±D/20;
+  - one axis at a time, in a frozen order.
+  They are local probes, not a resolution argument, and every probe record holds the offset it
+  used.
 - **Tests:**
   - end-of-baseline drift and gaps;
   - two sectors years apart;
@@ -177,13 +223,19 @@ today, and a test asserts it is byte-identical with and without the screen.
 ### 4.4 A symmetric paired claim (item 4)
 
 - **Both arms on every drawn TIC,** E and S, on the same input bytes (SHA-256 checked per unit).
-- **The informative pair:** a pair where at least one arm gives a decided class on the catalog
-  signal (identity matched by v0.5.6's rule).
-- **A flip:** only one arm is decided, or both are decided with different classes.
-- **Counted apart, never as flips:**
-  - wrong-signal fits (an identity miss), per arm;
-  - joint abstentions (both arms INCONCLUSIVE);
-  - operational losses (download failures and resource stops).
+- **"Decided on the catalog signal":** the arm's record is OK, its class is decided, and its final
+  fit matches the catalog ephemeris by v0.5.6's identity rule.
+- **The informative pair:** a pair where at least one arm is decided on the catalog signal.
+- **A flip:** exactly one arm is decided on the catalog signal, or both are, with different
+  classes.
+- **Tabulated apart, with a frozen place in the analysis:**
+  - **Identity misses** (a decided arm whose fit left the catalog signal) are counted per arm. In
+    the primary analysis such an arm counts as not decided on the catalog signal. A sensitivity
+    analysis that drops every pair with a miss is reported beside it.
+  - **Joint abstentions** (neither arm decided on the catalog signal) are outside the
+    denominator, and are reported.
+  - **Operational losses** (download failures and resource stops) are outside the denominator.
+    Their count is reported, and a loss rate above a declared ceiling fails the run's acceptance.
 - **Both arms' decision rates** are reported over all drawn targets.
 - **The guard on the decision rate.** The 0.10 floor is kept only as a declared operational
   floor, with its reason; it is not a scientific threshold.
@@ -211,12 +263,32 @@ today, and a test asserts it is byte-identical with and without the screen.
 - **An upper bound above 0.10** means the claim was not established at that precision. It is a
   failed acceptance criterion, not a scientific REFUTED. REFUTED is reserved for evidence that
   the flip rate is above 0.10, with the lower bound above it.
-- **A fixed sample, with no interim stop.** The 200-target stop of the first design is removed.
-  The sample is sized from the informative-pair yield (section 6) and a flip rate that matters
-  scientifically, declared before the lock.
+- **A fixed draw, with no interim stop.** The 200-target stop of the first design is removed.
+  - **The number of draws** N is fixed before the lock, from the declared scientific flip rate
+    f*, a conditional power of at least 0.9 (section 6.2), the yield q measured by the
+    exposed-PC yield check, and a declared loss rate.
+  - **The rule:** N is the smallest draw for which the probability of reaching n_min
+    informative pairs is at least 0.9, under a binomial model with the lower Wilson bound of q
+    and the upper bound of the loss rate. n_min is the smallest n with conditional power at
+    least 0.9 at f*.
 - **Every door has a denominator.**
-  - Identity misses in arm S are counted explicitly.
-  - The exit criteria name which doors block the lock and which only report.
+  - **The flip rate:** flips over informative pairs (section 4.4). Identity misses are counted
+    per arm and enter as section 4.4 says.
+  - **The decision-rate floor:** each arm's decided-on-the-catalog-signal count, over all drawn
+    targets less operational losses.
+  - **The consequence of the floor:** if either arm's Wilson upper bound is below 0.10, the
+    panel is declared uninformative. That is a failed acceptance criterion, and the claim is
+    INCONCLUSIVE; it is never a scientific REFUTED.
+  - **Too few informative pairs:** fewer than n_min makes the claim INCONCLUSIVE for lack of
+    precision, whatever the flip count.
+- **What blocks the lock** (each one must hold before it):
+  - the exposed-PC yield check, with q, the loss rate and both arms' decision rates measured;
+  - N, n_min and f* computed and written in the claim;
+  - the loss ceiling declared;
+  - the synthetic acceptance passed, with its own pre-registration (section 4.7);
+  - the blind rule review, if the consensus is part of the returned verdict (section 2).
+- **What only reports:** the joint abstentions, the per-arm identity misses, the sensitivity
+  analysis without pairs with a miss, and the decidability cost of the consensus.
 
 ### 4.6 Freeze and compatibility (item 6)
 
@@ -264,29 +336,38 @@ today, and a test asserts it is byte-identical with and without the screen.
 These items come from the v0.5.9 run. Its numbers are in `docs/reports/v0.5.9-report.md`.
 They are exploratory and post hoc, so they only shape the hypotheses below.
 
-- **The entry point matters.** In all 13 changes the S arm gave the v0.5.6 class. In 10 of the
-  12 that v0.5.8 left INCONCLUSIVE, the E arm did too. Both arms read the same bytes. So the
-  paired claim of section 4.4 tests a real effect, not noise in the inputs. It is a hypothesis
-  from exposed, selected TOIs; only fresh targets can test it.
-- **The epoch is the fragile axis.** Of the 10 consensus demotions, 8 started at an epoch probe
-  of D/20. `systematics` changed in 6 of the 10. The screen's calibration (section 3) and the
-  probes' step should be designed with that in mind.
+- **An observed class pattern, not a cause.** In all 13 changes the S arm gave the v0.5.6 class.
+  In 10 of the 12 that v0.5.8 left INCONCLUSIVE, the E arm did too.
+  - In this run both arms read the same bytes. Byte identity with v0.5.6's inputs is unknown for
+    4 of the 13, and the seeds move with the ephemeris.
+  - So no cause is attributed. The pattern motivates the paired claim of section 4.4, as a
+    hypothesis from exposed, selected TOIs; only fresh targets can test it.
+- **Where the first disagreements fell.** Of the 10 consensus demotions, the first disagreement
+  occurred on an epoch probe (D/20) in 8.
+  - The probes are read in a fixed order with the epoch first, so this does not show that the
+    other axes are stable.
+  - In 6 of the 10, `systematics` crossed the background sensitivity threshold.
+  - Version 5 records every probe's class, not only the first disagreement, so that each axis
+    can be measured.
 - **The simulation-seed confound.** The battery's simulation seeds read the candidate's period,
   epoch and depth (`power.candidate_seed`). A probe therefore moves both the ephemeris and the
   seeds. Version 5 keys the seeds to the target, not to the fitted parameters, so a probe moves
   only the ephemeris.
 - **The guarded centroid.** The prototype's guard is the model for section 4.3. The report
   (Q3) shows what it gave on the two numerical ERRORs of v0.5.8.
-- **The consensus's cost in decidability.** The report (Q4) measures it per arm. Decidability
-  at the verdict level is already 0.23 on known planets. A rule that only demotes is
-  therefore reported beside the screen, never in place of it.
+- **The consensus's cost in decidability.** The report (Q4) measures it per arm. Among the 100
+  identity-matched planets of v0.5.6's Part B, only 24 were decidable already (and 23 were
+  retained). A rule that only demotes is therefore reported beside the screen, never in place of
+  it.
 - **The resource control.** The prototype's supervisor provides:
   - a process per unit, journaled before it starts;
   - a Windows job with a kernel CPU limit;
   - the download limit at the HTTP stream boundary;
   - an independent pilot measure.
-  It is the model for any version-5 runner. Its fixes of `331ca03` were checked by the pilot, not
-  reviewed by Codex.
+  It is the model for any version-5 runner. Its fixes of `331ca03` were not reviewed by Codex.
+  The pilot checked only that the accounting agrees with an independent measure under the
+  observed load. No cap or allowance was reached, so the kill paths (the job's CPU limit, the
+  byte limit and the cap stop) were tested only offline.
 
 ## 6. Pair yield and cost model
 
@@ -299,10 +380,14 @@ in `.cache/v059/tools/yield_model.py`. Nothing is drawn.
 - one base per arm: 74 CPU-s per unit, the fit included;
 - one probe unit: 59 CPU-s.
 
-The cost is fetch + 2 × base + 6 × probe × (d_E + d_S), where d_E and d_S are the two arms' base
-decision rates.
+**Two different rates.**
+- **For cost:** the raw base decision rates d_E and d_S. Probes run for every decided base,
+  identity or not. The cost is fetch + 2 × base + 6 × probe × (d_E + d_S).
+- **For yield:** the identity-qualified rates (decided on the catalog signal, section 4.4). They
+  are at most the raw rates. The informative-pair yield q lies between their maximum and their
+  sum.
 
-| d_E | d_S | CPU-s per target | Informative-pair yield q (between max(d_E, d_S) and d_E + d_S) |
+| d_E (raw) | d_S (raw) | CPU-s per target | q, if the identity-qualified rates equal the raw ones (an upper bound) |
 |---|---|---|---|
 | 0.10 | 0.30 | 298 | 0.30 to 0.40 |
 | 0.20 | 0.30 | 333 | 0.30 to 0.50 |
@@ -324,17 +409,27 @@ decision rates.
 | 150 | 1.000 | 0.989 | 0.917 | 0.523 |
 | 200 | 1.000 | 0.999 | 0.982 | 0.700 |
 | 300 | 1.000 | 1.000 | 0.999 | 0.881 |
+| 320 | 1.000 | 1.000 | 1.000 | 0.916 |
 | 400 | 1.000 | 1.000 | 1.000 | 0.969 |
 
+These are conditional powers, at a fixed n. The fixed-draw rule of section 4.5 adds the
+uncertainty of the yield and of the losses.
+
 **6.3 What the prototype adds, as a warning.**
-- **On these 24 TOIs:**
-  - without consensus: 20 informative pairs, 10 of them flips;
-  - with consensus: 12 informative pairs, 4 flips;
-  - on the 8 controls: 0 flips, in 8 controls of which 6 are decided.
-- These TOIs were chosen for flipping, so the numbers bound nothing. But a true flip rate near
-  0.05 or above would need 400 or more informative pairs, at q of about 0.3, 1,300 or more drawn
-  targets. That is about 130 to 260 CPU-h and 320 GB.
-- **A 0.10 tolerance may therefore be out of reach** at a feasible size.
+- **On these 24 TOIs,** with the section 4.4 rule (decided on the catalog signal; checked by
+  `.cache/v059/tools/check_codex4.py`):
+  - without consensus: 16 informative pairs, 6 of them flips;
+  - with consensus: 9 informative pairs, 1 flip.
+- **Comparing raw classes,** without the identity rule, gives 10 of 20 and 4 of 12. Those raw
+  comparisons are not the endpoint.
+- **The controls:** 0 flips.
+- **These TOIs were chosen for flipping,** so the numbers bound nothing.
+- **A worked example, not a requirement.** At a true flip rate of 0.05:
+  - 320 informative pairs give a conditional power of 0.916;
+  - at an identity-qualified q of about 0.3, that is about 1,070 drawn targets before losses;
+  - that is about 110 to 210 CPU-h and 260 GB.
+- **A 0.10 tolerance may be costly** if the true flip rate is near 0.05. The yield check
+  decides.
 - **The consensus lowers q.** In the prototype, S lost 8 of its 20 decided outputs to the
   consensus. A panel sized without the consensus overestimates its informative pairs.
 - **Sizing rule:** the panel is sized only after the yield check, from the declared scientific
