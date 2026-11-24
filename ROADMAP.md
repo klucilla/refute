@@ -73,30 +73,40 @@ how later work is done.
 
 ## Current phase
 
-**v0.5.9 Ephemeris entry: exploratory prototype** (opened on 2026-11-23 by the maintainer's
-decision received at 19:28 local, #218, comment 7115813315; see
-[the section below](#v059-ephemeris-entry-exploratory-prototype)).
-- **Exploratory from start to end:** nothing is a verdict; no lock, no drand round, no change in
-  `src/`, no new target. Every record carries the label 'WEAKENED; does not meet D1, D2, D4, T2a'
-  and `method_status: not_validated`.
-- **The question:** when the v0.5 battery enters through the TOI's ephemeris, with a bounded and
-  declared refit, and its output is checked on a declared set of local perturbations, do the cases
-  that changed class in v0.5.8 stabilise, and at what cost in decidability and CPU?
-- **The set:** 24 TOIs already exposed: the 13 decided class changes of v0.5.8's completed runs, the
-  one change the other way (TOI-6450.01), the 2 numerical ERRORs (TOI-734.01, TOI-5218.01), and 8
-  unchanged controls with provenance `same`, drawn per class with a committed rule and seed. Both
-  entry modes (E, the TOI's ephemeris; S, the battery's own search) run on all 24, on the same
-  input bytes.
-- **Caps:** 15 GB of downloads, 8 CPU-h, 10 GB of disk peak. No dependency changes.
-- **The run** was approved at `331ca03` (#218, comment 7125778250). It ran on 2026-11-24 after a
-  pilot that passed (comment 7126035677), and it is **complete**: 252 units, 4.12 CPU-h, 5.87 GB.
-  - Report draft: [docs/reports/v0.5.9-report.md](docs/reports/v0.5.9-report.md).
-  - Version-5 specification draft: [docs/plans/battery-v5-spec.md](docs/plans/battery-v5-spec.md).
-- **Since the previous phase:** a second dated correction to the v0.5.8 report,
-  [docs/reports/v0.5.8-report-correction-2-2026-11-23.md](docs/reports/v0.5.8-report-correction-2-2026-11-23.md).
-- **After v0.5.9, a proposal only (no phase is opened):**
+**No phase is open** (since 2026-11-24, when v0.5.9 closed; the maintainer's decision received at
+09:03 local, #218, comment 7130900283, item 4).
+- **The next phase** follows the proposal
   [docs/plans/next-phases-2026-11-24.md](docs/plans/next-phases-2026-11-24.md), from the research
-  of 2026-11-23 ([record](docs/plans/research-2026-11-23/README.md)).
+  of 2026-11-23 ([record](docs/plans/research-2026-11-23/README.md)). Opening it is the
+  maintainer's decision. A phase opened from now on follows Process diet 2: a charter first.
+- **The version-5 specification stays a draft:**
+  [docs/plans/battery-v5-spec.md](docs/plans/battery-v5-spec.md). Nothing in it is adopted.
+
+### Previous phase record: v0.5.9 Ephemeris entry: exploratory prototype
+
+**v0.5.9 Ephemeris entry: exploratory prototype: closed on 2026-11-24, gate `WEAKENED` (one
+important finding, corrected)** (opened on 2026-11-23 by the maintainer's decision received at
+19:28 local, #218, comment 7115813315; see
+[the section below](#v059-ephemeris-entry-exploratory-prototype)).
+- **All six exit criteria are met,** each with its evidence in the v0.5.9 section.
+- **The question:** when the v0.5 battery enters through the TOI's ephemeris (E) rather than its
+  own search (S), with six local probes and a consensus rule, do the cases that changed class in
+  v0.5.8 stabilise, and at what cost? Everything is exploratory.
+  - On the 14 changes, E and S gave the same decided class in 3 without the consensus and 1 with
+    it. With the consensus, 9 of the 14 were INCONCLUSIVE in both.
+  - The 8 controls kept their class, and no ERROR remains.
+  - No verdict, rule or threshold changed, and nothing changed in `src/`.
+- **The report:** [docs/reports/v0.5.9-report.md](docs/reports/v0.5.9-report.md), approved by the
+  maintainer on 2026-11-24 (#218, comment 7130900283, item 3).
+- **The gate review** returned `WEAKENED`, with one important finding and no critical one
+  ([docs/gates/v0.5.9-review.md](docs/gates/v0.5.9-review.md)).
+  - **The important finding** (the `.cache` cleanups of 2026-11-24 had no record in the
+    repository) is tracked in #220. It is corrected by the record
+    [docs/maintenance/cache-archive-2026-11-24/](docs/maintenance/cache-archive-2026-11-24/README.md).
+  - **The minor findings** are on #59 (comment 7131152693). Findings 2 to 6 and 8 were applied to
+    the report, the records and the specification before the report's approval.
+- **Method status:** `method_status: not_validated` stands, under the limits label 'WEAKENED; does
+  not meet D1, D2, D4, T2a'.
 
 ### Previous phase record: v0.5.8 Output stability
 
@@ -1304,21 +1314,67 @@ prototype level. If the prototype needed a change in `src/`, the work would STOP
 
 **Caps:** 15 GB of downloads, 8 CPU-h, 10 GB of disk peak. No dependency changes.
 
+**Status: closed on 2026-11-24, gate `WEAKENED` (one important finding, corrected)**, by the
+maintainer's decision received at 09:03 local (#218, comment 7130900283).
+- The gate review: [docs/gates/v0.5.9-review.md](docs/gates/v0.5.9-review.md).
+- The important finding is tracked in #220 and corrected by the cleanups' record (below).
+- The minor findings are on #59 (comment 7131152693).
+
+**The report and the records:**
+- the exploratory report: [docs/reports/v0.5.9-report.md](docs/reports/v0.5.9-report.md), approved
+  by the maintainer on 2026-11-24 (#218, comment 7130900283, item 3);
+- the records: [docs/validation/v0.5.9/](docs/validation/v0.5.9/README.md);
+- the version-5 specification draft: [docs/plans/battery-v5-spec.md](docs/plans/battery-v5-spec.md).
+  It stays a draft, and nothing in it is adopted.
+
 **The `.cache` cleanups of 2026-11-24** (two, during the phase): their record (the scripts, the
 citation lists, the manifests with source and destination SHA-256, and the Drive destinations) is
 in [docs/maintenance/cache-archive-2026-11-24/](docs/maintenance/cache-archive-2026-11-24/README.md),
 added after the gate review's finding 1 (#220).
 
-**Exit criteria** (detail in the plan)
-- [ ] The consensus record and correction 2 of the v0.5.8 report are committed.
-- [ ] The plan, the control rule, the seed, the script and the report script are committed, and the
+**Exit criteria** (detail in the plan; ticked on 2026-11-24 by the maintainer's decision of 09:03,
+item 4, #218, with the evidence below; the gate review checked each one)
+- [x] The consensus record and correction 2 of the v0.5.8 report are committed.
+      *Evidence:*
+      - Both have been in the repository since `d70adc3`:
+        [docs/plans/v0.5.9-consensus/](docs/plans/v0.5.9-consensus/README.md) and
+        [the correction](docs/reports/v0.5.8-report-correction-2-2026-11-23.md).
+      - The reviewer checked the 9 SHA-256 of the consensus record's table.
+      - The correction was edited once in place, in `97be424` (the gate review, finding 10, on #59).
+- [x] The plan, the control rule, the seed, the script and the report script are committed, and the
       pushed SHA checked with `gh api`, before the run.
-- [ ] The 48 records (24 TOIs × 2 modes) exist, each with a machine `started_utc`,
+      *Evidence:*
+      - The seed and the scripts were in `d70adc3` (pushed at 22:47Z), and the set in `e581d07`.
+      - The run's code `331ca03` was pushed at 04:51:59Z, and the pilot's code `968a2bb` at
+        08:12:02Z (GitHub's clock).
+      - The fingerprints were pinned at 08:12:47Z (the machine's clock). The pinned files equal
+        their blobs at `331ca03`, except for the line endings of one `src/` file (the gate review,
+        finding 2).
+      - The literal `gh api` check is recorded for `3831626` (#218, comment 7116770581). For
+        `331ca03` and `968a2bb`, the addendum says "pushed" without it (finding 7, on #59).
+- [x] The 48 records (24 TOIs × 2 modes) exist, each with a machine `started_utc`,
       `mode: exploratory`, the label, coverage and provenance.
-- [ ] A report with Q1 to Q5 marked and the costs measured.
-- [ ] A version-5 specification draft (`docs/plans/battery-v5-spec.md`) that answers Codex's 7
+      *Evidence:* [prototype-records.json](docs/validation/v0.5.9/prototype-records.json) (`cc282b8`):
+      - 48 rows with 48 unique keys;
+      - `started_utc` from 08:15:17Z to 08:28:40Z;
+      - each with `mode: exploratory`, the label and `not_validated`;
+      - coverage: 45 `measured` and 3 `unavailable` (the 3 unresolved E entries);
+      - provenance on every row.
+- [x] A report with Q1 to Q5 marked and the costs measured.
+      *Evidence:* [docs/reports/v0.5.9-report.md](docs/reports/v0.5.9-report.md), approved on
+      2026-11-24. The reviewer's own recount gave every number.
+- [x] A version-5 specification draft (`docs/plans/battery-v5-spec.md`) that answers Codex's 7
       blocking items.
-- [ ] One Codex round on the round's work, and a short gate review.
+      *Evidence:*
+      - Sections 4.1 to 4.7 of [the draft](docs/plans/battery-v5-spec.md), one per item.
+      - f*, q and the loss ceiling stay open and block any lock.
+      - It stays a draft.
+- [x] One Codex round on the round's work, and a short gate review.
+      *Evidence:*
+      - The round: [review-round-answer.md](docs/plans/v0.5.9-consensus/review-round-answer.md),
+        `REFUTED` with 8 blocks, all applied in `7af787a`, with no further round.
+      - The short gate review: [docs/gates/v0.5.9-review.md](docs/gates/v0.5.9-review.md),
+        `WEAKENED`.
 
 **Stops that stay the maintainer's:**
 - running the run;
