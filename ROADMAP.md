@@ -1327,10 +1327,12 @@ maintainer's decision received at 09:03 local (#218, comment 7130900283).
 - the version-5 specification draft: [docs/plans/battery-v5-spec.md](docs/plans/battery-v5-spec.md).
   It stays a draft, and nothing in it is adopted.
 
-**The `.cache` cleanups of 2026-11-24** (two, during the phase): their record (the scripts, the
-citation lists, the manifests with source and destination SHA-256, and the Drive destinations) is
-in [docs/maintenance/cache-archive-2026-11-24/](docs/maintenance/cache-archive-2026-11-24/README.md),
-added after the gate review's finding 1 (#220).
+**The `.cache` cleanups of 2026-11-24:** two ran during the phase, and a third, of `.cache/v059`,
+ran after the closing (the decision of 09:03, item 6). Their record is in
+[docs/maintenance/cache-archive-2026-11-24/](docs/maintenance/cache-archive-2026-11-24/README.md),
+added after the gate review's finding 1 (#220), with the third in its
+[c/](docs/maintenance/cache-archive-2026-11-24/c/README.md) part. It holds the scripts, the citation
+lists, the manifests with source and destination SHA-256, and the Drive destinations.
 
 **Exit criteria** (detail in the plan; ticked on 2026-11-24 by the maintainer's decision of 09:03,
 item 4, #218, with the evidence below; the gate review checked each one)
