@@ -4,6 +4,14 @@
  "method_status": "not_validated",
  "limits_label": "WEAKENED; does not meet D1, D2, D4, T2a",
  "post_hoc": "comparisons are exploratory and post hoc; v0.5.9's classes are shown beside, never replaced or re-scored; no replacement class and no vote",
+ "provenance_gaps": [
+  "exovetter:TIC-124206468",
+  "leo:TIC-142937186",
+  "leo:TIC-372596795",
+  "triceratops:TIC-124206468",
+  "triceratops:TIC-142937186"
+ ],
+ "aggregation_post_hoc": "Centroid: the minimum significance over the sectors; TRICERATOPS: FPP or NFPP outside [0, 1] is unavailable; both chosen after the runs",
  "rows": [
   {
    "target": "TIC-124206468",
@@ -21,15 +29,16 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
-    "ModShift": "no_published_threshold",
-    "OddEven": "no_published_threshold",
-    "TransitPhaseCoverage": "no_published_threshold",
-    "Sweet": "threshold_met",
+    "ModShift": "unavailable",
+    "OddEven": "unavailable",
+    "TransitPhaseCoverage": "unavailable",
+    "Sweet": "unavailable",
     "Lpp": "unavailable",
-    "Centroid": "threshold_met"
+    "Centroid": "unavailable"
    },
    "leo": {
     "class": "PC",
@@ -54,14 +63,14 @@
     }
    },
    "triceratops": {
-    "FPP<0.015 and NFPP<0.001": "threshold_met",
-    "NFPP>0.1": "threshold_not_met"
+    "FPP<0.015 and NFPP<0.001": "unavailable",
+    "NFPP>0.1": "unavailable"
    },
    "status": {
     "tls": "ok",
-    "exovetter": "ok",
+    "exovetter": "unavailable_provenance",
     "leo": "ok",
-    "triceratops": "ok"
+    "triceratops": "unavailable_provenance"
    },
    "cpu_seconds": {
     "tls": 232.7,
@@ -83,13 +92,7 @@
      "distinct_transit_count": 10,
      "odd_even_mismatch_sigma": 1.5204646343486399
     },
-    "triceratops": {
-     "FPP": 0.00956762796552324,
-     "NFPP": 0.0,
-     "folded_depth_observed": 0.004704133852153292,
-     "catalog_depth_used": 0.00554,
-     "stars_considered": 2
-    }
+    "triceratops": null
    }
   },
   {
@@ -108,7 +111,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
     "ModShift": "no_published_threshold",
@@ -119,36 +123,18 @@
     "Centroid": "threshold_not_met"
    },
    "leo": {
-    "class": "FA",
-    "flags": {
-     "FA:weak": "threshold_met",
-     "FA:invalid_transits": "threshold_not_met",
-     "FA:bad_shape": "threshold_not_met",
-     "FA:non_unique": "threshold_met",
-     "FA:chases": "threshold_not_met",
-     "FA:dmm": "threshold_not_met",
-     "FA:single_event": "threshold_not_met",
-     "FA:bad_fit": "threshold_met",
-     "FA:sinusoidal": "threshold_not_met",
-     "FA:unphysical_duration": "threshold_not_met",
-     "FA:asymmetric": "threshold_not_met",
-     "FA:chi": "threshold_met",
-     "FA:data_gapped": "threshold_not_met",
-     "FP:odd_even": "threshold_not_met",
-     "FP:vshaped": "threshold_not_met",
-     "FP:large": "threshold_not_met",
-     "FP:secondary": "threshold_met"
-    }
+    "class": "unavailable",
+    "flags": {}
    },
    "triceratops": {
-    "FPP<0.015 and NFPP<0.001": "threshold_not_met",
-    "NFPP>0.1": "threshold_not_met"
+    "FPP<0.015 and NFPP<0.001": "unavailable",
+    "NFPP>0.1": "unavailable"
    },
    "status": {
     "tls": "ok",
     "exovetter": "ok",
-    "leo": "ok",
-    "triceratops": "ok"
+    "leo": "unavailable_provenance",
+    "triceratops": "unavailable_provenance"
    },
    "cpu_seconds": {
     "tls": 244.48,
@@ -170,13 +156,7 @@
      "distinct_transit_count": 65,
      "odd_even_mismatch_sigma": 0.2246773471659935
     },
-    "triceratops": {
-     "FPP": 0.24357100108988539,
-     "NFPP": 0.0,
-     "folded_depth_observed": 0.00021993845569034942,
-     "catalog_depth_used": 0.00056,
-     "stars_considered": 1
-    }
+    "triceratops": null
    }
   },
   {
@@ -194,7 +174,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
     "ModShift": "no_published_threshold",
@@ -278,7 +259,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
     "ModShift": "no_published_threshold",
@@ -367,7 +349,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
     "ModShift": "no_published_threshold",
@@ -448,7 +431,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
     "ModShift": "unavailable",
@@ -532,7 +516,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
     "ModShift": "no_published_threshold",
@@ -619,7 +604,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
     "ModShift": "no_published_threshold",
@@ -703,7 +689,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
     "ModShift": "no_published_threshold",
@@ -714,26 +701,8 @@
     "Centroid": "threshold_met"
    },
    "leo": {
-    "class": "PC",
-    "flags": {
-     "FA:weak": "threshold_not_met",
-     "FA:invalid_transits": "threshold_not_met",
-     "FA:bad_shape": "threshold_not_met",
-     "FA:non_unique": "threshold_not_met",
-     "FA:chases": "threshold_not_met",
-     "FA:dmm": "threshold_not_met",
-     "FA:single_event": "threshold_not_met",
-     "FA:bad_fit": "threshold_not_met",
-     "FA:sinusoidal": "threshold_not_met",
-     "FA:unphysical_duration": "threshold_not_met",
-     "FA:asymmetric": "threshold_not_met",
-     "FA:chi": "threshold_not_met",
-     "FA:data_gapped": "threshold_not_met",
-     "FP:odd_even": "threshold_not_met",
-     "FP:vshaped": "threshold_not_met",
-     "FP:large": "threshold_not_met",
-     "FP:secondary": "threshold_not_met"
-    }
+    "class": "unavailable",
+    "flags": {}
    },
    "triceratops": {
     "FPP<0.015 and NFPP<0.001": "threshold_not_met",
@@ -742,7 +711,7 @@
    "status": {
     "tls": "ok",
     "exovetter": "ok",
-    "leo": "ok",
+    "leo": "unavailable_provenance",
     "triceratops": "ok"
    },
    "cpu_seconds": {
@@ -787,7 +756,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
     "ModShift": "no_published_threshold",
@@ -874,7 +844,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
     "ModShift": "no_published_threshold",
@@ -952,7 +923,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
     "ModShift": "no_published_threshold",
@@ -1039,7 +1011,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
     "ModShift": "no_published_threshold",
@@ -1126,7 +1099,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
     "ModShift": "no_published_threshold",
@@ -1212,7 +1186,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
     "ModShift": "no_published_threshold",
@@ -1300,7 +1275,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
     "ModShift": "no_published_threshold",
@@ -1386,7 +1362,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
     "ModShift": "no_published_threshold",
@@ -1472,7 +1449,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
     "ModShift": "no_published_threshold",
@@ -1559,7 +1537,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 2.0
    },
    "exovetter": {
     "ModShift": "no_published_threshold",
@@ -1645,7 +1624,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
     "ModShift": "no_published_threshold",
@@ -1733,7 +1713,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
     "ModShift": "no_published_threshold",
@@ -1816,7 +1797,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
     "ModShift": "no_published_threshold",
@@ -1880,7 +1862,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
     "ModShift": "no_published_threshold",
@@ -1968,7 +1951,8 @@
    },
    "tls": {
     "detection": "threshold_met",
-    "recovery": "threshold_met"
+    "recovery": "threshold_met",
+    "recovery_factor": 1.0
    },
    "exovetter": {
     "ModShift": "no_published_threshold",
@@ -2060,7 +2044,7 @@
     },
     "exovetter:Sweet": {
      "n": 14,
-     "reached": 13
+     "reached": 12
     },
     "exovetter:Lpp": {
      "n": 14,
@@ -2068,87 +2052,87 @@
     },
     "exovetter:Centroid": {
      "n": 14,
-     "reached": 13
+     "reached": 12
     },
     "leo:FA:weak": {
-     "n": 14,
-     "reached": 14
+     "n": 13,
+     "reached": 13
     },
     "leo:FA:invalid_transits": {
-     "n": 14,
-     "reached": 14
+     "n": 13,
+     "reached": 13
     },
     "leo:FA:bad_shape": {
-     "n": 14,
-     "reached": 14
+     "n": 13,
+     "reached": 13
     },
     "leo:FA:non_unique": {
-     "n": 14,
-     "reached": 14
+     "n": 13,
+     "reached": 13
     },
     "leo:FA:chases": {
-     "n": 14,
-     "reached": 14
+     "n": 13,
+     "reached": 13
     },
     "leo:FA:dmm": {
-     "n": 14,
-     "reached": 14
+     "n": 13,
+     "reached": 13
     },
     "leo:FA:single_event": {
-     "n": 14,
-     "reached": 14
+     "n": 13,
+     "reached": 13
     },
     "leo:FA:bad_fit": {
-     "n": 14,
-     "reached": 14
+     "n": 13,
+     "reached": 13
     },
     "leo:FA:sinusoidal": {
-     "n": 14,
-     "reached": 14
+     "n": 13,
+     "reached": 13
     },
     "leo:FA:unphysical_duration": {
-     "n": 14,
-     "reached": 14
+     "n": 13,
+     "reached": 13
     },
     "leo:FA:asymmetric": {
-     "n": 14,
-     "reached": 14
+     "n": 13,
+     "reached": 13
     },
     "leo:FA:chi": {
-     "n": 14,
-     "reached": 14
+     "n": 13,
+     "reached": 13
     },
     "leo:FA:data_gapped": {
-     "n": 14,
-     "reached": 14
+     "n": 13,
+     "reached": 13
     },
     "leo:FP:odd_even": {
-     "n": 14,
-     "reached": 14
+     "n": 13,
+     "reached": 13
     },
     "leo:FP:vshaped": {
-     "n": 14,
-     "reached": 14
+     "n": 13,
+     "reached": 13
     },
     "leo:FP:large": {
-     "n": 14,
-     "reached": 14
+     "n": 13,
+     "reached": 13
     },
     "leo:FP:secondary": {
-     "n": 14,
-     "reached": 14
+     "n": 13,
+     "reached": 13
     },
     "leo:class": {
      "n": 14,
-     "reached": 14
+     "reached": 13
     },
     "triceratops:FPP<0.015 and NFPP<0.001": {
      "n": 14,
-     "reached": 11
+     "reached": 9
     },
     "triceratops:NFPP>0.1": {
      "n": 14,
-     "reached": 11
+     "reached": 9
     }
    }
   },
@@ -2177,7 +2161,7 @@
     },
     "exovetter:Sweet": {
      "n": 16,
-     "reached": 15
+     "reached": 14
     },
     "exovetter:Lpp": {
      "n": 16,
@@ -2185,87 +2169,87 @@
     },
     "exovetter:Centroid": {
      "n": 16,
-     "reached": 15
+     "reached": 14
     },
     "leo:FA:weak": {
-     "n": 16,
-     "reached": 16
+     "n": 14,
+     "reached": 14
     },
     "leo:FA:invalid_transits": {
-     "n": 16,
-     "reached": 16
+     "n": 14,
+     "reached": 14
     },
     "leo:FA:bad_shape": {
-     "n": 16,
-     "reached": 16
+     "n": 14,
+     "reached": 14
     },
     "leo:FA:non_unique": {
-     "n": 16,
-     "reached": 16
+     "n": 14,
+     "reached": 14
     },
     "leo:FA:chases": {
-     "n": 16,
-     "reached": 16
+     "n": 14,
+     "reached": 14
     },
     "leo:FA:dmm": {
-     "n": 16,
-     "reached": 16
+     "n": 14,
+     "reached": 14
     },
     "leo:FA:single_event": {
-     "n": 16,
-     "reached": 16
+     "n": 14,
+     "reached": 14
     },
     "leo:FA:bad_fit": {
-     "n": 16,
-     "reached": 16
+     "n": 14,
+     "reached": 14
     },
     "leo:FA:sinusoidal": {
-     "n": 16,
-     "reached": 16
+     "n": 14,
+     "reached": 14
     },
     "leo:FA:unphysical_duration": {
-     "n": 16,
-     "reached": 16
+     "n": 14,
+     "reached": 14
     },
     "leo:FA:asymmetric": {
-     "n": 16,
-     "reached": 16
+     "n": 14,
+     "reached": 14
     },
     "leo:FA:chi": {
-     "n": 16,
-     "reached": 16
+     "n": 14,
+     "reached": 14
     },
     "leo:FA:data_gapped": {
-     "n": 16,
-     "reached": 16
+     "n": 14,
+     "reached": 14
     },
     "leo:FP:odd_even": {
-     "n": 16,
-     "reached": 16
+     "n": 14,
+     "reached": 14
     },
     "leo:FP:vshaped": {
-     "n": 16,
-     "reached": 16
+     "n": 14,
+     "reached": 14
     },
     "leo:FP:large": {
-     "n": 16,
-     "reached": 16
+     "n": 14,
+     "reached": 14
     },
     "leo:FP:secondary": {
-     "n": 16,
-     "reached": 16
+     "n": 14,
+     "reached": 14
     },
     "leo:class": {
      "n": 16,
-     "reached": 16
+     "reached": 14
     },
     "triceratops:FPP<0.015 and NFPP<0.001": {
      "n": 16,
-     "reached": 13
+     "reached": 11
     },
     "triceratops:NFPP>0.1": {
      "n": 16,
-     "reached": 13
+     "reached": 11
     }
    }
   },
@@ -2411,7 +2395,7 @@
     },
     "exovetter:Sweet": {
      "n": 12,
-     "reached": 11
+     "reached": 10
     },
     "exovetter:Lpp": {
      "n": 12,
@@ -2419,126 +2403,265 @@
     },
     "exovetter:Centroid": {
      "n": 12,
-     "reached": 11
+     "reached": 10
     },
     "leo:FA:weak": {
-     "n": 12,
-     "reached": 12
+     "n": 11,
+     "reached": 11
     },
     "leo:FA:invalid_transits": {
-     "n": 12,
-     "reached": 12
+     "n": 11,
+     "reached": 11
     },
     "leo:FA:bad_shape": {
-     "n": 12,
-     "reached": 12
+     "n": 11,
+     "reached": 11
     },
     "leo:FA:non_unique": {
-     "n": 12,
-     "reached": 12
+     "n": 11,
+     "reached": 11
     },
     "leo:FA:chases": {
-     "n": 12,
-     "reached": 12
+     "n": 11,
+     "reached": 11
     },
     "leo:FA:dmm": {
-     "n": 12,
-     "reached": 12
+     "n": 11,
+     "reached": 11
     },
     "leo:FA:single_event": {
-     "n": 12,
-     "reached": 12
+     "n": 11,
+     "reached": 11
     },
     "leo:FA:bad_fit": {
-     "n": 12,
-     "reached": 12
+     "n": 11,
+     "reached": 11
     },
     "leo:FA:sinusoidal": {
-     "n": 12,
-     "reached": 12
+     "n": 11,
+     "reached": 11
     },
     "leo:FA:unphysical_duration": {
-     "n": 12,
-     "reached": 12
+     "n": 11,
+     "reached": 11
     },
     "leo:FA:asymmetric": {
-     "n": 12,
-     "reached": 12
+     "n": 11,
+     "reached": 11
     },
     "leo:FA:chi": {
-     "n": 12,
-     "reached": 12
+     "n": 11,
+     "reached": 11
     },
     "leo:FA:data_gapped": {
-     "n": 12,
-     "reached": 12
+     "n": 11,
+     "reached": 11
     },
     "leo:FP:odd_even": {
-     "n": 12,
-     "reached": 12
+     "n": 11,
+     "reached": 11
     },
     "leo:FP:vshaped": {
-     "n": 12,
-     "reached": 12
+     "n": 11,
+     "reached": 11
     },
     "leo:FP:large": {
-     "n": 12,
-     "reached": 12
+     "n": 11,
+     "reached": 11
     },
     "leo:FP:secondary": {
-     "n": 12,
-     "reached": 12
+     "n": 11,
+     "reached": 11
     },
     "leo:class": {
      "n": 12,
-     "reached": 12
+     "reached": 11
     },
     "triceratops:FPP<0.015 and NFPP<0.001": {
      "n": 12,
-     "reached": 9
+     "reached": 8
     },
     "triceratops:NFPP>0.1": {
      "n": 12,
-     "reached": 9
+     "reached": 8
+    }
+   }
+  },
+  "per_test_E": {
+   "aperture_depth": {
+    "tois_with_test_inconclusive_in_E": 7,
+    "outputs": {
+     "triceratops: NFPP > 0.1": {
+      "n": 7,
+      "reached": 2
+     }
+    }
+   },
+   "centroid_shift": {
+    "tois_with_test_inconclusive_in_E": 13,
+    "outputs": {
+     "exovetter: Centroid significance < 1e-3": {
+      "n": 13,
+      "reached": 12
+     },
+     "triceratops: NFPP > 0.1": {
+      "n": 13,
+      "reached": 6
+     }
+    }
+   },
+   "class": {
+    "tois_with_test_inconclusive_in_E": 0,
+    "outputs": {}
+   },
+   "duty_cycle": {
+    "tois_with_test_inconclusive_in_E": 0,
+    "outputs": {
+     "leo: FA unphysical_duration": {
+      "n": 0,
+      "reached": 0
+     }
+    }
+   },
+   "edge_events": {
+    "tois_with_test_inconclusive_in_E": 0,
+    "outputs": {}
+   },
+   "nearby_contamination": {
+    "tois_with_test_inconclusive_in_E": 0,
+    "outputs": {
+     "triceratops: NFPP > 0.1": {
+      "n": 0,
+      "reached": 0
+     }
+    }
+   },
+   "odd_even": {
+    "tois_with_test_inconclusive_in_E": 1,
+    "outputs": {
+     "exovetter: OddEven (no published threshold)": {
+      "n": 1,
+      "reached": 0
+     },
+     "leo: FP odd_even": {
+      "n": 1,
+      "reached": 1
+     }
+    }
+   },
+   "period_alias": {
+    "tois_with_test_inconclusive_in_E": 0,
+    "outputs": {
+     "tls: recovery factor": {
+      "n": 0,
+      "reached": 0
+     }
+    }
+   },
+   "plausibility": {
+    "tois_with_test_inconclusive_in_E": 2,
+    "outputs": {
+     "leo: FA unphysical_duration": {
+      "n": 2,
+      "reached": 1
+     },
+     "leo: FP large, vshaped": {
+      "n": 2,
+      "reached": 1
+     }
+    }
+   },
+   "secondary_eclipse": {
+    "tois_with_test_inconclusive_in_E": 1,
+    "outputs": {
+     "exovetter: ModShift (no published threshold)": {
+      "n": 1,
+      "reached": 0
+     },
+     "leo: FP secondary": {
+      "n": 1,
+      "reached": 1
+     }
+    }
+   },
+   "sinusoid": {
+    "tois_with_test_inconclusive_in_E": 0,
+    "outputs": {
+     "exovetter: Sweet": {
+      "n": 0,
+      "reached": 0
+     },
+     "leo: FA sinusoidal": {
+      "n": 0,
+      "reached": 0
+     }
+    }
+   },
+   "snr": {
+    "tois_with_test_inconclusive_in_E": 0,
+    "outputs": {
+     "tls: SDE >= 9": {
+      "n": 0,
+      "reached": 0
+     },
+     "leo: FA weak": {
+      "n": 0,
+      "reached": 0
+     }
+    }
+   },
+   "systematics": {
+    "tois_with_test_inconclusive_in_E": 9,
+    "outputs": {
+     "exovetter: Sweet": {
+      "n": 9,
+      "reached": 7
+     },
+     "leo: FA chases, dmm, bad_fit, chi": {
+      "n": 9,
+      "reached": 8
+     }
     }
    }
   }
  },
  "G2": {
   "centroid: exovetter Centroid vs TRICERATOPS NFPP>0.1": {
-   "both_reached": 17,
-   "agree": 10
+   "both_reached": 15,
+   "agree": 9
   },
   "variability: exovetter Sweet vs LEO FA:sinusoidal": {
-   "both_reached": 22,
-   "agree": 7
+   "both_reached": 19,
+   "agree": 6
   },
-  "detection: TLS SDE>=9 vs LEO FA:weak (inverted)": {
-   "both_reached": 23,
-   "agree": 20
+  "detection: TLS SDE>=9 vs LEO FA:weak (inverted; not in the logged note)": {
+   "both_reached": 21,
+   "agree": 19
   }
  },
  "G3": {
   "PC": {
    "n": 3,
    "leo_class": {
-    "PC": 3
+    "PC": 2,
+    "unavailable": 1
    },
    "triceratops_both": {
-    "threshold_met": 1,
+    "unavailable": 1,
     "threshold_not_met": 2
    }
   },
   "CP": {
    "n": 10,
    "leo_class": {
-    "FA": 3,
-    "PC": 7
+    "unavailable": 1,
+    "PC": 7,
+    "FA": 2
    },
    "triceratops_both": {
-    "threshold_not_met": 7,
-    "threshold_met": 2,
-    "unavailable": 1
+    "unavailable": 2,
+    "threshold_not_met": 6,
+    "threshold_met": 2
    }
   },
   "FP": {
@@ -2599,102 +2722,101 @@
    "threshold_met": 24
   },
   "exovetter:ModShift": {
-   "no_published_threshold": 23,
-   "unavailable": 1
+   "unavailable": 2,
+   "no_published_threshold": 22
   },
   "exovetter:OddEven": {
-   "no_published_threshold": 23,
-   "unavailable": 1
+   "unavailable": 2,
+   "no_published_threshold": 22
   },
   "exovetter:TransitPhaseCoverage": {
-   "no_published_threshold": 23,
-   "unavailable": 1
+   "unavailable": 2,
+   "no_published_threshold": 22
   },
   "exovetter:Sweet": {
-   "threshold_met": 16,
+   "unavailable": 2,
    "threshold_not_met": 7,
-   "unavailable": 1
+   "threshold_met": 15
   },
   "exovetter:Lpp": {
    "unavailable": 24
   },
   "exovetter:Centroid": {
-   "threshold_met": 9,
+   "unavailable": 2,
    "threshold_not_met": 14,
-   "unavailable": 1
+   "threshold_met": 8
   },
   "leo:FA:weak": {
-   "threshold_not_met": 20,
-   "threshold_met": 3
-  },
-  "leo:FA:invalid_transits": {
-   "threshold_not_met": 23
-  },
-  "leo:FA:bad_shape": {
-   "threshold_not_met": 23
-  },
-  "leo:FA:non_unique": {
-   "threshold_not_met": 21,
+   "threshold_not_met": 19,
    "threshold_met": 2
   },
+  "leo:FA:invalid_transits": {
+   "threshold_not_met": 21
+  },
+  "leo:FA:bad_shape": {
+   "threshold_not_met": 21
+  },
+  "leo:FA:non_unique": {
+   "threshold_not_met": 20,
+   "threshold_met": 1
+  },
   "leo:FA:chases": {
-   "threshold_not_met": 23
+   "threshold_not_met": 21
   },
   "leo:FA:dmm": {
-   "threshold_not_met": 21,
+   "threshold_not_met": 19,
    "threshold_met": 2
   },
   "leo:FA:single_event": {
-   "threshold_not_met": 23
+   "threshold_not_met": 21
   },
   "leo:FA:bad_fit": {
-   "threshold_not_met": 22,
-   "threshold_met": 1
+   "threshold_not_met": 21
   },
   "leo:FA:sinusoidal": {
-   "threshold_not_met": 23
+   "threshold_not_met": 21
   },
   "leo:FA:unphysical_duration": {
-   "threshold_not_met": 22,
+   "threshold_not_met": 20,
    "threshold_met": 1
   },
   "leo:FA:asymmetric": {
-   "threshold_not_met": 23
+   "threshold_not_met": 21
   },
   "leo:FA:chi": {
-   "threshold_not_met": 19,
-   "threshold_met": 4
+   "threshold_not_met": 18,
+   "threshold_met": 3
   },
   "leo:FA:data_gapped": {
-   "threshold_not_met": 23
+   "threshold_not_met": 21
   },
   "leo:FP:odd_even": {
-   "threshold_not_met": 22,
+   "threshold_not_met": 20,
    "threshold_met": 1
   },
   "leo:FP:vshaped": {
-   "threshold_not_met": 23
+   "threshold_not_met": 21
   },
   "leo:FP:large": {
-   "threshold_not_met": 21,
+   "threshold_not_met": 19,
    "threshold_met": 2
   },
   "leo:FP:secondary": {
-   "threshold_not_met": 19,
-   "threshold_met": 4
+   "threshold_not_met": 18,
+   "threshold_met": 3
   },
   "leo:class": {
-   "threshold_met": 23,
-   "unavailable": 1
+   "threshold_met": 21,
+   "unavailable": 3
   },
   "triceratops:FPP<0.015 and NFPP<0.001": {
-   "threshold_met": 5,
-   "threshold_not_met": 13,
-   "unavailable": 6
+   "unavailable": 8,
+   "threshold_not_met": 12,
+   "threshold_met": 4
   },
   "triceratops:NFPP>0.1": {
-   "threshold_not_met": 17,
-   "unavailable": 6,
+   "unavailable": 8,
+   "threshold_not_met": 15,
    "threshold_met": 1
   }
  }

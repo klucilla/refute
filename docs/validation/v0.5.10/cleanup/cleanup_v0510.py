@@ -205,9 +205,16 @@ def archive() -> None:
 
 
 def clean() -> None:
+    if CACHE.is_symlink() or CACHE.is_junction() or BASE.is_symlink() or BASE.is_junction():
+        raise SystemExit("refused: .cache or .cache/v0510 is a link or a junction")
+    if Path(os.path.realpath(BASE)) != Path(os.path.abspath(BASE)):
+        raise SystemExit("refused: .cache/v0510 does not resolve to itself")
     m = json.loads(MANIFEST.read_text("utf-8"))
     if not m["all_match"]:
         raise SystemExit("refused: the archive manifest does not match")
+    for r in m["rows"]:
+        if sha(Path(r["destination"])) != r["source_sha256"]:
+            raise SystemExit(f"refused: the Drive copy of {r['source']} does not match")
     if json.loads((DRIVE / "MANIFEST-sha256.json").read_text("utf-8")) != m:
         raise SystemExit("refused: the Drive manifest differs from the local one")
     s = json.loads(SURVEY.read_text("utf-8"))

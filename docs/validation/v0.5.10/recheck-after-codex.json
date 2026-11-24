@@ -1,0 +1,106 @@
+{
+ "schema": "refute-v0510-recheck-1",
+ "mode": "exploratory",
+ "method_status": "not_validated",
+ "tic_ids_in_run_records_outside_v0510": 1367,
+ "tic_ids_mentioned_anywhere_outside_v0510": 6936,
+ "promoted_v04_in_run_records": [
+  88096786,
+  286480954,
+  406413408
+ ],
+ "d1": {
+  "kelt_fp": {
+   "rows": 1128,
+   "distinct_tics": 1126,
+   "usable_distinct_tics": 307,
+   "usable_without_run_records": 307,
+   "usable_without_any_mention": 305
+  },
+  "planets_not_tess": {
+   "rows": 3803,
+   "distinct_tics": 2849,
+   "usable_distinct_tics": 2380,
+   "usable_without_run_records": 2373,
+   "usable_without_any_mention": 0
+  },
+  "planets_ground": {
+   "usable_distinct_tics": 181,
+   "usable_without_ambiguous_facilities": 171,
+   "usable_without_run_records": 181,
+   "usable_without_ambiguous_and_run_records": 171,
+   "usable_without_any_mention": 0
+  },
+  "planets_usable_by_facility": {
+   "Kepler": {
+    "rows": 2540,
+    "distinct_tics": 1796
+   },
+   "K2": {
+    "rows": 520,
+    "distinct_tics": 372
+   },
+   "HATSouth": {
+    "rows": 53,
+    "distinct_tics": 53
+   },
+   "CoRoT": {
+    "rows": 29,
+    "distinct_tics": 28
+   },
+   "HATNet": {
+    "rows": 22,
+    "distinct_tics": 22
+   },
+   "SuperWASP": {
+    "rows": 19,
+    "distinct_tics": 19
+   }
+  }
+ },
+ "kepler": {
+  "certified_fp": {
+   "rows": 1799,
+   "spoc_2min_rows": 289,
+   "spoc_2min_distinct_tics": 282,
+   "spoc_2min_without_run_records": 282,
+   "tglc": "not determined (the lookup returned none under a TIC target name)"
+  },
+  "kepler_planets": {
+   "rows": 2763,
+   "spoc_2min_rows": 2548,
+   "spoc_2min_distinct_tics": 1804,
+   "spoc_2min_without_run_records": 1793,
+   "tglc": "not determined (the lookup returned none under a TIC target name)"
+  }
+ },
+ "route_e": {
+  "eumemic": {
+   "entries": 725,
+   "distinct_tics": 725,
+   "entries_with_transit_on_silicon": 205,
+   "distinct_tics_with_transit_on_silicon": 205,
+   "distinct_tics_with_transit_and_2min_history": 50
+  },
+  "ctoi": {
+   "entries": 5139,
+   "distinct_tics": 4936,
+   "entries_with_transit_on_silicon": 1222,
+   "distinct_tics_with_transit_on_silicon": 1196,
+   "distinct_tics_with_transit_and_2min_history": 662
+  },
+  "refute_own": {
+   "entries": 3,
+   "distinct_tics": 3,
+   "entries_with_transit_on_silicon": 0,
+   "distinct_tics_with_transit_on_silicon": 0,
+   "distinct_tics_with_transit_and_2min_history": 0
+  }
+ },
+ "route_e_limits": [
+  "adjacent sector windows share their boundary day, so an event on that day counts in two sectors; not corrected here",
+  "a missing uncertainty term was treated as zero by route_e.py; not corrected here",
+  "sector 110 began on 2026-10-31, before the census; its events are not prospective",
+  "the 2-minute history is a proxy from earlier sectors, not the expected product"
+ ]
+}

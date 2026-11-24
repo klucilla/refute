@@ -21,9 +21,30 @@ FACTORS = (1 / 3, 1 / 2, 1.0, 2.0, 3.0)
 TOL = 0.001
 
 
+EMPTY = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+
+
+def provenance_gaps() -> set[str]:
+    """Runs whose 'before' entry logged the empty file's SHA-256 for the worker (Codex's round on
+    the report, blocking item 1): the copy was hashed while another thread rewrote it, so what the
+    process executed is not established by the log. Their outputs are 'unavailable' here."""
+    out = set()
+    for line in (HERE.parent / "log.jsonl").read_text(encoding="utf-8").splitlines():
+        r = json.loads(line)
+        if r.get("kind") == "before" and r.get("worker_sha256") == EMPTY:
+            out.add(r["run"])
+    return out
+
+
+GAPS = provenance_gaps()
+
+
 def load(engine: str, key: str) -> dict | None:
     p = HERE / "results" / engine / f"{key}.json"
-    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
+    rec = json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
+    if rec is not None and f"{engine}:{key}" in GAPS:
+        rec = {**rec, "status": "unavailable_provenance", "result": None}
+    return rec
 
 
 def tls_outcomes(rec: dict | None, period: float) -> dict:
@@ -34,8 +55,9 @@ def tls_outcomes(rec: dict | None, period: float) -> dict:
     if m.get("sde") is not None:
         out["detection"] = "threshold_met" if m["sde"] >= 9 else "threshold_not_met"
     if m.get("period_days"):
-        hit = any(abs(m["period_days"] / (period * f) - 1) <= TOL for f in FACTORS)
-        out["recovery"] = "threshold_met" if hit else "threshold_not_met"
+        hits = [f for f in FACTORS if abs(m["period_days"] / (period * f) - 1) <= TOL]
+        out["recovery"] = "threshold_met" if hits else "threshold_not_met"
+        out["recovery_factor"] = hits[0] if hits else None
     return out
 
 
@@ -149,7 +171,7 @@ def main() -> int:
         rows.append(row)
 
     def engine_outputs(r: dict) -> dict[str, str]:
-        out = {f"tls:{k}": v for k, v in r["tls"].items()}
+        out = {f"tls:{k}": v for k, v in r["tls"].items() if k != "recovery_factor"}
         out.update({f"exovetter:{k}": v for k, v in r["exovetter"].items()})
         out.update({f"leo:{k}": v for k, v in r["leo"]["flags"].items()})
         out["leo:class"] = (
@@ -168,6 +190,42 @@ def main() -> int:
                 d["n"] += 1
                 d["reached"] += reached(v)
         g1[which] = {"inconclusive_tois": len(inc), "outputs": per}
+    crosswalk = {}
+    for line in (HERE.parent / "log.jsonl").read_text(encoding="utf-8").splitlines():
+        e = json.loads(line)
+        if e.get("run") == "crosswalk":
+            crosswalk = e["crosswalk"]
+    output_of = {
+        "tls: SDE >= 9": lambda r: r["tls"]["detection"],
+        "tls: recovery factor": lambda r: r["tls"]["recovery"],
+        "exovetter: OddEven (no published threshold)": lambda r: r["exovetter"]["OddEven"],
+        "exovetter: ModShift (no published threshold)": lambda r: r["exovetter"]["ModShift"],
+        "exovetter: Centroid significance < 1e-3": lambda r: r["exovetter"]["Centroid"],
+        "exovetter: Sweet": lambda r: r["exovetter"]["Sweet"],
+        "triceratops: NFPP > 0.1": lambda r: r["triceratops"]["NFPP>0.1"],
+        "leo: FA weak": lambda r: r["leo"]["flags"].get("FA:weak", "unavailable"),
+        "leo: FP odd_even": lambda r: r["leo"]["flags"].get("FP:odd_even", "unavailable"),
+        "leo: FP secondary": lambda r: r["leo"]["flags"].get("FP:secondary", "unavailable"),
+        "leo: FA sinusoidal": lambda r: r["leo"]["flags"].get("FA:sinusoidal", "unavailable"),
+        "leo: FA unphysical_duration": lambda r: r["leo"]["flags"].get(
+            "FA:unphysical_duration", "unavailable"
+        ),
+        "leo: FP large, vshaped": lambda r: r["leo"]["flags"].get("FP:large", "unavailable"),
+        "leo: FA chases, dmm, bad_fit, chi": lambda r: r["leo"]["flags"].get(
+            "FA:chases", "unavailable"
+        ),
+    }
+    g1_tests = {}
+    for test, outs in crosswalk.items():
+        rows_inc = [r for r in rows if test in r["v059"]["E_inconclusive_tests"]]
+        per = {}
+        for o in outs:
+            fn = output_of.get(o)
+            if fn is None:
+                continue
+            per[o] = {"n": len(rows_inc), "reached": sum(reached(fn(r)) for r in rows_inc)}
+        g1_tests[test] = {"tois_with_test_inconclusive_in_E": len(rows_inc), "outputs": per}
+    g1["per_test_E"] = g1_tests
     g2 = {}
     pairs = {
         "centroid: exovetter Centroid vs TRICERATOPS NFPP>0.1": (
@@ -178,7 +236,7 @@ def main() -> int:
             lambda r: r["exovetter"]["Sweet"],
             lambda r: r["leo"]["flags"].get("FA:sinusoidal", "unavailable"),
         ),
-        "detection: TLS SDE>=9 vs LEO FA:weak (inverted)": (
+        "detection: TLS SDE>=9 vs LEO FA:weak (inverted; not in the logged note)": (
             lambda r: r["tls"]["detection"],
             lambda r: {
                 "threshold_met": "threshold_not_met",
@@ -220,6 +278,9 @@ def main() -> int:
         "limits_label": LABEL,
         "post_hoc": "comparisons are exploratory and post hoc; v0.5.9's classes are shown beside, "
         "never replaced or re-scored; no replacement class and no vote",
+        "provenance_gaps": sorted(GAPS),
+        "aggregation_post_hoc": "Centroid: the minimum significance over the sectors; "
+        "TRICERATOPS: FPP or NFPP outside [0, 1] is unavailable; both chosen after the runs",
         "rows": rows,
         "G1": g1,
         "G2": g2,

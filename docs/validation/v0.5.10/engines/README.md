@@ -7,6 +7,10 @@
 > `delete_profile.py`. The thresholds are fixed in `settings.json`, committed before the first run
 > on a TOI. The earlier stop is kept below as written.
 >
+> The plan below is kept as written in the first round, including the decision rules' original
+> wording; the outcome vocabulary of section "After Codex's round", item 8, applies to every
+> record. The actual install sequence and commands are in `install-record.json`.
+>
 > **Status (2026-11-24): stopped for the maintainer before any engine was installed or run.**
 > - **The stop:** Codex's round on part (f) returned `WEAKENED`
 >   ([record](../../../plans/v0.5.10-consensus/README.md)). Its blocking item 9 changes the

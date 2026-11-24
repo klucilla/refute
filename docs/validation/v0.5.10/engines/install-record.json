@@ -1,0 +1,28 @@
+{
+ "schema": "refute-v0510-install-record-1",
+ "mode": "exploratory",
+ "sequence": [
+  "1. wheelhouse.py plan: wheelhouse-manifest.json written (PyPI JSON read 2026-11-24)",
+  "2. wheelhouse.py fetch .cache/v0510/engines/wheelhouse: 119 artifacts, each SHA-256 checked",
+  "3. copy of the uv-managed CPython 3.12.15 into .cache/v0510/engines/base",
+  "4. uv venv .cache/v0510/engines/venv --python .cache/v0510/engines/base/python.exe --offline --no-python-downloads",
+  "5. uv pip install --python <venv python> --offline --no-index --no-deps <wheelhouse>/setuptools-80.10.2-py3-none-any.whl",
+  "6. uv build --wheel --no-build-isolation --offline --python <venv python> --out-dir .cache/v0510/engines/built .cache/v0510/engines/fbpca-src/fbpca-1.0 (the sdist extracted)",
+  "7. the built fbpca wheel copied into the wheelhouse; requirements-install.txt written (only fbpca's hash changes)",
+  "8. uv pip sync --python <venv python> --offline --no-index --find-links <wheelhouse> --require-hashes --only-binary :all: requirements-install.txt (first install, hardlinked)",
+  "9. the venv deleted and step 4 repeated, then step 8 with --link-mode=copy (the install used by every run)",
+  "10. the manifest, the record and the install files committed in 67bfbb7, after the install and before any TOI run"
+ ],
+ "uv": "uv 0.12.24 (5411378eb 2026-10-08 x86_64-pc-windows-msvc)",
+ "python": "CPython 3.12.15 (main, Oct  3 2026, 01:05:37) [MSC v.1944 64 bit (AMD64)]",
+ "python_exe_sha256": "4a3bbd9702bb52d720920a85443e43d90bc405e795cc2d6c1b16620cc0ca396b",
+ "python312_dll_sha256": "6ff1a4d4b86b88844dc84300c4d6fb3c775a9b00b23a0f66cd3d5ddfefebdce9",
+ "fbpca": {
+  "sdist_sha256": "150677642479663f317fdbb5e06dab3f98721cf7031bb4a84113d7a631c472d1",
+  "sdist_setup_py_sha256": "0c72dd35e49883401b07b96e9d3cd0478da879af930e18f86b1a8c410418b5bb",
+  "sdist_fbpca_py_sha256": "0361a5310837f5cab86616de42b8f109f4017567bdd889186576ae1a9039e9df",
+  "backend": "setuptools 80.10.2 (the pinned wheel)",
+  "built_wheel_sha256": "9089552e89845ad9975c4cee08e5283eac65edd86d340dcbac2907cb8553b130"
+ },
+ "requirements_install_sha256": "221f114866159b60df721c58621997b9fc534a91509c796b44f111fea0155899"
+}

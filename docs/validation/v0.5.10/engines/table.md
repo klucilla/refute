@@ -4,15 +4,15 @@ Limits label: 'WEAKENED; does not meet D1, D2, D4, T2a'. `method_status: not_val
 
 | TOI | TFOPWG | E | S | E cons. | TLS SDE>=9 | TLS recov. | exoV Sweet | exoV Centroid | LEO class | TRIC. FPP&NFPP | TRIC. NFPP>0.1 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| 2357.01 | PC | INCONCLUSIVE | SURVIVED | INCONCLUSIVE | met | met | met | met | PC | met | not met |
-| 2427.01 | CP | INCONCLUSIVE | SURVIVED | INCONCLUSIVE | met | met | not met | not met | FA | not met | not met |
+| 2357.01 | PC | INCONCLUSIVE | SURVIVED | INCONCLUSIVE | met | met | — | — | PC | — | — |
+| 2427.01 | CP | INCONCLUSIVE | SURVIVED | INCONCLUSIVE | met | met | not met | not met | unavailable | — | — |
 | 2407.01 | CP | SURVIVED | SURVIVED | SURVIVED | met | met | met | not met | PC | not met | not met |
 | 399.01 | FP | INCONCLUSIVE | WEAKENED | INCONCLUSIVE | met | met | not met | not met | FA | met | not met |
 | 357.01 | FP | INCONCLUSIVE | WEAKENED | INCONCLUSIVE | met | met | not met | not met | FA | — | — |
 | 1062.01 | CP | INCONCLUSIVE | SURVIVED | INCONCLUSIVE | met | met | — | — | PC | not met | not met |
 | 2111.01 | FP | INCONCLUSIVE | REFUTED | INCONCLUSIVE | met | met | not met | not met | PC | not met | not met |
 | 1288.01 | CP | INCONCLUSIVE | SURVIVED | INCONCLUSIVE | met | met | met | met | PC | not met | not met |
-| 3040.01 | PC | WEAKENED | WEAKENED | INCONCLUSIVE | met | met | met | met | PC | not met | not met |
+| 3040.01 | PC | WEAKENED | WEAKENED | INCONCLUSIVE | met | met | met | met | unavailable | not met | not met |
 | 2193.01 | CP | INCONCLUSIVE | WEAKENED | INCONCLUSIVE | met | met | met | not met | FA | not met | not met |
 | 3165.01 | FP | INCONCLUSIVE | REFUTED | INCONCLUSIVE | met | met | met | not met | FP | — | — |
 | 3753.01 | FP | REFUTED | REFUTED | INCONCLUSIVE | met | met | met | met | FP | not met | not met |

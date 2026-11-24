@@ -1,4 +1,7 @@
 {
+ "mode": "exploratory",
+ "method_status": "not_validated",
+ "data": "synthetic",
  "run": "synthetic-tls-cost-4s-nobin",
  "status": "failed",
  "result": {

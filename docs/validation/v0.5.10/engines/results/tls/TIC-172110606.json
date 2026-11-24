@@ -1,4 +1,7 @@
 {
+ "mode": "exploratory",
+ "method_status": "not_validated",
+ "limits_label_where_v059_is_used": "WEAKENED; does not meet D1, D2, D4, T2a",
  "target": "TIC-172110606",
  "toi": "5135.01",
  "engine": "tls",

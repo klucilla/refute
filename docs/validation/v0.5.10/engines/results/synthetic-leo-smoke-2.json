@@ -1,4 +1,7 @@
 {
+ "mode": "exploratory",
+ "method_status": "not_validated",
+ "data": "synthetic",
  "run": "synthetic-leo-smoke-2",
  "status": "ok",
  "result": {
