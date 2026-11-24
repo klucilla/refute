@@ -285,6 +285,45 @@ and review (the standing approval of 2026-10-14 and 2026-10-15).
    unless the change is broad). Corrections are batched into **one push per batch**, never
    one push per correction: each push triggers CI. CI on main runs by itself; if it turns
    red, fix forward and go on with the rest.
+
+   **CI in two levels** (the maintainer's decision of 2026-11-24, #218 comment 7133936093,
+   item 2; `.github/workflows/ci.yml`, `scripts/ci_plan.py`):
+   Codex's blocking items are applied
+   ([docs/plans/ci-two-level-consensus/](docs/plans/ci-two-level-consensus/README.md)).
+   - **Every push to main and every pull request starts a run.** There is no trigger-level
+     path filter; the plan job is the only path classifier.
+   - **The fast matrix** is the default: ubuntu-24.04 with Python 3.12.15 and windows-2025
+     with Python 3.13.16, all 7 shards (14 jobs). The recorded-value tests also run on the
+     two other pairs, because `docs/validation/v0.3/wp3-acceptance.md` requires them on
+     every CI job.
+   - **The full matrix** (the 4 pairs, 28 jobs) runs:
+     - when any commit of the push or pull request touches `src/**`, `pyproject.toml`,
+       `uv.lock`, `calibration/**` or `.github/workflows/**`;
+     - when a push is not a fast-forward;
+     - every night (schedule);
+     - when a tag is created;
+     - by `workflow_dispatch`.
+   - **No test job** runs for a change whose every path is documentation that no test
+     reads (the former `paths-ignore` list).
+   - **One CI per round.** A push that exists only to prove pre-registration order (for
+     example the seed before the draw) runs no test job, under these conditions:
+     - its commit message has the trailer line `CI: order-proof`;
+     - it is that commit alone, a fast-forward and not a merge;
+     - it touches no code path.
+
+     Its run still records the push time. The round's final push runs the tests.
+     - GitHub's `[skip ci]` is **never** used for such a push. It creates no run, and the
+       order proofs read the `created_at` of the commit's push run of `ci.yml`
+       (`refute.selection.publication`, `push_run_created_at`).
+     - Tags start CI through the `create` event, never through `push`, so a tag adds no
+       second push run for a commit. Tags are created one at a time.
+   - **Test evidence is `scripts/ci_evidence.py <sha> --level full|fast`, never a run's
+     green status:** a documentation-only or order-proof run is green with no test job.
+     - A rule that requires green CI before a lock, a tag, a release, a dependency change or
+       an acceptance that names four green jobs requires `--level full` on that exact commit,
+       before the gated step.
+     - If that commit's run was fast, the full matrix is started with `workflow_dispatch`
+       while the commit is the tip of `main`, and the run's `head_sha` is checked.
 2. **Codex** (read only, sandbox read-only, CPU affinity 8 to 31) is consulted on design
    and security decisions; the two reach a verdict and go on. At the end of each round,
    **one** Codex review of all the round's commits; its findings become a direct fix or an

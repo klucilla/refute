@@ -1,69 +1,106 @@
 name: CI
 
-# The workflow is skipped when every changed file is documentation that no test,
-# lint step or build reads. Not ignored, because they are read: README.md (the
-# package metadata in pyproject.toml and tests/test_update_readme.py), LICENSE
-# (license-files), everything under calibration/, and every .py, .json, .yaml or
-# .csv file, including those under docs/ (ruff lints them). A change that mixes
-# documentation with any other file still runs the workflow.
+# Two levels (the maintainer's decision of 2026-11-24, #218 comment 7133936093, item 2, with the
+# blocking items of Codex's round applied: docs/plans/ci-two-level-consensus/; the rule is in
+# CLAUDE.md, "Working mode (v0.3)", item 1). Every push to main, pull request, tag creation,
+# nightly schedule and manual dispatch creates a run: there is no trigger-level path filter, and
+# the plan job (scripts/ci_plan.py) is the only path classifier. It chooses:
+# - full: the four pairs, every shard; when any commit of the push or pull request touches
+#   src/**, pyproject.toml, uv.lock, calibration/** or .github/workflows/**, when a push is not a
+#   fast-forward, every night, when a tag is created, and by workflow_dispatch;
+# - fast: ubuntu-24.04 with Python 3.12.15 and windows-2025 with Python 3.13.16, every shard;
+#   plus the recorded-value tests on the two other pairs (the recorded-values job), because
+#   docs/validation/v0.3/wp3-acceptance.md (line 393) requires them on every CI job;
+# - docs: no test job, when every touched path is documentation that no test, lint step or build
+#   reads (the former paths-ignore list; README.md, LICENSE, calibration/ and every .py, .json,
+#   .yaml or .csv file are read, so they are never "docs");
+# - record-only: no test job, for a one-commit fast-forward push to main whose message has the
+#   trailer line "CI: order-proof" and which touches no code path. The run exists so that the
+#   push has a run of this workflow whose created_at proves when it was pushed
+#   (src/refute/selection/publication.py; discover/pilot.py push_run_created_at). GitHub's
+#   "[skip ci]" is never used for such pushes: it creates no run, so it would remove that proof.
+# Tags start this workflow through the create event, not through push, so a tag never adds a
+# second push run for a commit (push_run_created_at requires exactly one). Test evidence for a
+# lock, a tag or a release is scripts/ci_evidence.py on the exact commit, never a run's status
+# alone: a docs or record-only run is green with no test job.
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - "docs/**/*.md"
-      - "docs/assets/*.svg"
-      - "docs/assets/*.png"
-      - "CLAUDE.md"
-      - "CODE_OF_CONDUCT.md"
-      - "CONTRIBUTING.md"
-      - "PROMPT-v0.1.md"
-      - "ROADMAP.md"
-      - "SECURITY.md"
-  # Same list as for push.
   pull_request:
-    paths-ignore:
-      - "docs/**/*.md"
-      - "docs/assets/*.svg"
-      - "docs/assets/*.png"
-      - "CLAUDE.md"
-      - "CODE_OF_CONDUCT.md"
-      - "CONTRIBUTING.md"
-      - "PROMPT-v0.1.md"
-      - "ROADMAP.md"
-      - "SECURITY.md"
+  # The creation of a tag runs the full matrix (a branch creation runs the plan job only).
+  create:
+  # The nightly full run on main (06:23 UTC).
+  schedule:
+    - cron: "23 6 * * *"
+  workflow_dispatch:
 
 permissions:
   contents: read
 
-# A newer run on the same pull request branch cancels the one in progress. Runs on
-# main are never cancelled; a push to main is tested unless every changed file is in
-# the paths-ignore list above. On main each commit has its own group, so a newer push
-# never replaces a pending run either, and every merge commit gets its own run.
+# A newer run on the same pull request branch cancels the one in progress. Runs on main are
+# never cancelled: each push to main has its own group (its commit), so a newer push never
+# replaces a pending run either. Tag, nightly and manual runs each have their own group (the
+# run id), and are never cancelled.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/main' && github.sha || github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ (github.event_name == 'push' || github.event_name == 'pull_request') && (github.ref == 'refs/heads/main' && github.sha || github.ref) || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  plan:
+    name: plan
+    runs-on: ubuntu-24.04
+    outputs:
+      level: ${{ steps.plan.outputs.level }}
+      pairs: ${{ steps.plan.outputs.pairs }}
+      extra_pairs: ${{ steps.plan.outputs.extra_pairs }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      # The standard library only, on the runner's own python3: no dependency is installed.
+      - name: Plan the matrix
+        id: plan
+        shell: bash
+        env:
+          EVENT: ${{ github.event_name }}
+          REF_TYPE: ${{ github.ref_type }}
+          SHA: ${{ github.sha }}
+          BEFORE: ${{ github.event.before }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          MESSAGE: ${{ github.event.head_commit.message }}
+        run: python3 scripts/ci_plan.py
   test:
-    name: ${{ matrix.os }} / Python ${{ matrix.python }} / ${{ matrix.shard }}
-    runs-on: ${{ matrix.os }}
+    needs: plan
+    if: needs.plan.outputs.pairs != '[]'
+    name: ${{ matrix.pair.os }} / Python ${{ matrix.pair.python }} / ${{ matrix.shard }}
+    runs-on: ${{ matrix.pair.os }}
     strategy:
       fail-fast: false
       matrix:
-        # Runner OS labels are pinned (not `-latest`) so an image migration happens in
-        # its own commit with its own green run. Pinning the OS label does not freeze
-        # the image: its version is recorded by the "Record environment" step.
-        os: [ubuntu-24.04, windows-2025]
-        # Exact Python versions (major.minor.patch), from uv-managed builds only
-        # (python-preference = "only-managed" in pyproject.toml), so the patch no longer
-        # depends on what the runner image ships; the "Check interpreter" step enforces
-        # both (docs/validation/v0.3/wp0-acceptance.md, sections 3.4 and 3.5).
-        python: ["3.12.15", "3.13.16"]
+        # The (OS, Python) pairs come from the plan job (scripts/ci_plan.py): two in the fast
+        # matrix, four in the full one. Runner OS labels are pinned (not `-latest`) so an
+        # image migration happens in its own commit with its own green run. Pinning the OS
+        # label does not freeze the image: its version is recorded by the "Record
+        # environment" step. Exact Python versions (major.minor.patch), from uv-managed
+        # builds only (python-preference = "only-managed" in pyproject.toml), so the patch no
+        # longer depends on what the runner image ships; the "Check interpreter" step
+        # enforces both (docs/validation/v0.3/wp0-acceptance.md, sections 3.4 and 3.5).
+        pair: ${{ fromJSON(needs.plan.outputs.pairs) }}
         # The suite is split into shards that run in parallel (scripts/ci_shard.py):
-        # every test still runs on every OS and Python above; tests/test_ci_shard.py
+        # every test still runs on every pair of the run's matrix; tests/test_ci_shard.py
         # checks that each test file is in exactly one shard.
         shard: [heavy-a, heavy-b, heavy-c, heavy-d, heavy-e, heavy-f, rest]
     steps:
+      # The pairs come from scripts/ci_plan.py; the workflow keeps its own allowlist, so a
+      # changed planner cannot run tests on any other runner label or Python version.
+      - name: Check the pair against the workflow's allowlist
+        shell: bash
+        run: |
+          case "${{ matrix.pair.os }}/${{ matrix.pair.python }}" in
+            ubuntu-24.04/3.12.15|ubuntu-24.04/3.13.16|windows-2025/3.12.15|windows-2025/3.13.16) ;;
+            *) echo "pair not in the workflow's allowlist"; exit 1 ;;
+          esac
       # Actions are pinned to a commit; the tag is in the comment. setup-uv
       # publishes no major-version tags since v8, so `@v10` would not resolve.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -76,7 +113,7 @@ jobs:
           # uv is pinned, the same version locally and in CI, released at least 7 days
           # before it was chosen (CLAUDE.md; wp0-acceptance.md section 3.5).
           version: "0.12.24"
-          python-version: ${{ matrix.python }}
+          python-version: ${{ matrix.pair.python }}
       - name: Install (frozen lockfile)
         run: uv sync --frozen
       # The effective environment of this run: runner image, uv, Python (version and
@@ -87,13 +124,13 @@ jobs:
           echo "ImageOS=$ImageOS ImageVersion=$ImageVersion"
           uv --version
           uv run python -VV
-          uv python find "${{ matrix.python }}"
+          uv python find "${{ matrix.pair.python }}"
           uv python list --only-installed
           uv pip list --format=freeze
       # Fails the job unless the environment's interpreter has exactly the matrix
       # version and is a uv-managed build (under the job's uv Python install directory).
       - name: Check interpreter
-        run: uv run python scripts/check_interpreter.py "${{ matrix.python }}"
+        run: uv run python scripts/check_interpreter.py "${{ matrix.pair.python }}"
       # calibration/*/audit/, docs/validation/v0.2.1/pre-document-runs/ and
       # docs/validation/v0.2.1/population/ hold records whose bytes are cited by SHA-256:
       # they are never linted or reformatted (see CLAUDE.md). docs/validation/v0.5.8/zenodo/
@@ -140,3 +177,91 @@ jobs:
         shell: bash
         run: |
           uv run python scripts/junit_counts.py junit.xml --trace test-trace.txt --show test_vm_jea_integration --ids
+  recorded-values:
+    needs: plan
+    if: needs.plan.outputs.extra_pairs != '[]'
+    name: ${{ matrix.pair.os }} / Python ${{ matrix.pair.python }} / recorded-values
+    runs-on: ${{ matrix.pair.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # The fast matrix's two other pairs (scripts/ci_plan.py, FAST_EXTRA_PAIRS): only the
+        # recorded-value tests (RECORDED_VALUE_TESTS), which every CI job must reproduce.
+        pair: ${{ fromJSON(needs.plan.outputs.extra_pairs) }}
+    steps:
+      # The pairs come from scripts/ci_plan.py; the workflow keeps its own allowlist, so a
+      # changed planner cannot run tests on any other runner label or Python version.
+      - name: Check the pair against the workflow's allowlist
+        shell: bash
+        run: |
+          case "${{ matrix.pair.os }}/${{ matrix.pair.python }}" in
+            ubuntu-24.04/3.12.15|ubuntu-24.04/3.13.16|windows-2025/3.12.15|windows-2025/3.13.16) ;;
+            *) echo "pair not in the workflow's allowlist"; exit 1 ;;
+          esac
+      # Actions are pinned to a commit; the tag is in the comment. setup-uv
+      # publishes no major-version tags since v8, so `@v10` would not resolve.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # v0.5.1 WP5 (row 5.2 (a)): the whole history, so that tests/baseline_code.py can
+          # extract the source of the v0.5.0 calibration lock with `git archive` (no network)
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          # uv is pinned, the same version locally and in CI, released at least 7 days
+          # before it was chosen (CLAUDE.md; wp0-acceptance.md section 3.5).
+          version: "0.12.24"
+          python-version: ${{ matrix.pair.python }}
+      - name: Install (frozen lockfile)
+        run: uv sync --frozen
+      # The effective environment of this run: runner image, uv, Python (version and
+      # origin) and the installed dependencies (from the frozen uv.lock).
+      - name: Record environment
+        shell: bash
+        run: |
+          echo "ImageOS=$ImageOS ImageVersion=$ImageVersion"
+          uv --version
+          uv run python -VV
+          uv python find "${{ matrix.pair.python }}"
+          uv python list --only-installed
+          uv pip list --format=freeze
+      # Fails the job unless the environment's interpreter has exactly the matrix
+      # version and is a uv-managed build (under the job's uv Python install directory).
+      - name: Check interpreter
+        run: uv run python scripts/check_interpreter.py "${{ matrix.pair.python }}"
+      # calibration/*/audit/, docs/validation/v0.2.1/pre-document-runs/ and
+      # docs/validation/v0.2.1/population/ hold records whose bytes are cited by SHA-256:
+      # they are never linted or reformatted (see CLAUDE.md). docs/validation/v0.5.8/zenodo/
+      # likewise: the published Zenodo record's scripts, stored byte for byte (2026-11-24).
+      - name: Lint
+        run: uv run ruff check . --extend-exclude "calibration/*/audit" --extend-exclude "docs/validation/v0.2.1/pre-document-runs" --extend-exclude "docs/validation/v0.2.1/population" --extend-exclude "docs/validation/v0.5.8/zenodo" --extend-exclude "docs/maintenance/cache-archive-2026-11-24/a" --extend-exclude "docs/maintenance/cache-archive-2026-11-24/b"
+      - name: Format
+        run: uv run ruff format --check . --extend-exclude "calibration/*/audit" --extend-exclude "docs/validation/v0.2.1/pre-document-runs" --extend-exclude "docs/validation/v0.2.1/population" --extend-exclude "docs/validation/v0.5.8/zenodo" --extend-exclude "docs/maintenance/cache-archive-2026-11-24/a" --extend-exclude "docs/maintenance/cache-archive-2026-11-24/b"
+      # The tests that spread work over processes use REFUTE_WORKERS when it is set
+      # (src/refute/core/runner.py). In CI it is every core of the runner; locally the
+      # default stays os.cpu_count() - 2. The number of workers should change only the
+      # execution, preserving the scientific results (a worker-count equivalence test
+      # is planned: docs/validation/v0.2.1/workers-equivalence-acceptance.md).
+      # pytest-xdist is not used.
+      - name: Runner CPUs and test parallelism
+        shell: bash
+        run: |
+          uv run python -c "import importlib.util, os; print('os.cpu_count():', os.cpu_count()); print('pytest-xdist installed:', importlib.util.find_spec('xdist') is not None)"
+          echo "REFUTE_WORKERS=$(uv run python -c 'import os; print(os.cpu_count() or 1)')" >> "$GITHUB_ENV"
+      # Tests run with --disable-socket (pytest-socket, see pyproject.toml). Only the
+      # recorded-value tests (scripts/ci_plan.py, RECORDED_VALUE_TESTS; tests/test_ci_plan.py
+      # checks that this list matches). pytest-timeout and the test trace as in the test job.
+      - name: Recorded-value tests (no network)
+        shell: bash
+        env:
+          REFUTE_TEST_TRACE: test-trace.txt
+        run: |
+          uv run pytest --durations=25 --junitxml=junit.xml tests/test_ml_schema.py tests/test_ml_papers.py tests/test_ml_data_sources.py
+      # Test counts come from the JUnit file, never from the console line (CLAUDE.md); the
+      # outcome of each JEA integration test is listed too. Runs also when the tests fail.
+      # Without a readable JUnit file the run is reported as incomplete, with no counts and
+      # with the test the trace shows as started and not ended, and the step fails.
+      - name: Test counts (JUnit)
+        if: always()
+        shell: bash
+        run: |
+          uv run python scripts/junit_counts.py junit.xml --trace test-trace.txt --ids
