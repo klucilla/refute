@@ -152,3 +152,53 @@ in the prototype; the disclosure of the CPU risk; correction 2's inference label
 REFUTED; it does not authorize a third. Codex's last verdict on record is therefore **REFUTED**, on
 the code before commit D. By the rule of the most conservative option, the run is not proposed as
 reviewed: whether a third round reviews commit D before the run is the maintainer's decision.
+
+## The prototype, before the run: round 3 (short)
+
+The maintainer's decision of 2026-11-24 (#218, comment 7122240195), item 1: one short round in the
+same conversation on `521fcff`, limited to (a) whether each of round 2's six blocking items was
+resolved as asked and (b) whether the fixes introduced a regression or a new block on the run's
+path. **No block: the run is approved by the posted procedure. A block: fix it, record it, STOP
+before running.** Codex CLI 0.167.0-alpha.3.2, model gpt-6.2-sol, effort high. Prompt and answer
+stored unchanged.
+
+| Round | File | Verdicts | SHA-256 |
+|---|---|---|---|
+| 3 | [prototype-round-3-prompt.md](prototype-round-3-prompt.md) | the short prompt | `99c64c20d76f0d1a29d43b5e320627af7401433d3006ee12409ec2328812d989` |
+| 3 | [prototype-round-3-answer.md](prototype-round-3-answer.md) | round 2's item 5 RESOLVED, items 1, 2, 3, 4, 6 NOT RESOLVED; **BLOCKS: 5** | `c687c3cb8f96a620db419e113ebcadd0e93ed787f3d8049d62f0871d12fe0205` |
+
+The round used 9,077,403 input tokens (8,389,120 cached) and 39,388 output tokens: **727,671**
+review tokens. The three rounds on the prototype together: **1,531,127** review tokens.
+
+**The five blocks, applied in the prototype only (the commit after `d347783`):**
+1. **A settled charge counts at once.** Every settlement refreshes the live charge before another
+   unit is admitted. Test: a second unit that would pass the cap after the first settles is not
+   admitted.
+2. **The limits are enforced before they are passed.**
+   - Downloads: every HTTP body chunk read through `requests` (`Response.iter_content`) is
+     counted, retries and partial transfers included; a chunk past the allowance is refused
+     before it is written, the unit ends `DOWNLOAD_ALLOWANCE` and is never retried. The file
+     snapshot and the product meter stay as second checks.
+   - CPU: each worker is placed in a Windows job whose kernel ends it once its user CPU passes its
+     allowance, and ends it when the controller's job handle closes (no orphan can keep working).
+   - The settlement includes startup and the end: the worker's process-wide CPU, and the final
+     reading by its process handle.
+   - Disk: bounded by the download allowances reserved at admission, which the stream now
+     enforces.
+3. **An interrupted launch.** A worker waits at a start gate until its identity is journaled and
+   its job holds it; recovery settles a journal entry without a PID as a dispatch that did no work
+   (charged a startup bound of 60 CPU-s), and the unit runs again within the approved run.
+4. **A stop never discards a result.** Every end (normal, an allowance, a cap, a supervisor
+   failure) confirms the worker's exit, prefers any valid result it wrote for that attempt, writes
+   a stop record only when there is none, and drops the worker from the running set only after
+   its settlement is durable.
+5. **The report:** the descriptive all-24 summary counts only complete pairs and states the
+   incomplete count; Q1 to Q4 keep their withholding rule.
+
+**The non-blocking item** (the archive receipt bound to the current staged records) is applied too
+(`clean` checks the receipt against the staged file's and the bundle's SHA-256) and recorded on
+#59, with no further round.
+
+Tests: `tests/v059`, JUnit 37 passed, 0 failed, 0 errors, 0 skipped (with real worker processes,
+the kernel's CPU limit and the stream limit). **By the decision, the work stops here, before the
+run:** these fixes have not been reviewed by Codex.

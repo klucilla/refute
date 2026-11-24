@@ -810,9 +810,45 @@ def metered(adapter, allowance: float, meter: dict):
 
         adapter.download_checked, adapter.discard_if_incomplete = download, discard
         try:
-            yield meter
+            with stream_limit(allowance, meter):
+                yield meter
         finally:
             adapter.download_checked, adapter.discard_if_incomplete = plain_dl, plain_discard
+
+    return ctx()
+
+
+def stream_limit(allowance: float, meter: dict):
+    """Context manager (Codex's round 3, block 2): every HTTP body chunk this process reads
+    through ``requests`` (``Response.iter_content``, which ``.content`` and the archive downloads
+    use) is counted in ``meter["stream_bytes"]``, retries and partial transfers included; a chunk
+    that would take the count past ``allowance`` is refused before it is written, and
+    ``meter["allowance_hit"]`` is set. Received bytes are charged, the refused chunk included."""
+    import contextlib
+
+    import requests
+
+    @contextlib.contextmanager
+    def ctx():
+        plain = requests.models.Response.iter_content
+
+        def iter_content(self, *args, **kwargs):
+            for chunk in plain(self, *args, **kwargs):
+                n = len(chunk) if chunk else 0
+                if meter.get("stream_bytes", 0) + n > allowance:
+                    meter["stream_bytes"] = meter.get("stream_bytes", 0) + n
+                    meter["allowance_hit"] = True
+                    raise DownloadAllowanceError(
+                        f"the transfer reached the unit's allowance of {int(allowance)} bytes"
+                    )
+                meter["stream_bytes"] = meter.get("stream_bytes", 0) + n
+                yield chunk
+
+        requests.models.Response.iter_content = iter_content
+        try:
+            yield meter
+        finally:
+            requests.models.Response.iter_content = plain
 
     return ctx()
 
@@ -857,13 +893,23 @@ def _fetch(unit: dict, test_plan: dict, rec: dict, w) -> None:
                 attempts.append({"attempt": i + 1, "ok": False,
                                  "error": f"{type(exc).__name__}: {exc}"[:500],
                                  "wall_seconds": time.time() - t})  # fmt: skip
+                if meter.get("allowance_hit"):  # wrapped by the adapter: never retried
+                    rec.update(
+                        {
+                            "status": "DOWNLOAD_ALLOWANCE",
+                            "reason": "the transfer reached the unit's allowance",
+                        }
+                    )
+                    return
                 if i + 1 == FETCH_ATTEMPTS:
                     raise
                 time.sleep(FETCH_WAITS[i])
     finally:
         rec["fetch_attempts"] = attempts
         rec["fetch_wall_seconds"] = time.time() - started
-        rec["metered_download_bytes"] = meter["completed_bytes"] + meter["partial_bytes"]
+        rec["metered_download_bytes"] = max(
+            meter["completed_bytes"] + meter["partial_bytes"], meter.get("stream_bytes", 0)
+        )
         rec["metered"] = dict(meter)
         if w._FETCHED is not None:
             w._FETCHED.put(unit["key"])
@@ -1075,12 +1121,114 @@ def _self_limit(cpu_allowance: float) -> None:
     threading.Thread(target=watch, daemon=True).start()
 
 
-def child_main(unit: dict, test_plan: dict, result_path: str) -> None:
-    """A worker process: run one unit and write its record to ``result_path`` (atomic, read
-    back). The controller turns that file into the unit's record."""
+GATE_SECONDS = 300.0  # a worker never released within this does no work and exits
+START_CPU_BOUND = 60.0  # the charge of a dispatch that was never released (imports only)
+
+
+def child_main(unit: dict, test_plan: dict, result_path: str, go=None) -> None:
+    """A worker process: wait until the controller has journaled its identity and placed it in
+    its job (``go``; Codex's round 3, block 3), then run one unit and write its record to
+    ``result_path`` (atomic, read back). The controller turns that file into the unit's record.
+    The process-wide CPU, imports included, is written with the record."""
+    if go is not None and not go.wait(GATE_SECONDS):
+        return  # never released: no work
     _self_limit(unit["cpu_allowance_seconds"])
     rec = run_unit(unit, test_plan)
+    rec["process_cpu_seconds"] = time.process_time()
     write_json(Path(result_path), rec)
+
+
+# --- Windows job objects: a kernel-enforced CPU limit per worker (Codex's round 3, block 2) ----
+
+_JOB_LIMIT_PROCESS_TIME = 0x00000002
+_JOB_LIMIT_KILL_ON_JOB_CLOSE = 0x00002000
+_JOB_EXTENDED_LIMIT_INFORMATION = 9
+
+
+def _job_structs():
+    import ctypes
+    from ctypes import wintypes
+
+    class Basic(ctypes.Structure):
+        _fields_ = [
+            ("PerProcessUserTimeLimit", ctypes.c_int64),
+            ("PerJobUserTimeLimit", ctypes.c_int64),
+            ("LimitFlags", wintypes.DWORD),
+            ("MinimumWorkingSetSize", ctypes.c_size_t),
+            ("MaximumWorkingSetSize", ctypes.c_size_t),
+            ("ActiveProcessLimit", wintypes.DWORD),
+            ("Affinity", ctypes.c_size_t),
+            ("PriorityClass", wintypes.DWORD),
+            ("SchedulingClass", wintypes.DWORD),
+        ]
+
+    class Io(ctypes.Structure):
+        _fields_ = [
+            (n, ctypes.c_uint64)
+            for n in (
+                "ReadOperationCount",
+                "WriteOperationCount",
+                "OtherOperationCount",
+                "ReadTransferCount",
+                "WriteTransferCount",
+                "OtherTransferCount",
+            )
+        ]
+
+    class Extended(ctypes.Structure):
+        _fields_ = [
+            ("BasicLimitInformation", Basic),
+            ("IoInfo", Io),
+            ("ProcessMemoryLimit", ctypes.c_size_t),
+            ("JobMemoryLimit", ctypes.c_size_t),
+            ("PeakProcessMemoryUsed", ctypes.c_size_t),
+            ("PeakJobMemoryUsed", ctypes.c_size_t),
+        ]
+
+    return Extended
+
+
+def limit_process(handle: int, cpu_seconds: float) -> int:
+    """Put a worker (by the handle its ``Process`` object holds) in a new job whose kernel ends
+    it once its user CPU passes ``cpu_seconds``, and ends it when the controller's handle to the
+    job closes (the controller's exit included). Returns the job handle; raises on any failure."""
+    import ctypes
+
+    k32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    k32.CreateJobObjectW.restype = ctypes.c_void_p
+    job = k32.CreateJobObjectW(None, None)
+    if not job:
+        raise OSError(ctypes.get_last_error(), "CreateJobObject failed")
+    info = _job_structs()()
+    info.BasicLimitInformation.LimitFlags = _JOB_LIMIT_PROCESS_TIME | _JOB_LIMIT_KILL_ON_JOB_CLOSE
+    info.BasicLimitInformation.PerProcessUserTimeLimit = int(cpu_seconds * 1e7)
+    k32.SetInformationJobObject.argtypes = [ctypes.c_void_p, ctypes.c_int, ctypes.c_void_p,
+                                            ctypes.c_uint32]  # fmt: skip
+    if not k32.SetInformationJobObject(job, _JOB_EXTENDED_LIMIT_INFORMATION, ctypes.byref(info),
+                                       ctypes.sizeof(info)):  # fmt: skip
+        raise OSError(ctypes.get_last_error(), "SetInformationJobObject failed")
+    k32.AssignProcessToJobObject.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+    if not k32.AssignProcessToJobObject(job, ctypes.c_void_p(int(handle))):
+        raise OSError(ctypes.get_last_error(), "AssignProcessToJobObject failed")
+    return int(job)
+
+
+def close_job(job: int | None) -> None:
+    import ctypes
+
+    if job:
+        ctypes.windll.kernel32.CloseHandle(ctypes.c_void_p(job))
+
+
+def handle_cpu_seconds(handle: int) -> float | None:
+    """User plus kernel CPU of a process by an open handle (valid after the process exits)."""
+    import ctypes
+
+    t = [ctypes.c_ulonglong() for _ in range(4)]
+    if not ctypes.windll.kernel32.GetProcessTimes(ctypes.c_void_p(int(handle)),
+                                                  *(ctypes.byref(x) for x in t)):  # fmt: skip
+        return None
+    return (t[2].value + t[3].value) / 1e7
 
 
 # --- the controller ----------------------------------------------------------------------------
@@ -1334,7 +1482,10 @@ def settle(a: dict, rec: dict | None, status: str | None = None, reason: str | N
                "cpu_seconds": a.get("cpu_seconds_seen", 0.0) + SAMPLE_SECONDS,
                "ended_utc": sr.utc()}  # fmt: skip
     rec["attempt_id"] = a["attempt_id"]
-    cpu = max(float(rec.get("cpu_seconds") or 0.0),
+    # the charge includes startup and the end: the worker's process-wide CPU, the final reading
+    # by the process handle, and the last sample plus one interval (Codex's round 3, block 2)
+    cpu = max(float(rec.get("cpu_seconds") or 0.0), float(rec.get("process_cpu_seconds") or 0.0),
+              float(a.get("cpu_seconds_final") or 0.0),
               float(a.get("cpu_seconds_seen") or 0.0) + SAMPLE_SECONDS)  # fmt: skip
     nbytes = 0
     if a["kind"] == "fetch":
@@ -1356,6 +1507,16 @@ def recover() -> list[str]:
     notes = []
     for a in attempts():
         if a.get("state") == "settled":
+            continue
+        if "pid" not in a:  # journaled before its process existed (Codex's round 3, block 3)
+            a.update({"state": "settled", "settled_utc": sr.utc(), "recovered": True,
+                      "record_status": None, "cpu_seconds_charged": START_CPU_BOUND,
+                      "bytes_charged": 0,
+                      "rule": "journaled before its process started: never released by the "
+                              "start gate, so it did no work; charged the startup bound; the "
+                              "unit runs again in this approved run"})  # fmt: skip
+            write_json(ATTEMPTS / f"{a['attempt_id']}.json", a)
+            notes.append(a["key"])
             continue
         if same_process_alive(int(a["pid"]), a.get("created")):
             raise SystemExit(f"refused: a worker of an earlier batch is alive (PID {a['pid']}, "
@@ -1512,12 +1673,22 @@ def _launch(ctx, u: dict, plan: dict) -> dict:
     write_json(ATTEMPTS / f"{attempt_id}.json", a)  # journaled before the process exists
     result = RESULTS / f"{attempt_id}.json"
     baseline = _tic_snapshot(int(u["tic_id"])) if u["kind"] == "fetch" else {}
-    proc = ctx.Process(target=child_main, args=(u, plan, str(result)), daemon=False)
-    proc.start()
-    a.update({"state": "running", "pid": proc.pid, "created": _creation_time(proc.pid)})
+    go = ctx.Event()
+    proc = ctx.Process(target=child_main, args=(u, plan, str(result), go), daemon=False)
+    proc.start()  # the worker waits at its start gate: no work before it is released
+    a.update({"state": "started", "pid": proc.pid, "created": _creation_time(proc.pid)})
     write_json(ATTEMPTS / f"{attempt_id}.json", a)
-    return {"unit": u, "attempt": a, "proc": proc, "result": result, "baseline": baseline,
-            "max_seen": {}, "started": time.time()}  # fmt: skip
+    r = {"unit": u, "attempt": a, "proc": proc, "result": result, "baseline": baseline,
+         "max_seen": {}, "started": time.time(), "job": None, "go": go}  # fmt: skip
+    try:
+        r["job"] = limit_process(proc._popen._handle, u["cpu_allowance_seconds"])
+    except BaseException as exc:
+        reap(r, "WORKER_LOST", f"never released: the worker could not be placed in its job ({exc})")
+        raise
+    a["state"] = "running"
+    write_json(ATTEMPTS / f"{attempt_id}.json", a)
+    go.set()  # released only once its identity is journaled and its job holds it
+    return r
 
 
 def _kill(r: dict) -> None:
@@ -1525,6 +1696,37 @@ def _kill(r: dict) -> None:
     if r["proc"].is_alive():
         r["proc"].terminate()
     r["proc"].join(10)
+
+
+def _valid_result(path: Path, key: str) -> dict | None:
+    try:
+        rec = json.loads(path.read_text("utf-8")) if path.exists() else None
+    except (OSError, ValueError):
+        return None
+    return rec if isinstance(rec, dict) and rec.get("unit_key") == key else None
+
+
+def reap(r: dict, status: str | None = None, reason: str | None = None) -> str:
+    """End (if needed) and settle one worker (Codex's round 3, block 4): confirm its exit, read
+    its final CPU by its process handle, prefer any valid result it wrote for this attempt, and
+    write a stop record only when there is none. The caller drops it from the running set only
+    after this returns."""
+    _kill(r)
+    a = r["attempt"]
+    final = handle_cpu_seconds(r["proc"]._popen._handle) if r["proc"]._popen else None
+    if final is not None:
+        a["cpu_seconds_final"] = final
+    rec = _valid_result(r["result"], a["key"])
+    if rec is None and status is None:
+        used = max(final or 0.0, float(a.get("cpu_seconds_seen") or 0.0))
+        if used >= 0.98 * float(a["cpu_allowance_seconds"]):
+            status, reason = "CPU_ALLOWANCE", "the worker was ended at its CPU allowance"
+        else:
+            status, reason = "WORKER_LOST", f"exit code {r['proc'].exitcode}, no result"
+    out = settle(a, rec, None if rec else status, None if rec else reason)
+    close_job(r.get("job"))
+    r["job"] = None
+    return out
 
 
 def run_batch(selection: list[dict], label: str) -> str | None:
@@ -1546,23 +1748,23 @@ def run_batch(selection: list[dict], label: str) -> str | None:
     running: dict[str, dict] = {}
     stop, recorded, failures, peak, samples = None, 0, [], disk_bytes(), 0
     os.environ.update(CHILD_ENV)
-    settled_charge = charged()
-    if settled_charge["cpu_hours"] >= CAP_CPU_HOURS - CPU_HALT_MARGIN_HOURS:
+    state = {"settled": charged()}  # refreshed after every settlement (Codex's round 3, block 1)
+    if state["settled"]["cpu_hours"] >= CAP_CPU_HOURS - CPU_HALT_MARGIN_HOURS:
         return f"the cap of {CAP_CPU_HOURS} CPU-h is reached"
 
     def live() -> dict:
-        cpu = settled_charge["cpu_hours"] + (time.process_time() - controller0) / 3600.0
+        cpu = state["settled"]["cpu_hours"] + (time.process_time() - controller0) / 3600.0
         cpu += sum(r["attempt"].get("cpu_seconds_seen", 0.0) for r in running.values()) / 3600.0
-        nbytes = settled_charge["download_bytes"] + sum(
+        nbytes = state["settled"]["download_bytes"] + sum(
             r["attempt"].get("bytes_seen", 0) for r in running.values()
         )
         return {"cpu_hours": cpu, "download_bytes": nbytes}
 
     def stop_all(status: str, reason: str) -> None:
         for key in list(running):
-            r = running.pop(key)
-            _kill(r)
-            settle(r["attempt"], None, status, reason)
+            reap(running[key], status, reason)
+            running.pop(key)  # only after its settlement is durable
+        state["settled"] = charged()
 
     try:
         while True:
@@ -1584,8 +1786,8 @@ def run_batch(selection: list[dict], label: str) -> str | None:
             for key in list(running):
                 r = running[key]
                 a, u = r["attempt"], r["unit"]
-                seen = sr.process_cpu_seconds(r["proc"].pid) if r["proc"].is_alive() else None
-                if seen is None:  # unreadable or ended: the wall since the last reading bounds it
+                seen = handle_cpu_seconds(r["proc"]._popen._handle)
+                if seen is None:  # unreadable: the wall since the last reading bounds it
                     seen = a.get("cpu_seconds_seen", 0.0) + SAMPLE_SECONDS
                 a["cpu_seconds_seen"] = max(a.get("cpu_seconds_seen", 0.0), seen)
                 if u["kind"] == "fetch":
@@ -1604,27 +1806,15 @@ def run_batch(selection: list[dict], label: str) -> str | None:
                         "DOWNLOAD_ALLOWANCE",
                         f"the download passed its allowance of {int(u['allowance_bytes'])} bytes",
                     )
-                if why is not None:
-                    running.pop(key)
-                    _kill(r)
-                    settle(a, None, *why)
+                if why is not None or not r["proc"].is_alive():
+                    status = reap(r, *(why or (None, None)))
+                    running.pop(key)  # only after its settlement is durable
+                    state["settled"] = charged()
                     recorded += 1
-                    continue
-                if not r["proc"].is_alive():
-                    running.pop(key)
-                    r["proc"].join()
-                    rec = (
-                        json.loads(r["result"].read_text("utf-8")) if r["result"].exists() else None
-                    )
-                    status = settle(
-                        a,
-                        rec,
-                        None if rec else "WORKER_LOST",
-                        None if rec else f"exit code {r['proc'].exitcode}, no result",
-                    )
-                    recorded += 1
-                    finish_target(json.loads((RECORDS / f"{key}.json").read_text("utf-8")))
-                    print(key, status, (rec or {}).get("outcome"), round(a["cpu_seconds_seen"]),
+                    rec = _read_record(key) or {}
+                    if rec:
+                        finish_target(rec)
+                    print(key, status, rec.get("outcome"), round(a["cpu_seconds_seen"]),
                           f"charged {live()['cpu_hours']:.2f} CPU-h", f"peak {peak / 1e9:.2f} GB",
                           flush=True)  # fmt: skip
             now = live()
@@ -1650,6 +1840,7 @@ def run_batch(selection: list[dict], label: str) -> str | None:
     finally:
         for r in running.values():  # anything left is ended; recover() settles it
             _kill(r)
+            close_job(r.get("job"))
         if sr.MARKER.exists() and not running:
             sr.MARKER.unlink()
     peak = max(peak, disk_bytes())
@@ -1911,8 +2102,10 @@ def clean() -> None:
         receipt = (
             json.loads(ARCHIVE_MANIFEST.read_text("utf-8")) if ARCHIVE_MANIFEST.exists() else {}
         )
-        if not receipt.get("match"):
-            raise SystemExit("refused: the staged unit records have no matching archive receipt")
+        staged = sr.sha256_path(ARCHIVE_STAGE)
+        bundled = json.loads(BUNDLE.read_text("utf-8"))["units_file"]["sha256"]
+        if not (receipt.get("match") and receipt.get("source_sha256") == staged == bundled):
+            raise SystemExit("refused: no archive receipt matches the current staged unit records")
     entries, freed = [], 0
     for t in targets():
         f = _read_record(unit_key(t["key"], "fetch"))

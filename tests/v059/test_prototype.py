@@ -436,6 +436,19 @@ def test_the_report_pairs_and_controls():
     assert not q3["all_ended"]
 
 
+def test_the_all_24_summary_counts_only_complete_pairs():
+    """Codex's round 3, block 5: a pair a cap never evaluated is left out, and counted apart."""
+    by = {
+        ("A", "E"): _record("A", "E", "SURVIVED"),
+        ("A", "S"): _record("A", "S", "SURVIVED"),
+        ("B", "E"): {**_record("B", "E", "SURVIVED"), "status": "NO RECORD"},
+        ("B", "S"): _record("B", "S", "SURVIVED"),
+    }
+    d = rep.describe(by, ["A", "B"])["all_24"]
+    assert d["complete_pairs"] == 1 and d["incomplete_pairs"] == 1
+    assert d["base"]["same_decided_class"]["n"] == 1 and d["base"]["same_decided_class"]["k"] == 1
+
+
 def test_q3_needs_a_reason_and_reports_skipped_evaluations_apart():
     by = {
         ("X", "E"): {"target_key": "X", "entry_mode": "E", "status": "OK",
@@ -529,12 +542,67 @@ def test_the_supervisor_settles_every_unit_with_its_charge(supervised):
 
 
 def test_the_supervisor_ends_a_unit_past_its_cpu_allowance(supervised):
+    """The kernel's job limit, the worker's own limit or the supervisor ends it; the record says
+    CPU_ALLOWANCE and the charge covers the allowance."""
     run.run_batch(_selftest_units(1, 60.0, 2.0), "selftest")
     rec = json.loads((run.RECORDS / "TIC-900.selftest.json").read_text("utf-8"))
-    assert rec["status"] == "CPU_ALLOWANCE" or (
-        rec["status"] == "WORKER_LOST" and "86" in rec["reason"]  # the worker's own limit
-    )
-    assert run.attempts()[0]["cpu_seconds_charged"] >= 2.0
+    assert rec["status"] == "CPU_ALLOWANCE"
+    assert run.attempts()[0]["cpu_seconds_charged"] >= 2.0 * 0.98
+
+
+def test_a_settled_charge_counts_at_once_for_admission(supervised, monkeypatch):
+    """Codex's round 3, block 1: once the first unit settles, its charge holds back a second
+    unit that would pass the cap (the earlier code forgot it until the drain)."""
+    monkeypatch.setattr(run.sr, "batch_limits", lambda: (1, 1))
+    monkeypatch.setattr(run, "CPU_HALT_MARGIN_HOURS", 0.0)
+    monkeypatch.setattr(run, "CAP_CPU_HOURS", 25.2 / 3600.0)  # the first fits: 0 + 20 s
+    run.run_batch(_selftest_units(2, 6.0, 20.0), "selftest")
+    assert [a["key"] for a in run.attempts()] == ["TIC-900.selftest"]  # 6+ s + 20 s > 25.2 s
+
+
+def test_reap_prefers_a_result_the_worker_already_wrote(supervised):
+    """Codex's round 3, block 4: a stop never discards a completed result."""
+    from types import SimpleNamespace
+
+    for d in (run.RECORDS, run.ATTEMPTS, run.RESULTS):
+        d.mkdir(parents=True, exist_ok=True)
+    a = {"attempt_id": "TIC-1.E.p1.1", "key": "TIC-1.E.p1", "target_key": "TIC-1", "tic_id": 1,
+         "kind": "probe", "state": "running", "pid": 1, "started_utc": "x",
+         "cpu_allowance_seconds": 600.0, "allowance_bytes": 0}  # fmt: skip
+    result = run.RESULTS / "TIC-1.E.p1.1.json"
+    run.write_json(result, {"unit_key": "TIC-1.E.p1", "status": "OK", "outcome": "SURVIVED",
+                            "cpu_seconds": 5.0})  # fmt: skip
+    proc = SimpleNamespace(is_alive=lambda: False, terminate=lambda: None,
+                           join=lambda t=None: None, _popen=None, exitcode=0)  # fmt: skip
+    r = {"attempt": a, "proc": proc, "result": result, "job": None}
+    assert run.reap(r, "STOPPED_AT_CAP", "the cap") == "OK"
+    assert run._read_record("TIC-1.E.p1")["outcome"] == "SURVIVED"
+    r2 = {"attempt": {**a, "attempt_id": "TIC-1.E.p2.1", "key": "TIC-1.E.p2"}, "proc": proc,
+          "result": run.RESULTS / "none.json", "job": None}  # fmt: skip
+    assert run.reap(r2, "STOPPED_AT_CAP", "the cap") == "STOPPED_AT_CAP"
+
+
+def test_a_stream_past_its_allowance_is_refused_before_it_is_written():
+    """Codex's round 3, block 2: bytes are counted at the HTTP stream boundary."""
+    import io
+
+    import requests
+
+    resp = requests.models.Response()
+    resp.raw = io.BytesIO(b"x" * 300)
+    meter: dict = {}
+    got = []
+    with pytest.raises(run.DownloadAllowanceError), run.stream_limit(250, meter):
+        for chunk in resp.iter_content(chunk_size=100):
+            got.append(len(chunk))
+    assert got == [100, 100] and meter["stream_bytes"] == 300 and meter["allowance_hit"]
+    assert requests.models.Response.iter_content.__name__ == "iter_content"  # restored
+    resp2 = requests.models.Response()
+    resp2.raw = io.BytesIO(b"y" * 200)
+    meter2: dict = {}
+    with run.stream_limit(250, meter2):
+        assert sum(len(c) for c in resp2.iter_content(chunk_size=100)) == 200
+    assert meter2["stream_bytes"] == 200 and not meter2.get("allowance_hit")
 
 
 def test_the_supervisor_stops_every_worker_at_the_cpu_cap(supervised, monkeypatch):
@@ -559,6 +627,20 @@ def test_recovery_settles_an_unsettled_attempt_once(supervised):
     assert got["bytes_charged"] == 300_000_000 and run._read_record("TIC-1.fetch") is None
     assert run.recover() == []  # idempotent
     assert run.charged()["download_bytes"] == 300_000_000
+
+
+def test_recovery_settles_a_dispatch_journaled_before_its_process(supervised):
+    """Codex's round 3, block 3: a 'launching' entry has no PID; its worker was never released
+    by the start gate, so it did no work."""
+    run.ATTEMPTS.mkdir(parents=True)
+    a = {"attempt_id": "TIC-2.fetch.1", "key": "TIC-2.fetch", "target_key": "TIC-2",
+         "tic_id": 2, "kind": "fetch", "state": "launching", "started_utc": "x",
+         "cpu_allowance_seconds": 600.0, "allowance_bytes": 3e8}  # fmt: skip
+    run.write_json(run.ATTEMPTS / "TIC-2.fetch.1.json", a)
+    assert run.recover() == ["TIC-2.fetch"]
+    got = run.attempts()[0]
+    assert got["state"] == "settled" and got["cpu_seconds_charged"] == run.START_CPU_BOUND
+    assert got["bytes_charged"] == 0 and run.recover() == []
 
 
 def test_the_archive_copy_must_be_distinct_and_under_the_archive_root(tmp_path, monkeypatch):

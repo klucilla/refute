@@ -276,11 +276,17 @@ def describe(by: dict, keys: list[str]) -> dict:
             name = (r.get("consensus") or {}).get("first_disagreeing")
             if name:
                 first[f"{m}:{AXES[name]}"] += 1
+    complete_keys = [k for k in keys if toi_complete(by, k)]  # Codex's round 3, block 5
     return {
         "entry_unresolved": dict(unresolved),
         "stayed_on_toi_ephemeris": dict(matched),
         "first_disagreeing_axis": dict(first),
-        "all_24": {"base": pairs(by, keys, base_out), "consensus": pairs(by, keys, cons_out)},
+        "all_24": {
+            "complete_pairs": len(complete_keys),
+            "incomplete_pairs": len(keys) - len(complete_keys),
+            "base": pairs(by, complete_keys, base_out),
+            "consensus": pairs(by, complete_keys, cons_out),
+        },
     }
 
 
@@ -434,9 +440,10 @@ def markdown(rep: dict) -> str:
               f"- Entries unresolved: {d['entry_unresolved']}; fits on the TOI ephemeris: "
               f"{d['stayed_on_toi_ephemeris']}; first disagreeing axis: "
               f"{d['first_disagreeing_axis']}.",
-              f"- All 24, same decided class: without consensus "
-              f"{fmt(d['all_24']['base']['same_decided_class'])}; with consensus "
-              f"{fmt(d['all_24']['consensus']['same_decided_class'])}."]  # fmt: skip
+              f"- Over the {d['all_24']['complete_pairs']} complete pairs of the 24 "
+              f"({d['all_24']['incomplete_pairs']} incomplete, left out), same decided class: "
+              f"without consensus {fmt(d['all_24']['base']['same_decided_class'])}; with "
+              f"consensus {fmt(d['all_24']['consensus']['same_decided_class'])}."]  # fmt: skip
     return "\n".join(lines) + "\n"
 
 
