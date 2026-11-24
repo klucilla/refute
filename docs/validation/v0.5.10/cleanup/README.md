@@ -38,3 +38,24 @@ complete:
 - the AppContainer profile `refute.v0510.engines`. Its removal is the maintainer's, with
   `engines/delete_profile.py`;
 - the uv-managed CPython builds.
+
+## The closing cleanup (2026-11-24, after the phase closed)
+
+By the maintainer's decision received at 17:50 local (#218, comment 7144131066), item 6.
+[cleanup_scratch.py](cleanup_scratch.py) wrote [scratch-record.json](scratch-record.json).
+- **Folders:** `.cache/r1124`, `.cache/r1124b` and `.cache/r1124c` were this phase's working
+  folders: commit messages, comment drafts and helper scripts.
+  - 52 files (2,337,435 bytes) were copied to
+    `K:/Meu Drive/Pessoal/Projetos/refute/cache-archive-2026-11-24-v0510-close`, all matching.
+  - They were then deleted by literal path, and the three folders were removed.
+- **Branches:** the two local branches already merged into `main` were deleted with
+  `git branch -d`, after `git merge-base --is-ancestor <branch> main` (CLAUDE.md, the permanent rule
+  of the same day):
+  - `claude/v0-2-1-integration`, at `5b86736`;
+  - `claude/v0-2-1-reopen`, at `2e4ff99`.
+
+  `claude/v0-3-planning-draft-abff23`, `diag/clock-info` and `v04-lock-attempt-1` are not merged,
+  and they stay.
+- **Kept:** the folders of other phases that are still in use (`lock-compat`, `maint1120`,
+  `tools`, `v04`, `v055`, `vm`, `wt-v021`) and the AppContainer profile, which the maintainer
+  removes.
