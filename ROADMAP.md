@@ -79,6 +79,10 @@ how later work is done.
   [docs/plans/next-phases-2026-11-24.md](docs/plans/next-phases-2026-11-24.md), from the research
   of 2026-11-23 ([record](docs/plans/research-2026-11-23/README.md)). Opening it is the
   maintainer's decision. A phase opened from now on follows Process diet 2: a charter first.
+- **Proposed, not open:** the charter of v0.5.10 Census and feasibility,
+  [docs/plans/v0.5.10-charter.md](docs/plans/v0.5.10-charter.md), written on the maintainer's
+  decision of 2026-11-24 received at 11:09 local (#218, comment 7133936093, item 3). The phase
+  opens only when the maintainer approves the charter in #218, citing its commit SHA.
 - **The version-5 specification stays a draft:**
   [docs/plans/battery-v5-spec.md](docs/plans/battery-v5-spec.md). Nothing in it is adopted.
 
