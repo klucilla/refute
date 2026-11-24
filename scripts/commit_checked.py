@@ -63,6 +63,7 @@ EXCLUDE = (
     "calibration/*/audit",
     "docs/validation/v0.2.1/pre-document-runs",
     "docs/validation/v0.2.1/population",
+    "docs/validation/v0.5.8/zenodo",  # the published Zenodo record's files, byte for byte
 )
 PYTHON_SUFFIXES = (".py", ".pyi", ".ipynb")
 CONFIG_NAMES = ("pyproject.toml", "ruff.toml", ".ruff.toml")

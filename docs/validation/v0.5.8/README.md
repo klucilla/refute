@@ -21,6 +21,13 @@ Plan: [docs/plans/v0.5.8-plan.md](../../plans/v0.5.8-plan.md). Tracking: #218.
 
 The tests of the runner and the report are in `tests/v058/`.
 
+**On Zenodo:** the records are published as a dataset, DOI
+[10.5281/zenodo.24485272](https://doi.org/10.5281/zenodo.24485272) (all versions:
+10.5281/zenodo.24485271), published by the maintainer on 2026-11-23. The record holds the nine
+files above as of `bbfdecc`, the root `LICENSE` and a SHA-256 manifest; its metadata, scripts,
+logs and Codex's review are in [zenodo/](zenodo/README.md), with the MD5 check of the 11
+published files.
+
 **The phase's report and note** (both approved by the maintainer on 2026-11-23, #218):
 - [docs/reports/v0.5.8-report.md](../../reports/v0.5.8-report.md), with its dated correction
   [docs/reports/v0.5.8-report-correction-2026-11-23.md](../../reports/v0.5.8-report-correction-2026-11-23.md):

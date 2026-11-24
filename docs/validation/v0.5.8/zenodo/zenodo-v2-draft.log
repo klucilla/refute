@@ -1,0 +1,14 @@
+upload LICENSE: size=10764 checksum_ok=True
+upload MANIFEST-sha256.json: size=2616 checksum_ok=True
+upload stability-ledger.json: size=8832 checksum_ok=True
+upload stability-records.json: size=4037525 checksum_ok=True
+upload stability-report.json: size=11849 checksum_ok=True
+upload stability-report.md: size=5786 checksum_ok=True
+upload stability_report.py: size=14355 checksum_ok=True
+upload stability_run.py: size=13208 checksum_ok=True
+upload stage0-records.json: size=6003 checksum_ok=True
+upload stage0_records.py: size=10953 checksum_ok=True
+upload stage1-set.json: size=3765 checksum_ok=True
+metadata status 200 state unsubmitted submitted False
+draft id 24485272 files 11 state unsubmitted submitted False
+html https://zenodo.org/deposit/24485272

@@ -1,0 +1,92 @@
+{
+ "api": "https://zenodo.org/api/records/24485272",
+ "doi": "10.5281/zenodo.24485272",
+ "conceptdoi": "10.5281/zenodo.24485271",
+ "created": "2026-11-23T23:30:39.375051+00:00",
+ "publication_date": "2026-11-24",
+ "license": {
+  "id": "cc-by-4.0"
+ },
+ "title": "Refute v0.5.8: output stability of the v0.5 battery on 167 TESS TOIs (exploratory records)",
+ "files": [
+  {
+   "file": "stability-records.json",
+   "size": 4037525,
+   "zenodo_md5": "398bea87e14328818d8e403e56d6983b",
+   "local_md5": "398bea87e14328818d8e403e56d6983b",
+   "match": true
+  },
+  {
+   "file": "stability_run.py",
+   "size": 13208,
+   "zenodo_md5": "6c60a32aba110a16d7982b3be03b4268",
+   "local_md5": "6c60a32aba110a16d7982b3be03b4268",
+   "match": true
+  },
+  {
+   "file": "stage0_records.py",
+   "size": 10953,
+   "zenodo_md5": "d83eb26eaac399a0f834e12b403b57cc",
+   "local_md5": "d83eb26eaac399a0f834e12b403b57cc",
+   "match": true
+  },
+  {
+   "file": "stability_report.py",
+   "size": 14355,
+   "zenodo_md5": "12cee89e24264b3935c89fe29caeb0d3",
+   "local_md5": "12cee89e24264b3935c89fe29caeb0d3",
+   "match": true
+  },
+  {
+   "file": "stability-ledger.json",
+   "size": 8832,
+   "zenodo_md5": "a8a2b6b41852b4f2759e0f33476c2e19",
+   "local_md5": "a8a2b6b41852b4f2759e0f33476c2e19",
+   "match": true
+  },
+  {
+   "file": "stability-report.json",
+   "size": 11849,
+   "zenodo_md5": "002598bdb0dd9be4da68ccec1ca8016e",
+   "local_md5": "002598bdb0dd9be4da68ccec1ca8016e",
+   "match": true
+  },
+  {
+   "file": "stability-report.md",
+   "size": 5786,
+   "zenodo_md5": "a4cb79daba511021c5a924017443fe2b",
+   "local_md5": "a4cb79daba511021c5a924017443fe2b",
+   "match": true
+  },
+  {
+   "file": "MANIFEST-sha256.json",
+   "size": 2616,
+   "zenodo_md5": "cb9f5962c7ef97b72517823c0c90bb5b",
+   "local_md5": "cb9f5962c7ef97b72517823c0c90bb5b",
+   "match": true
+  },
+  {
+   "file": "stage1-set.json",
+   "size": 3765,
+   "zenodo_md5": "21be384a911169fbb43b4d7d16393d2e",
+   "local_md5": "21be384a911169fbb43b4d7d16393d2e",
+   "match": true
+  },
+  {
+   "file": "LICENSE",
+   "size": 10764,
+   "zenodo_md5": "24cdfc643588ce69f327946bb86ddeee",
+   "local_md5": "24cdfc643588ce69f327946bb86ddeee",
+   "match": true
+  },
+  {
+   "file": "stage0-records.json",
+   "size": 6003,
+   "zenodo_md5": "e80e0962cff80cd051c45dd8e15eda67",
+   "local_md5": "e80e0962cff80cd051c45dd8e15eda67",
+   "match": true
+  }
+ ],
+ "all_match": true,
+ "count": 11
+}

@@ -32,6 +32,31 @@ Agents working in this repo must read it before planning any work.
   carries the label. (c) relaxes no target and changes no verdict. This amendment was adopted with
   the results of v0.5 to v0.5.5 known. *(Dated: it applies from 2026-11-21 on, and the rule above
   stays as it was for every earlier phase.)*
+- **Process diet 2** (adopted by the maintainer's decision of 2026-11-24, #218, comment
+  7122240195, as the final text of its blind review; record:
+  [docs/plans/process-diet-2/](docs/plans/process-diet-2/README.md)). Applies to phases opened
+  after its adoption is recorded; v0.5.9 keeps the rules it was opened with. Items 3 and 6 are
+  here; items 1, 2, 4, 5 and 7 are in CLAUDE.md, "Exploratory and confirmatory work". The numbers
+  1 to 7 are the same in both files.
+  - **3. Time box.** Execution stops seven calendar days after the charter's approval, unless the
+    maintainer has recorded, before expiry, an extension with its reason and a new deadline (one
+    at a time). A locked run that has started finishes as registered, and the time box shortens no
+    right-of-reply period, dependency cooldown or registered wait. At the stop, record each
+    criterion as met, failed or not run. Expiry closes nothing and advances nothing: the phase
+    waits for the maintainer, who alone records a close under case (a), (b) or (c) of the
+    2026-11-21 amendment, as written in "How phases work". Expiry opens no automatic rescue round.
+    Any later correction phase follows the advance rule.
+  - **6. Gate.** For a solely exploratory phase with no lock, scientific verdict, scientific
+    acceptance, change of a rule or threshold in `src/`, or separately mandated review, one fresh,
+    read-only Codex session may serve as the independent gate. Fresh means a new thread, never a
+    resumed one, that has seen neither the design round nor any other thread of the phase. It
+    receives only the dossier: a clean checkout of a pushed SHA, with the gate-review protocol and
+    the phase name as its whole prompt, and no summary from the builder. Store its review
+    unchanged with the model, thread id, prompt and SHA. A `WEAKENED` gate has every issue
+    tracked; a `REFUTED` gate closes nothing, and a review after fixes is another fresh session,
+    with every review stored. It also counts as the round's final Codex review only when it is
+    that fresh session. Retain the required independent reviews for confirmatory work and
+    infeasibility decisions. Rule changes receive a fresh blind review before adoption.
 
 ## Cross-cutting principles
 
@@ -66,6 +91,9 @@ decision received at 19:28 local, #218, comment 7115813315; see
 - **The run starts only with the maintainer's recorded approval.**
 - **Since the previous phase:** a second dated correction to the v0.5.8 report,
   [docs/reports/v0.5.8-report-correction-2-2026-11-23.md](docs/reports/v0.5.8-report-correction-2-2026-11-23.md).
+- **After v0.5.9, a proposal only (no phase is opened):**
+  [docs/plans/next-phases-2026-11-24.md](docs/plans/next-phases-2026-11-24.md), from the research
+  of 2026-11-23 ([record](docs/plans/research-2026-11-23/README.md)).
 
 ### Previous phase record: v0.5.8 Output stability
 
@@ -1191,7 +1219,10 @@ maintainer's decision received at 17:15 local (#218, comment 7112815055).
   [docs/reports/v0.5.8-stability-note.md](docs/reports/v0.5.8-stability-note.md). Its facts were
   checked in one Codex round, whose corrections were applied
   ([record](docs/plans/v0.5.8-consensus/README.md)). Nothing on the site;
-- the records: [docs/validation/v0.5.8/](docs/validation/v0.5.8/README.md).
+- the records: [docs/validation/v0.5.8/](docs/validation/v0.5.8/README.md);
+- **on Zenodo:** DOI [10.5281/zenodo.24485272](https://doi.org/10.5281/zenodo.24485272) (all
+  versions: 10.5281/zenodo.24485271), published by the maintainer on 2026-11-23; the record's
+  files are checked in [docs/validation/v0.5.8/zenodo/](docs/validation/v0.5.8/zenodo/README.md).
 
 **Exit criteria** (detail in the plan; ticked on 2026-11-23 by the maintainer's decision of 17:15,
 item 3, #218, with the evidence below; the gate review checked each one)

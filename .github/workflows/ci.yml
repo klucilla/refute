@@ -96,11 +96,12 @@ jobs:
         run: uv run python scripts/check_interpreter.py "${{ matrix.python }}"
       # calibration/*/audit/, docs/validation/v0.2.1/pre-document-runs/ and
       # docs/validation/v0.2.1/population/ hold records whose bytes are cited by SHA-256:
-      # they are never linted or reformatted (see CLAUDE.md).
+      # they are never linted or reformatted (see CLAUDE.md). docs/validation/v0.5.8/zenodo/
+      # likewise: the published Zenodo record's scripts, stored byte for byte (2026-11-24).
       - name: Lint
-        run: uv run ruff check . --extend-exclude "calibration/*/audit" --extend-exclude "docs/validation/v0.2.1/pre-document-runs" --extend-exclude "docs/validation/v0.2.1/population"
+        run: uv run ruff check . --extend-exclude "calibration/*/audit" --extend-exclude "docs/validation/v0.2.1/pre-document-runs" --extend-exclude "docs/validation/v0.2.1/population" --extend-exclude "docs/validation/v0.5.8/zenodo"
       - name: Format
-        run: uv run ruff format --check . --extend-exclude "calibration/*/audit" --extend-exclude "docs/validation/v0.2.1/pre-document-runs" --extend-exclude "docs/validation/v0.2.1/population"
+        run: uv run ruff format --check . --extend-exclude "calibration/*/audit" --extend-exclude "docs/validation/v0.2.1/pre-document-runs" --extend-exclude "docs/validation/v0.2.1/population" --extend-exclude "docs/validation/v0.5.8/zenodo"
       # The tests that spread work over processes use REFUTE_WORKERS when it is set
       # (src/refute/core/runner.py). In CI it is every core of the runner; locally the
       # default stays os.cpu_count() - 2. The number of workers should change only the

@@ -11,3 +11,8 @@ docs/validation/v0.2.1/baseline/** -text
 docs/validation/v0.2.1/population/** -text
 # the sealed dossiers of v0.3, published byte for byte (wp3-dossier-provenance-acceptance.md)
 calibration/v0.3/main/dossiers/*/dossier/** -text
+# the v0.5.8 Zenodo record's files, stored byte for byte (their SHA-256 are in its README)
+docs/validation/v0.5.8/zenodo/** -text
+# the process-diet-2 and research records, stored byte for byte
+docs/plans/process-diet-2/** -text
+docs/plans/research-2026-11-23/** -text

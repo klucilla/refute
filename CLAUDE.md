@@ -26,6 +26,10 @@ the label. (c) relaxes no target and changes no verdict. This amendment was adop
 results of v0.5 to v0.5.5 known. *(It applies from 2026-11-21 on; the advance rule in ROADMAP.md
 carries the same text.)*
 
+**Process diet 2** (adopted 2026-11-24, #218; for phases opened after its adoption): items 3 (time
+box) and 6 (gate) are in ROADMAP.md, "How phases work"; items 1, 2, 4, 5 and 7 are in "Exploratory
+and confirmatory work" below.
+
 ## Core principle
 
 **Agents propose. Deterministic tests decide.**
@@ -53,6 +57,70 @@ rigour. No earlier verdict changes.
 - A caps ledger only for runs above 5 CPU-h.
 - Decision blocks and records stay short.
 - The rules on safety, privacy, the machine, deletion and dependencies below do not change.
+
+**Process diet 2** (adopted by the maintainer's decision of 2026-11-24, #218, comment 7122240195,
+as the final text of its blind review, with the maintainer's choices N1 and N2; record:
+[docs/plans/process-diet-2/](docs/plans/process-diet-2/README.md)). Items 1, 2, 4, 5 and 7 are
+here; items 3 and 6 are in ROADMAP.md, "How phases work". The numbers 1 to 7 are the same in both
+files. v0.5.9 keeps the rules it was opened with.
+
+Process diet 2 (#218). Applies to phases opened after its adoption is recorded. Existing phase
+authorizations and historical records remain in force. Apart from what items 1, 5 and 6 state, it
+relaxes no rule of CLAUDE.md or ROADMAP.md; in doubt, the existing rule applies.
+
+1. **Charter.** Before work starts, one charter file is committed and linked from the phase's
+   ROADMAP section, and the maintainer approves it in the phase issue, citing its commit SHA. It
+   fixes the question, target and data scope, resource caps (CPU-h, downloads, disk peak), exit
+   criteria, reviews and stops. It may approve named reruns, each with its reason, exact procedure
+   and the conditions that trigger it, written so that a record can check them. A charter adds
+   stops and never removes one of item 2 or a safeguard of item 7. A change to it is a dated
+   amendment, approved the same way before the work it covers, that states which results were
+   known. Authorized work proceeds within that scope.
+2. **Stops.** Keep all mandatory individual approvals, pre-registration checkpoints and
+   phase-specific stops. The list that follows is not exhaustive. Stop before a lock or drand
+   checkpoint, the approval of public text or of the phase report, a publication, a dependency
+   change, or work beyond the charter. Where the charter calls for it, stop before the first
+   commit in `src/`, with Codex's review of the diff attached. Decisions ready at the same time go
+   in one issue comment, each with its own explicit approval. A pre-registration checkpoint is
+   never merged with the step after it: that step's approval may share the comment only if it
+   names the deterministic check that must pass in between, and a failed check returns the stop
+   to the maintainer. Obtain any Claude review authorization with purpose, number and cost.
+3. *Time box: in ROADMAP.md, "How phases work".*
+4. **Exploration and reruns.** Within the charter and all applicable stops, explore on synthetic
+   development data or on public data already exposed. A public target not yet exposed may be
+   looked at only inside a pool the charter names; the choice and its reason are logged, and from
+   then on it is exposed and unusable for confirmation. Without a higher cap in the charter,
+   exploration stays within 5 CPU-h and 20 GB of downloads per phase, cumulatively; above 5 CPU-h
+   the caps ledger applies. A rerun is any execution that gives a case a new value of an output it
+   already has on record (a test status, class, score, door or criterion), on all or part of a
+   recorded run's cases, including failed or incomplete ones, whatever the code, seed, threshold,
+   input or entry mode. Every rerun needs issue approval of its reason and exact procedure before
+   it runs, in the charter or later. A reviewer's read-only recount, `refute verify` and
+   `refute check-dossier` are verification, not reruns. A new diagnostic may reuse exposed data
+   without that approval only if (i) it yields a quantity no recorded run yielded for those
+   cases, (ii) its question, quantity and cases are logged before it runs, and (iii) its result
+   replaces or re-scores no recorded result and is reported beside it as exploratory and post
+   hoc. In doubt, it is a rerun. The runner writes one append-only log per phase: before each
+   run, the question and choices with a machine timestamp; after it, provenance, coverage and
+   every outcome, including failures and abandoned attempts. The phase report links that log.
+   Label outputs `exploratory` and carry applicable limits. Use findings only to generate
+   hypotheses. Claims, acceptance and verdicts require locked, pre-registered confirmation on
+   targets or data that are unexposed and did not inform the choices, or on prospective data; a
+   claim that follows a failed or weakened one on the same question cites every earlier attempt
+   in its pre-registration. No holdout, hidden window or reserved confirmation set is read before
+   its own lock reveals it, whether its phase is open, paused or closed. Preserve the original
+   results and stop decisions.
+5. **Records.** The charter is the plan; keep one phase report. A working exploratory report (not
+   approved, published, locked or hashed) is corrected in place by a commit, with a dated entry in
+   one append-only errata log per phase: source commit, correction and impact. Approved,
+   published, locked or hashed records, and any verdict-related correction, get a separate dated
+   correction file, and the original is never edited. Track findings that affect a gate.
+6. *Gate: in ROADMAP.md, "How phases work".*
+7. **Safeguards.** Preserve pre-registration order, locks, hidden data, rerun approval,
+   deterministic verdicts and their vocabulary, evidence for every PASS, zero coverage as
+   `INCONCLUSIVE`, "results are never tuned to pass a gate", "no earlier verdict changes", the
+   advance rule with its 2026-11-21 amendment, the non-negotiable rules, and all safety, privacy,
+   machine, deletion and dependency rules.
 
 ## Two modes, one engine
 
@@ -174,7 +242,9 @@ First pack: exoplanet transits (TESS).
   published records (scripts, outputs, transcript extracts) whose bytes are cited
   by SHA-256. Never edit, reformat or normalize line endings there; linters and
   pre-commit hooks exclude these folders on purpose. A correction is a new file
-  or a new record, never an edit.
+  or a new record, never an edit. The same holds, from 2026-11-24, for
+  `docs/validation/v0.5.8/zenodo/` (the published Zenodo record's files) and the
+  stored plan records `docs/plans/process-diet-2/` and `docs/plans/research-2026-11-23/`.
 - Never print webhook or secret configuration (for example
   `gh api repos/.../hooks` without a filter): its URLs can contain tokens. Use a
   `--jq` filter that leaves out `config`.

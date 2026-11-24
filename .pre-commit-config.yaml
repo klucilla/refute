@@ -1,7 +1,8 @@
 # calibration/*/audit/ and docs/validation/v0.2.1/pre-document-runs/ hold preserved
 # records whose bytes are cited by SHA-256: no hook may lint, reformat or change them
-# (see CLAUDE.md). The sealed dossiers of v0.3 likewise (wp3-dossier-provenance-acceptance.md).
-exclude: ^(calibration/[^/]+/audit/|calibration/v0\.3/main/dossiers/[^/]+/dossier/|docs/validation/v0\.2\.1/(pre-document-runs|population)/)
+# (see CLAUDE.md). The sealed dossiers of v0.3 likewise (wp3-dossier-provenance-acceptance.md),
+# and the v0.5.8 Zenodo record's files and the stored plan records (2026-11-24).
+exclude: ^(calibration/[^/]+/audit/|calibration/v0\.3/main/dossiers/[^/]+/dossier/|docs/validation/v0\.2\.1/(pre-document-runs|population)/|docs/validation/v0\.5\.8/zenodo/|docs/plans/(process-diet-2|research-2026-11-23)/)
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.16.9 # keep equal to the ruff version in uv.lock

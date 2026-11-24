@@ -1,0 +1,73 @@
+[
+ {
+  "file": "stability-records.json",
+  "repository_path": "docs/validation/v0.5.8/stability-records.json",
+  "bytes": 4037525,
+  "sha256": "4993d9a77a68c4ae961fb92007fa53ab7eac15d99b27ced0f46225bdbd7c9b5a",
+  "commit": "bbfdecc6eac3dfbd3e532cf83cbb006d22c136e5"
+ },
+ {
+  "file": "stability-report.json",
+  "repository_path": "docs/validation/v0.5.8/stability-report.json",
+  "bytes": 11849,
+  "sha256": "a3feafd66600e06a8e0455299b2f59067b21fef79ccfe14f8ba35409cbf91b87",
+  "commit": "bbfdecc6eac3dfbd3e532cf83cbb006d22c136e5"
+ },
+ {
+  "file": "stability-report.md",
+  "repository_path": "docs/validation/v0.5.8/stability-report.md",
+  "bytes": 5786,
+  "sha256": "f03aebeb1a4e67548d05f344fdaa026bfd43194c280642edd3250b3fe7e00134",
+  "commit": "bbfdecc6eac3dfbd3e532cf83cbb006d22c136e5"
+ },
+ {
+  "file": "stability-ledger.json",
+  "repository_path": "docs/validation/v0.5.8/stability-ledger.json",
+  "bytes": 8832,
+  "sha256": "47db28b220ce5ca6dc12f182838fde9ea5553b75f1629ac96811cb689ee7db42",
+  "commit": "bbfdecc6eac3dfbd3e532cf83cbb006d22c136e5"
+ },
+ {
+  "file": "stage1-set.json",
+  "repository_path": "docs/validation/v0.5.8/stage1-set.json",
+  "bytes": 3765,
+  "sha256": "84c14aead346e5345fee3dbed42c69bab8143bc8f6cbaf2b0c5140f58d3edfe5",
+  "commit": "bbfdecc6eac3dfbd3e532cf83cbb006d22c136e5"
+ },
+ {
+  "file": "stage0-records.json",
+  "repository_path": "docs/validation/v0.5.8/stage0-records.json",
+  "bytes": 6003,
+  "sha256": "02ae8271784cf20b551edf15dff6569dffaa0601450d447aee481b81dbfea826",
+  "commit": "bbfdecc6eac3dfbd3e532cf83cbb006d22c136e5"
+ },
+ {
+  "file": "stability_run.py",
+  "repository_path": "docs/validation/v0.5.8/stability_run.py",
+  "bytes": 13208,
+  "sha256": "0ad5c9891e167f9c329d38c9f5a9c88d500aadba2cd39f449182baa6eee80b02",
+  "commit": "bbfdecc6eac3dfbd3e532cf83cbb006d22c136e5"
+ },
+ {
+  "file": "stability_report.py",
+  "repository_path": "docs/validation/v0.5.8/stability_report.py",
+  "bytes": 14355,
+  "sha256": "d19db982dc8ed19d342b5716208310f9346eff479ec25e8e7f9834fdb51a4515",
+  "commit": "bbfdecc6eac3dfbd3e532cf83cbb006d22c136e5"
+ },
+ {
+  "file": "stage0_records.py",
+  "repository_path": "docs/validation/v0.5.8/stage0_records.py",
+  "bytes": 10953,
+  "sha256": "961f2792d054cddda513d80e7ef56da470c8479955b272c5a8c5ff571ac28be5",
+  "commit": "bbfdecc6eac3dfbd3e532cf83cbb006d22c136e5"
+ },
+ {
+  "file": "LICENSE",
+  "repository_path": "LICENSE",
+  "commit": "bbfdecc6eac3dfbd3e532cf83cbb006d22c136e5",
+  "bytes": 10764,
+  "sha256": "ded5d2dc8cc209e1e6cc03f7c259ceac510a2e20a0f2918f6972798a727c7f87",
+  "note": "Apache-2.0, the license of the three bundled scripts"
+ }
+]
