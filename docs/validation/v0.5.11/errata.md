@@ -64,3 +64,17 @@ its impact. Recorded outputs are never edited.
     source of `eb70c13` on every machine.
 - **A design limit:** a machine-wide upper bound makes long units that use no network
   vulnerable to unrelated traffic. It is recorded for the report.
+
+## 5. 2026-11-24: launch_v3 refused the first tests unit; a junction in pytest's temporary folder
+
+- **Source:** `tools/launch_v3.py` (`ab828ce`), its disk scan (`launch_v2.tree_bytes`).
+- **What happened:**
+  - The step-1 `tests` unit was refused before dispatch ("the disk baseline has scan errors"),
+    with nothing journaled and nothing run, as version 3 requires.
+  - An inspection unit found the cause: 2 scan errors in pytest's temporary folder. An old
+    test's directory junction points at its own parent. `DirEntry.is_symlink()` is false for a
+    Windows junction, so the scan followed it in a loop until the path was too long.
+- **The correction:** `tools/launch_v4.py` follows and counts no link and no junction. Every
+  other rule is version 3's.
+- **A gap:** `.cache/tools/junit_counts.py` was chained after the refused launch in the same
+  shell command and ran outside the meter. It found no file. This is gap G9.
