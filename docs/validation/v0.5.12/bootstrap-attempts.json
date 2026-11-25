@@ -1,0 +1,8 @@
+{
+ "phase": "v0.5.12",
+ "rule": "Every attempt of v0.5.11's journal (docs/validation/v0.5.11/log.jsonl) whose before entry is at or after phase_opened_utc is v0.5.12's bootstrap, charged once in v0.5.12's ledger by cross-reference (charter, step 0).",
+ "phase_opened_utc": "2026-11-25T20:24:00Z",
+ "baseline": "The disk roots' sizes from v0.5.11's inspect unit at 2026-11-25T20:27:29Z (label v0512-bootstrap-baseline): the roots without .cache/lock-compat total 448,460,800 bytes, and .cache/lock-compat 4,153,114,088 bytes. That scan left out .cache/v0511/runs, so all of it counts as the phase's occupancy, which is conservative.",
+ "baseline_fast_total": 448460800,
+ "lock_compat_baseline": 4153114088
+}
