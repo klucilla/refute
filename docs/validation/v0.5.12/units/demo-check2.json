@@ -1,0 +1,11 @@
+{
+ "name": "demo-check2",
+ "question": "Check the meter's demonstration over its five fixtures, after the approved repetitions (#218 comment 7174740316, item 2); any failed check stops the work before M1.",
+ "choices": "docs/validation/v0.5.12/step0/demo_check2.py reads log.jsonl and the units' stdout; its record is copied to step0/demo-check2.json. A data unit, run once.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/step0/demo_check2.py"],
+ "identity": ["docs/validation/v0.5.12/step0/demo_check2.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 60, "disk_bytes": 10000000},
+ "network": false,
+ "outputs": {"demo-check2.json": "docs/validation/v0.5.12/step0/demo-check2.json"}
+}

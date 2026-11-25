@@ -10,9 +10,9 @@
   "disk_bytes": 2000000000
  },
  "charged": {
-  "cpu_s": 99.563,
+  "cpu_s": 110.594,
   "download_bytes": 0,
-  "disk_peak_bytes": 251482564
+  "disk_peak_bytes": 251589398
  },
  "within_caps": "not demonstrated",
  "telemetry_complete": true,
@@ -120,6 +120,22 @@
    "start": "2026-11-25T20:38:12Z",
    "status": "ok",
    "cpu_s": 3.141,
+   "telemetry_complete": true
+  },
+  {
+   "attempt": "18ae4acdfbe945aebafc2e30e7ef1c39",
+   "unit": "commit-check",
+   "start": "2026-11-25T20:40:08Z",
+   "status": "failed",
+   "cpu_s": 0.688,
+   "telemetry_complete": true
+  },
+  {
+   "attempt": "2de99604c7754187ad8e6841558b79d2",
+   "unit": "commit-check",
+   "start": "2026-11-25T20:40:35Z",
+   "status": "ok",
+   "cpu_s": 0.781,
    "telemetry_complete": true
   }
  ],
@@ -242,6 +258,81 @@
    "cpu_s": 1.891,
    "write_bytes": 747555,
    "disk_bound_bytes": 251482564,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "dbe9fe1b274645bdadb85357ad517f48",
+   "start": "2026-11-25T20:40:29Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.672,
+   "write_bytes": 836477,
+   "disk_bound_bytes": 251589398,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "push",
+   "label": null,
+   "attempt": "0ba8e725657d4d58ac0065fd847445c7",
+   "start": "2026-11-25T20:40:45Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000
+   },
+   "status": "ok",
+   "cpu_s": 2.406,
+   "write_bytes": 102407,
+   "disk_bound_bytes": 250963982,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh",
+   "label": null,
+   "attempt": "fd1473af79294bbd9390ab32ab19c3db",
+   "start": "2026-11-25T20:40:54Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000
+   },
+   "status": "ok",
+   "cpu_s": 1.703,
+   "write_bytes": 402,
+   "disk_bound_bytes": 250867256,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh",
+   "label": null,
+   "attempt": "b6583ca824234d3a825770bc7e37f60c",
+   "start": "2026-11-25T20:41:21Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000
+   },
+   "status": "ok",
+   "cpu_s": 1.969,
+   "write_bytes": 160,
+   "disk_bound_bytes": 250874636,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh",
+   "label": null,
+   "attempt": "61739fe167764526af91e7d3fdb06f1e",
+   "start": "2026-11-25T21:11:43Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000
+   },
+   "status": "ok",
+   "cpu_s": 1.812,
+   "write_bytes": 160,
+   "disk_bound_bytes": 250880834,
    "telemetry_complete": true
   }
  ]

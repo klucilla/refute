@@ -1,8 +1,9 @@
-# v0.5.12 step 0: the meter's demonstration, two failures (2026-11-25)
+# v0.5.12 step 0: the meter's demonstration, three failures (2026-11-25)
 
 The charter's step 0 runs the meter's demonstration before M1; "if one fails, the work stops
-before M1" (charter, step 0; stop 7). Two of the fixtures failed. The work stopped there: M1 has
-not run, and no fixture was repeated.
+before M1" (charter, step 0; stop 7). Three of the fixtures failed: transient, commit and network.
+The work stopped there: M1 has not run, and no fixture was repeated. *(Corrected in place on
+2026-11-25: the title and this sentence said "two"; errata entry 1.)*
 
 ## The outcomes, from the journal (`log.jsonl`)
 

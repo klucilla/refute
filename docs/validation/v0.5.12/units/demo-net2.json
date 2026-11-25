@@ -1,0 +1,11 @@
+{
+ "name": "demo-net2",
+ "question": "The meter's demonstration, the new network fixture (#218 comment 7174740316, items 1 b and 2): from the contained process and its child, every external attempt and every attempt to the launcher's listener outside the container must fail, and that listener must accept 0 connections.",
+ "choices": "docs/validation/v0.5.12/step0/demo_net2.py through launch_v2 (listener true). The same-container loopback is recorded as information only. A data unit, run once (the approved repetition of the network fixture).",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/step0/demo_net2.py"],
+ "identity": ["docs/validation/v0.5.12/step0/demo_net2.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 120, "disk_bytes": 20000000},
+ "network": false,
+ "listener": true
+}

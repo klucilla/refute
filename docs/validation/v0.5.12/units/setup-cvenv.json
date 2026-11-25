@@ -1,0 +1,11 @@
+{
+ "name": "setup-cvenv",
+ "question": "Build the container's virtual environment .cache/v0512/cvenv from local copies only, checked by SHA-256 (#218 comment 7174740316, item 1 c); any failure stops the work.",
+ "choices": "docs/validation/v0.5.12/tools/cvenv_setup.py, in the AppContainer with the interpreter copy (launch_v1); its record is copied to docs/validation/v0.5.12/cvenv.json. A data unit, run once.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/tools/cvenv_setup.py"],
+ "identity": ["docs/validation/v0.5.12/tools/cvenv_setup.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 120, "disk_bytes": 50000000},
+ "network": false,
+ "outputs": {"cvenv.json": "docs/validation/v0.5.12/cvenv.json"}
+}
