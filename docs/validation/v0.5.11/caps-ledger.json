@@ -10,13 +10,13 @@
   "disk_bytes": 10000000000
  },
  "charged": {
-  "cpu_s": 14921.733,
-  "transfer_bytes": 3461560060,
+  "cpu_s": 14924.0,
+  "transfer_bytes": 3470276429,
   "disk_peak_bytes": 1000000000
  },
  "within_caps": "not demonstrated",
  "telemetry_complete": false,
- "gaps": 12,
+ "gaps": 14,
  "gaps_file": "docs/validation/v0.5.11/meter-gaps.json",
  "charging_rule": "measured use for settled attempts with complete telemetry; otherwise the larger of the reservation and the measured use",
  "transfer_note": "an upper bound: the machine's netstat -e bytes during each unit",
@@ -2445,6 +2445,132 @@
    "cpu_s": 0.781,
    "transfer_bytes_upper": 4329204,
    "disk_peak_bytes": 15652577,
+   "telemetry_complete": true,
+   "overrun": []
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "4c3d93ceae2245999895f798246fe4d1",
+   "launcher": "launch_v6.py",
+   "start": "2026-11-25T14:56:52Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 50000000,
+    "transfer_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.016,
+   "transfer_bytes_upper": 1379836,
+   "disk_peak_bytes": 15673565,
+   "telemetry_complete": true,
+   "overrun": []
+  },
+  {
+   "unit": "inspect",
+   "label": null,
+   "attempt": "cc17bf961ce84a8d83ddea3ba897865d",
+   "launcher": "launch_v6.py",
+   "start": "2026-11-25T15:04:28Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 50000000,
+    "transfer_bytes": 50000000
+   },
+   "status": "failed",
+   "cpu_s": 0.188,
+   "transfer_bytes_upper": 160895,
+   "disk_peak_bytes": 16013220,
+   "telemetry_complete": true,
+   "overrun": []
+  },
+  {
+   "unit": "inspect",
+   "label": null,
+   "attempt": "f2bb5439df6c451b9c9a87d7258b72f4",
+   "launcher": "launch_v6.py",
+   "start": "2026-11-25T15:04:29Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 50000000,
+    "transfer_bytes": 50000000
+   },
+   "status": "failed",
+   "cpu_s": 0.234,
+   "transfer_bytes_upper": 519300,
+   "disk_peak_bytes": 16013990,
+   "telemetry_complete": true,
+   "overrun": []
+  },
+  {
+   "unit": "inspect",
+   "label": null,
+   "attempt": "7d70da043a664d86bcd5a68307e794a1",
+   "launcher": "launch_v6.py",
+   "start": "2026-11-25T15:04:30Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 50000000,
+    "transfer_bytes": 50000000
+   },
+   "status": "failed",
+   "cpu_s": 0.188,
+   "transfer_bytes_upper": 2352481,
+   "disk_peak_bytes": 16014736,
+   "telemetry_complete": true,
+   "overrun": []
+  },
+  {
+   "unit": "inspect",
+   "label": null,
+   "attempt": "bb16c791b6834acabd8a840c65e30657",
+   "launcher": "launch_v6.py",
+   "start": "2026-11-25T15:04:32Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 50000000,
+    "transfer_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 0.188,
+   "transfer_bytes_upper": 760881,
+   "disk_peak_bytes": 16015537,
+   "telemetry_complete": true,
+   "overrun": []
+  },
+  {
+   "unit": "inspect",
+   "label": null,
+   "attempt": "09c0e7751d9e471ba5fbac74a3f8402b",
+   "launcher": "launch_v6.py",
+   "start": "2026-11-25T15:06:07Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 50000000,
+    "transfer_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 0.281,
+   "transfer_bytes_upper": 2057166,
+   "disk_peak_bytes": 16020469,
+   "telemetry_complete": true,
+   "overrun": []
+  },
+  {
+   "unit": "inspect",
+   "label": null,
+   "attempt": "5ec8d25a24a142559e08cf14da4cc745",
+   "launcher": "launch_v6.py",
+   "start": "2026-11-25T15:06:08Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 50000000,
+    "transfer_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 0.172,
+   "transfer_bytes_upper": 1485810,
+   "disk_peak_bytes": 16020568,
    "telemetry_complete": true,
    "overrun": []
   }

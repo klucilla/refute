@@ -1,0 +1,9 @@
+{
+ "name": "cleanup-close",
+ "question": "Archive to the Drive, with a checked SHA-256 manifest, and then delete what fell out of use when v0.5.11 closed (#218, comment 7165994585, item 4): everything under .cache/v0511 except the launcher's lock and this unit's own run folder.",
+ "choices": "docs/maintenance/cleanup-2026-11-25-v0511-close/cleanup.py, literal paths enumerated under .cache/v0511 only, with a guard against links and junctions; a data unit, run once.",
+ "argv": ["{python}", "-I", "-B", "docs/maintenance/cleanup-2026-11-25-v0511-close/cleanup.py"],
+ "identity": ["docs/maintenance/cleanup-2026-11-25-v0511-close/cleanup.py"],
+ "reserve": {"cpu_s": 300, "transfer_bytes": 1000000000, "disk_bytes": 100000000},
+ "network": false
+}
