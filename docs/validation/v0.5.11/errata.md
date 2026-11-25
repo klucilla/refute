@@ -139,3 +139,24 @@ its impact. Recorded outputs are never edited.
     returns to the maintainer.
   - R1' completed (`golden-before.json`, 20 outputs, none an error). After `git stash pop`, the
     diff's SHA-256 was `35102b10…`, unchanged.
+
+## 9. 2026-11-25: the ledger writer of launch_v7 charged amendment 2's information
+
+- **Source:** `docs/validation/v0.5.11/caps-ledger.json` as written at 02:09Z and later by
+  units run under launch_v7 (inspect and commit-check).
+- **The defect:**
+  - The ledger is rewritten from the journal at the end of every unit, by the launcher that
+    ran it.
+  - launch_v7 used launch_v2's charging rule, which does not know amendment 2's
+    `transfer_role: information`. So it charged against the transfer ceiling the machine
+    counter of R1' and R2', which amendment 2 frees.
+  - The stop of 2026-11-25 (comment 7150398090) reported 4.15 GB charged from that writer.
+- **The fix** (the maintainer's decision received at 00:04 local, item 5):
+  `tools/launch_v9.py`.
+  - Every unit writes the ledger with launch_v8's information-aware rule.
+  - Amendment 2's rule applies to the units the amendment names: `"network": false` with 0
+    reserved transfer.
+  - Every later unit runs under version 9, and its first ledger write recomputes the whole
+    ledger from the journal.
+- **Impact:** none on any recorded quantity. The journal is unchanged. Only the ledger's
+  charged transfer changes.
