@@ -1,0 +1,248 @@
+{
+ "phase": "v0.5.12",
+ "labels": [
+  "exploratory",
+  "method_status: not_validated"
+ ],
+ "caps": {
+  "cpu_s": 10800.0,
+  "download_bytes": 0,
+  "disk_bytes": 2000000000
+ },
+ "charged": {
+  "cpu_s": 99.563,
+  "download_bytes": 0,
+  "disk_peak_bytes": 251482564
+ },
+ "within_caps": "not demonstrated",
+ "telemetry_complete": true,
+ "gaps": 4,
+ "gaps_file": "docs/validation/v0.5.12/meter-gaps.json",
+ "charging_rule": "measured use for settled attempts with complete telemetry; otherwise the larger of the reservation and the measured use; the bootstrap charged once by cross-reference to v0.5.11's journal",
+ "downloads_rule": "every offline unit runs in the AppContainer with no capability; only units declaring GitHub or review traffic have network, with their operations journaled",
+ "outside_meter": [
+  "the agent's own file tools (reading and editing files; their writes are carried by the next disk scan)",
+  "the agent's shell host process that starts this launcher",
+  "remote CI provisioning and reviewer inference (reported apart)"
+ ],
+ "bootstrap": [
+  {
+   "attempt": "9ef2291e429948f5aa2aa4fe25f0d861",
+   "unit": "inspect",
+   "start": "2026-11-25T20:27:12Z",
+   "status": "ok",
+   "cpu_s": 16.375,
+   "telemetry_complete": true
+  },
+  {
+   "attempt": "d25cfab6f1594209b002f523f120257f",
+   "unit": "commit-check",
+   "start": "2026-11-25T20:31:08Z",
+   "status": "ok",
+   "cpu_s": 3.047,
+   "telemetry_complete": true
+  },
+  {
+   "attempt": "c3f06107c8e44deba064880cae981d3d",
+   "unit": "bootstrap-v0512",
+   "start": "2026-11-25T20:34:50Z",
+   "status": "ok",
+   "cpu_s": 1.016,
+   "telemetry_complete": true
+  },
+  {
+   "attempt": "15fe1db6f5cb4f319560230f55c8502c",
+   "unit": "commit-check",
+   "start": "2026-11-25T20:35:05Z",
+   "status": "failed",
+   "cpu_s": 1.828,
+   "telemetry_complete": true
+  },
+  {
+   "attempt": "1f9f23de357749aeb5f4a0e8e7151f5c",
+   "unit": "bootstrap-v0512",
+   "start": "2026-11-25T20:35:26Z",
+   "status": "failed",
+   "cpu_s": 1.094,
+   "telemetry_complete": true
+  },
+  {
+   "attempt": "19bb82d3189e4b7aa62a3f7b0133e147",
+   "unit": "bootstrap-v0512",
+   "start": "2026-11-25T20:35:40Z",
+   "status": "ok",
+   "cpu_s": 0.969,
+   "telemetry_complete": true
+  },
+  {
+   "attempt": "63cede050ffe4e8ba8de1fb962cc6fe4",
+   "unit": "commit-check",
+   "start": "2026-11-25T20:35:45Z",
+   "status": "ok",
+   "cpu_s": 2.891,
+   "telemetry_complete": true
+  },
+  {
+   "attempt": "87ccc733e54e435894e4ef7a5a2165d3",
+   "unit": "bootstrap-v0512",
+   "start": "2026-11-25T20:35:57Z",
+   "status": "ok",
+   "cpu_s": 44.969,
+   "telemetry_complete": true
+  },
+  {
+   "attempt": "84df8e5951c44e06a50d50c196281e6e",
+   "unit": "bootstrap-v0512",
+   "start": "2026-11-25T20:37:37Z",
+   "status": "ok",
+   "cpu_s": 1.344,
+   "telemetry_complete": true
+  },
+  {
+   "attempt": "27b690d39c0c42eb993f24a6e26f5e54",
+   "unit": "commit-check",
+   "start": "2026-11-25T20:37:41Z",
+   "status": "failed",
+   "cpu_s": 2.078,
+   "telemetry_complete": true
+  },
+  {
+   "attempt": "9032efbee99c41c997b914319d734c11",
+   "unit": "bootstrap-v0512",
+   "start": "2026-11-25T20:38:06Z",
+   "status": "ok",
+   "cpu_s": 1.266,
+   "telemetry_complete": true
+  },
+  {
+   "attempt": "22d166bee9f84fbea922e0ecdca04aac",
+   "unit": "commit-check",
+   "start": "2026-11-25T20:38:12Z",
+   "status": "ok",
+   "cpu_s": 3.141,
+   "telemetry_complete": true
+  }
+ ],
+ "rows": [
+  {
+   "unit": "demo",
+   "label": "cpu",
+   "attempt": "7cff4b26487b47c8962cd45755a695e5",
+   "start": "2026-11-25T20:38:21Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 200000000
+   },
+   "status": "ok",
+   "cpu_s": 6.812,
+   "write_bytes": 92,
+   "disk_bound_bytes": 187696014,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "demo",
+   "label": "transient",
+   "attempt": "4bb7b84b1f9e44db8ef5ec28db3cbce9",
+   "start": "2026-11-25T20:38:37Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 200000000
+   },
+   "status": "failed",
+   "cpu_s": 1.859,
+   "write_bytes": 741,
+   "disk_bound_bytes": 187703061,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "demo",
+   "label": "retain-a",
+   "attempt": "1bc307ef44d24d198748852f7cd0cf95",
+   "start": "2026-11-25T20:38:40Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 200000000
+   },
+   "status": "ok",
+   "cpu_s": 1.75,
+   "write_bytes": 31457322,
+   "disk_bound_bytes": 219163320,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "demo",
+   "label": "retain-b",
+   "attempt": "a63dd0074176480081f7413bdeb013b6",
+   "start": "2026-11-25T20:38:43Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 200000000
+   },
+   "status": "ok",
+   "cpu_s": 1.781,
+   "write_bytes": 31457322,
+   "disk_bound_bytes": 250623576,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "demo",
+   "label": "network",
+   "attempt": "5785a2f190d74d40838b328509e79a38",
+   "start": "2026-11-25T20:38:46Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 200000000
+   },
+   "status": "failed",
+   "cpu_s": 1.781,
+   "write_bytes": 616,
+   "disk_bound_bytes": 250626939,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "04a0f4644e474cfda6aa1febd8e82e47",
+   "start": "2026-11-25T20:39:24Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.859,
+   "write_bytes": 834756,
+   "disk_bound_bytes": 251465714,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "3fb0433cf6a94ace8c6ed403f71b231a",
+   "start": "2026-11-25T20:39:34Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000
+   },
+   "status": "failed",
+   "cpu_s": 1.812,
+   "write_bytes": 103,
+   "disk_bound_bytes": 250732736,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "f2c69b3604f74f5ab99b539ed5dda3ed",
+   "start": "2026-11-25T20:40:01Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.891,
+   "write_bytes": 747555,
+   "disk_bound_bytes": 251482564,
+   "telemetry_complete": true
+  }
+ ]
+}
