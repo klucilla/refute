@@ -10,8 +10,8 @@
   "disk_bytes": 10000000000
  },
  "charged": {
-  "cpu_s": 14517.952,
-  "transfer_bytes": 3427451312,
+  "cpu_s": 14919.483,
+  "transfer_bytes": 3443518856,
   "disk_peak_bytes": 1000000000
  },
  "within_caps": "not demonstrated",
@@ -2301,6 +2301,78 @@
    "cpu_s": 0.219,
    "transfer_bytes_upper": 878940,
    "disk_peak_bytes": 15268062,
+   "telemetry_complete": true,
+   "overrun": []
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "9dac2d0b9d104de8acdb96446efb0b2b",
+   "launcher": "launch_v6.py",
+   "start": "2026-11-25T13:14:45Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 50000000,
+    "transfer_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 4.359,
+   "transfer_bytes_upper": 15771997,
+   "disk_peak_bytes": 15269531,
+   "telemetry_complete": true,
+   "overrun": []
+  },
+  {
+   "unit": "golden-local",
+   "label": null,
+   "attempt": "bf625451d57e4e18b91a8a7a64d2fce5",
+   "launcher": "launch_v6.py",
+   "start": "2026-11-25T13:15:03Z",
+   "reserve": {
+    "cpu_s": 3600,
+    "disk_bytes": 200000000,
+    "transfer_bytes": 0
+   },
+   "status": "ok",
+   "cpu_s": 392.969,
+   "transfer_bytes_upper": 1139628871,
+   "disk_peak_bytes": 15647689,
+   "telemetry_complete": true,
+   "overrun": []
+  },
+  {
+   "unit": "claim-hashes",
+   "label": null,
+   "attempt": "f6d1344812be4f0599b27054a9a9dce0",
+   "launcher": "launch_v6.py",
+   "start": "2026-11-25T13:21:45Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 50000000,
+    "transfer_bytes": 0
+   },
+   "status": "ok",
+   "cpu_s": 4.0,
+   "transfer_bytes_upper": 14313680,
+   "disk_peak_bytes": 15647718,
+   "telemetry_complete": true,
+   "overrun": []
+  },
+  {
+   "unit": "inspect",
+   "label": null,
+   "attempt": "d8e84b57c55749049e84a3834df2eba8",
+   "launcher": "launch_v6.py",
+   "start": "2026-11-25T13:22:00Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 50000000,
+    "transfer_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 0.203,
+   "transfer_bytes_upper": 295547,
+   "disk_peak_bytes": 15649022,
    "telemetry_complete": true,
    "overrun": []
   }

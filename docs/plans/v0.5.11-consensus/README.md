@@ -225,3 +225,18 @@ the last, and a blocking item stops the work with no new round.
   overflow in the bin totals (errata entry 13).
 - **So E1 was not committed.** Its tests (172 tests, 0 failures, 23 of 23 IDs) do not change
   that.
+
+## A deviation: correction 1 without a Codex round (2026-11-25)
+
+By the maintainer's decision received at 09:34 local (#218, comment 7162573384), items 1 and 2.
+- **What it is:** the numerical defect is closed by an input rule, not by arithmetic:
+  [../v0.5.11-spec-correction-1.md](../v0.5.11-spec-correction-1.md) (`7bf74b1`, SHA-256
+  `62a5532f…`).
+  - Its tests came first (`58c308d`, pushed, six strict expected failures on `a896c49`).
+  - The `src/` commit is `f18d6f8`; its diff is `step2/ir-fix.diff`, SHA-256 `3cbe73c4…`.
+- **The deviation:**
+  - no Codex round reviews the correction or its code, since the rounds are over;
+  - their review is left to the independent gate, which sees the whole phase.
+- **No new tokens:** this thread's total stays **4,036,836** over 9 rounds.
+- **The lesson** for v0.5.12, by the same decision, item 3: one round per question, with a
+  closed scope ([../v0.5.12-proposal.md](../v0.5.12-proposal.md)).

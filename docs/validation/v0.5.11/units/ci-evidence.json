@@ -1,0 +1,9 @@
+{
+ "name": "ci-evidence",
+ "question": "Test evidence of the charter's proof (iv): scripts/ci_evidence.py <sha> --level full on the last commit that changed src/, before the gate (the maintainer's decision of 2026-11-25, #218 comment 7162573384, item 2).",
+ "choices": "The extra arguments are the SHA and --level full. It reads the GitHub API through gh (network). A data unit: the same SHA and level is the same unit.",
+ "argv": ["{python}", "-I", "-B", "scripts/ci_evidence.py"],
+ "identity": ["scripts/ci_evidence.py"],
+ "reserve": {"cpu_s": 120, "transfer_bytes": 500000000, "disk_bytes": 50000000},
+ "network": true
+}
