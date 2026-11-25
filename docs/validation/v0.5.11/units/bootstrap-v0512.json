@@ -1,0 +1,10 @@
+{
+ "name": "bootstrap-v0512",
+ "question": "v0.5.12's bootstrap (its charter, step 0; #218 comment 7173638284): run one preparation payload (the extra arguments) of the v0.5.12 meter under this pre-existing outer meter, in a job object that counts its CPU and written bytes, with the disk roots scanned before and after.",
+ "choices": "docs/validation/v0.5.12/tools/bootstrap_job.py runs the payload with jobrun.py and records the bound in docs/validation/v0.5.12/bootstrap-disk.jsonl. It may write under .cache/v0512/ and docs/validation/v0.5.12/. A tree unit: the same payload and code state is the same unit.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/tools/bootstrap_job.py"],
+ "identity": ["docs/validation/v0.5.12/tools/bootstrap_job.py", "docs/validation/v0.5.12/tools/jobrun.py", "docs/validation/v0.5.12/tools/diskbound.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 1200, "transfer_bytes": 0, "disk_bytes": 1000000000},
+ "network": false
+}

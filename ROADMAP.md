@@ -73,9 +73,9 @@ how later work is done.
 
 ## Current phase
 
-**None is open.** v0.5.12 is chartered and its charter is pending approval: see
-[the section below](#v0512-battery-version-5-corrections-before-calibration). It opens only when
-the maintainer approves the charter in #218, citing its SHA.
+**v0.5.12 Battery version 5: corrections before calibration**, opened on 2026-11-25 at 20:24Z by
+the maintainer's approval of its charter at `7df389c` (#218, comment 7173638284). Its time box ends
+on 2026-12-02 at 20:24Z. See [the section below](#v0512-battery-version-5-corrections-before-calibration).
 
 ### Previous phase record: v0.5.11 Battery version 5: specification and software
 
@@ -1502,10 +1502,11 @@ section 7.
 
 ## v0.5.12 Battery version 5: corrections before calibration
 
-Tracking: #218. **Charter pending approval:** [docs/plans/v0.5.12-charter.md](docs/plans/v0.5.12-charter.md),
-written on the maintainer's decision of 2026-11-25 (comment 7172688755). The phase opens only when
-the maintainer approves it in #218, citing its commit SHA; no item starts before. Records will be in
-`docs/validation/v0.5.12/`.
+Tracking: #218. **Open** since 2026-11-25 at 20:24Z, by the maintainer's decision (comment
+7173638284), which approved the charter at `7df389c`:
+[docs/plans/v0.5.12-charter.md](docs/plans/v0.5.12-charter.md), written on the decision of comment
+7172688755. Time box: to 2026-12-02 at 20:24Z. The gate protocol is not changed: the gate is the
+closure condition (the same decision, item 2). Records: `docs/validation/v0.5.12/`.
 
 **The question:** are version 5's core (F1, OE_box) and its report-only quantities correct enough
 to start the calibration? Three items: #222 (F1 with unequal weights), #223 (the step 1 cases and

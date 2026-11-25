@@ -1,0 +1,8 @@
+{
+ "phase": "v0.5.12",
+ "note": "Every local execution of the phase outside its meter (charter, step 0 and section 5, rule (e)). Any gap leaves exit criterion 6 unmet. Append-only.",
+ "gaps": [
+  {"id": "G1", "utc_window": "2026-11-25, about 20:43Z", "what": "after the phase opened, during the bootstrap, ruff check and ruff format --check run by the agent directly from a shell on docs/validation/v0.5.12/tools/, outside the outer meter (v0.5.11's launcher), before the first bootstrap commit", "estimate": "under 1 CPU-s; ruff's cache under .ruff_cache (inside the disk roots, so carried by the next scan); no network"},
+  {"id": "G0", "utc_window": "2026-11-25, 20:24Z", "what": "the opening record itself (#218, comment 7173638284), posted with gh from a shell before any meter of the phase existed; it is the record that opens the phase", "estimate": "under 1 CPU-s; one GitHub API call"}
+ ]
+}
