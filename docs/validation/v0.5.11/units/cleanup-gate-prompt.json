@@ -1,0 +1,9 @@
+{
+ "name": "cleanup-gate-prompt",
+ "question": "Delete the source copy of the full gate prompt (#218, comment 7168908914, item 2), once its bytes are checked against the maintainer's SHA-256 and against the blob stored in HEAD as docs/gates/v0.5.11-gate-prompt-full.txt.",
+ "choices": "docs/maintenance/cleanup-2026-11-25-v0511-gate-prompt/cleanup.py, one literal path under .cache/v0511/gate-prompt-full, with a guard against links and junctions; integrated in git, so not archived; a data unit, run once.",
+ "argv": ["{python}", "-I", "-B", "docs/maintenance/cleanup-2026-11-25-v0511-gate-prompt/cleanup.py"],
+ "identity": ["docs/maintenance/cleanup-2026-11-25-v0511-gate-prompt/cleanup.py"],
+ "reserve": {"cpu_s": 60, "transfer_bytes": 50000000, "disk_bytes": 1000000},
+ "network": false
+}
