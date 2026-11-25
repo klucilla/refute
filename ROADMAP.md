@@ -98,7 +98,10 @@ see [the section below](#v0511-battery-version-5-specification-and-software).
 - **The gate review:** [docs/gates/v0.5.11-review.md](docs/gates/v0.5.11-review.md), a fresh
   Claude Fable 5.2 session on `cf95b100`, `REFUTED`, with
   [its record](docs/gates/v0.5.11-gate-record.md). Its minor findings were posted to #59.
-- **The next phase is proposed only:** [docs/plans/v0.5.12-proposal.md](docs/plans/v0.5.12-proposal.md).
+- **The next phase was proposed only:** [docs/plans/v0.5.13-proposal.md](docs/plans/v0.5.13-proposal.md).
+  *(Written as `docs/plans/v0.5.12-proposal.md`; renamed on 2026-11-25 by the maintainer's
+  decision, #218 comment 7172688755: v0.5.12 became a short correction phase, and the
+  calibration moved to v0.5.13.)*
 
 ### Previous phase record: v0.5.10 Census and feasibility
 

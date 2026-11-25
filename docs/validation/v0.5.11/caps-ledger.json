@@ -10,13 +10,13 @@
   "disk_bytes": 10000000000
  },
  "charged": {
-  "cpu_s": 14931.641,
-  "transfer_bytes": 3602666535,
+  "cpu_s": 14932.266,
+  "transfer_bytes": 3602950487,
   "disk_peak_bytes": 1000000000
  },
  "within_caps": "not demonstrated",
  "telemetry_complete": false,
- "gaps": 14,
+ "gaps": 15,
  "gaps_file": "docs/validation/v0.5.11/meter-gaps.json",
  "charging_rule": "measured use for settled attempts with complete telemetry; otherwise the larger of the reservation and the measured use",
  "transfer_note": "an upper bound: the machine's netstat -e bytes during each unit",
@@ -2661,6 +2661,24 @@
    "cpu_s": 0.188,
    "transfer_bytes_upper": 136620,
    "disk_peak_bytes": 5364,
+   "telemetry_complete": true,
+   "overrun": []
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "2e4d884621c742c0a2f3674819c28535",
+   "launcher": "launch_v6.py",
+   "start": "2026-11-25T17:10:54Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 50000000,
+    "transfer_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 0.625,
+   "transfer_bytes_upper": 283952,
+   "disk_peak_bytes": 1417,
    "telemetry_complete": true,
    "overrun": []
   }
