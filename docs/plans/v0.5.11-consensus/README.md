@@ -207,3 +207,21 @@ same thread, and was stored unchanged by the unit `store-round`.
 - **Its non-blocking findings** confirm the exact patch provenance, the golden and claim-hash
   proofs, the 10/10 tag summary, the pre-registration order and both amendments as pure appends.
   They also note three records whose text lags behind (errata entry 11).
+
+### Its second and last round, on E1 (2026-11-25)
+
+By the maintainer's decision received at 08:47 local (#218, comment 7161509920): this round was
+the last, and a blocking item stops the work with no new round.
+
+| File | Bytes | SHA-256 |
+|---|---|---|
+| [all-commits-r2-codex-prompt.md](all-commits-r2-codex-prompt.md) | 2,925 | `8bdc3e2552ed9741ad243ff4f20f9a88a8614c3698b774a0fba3fb90f9992b76` |
+| [all-commits-r2-codex-answer.md](all-commits-r2-codex-answer.md) | 3,339 | `181459ceafd691dc1b2df9e51fab86ad330714b9d4191229d7b42b64c22bbf7f` |
+
+- **Tokens:** 20,382,076 input (19,486,720 cached) and 69,728 output, so **965,084**.
+- **The thread's total** over 9 rounds is **4,036,836**.
+- **Verdict: `REFUTED`.** E1's preflight bound can change a valid F1 decision, with equal errors
+  of 4.5e-153: `pass` at 2.99999999997 becomes `fail` at 3.0000000000069. It can also miss an
+  overflow in the bin totals (errata entry 13).
+- **So E1 was not committed.** Its tests (172 tests, 0 failures, 23 of 23 IDs) do not change
+  that.

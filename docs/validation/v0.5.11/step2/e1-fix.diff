@@ -1,0 +1,88 @@
+diff --git a/src/refute/packs/tess/screen_d5.py b/src/refute/packs/tess/screen_d5.py
+index eaa4980..6ad94c4 100644
+--- a/src/refute/packs/tess/screen_d5.py
++++ b/src/refute/packs/tess/screen_d5.py
+@@ -112,25 +112,39 @@ def _valid(time, flux, flux_err):
+     return t[ok], f[ok], s[ok], int((~ok).sum())
+ 
+ 
+-def _weights(s: np.ndarray) -> np.ndarray:
++def _representable(w: np.ndarray, f: np.ndarray) -> bool:
++    """Whether every weight and every weighted reduction of the specification is finite.
++
++    Each reduction is a sum over a subset of the valid set, and each is bounded by the full set's
++    sum of weights, or by 4 max(f^2) times that sum. The reductions are the means, the variance
++    terms w (x - m)^2 with |m| <= max |f|, and the bins' weights and means."""
++    if not (np.all(np.isfinite(w)) and np.all(w > 0)):
++        return False
++    with np.errstate(all="ignore"):
++        total = float(np.sum(w))
++        bound = 4.0 * float(np.max(f * f)) * total
++    return math.isfinite(total) and total > 0 and math.isfinite(bound)
++
++
++def _weights(s: np.ndarray, f: np.ndarray) -> np.ndarray:
+     """The weights of the valid set.
+ 
+-    - **Normally 1/sigma^2,** unscaled: the specification's own arithmetic, whenever every weight
+-      is finite and positive.
++    - **Normally 1/sigma^2,** unscaled: the specification's own arithmetic, whenever the weights
++      and every weighted reduction of the specification are representable (finite).
+     - **Otherwise on a common scale,** (min sigma / sigma)^2. Every weighted mean and standard
+       deviation of the specification is unchanged by a common factor.
+-    - **A ValueError** when a weight cannot be represented even at that scale: zero, or not
+-      finite.
++    - **A ValueError** when even the common scale cannot be represented.
+ 
+-    The maintainer's decision received on 2026-11-25 at 00:04 local, #218 comment 7151559282,
+-    item 1."""
++    The maintainer's decisions received on 2026-11-25 at 00:04 local (#218 comment 7151559282,
++    item 1) and at 08:47 local (comment 7161509920, item 1, E1: a recomputation on the common
++    scale when the raw sums overflow)."""
+     with np.errstate(all="ignore"):
+         w = 1.0 / s**2
+-    if np.all(np.isfinite(w)) and np.all(w > 0):
++    if _representable(w, f):
+         return w
+     with np.errstate(all="ignore"):
+         w = (float(np.min(s)) / s) ** 2
+-    if not np.all(np.isfinite(w)) or np.any(w <= 0):
++    if not _representable(w, f):
+         raise ValueError("the weights of the valid set cannot be represented")
+     return w
+ 
+@@ -213,7 +227,7 @@ def _f1_box(time, flux, flux_err, period, t0, duration) -> dict:
+     if t.size < MIN_VALID:
+         return _core("not_assessed", "fewer than 20 valid points", 0, counts)
+     try:
+-        w = _weights(s)
++        w = _weights(s, f)
+     except ValueError as exc:
+         return _core("not_assessed", str(exc), 0, counts)
+     k = _epochs(t, period, t0)
+@@ -666,7 +680,7 @@ def report_only(flattened, candidate, star, plausibility=None) -> dict:
+     if not _candidate_ok(period, t0, duration) or t.size < MIN_VALID:
+         return {n: _unavailable(n, "candidate or curve not usable") for n in names}
+     try:
+-        w = _weights(s)
++        w = _weights(s, f)
+     except ValueError as exc:
+         return {n: _unavailable(n, str(exc)) for n in names}
+ 
+diff --git a/tests/test_v0511_screen.py b/tests/test_v0511_screen.py
+index f62d448..7c62734 100644
+--- a/tests/test_v0511_screen.py
++++ b/tests/test_v0511_screen.py
+@@ -186,12 +186,6 @@ def test_an_extreme_flux_error_never_raises_in_f1():
+     assert all(v["state"] == "unavailable" for v in rec["report_only"].values())
+ 
+ 
+-@pytest.mark.xfail(
+-    strict=True,
+-    raises=AssertionError,
+-    reason="E1 (#218 comment 7161509920): a896c49 abstains when finite raw weights overflow in "
+-    "their sums; the fix comes after this test",
+-)
+ def test_tiny_equal_errors_give_the_same_f1_as_ordinary_equal_errors():
+     # Codex's review of all the phase's commits, blocking item 1 (errata entry 12): with equal
+     # sigma = 1e-154 every weight 1/sigma^2 is finite (1e308) but their sums overflow; the same

@@ -207,3 +207,32 @@ its impact. Recorded outputs are never edited.
     requested at the stop, together with a regression test that keeps the 1e-9 reference
     tolerance.
   - The defect is in the committed code until then.
+
+## 13. 2026-11-25: E1 passed its tests, but the last Codex round refuted it; no src/ commit
+
+- **Source:** the maintainer's decision received on 2026-11-25 at 08:47 local (#218, comment
+  7161509920), items 1 and 2.
+- **What was done:**
+  - The regression test was committed before the fix (`912087a`), as a strict expected
+    failure. On `a896c49` it gave 19 tests: 18 passed and 1 strict xfail.
+  - The fix (`step2/e1-fix.diff`, SHA-256
+    `40cbfb380e2e7c65acef8af60686501bc1b6cb9363ce4a6c739ff2483eafc010`) checks a bound,
+    4 max(f^2) times the total weight, before using the raw 1/σ².
+  - Its tests unit (label `e1-fix`) gave **172 tests, 0 failures, 0 errors, 0 skipped, with all
+    23 expected IDs passing.**
+- **The second and last round of Codex's review of all commits: REFUTED,** with two witnesses:
+  - **A changed decision.** With equal errors of 4.5e-153, the raw reductions are finite and
+    give OE_box 2.9999999999743827 (`pass`). The preflight bound overflows, though, and the
+    common scale gives 3.0000000000069456 (`fail`). The bound uses max |f| instead of the
+    centered terms.
+  - **A missed overflow.** In a 20-point probe the raw total weight was finite
+    (1.7976931348623155e308), but the bin totals overflowed after grouping.
+- **What followed, by the decision:**
+  - The work stops with no new round, and nothing was committed in `src/`.
+  - The fix stays uncommitted in the working tree. A request to restore that tree to `HEAD` was
+    refused by the session's safety classifier, so the change is kept, and its diff is recorded.
+  - `a896c49` keeps the defect of entry 12.
+  - Codex's proposed fix: raw weights, and a check of the actual sums, products and centered
+    squares in `_wmean`, `_wstd` and the bin totals, with a retry from scratch on the common
+    scale when one overflows, plus regression cases for both witnesses. It is the maintainer's
+    to decide.
