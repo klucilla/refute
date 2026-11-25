@@ -1,0 +1,133 @@
+{
+ "utc": "2026-11-25T00:43:37Z",
+ "decision": "#218, comment 7146858167 (the instruction with the charter's approval)",
+ "drive": "K:/Meu Drive/Pessoal/Projetos/refute/cache-archive-2026-11-25-r1124f",
+ "files": 15,
+ "bytes": 32059,
+ "all_match": true,
+ "folders_removed": [
+  ".cache/r1124f/"
+ ],
+ "rows": [
+  {
+   "path": ".cache/r1124f/c-decision.md",
+   "bytes": 3986,
+   "sha256": "1a70b4a1290c4fbd69fafbd9758d9aa31c6ecbd8392780bc692de32351a6cc6c",
+   "destination_sha256": "1a70b4a1290c4fbd69fafbd9758d9aa31c6ecbd8392780bc692de32351a6cc6c",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/r1124f/c-open.md",
+   "bytes": 1114,
+   "sha256": "513870c77799b82de99c4e3280dafb2d45d687e98c81fe421b150ddd9bc3d289",
+   "destination_sha256": "513870c77799b82de99c4e3280dafb2d45d687e98c81fe421b150ddd9bc3d289",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/r1124f/c-stop.md",
+   "bytes": 3692,
+   "sha256": "23b71828e10ba487bad69db6882e8198be41d4573d87352fe599dcadf8c2149b",
+   "destination_sha256": "23b71828e10ba487bad69db6882e8198be41d4573d87352fe599dcadf8c2149b",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/r1124f/codex_meta.py",
+   "bytes": 1086,
+   "sha256": "843b84cf674c460006b9e0b29d599ec3137731b8b24a6d0175d1e217b4d86673",
+   "destination_sha256": "843b84cf674c460006b9e0b29d599ec3137731b8b24a6d0175d1e217b4d86673",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/r1124f/extract_md.py",
+   "bytes": 663,
+   "sha256": "84680ca0bba11ba0e2d0ef2e26fcb6c846494cc97e5d05f120726192df4a99be",
+   "destination_sha256": "84680ca0bba11ba0e2d0ef2e26fcb6c846494cc97e5d05f120726192df4a99be",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/r1124f/grep_ctx.py",
+   "bytes": 584,
+   "sha256": "3950cef43e21b237fe8848f3c1fe759b293faf09de600db54f580235fb82ca5d",
+   "destination_sha256": "3950cef43e21b237fe8848f3c1fe759b293faf09de600db54f580235fb82ca5d",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/r1124f/junit-affected.out.err.txt",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "destination_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/r1124f/junit-affected.out.txt",
+   "bytes": 162,
+   "sha256": "7f31e097438e735b79c8261c35c2692e85679774f7c053ddd73f4b9133d89fa0",
+   "destination_sha256": "7f31e097438e735b79c8261c35c2692e85679774f7c053ddd73f4b9133d89fa0",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/r1124f/junit-affected.xml",
+   "bytes": 13465,
+   "sha256": "47e00ce9177f497cceaa5937969d33f9ec7dccb8f1ad6168e65afe227db57609",
+   "destination_sha256": "47e00ce9177f497cceaa5937969d33f9ec7dccb8f1ad6168e65afe227db57609",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/r1124f/msg-charter.txt",
+   "bytes": 2072,
+   "sha256": "b01703cbed7dcdfd74c3bdc9c73e9511fd47a958b96ef5c6fcbe803bb0f09dbd",
+   "destination_sha256": "b01703cbed7dcdfd74c3bdc9c73e9511fd47a958b96ef5c6fcbe803bb0f09dbd",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/r1124f/msg-clean.txt",
+   "bytes": 880,
+   "sha256": "959977422c94ca22405c42d2cb7675eec0efdca2c7a6a5c1093d4ead68c2addf",
+   "destination_sha256": "959977422c94ca22405c42d2cb7675eec0efdca2c7a6a5c1093d4ead68c2addf",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/r1124f/msg-open.txt",
+   "bytes": 1440,
+   "sha256": "5b28d2ff71d948fcfd944d9ec835a0c3ebd8db8b19c9f3af192080edd6126d8e",
+   "destination_sha256": "5b28d2ff71d948fcfd944d9ec835a0c3ebd8db8b19c9f3af192080edd6126d8e",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/r1124f/peek_json.py",
+   "bytes": 883,
+   "sha256": "dae8d932d53c38751f068f8dff4606f715ec731d539e485ca45ed24072c7c5d7",
+   "destination_sha256": "dae8d932d53c38751f068f8dff4606f715ec731d539e485ca45ed24072c7c5d7",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/r1124f/store_review.py",
+   "bytes": 1040,
+   "sha256": "1c743613bf5cdb7bf3514aff468d403a26ea99ecc8c8de8794d3bc08b4f66976",
+   "destination_sha256": "1c743613bf5cdb7bf3514aff468d403a26ea99ecc8c8de8794d3bc08b4f66976",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/r1124f/store_round2.py",
+   "bytes": 992,
+   "sha256": "5d11b90d37e90165563669798b515d1d3ae40cab29ecd2241021233ef2ec0de3",
+   "destination_sha256": "5d11b90d37e90165563669798b515d1d3ae40cab29ecd2241021233ef2ec0de3",
+   "match": true,
+   "status": "deleted, archived"
+  }
+ ]
+}
