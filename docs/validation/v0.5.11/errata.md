@@ -276,3 +276,21 @@ its impact. Recorded outputs are never edited.
   0 failures, 0 errors, 0 skipped. The JUnit file is the evidence; both readings agree.
 - **Impact:** none on the condition. It is one more instance of finding F-2 (the machine-wide
   bound is loose).
+
+## 16. 2026-11-25: the working report is updated in place for correction 1
+
+- **Source:** `docs/reports/v0.5.11-report.md` as committed at `62c8237`.
+- **The correction:** the report is updated in place, in the commit that adds this entry. It now
+  covers:
+  - correction 1 (`7bf74b1`), its tests (`58c308d`) and its `src/` commit (`f18d6f8`);
+  - the units `ir-before` and `ir-fix`;
+  - proofs (i) and (ii) after-fix;
+  - `ci_evidence --level full` on `f18d6f8`;
+  - the Codex tokens as a cost and a lesson for v0.5.12.
+
+  The states it changes:
+  - criterion 3: met with two recorded deviations;
+  - criterion 4: met, with the full CI evidence;
+  - the phase is ready for the gate.
+- **Impact:** criterion 6 stays "not demonstrated" (gaps G1 to G12). No verdict changes, and the
+  report remains a working exploratory report, not approved.
