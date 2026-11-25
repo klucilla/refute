@@ -236,3 +236,25 @@ its impact. Recorded outputs are never edited.
     squares in `_wmean`, `_wstd` and the bin totals, with a retry from scratch on the common
     scale when one overflows, plus regression cases for both witnesses. It is the maintainer's
     to decide.
+
+## 14. 2026-11-25: correction 1 of the specification withdraws the E1 test; the E1 change is overwritten
+
+- **Source:** the maintainer's decision received on 2026-11-25 at 09:34 local (#218, comment
+  7162573384), item 1, and [correction 1](../../plans/v0.5.11-spec-correction-1.md) (`7bf74b1`).
+- **The E1 test is withdrawn.** It was committed at `912087a`, as
+  `test_tiny_equal_errors_give_the_same_f1_as_ordinary_equal_errors`, and required σ = 1e-154
+  to give the same assessed F1 as ordinary errors. The correction decides the opposite: that σ
+  is outside [1e-12, 1e3], so F1 is `not_assessed`, with the reason `invalid_uncertainty`.
+  - It is replaced by `test_the_case_of_errata_12_is_unassessed_in_the_core_and_the_report`.
+  - `step2/expected-tests-e1.json` stays as the record of E1. The condition is now
+    `step2/expected-tests-ir.json`.
+- **The uncommitted E1 change is gone from the tree.** As the decision says, the file
+  `src/refute/packs/tess/screen_d5.py` was overwritten with the bytes of `a896c49`, with no
+  `git checkout` and no stash. Its SHA-256 is `30bd588f…`, and an inspection unit checked it
+  equal to the committed blob. E1's diff stays recorded in `step2/e1-fix.diff`.
+- **Tests before the code:** on `a896c49`, the tests unit labelled `ir-before` gave 30 tests,
+  0 failures, 0 errors, and 6 strict expected failures (the six IDs of `expected-tests-ir.json`).
+- **Small steps outside the meter,** listed in `meter-gaps.json`:
+  - G11: while preparing the commit of the correction, the agent ran `python -c "print(1)"`
+    once outside the launcher. It used no data and wrote nothing.
+  - G12: the file copy that overwrote the E1 change.

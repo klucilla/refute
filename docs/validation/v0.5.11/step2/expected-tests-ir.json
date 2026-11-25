@@ -1,0 +1,31 @@
+{
+ "phase": "v0.5.11",
+ "purpose": "The tests of correction 1 of the specification (docs/plans/v0.5.11-spec-correction-1.md, SHA-256 62a5532f01c498901dd2c1546ad428e33cb4669efa14caf3d80d57f9b19b6df7), committed and pushed before the change in src/ (the maintainer's decision of 2026-11-25, #218 comment 7162573384, item 1). On a896c49, unit tests label ir-before gave 30 tests, 0 failures, 0 errors, 6 strict expected failures (the IDs below). After the change, the markers are removed in the diff and every ID here must pass in JUnit, with every ID of step1/expected-tests.json. The E1 test of 912087a (step2/expected-tests-e1.json) is withdrawn by the correction.",
+ "labels": ["exploratory", "method_status: not_validated", "software acceptance"],
+ "strict_expected_failures": {
+  "tests/test_v0511_screen.py": {
+   "reason": "On a896c49 the module has no input rule: an out-of-range sigma is assessed (raw path) or not assessed for another reason (noise unavailable), never with the reason invalid_uncertainty; CORRECTION_SHA256 and spec_correction_sha256 do not exist (xfail strict)",
+   "ids": [
+    "test_codex_first_witness_is_unassessed",
+    "test_codex_second_witness_is_unassessed",
+    "test_the_case_of_errata_12_is_unassessed_in_the_core_and_the_report",
+    "test_just_outside_the_range_is_unassessed[below]",
+    "test_just_outside_the_range_is_unassessed[above]",
+    "test_the_record_cites_the_correction"
+   ]
+  }
+ },
+ "unchanged_by_the_rule": {
+  "tests/test_v0511_screen.py": {
+   "reason": "They pass on a896c49 and must still pass after the change: ordinary errors keep the reviewed state and OE_box (rel_tol 1e-9), the ends of the range are assessed, the bound of section 4 at 1e7 points, and the reference implementation's rule.",
+   "ids": [
+    "test_ordinary_errors_keep_the_reviewed_f1[planet-spec0]",
+    "test_ordinary_errors_keep_the_reviewed_f1[eb_half-spec1]",
+    "test_the_ends_of_the_range_are_assessed_like_ordinary_errors[floor]",
+    "test_the_ends_of_the_range_are_assessed_like_ordinary_errors[ceiling]",
+    "test_the_floor_keeps_the_weighted_reductions_finite_at_1e7_points",
+    "test_the_reference_applies_the_same_rule"
+   ]
+  }
+ }
+}

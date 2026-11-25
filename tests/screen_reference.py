@@ -18,6 +18,7 @@ MIN_IN_PER_EPOCH = 3
 MIN_BASELINE = 10
 MIN_BINS = 3
 THRESHOLD = 3.0
+SIGMA_MIN, SIGMA_MAX = 1e-12, 1e3  # correction 1 of the specification (2026-11-25)
 
 
 @dataclass
@@ -82,6 +83,13 @@ def f1_reference(time, flux, flux_err, period, t0, duration) -> F1Result:
     t, f, s = (np.asarray(x, dtype=float) for x in (time, flux, flux_err))
     if not all(math.isfinite(v) for v in (period, t0, duration)) or period <= 0 or duration <= 0:
         return F1Result("not_assessed", "candidate not finite or not positive")
+    # correction 1 (docs/plans/v0.5.11-spec-correction-1.md): every sigma of the cadences with
+    # finite t and f is finite and in [SIGMA_MIN, SIGMA_MAX]; otherwise not assessed
+    sm = s[np.isfinite(t) & np.isfinite(f)]
+    with np.errstate(invalid="ignore"):
+        in_range = np.isfinite(sm) & (sm >= SIGMA_MIN) & (sm <= SIGMA_MAX)
+    if not np.all(in_range):
+        return F1Result("not_assessed", "invalid_uncertainty")
     ok = np.isfinite(t) & np.isfinite(f) & np.isfinite(s) & (s > 0)
     t, f, s = t[ok], f[ok], s[ok]
     if t.size < MIN_VALID:

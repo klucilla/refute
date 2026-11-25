@@ -186,24 +186,129 @@ def test_an_extreme_flux_error_never_raises_in_f1():
     assert all(v["state"] == "unavailable" for v in rec["report_only"].values())
 
 
-@pytest.mark.xfail(
-    strict=True,
-    raises=AssertionError,
-    reason="E1 (#218 comment 7161509920): a896c49 abstains when finite raw weights overflow in "
-    "their sums; the fix comes after this test",
+# --- correction 1 of the specification: the input range of sigma -----------------------------
+# docs/plans/v0.5.11-spec-correction-1.md; the maintainer's decision of 2026-11-25, #218 comment
+# 7162573384, item 1. Written and pushed before the code: the strict expected failures below
+# fail on the module as committed at a896c49. The E1 test of 912087a (sigma = 1e-154 assessed
+# like ordinary errors) is withdrawn: the rule decides the opposite.
+
+CORRECTION_SHA256 = "62a5532f01c498901dd2c1546ad428e33cb4669efa14caf3d80d57f9b19b6df7"
+INVALID = "invalid_uncertainty"
+BEFORE_CODE = pytest.mark.xfail(
+    strict=True, reason="spec correction 1: the input rule is not in the module at a896c49"
 )
-def test_tiny_equal_errors_give_the_same_f1_as_ordinary_equal_errors():
-    # Codex's review of all the phase's commits, blocking item 1 (errata entry 12): with equal
-    # sigma = 1e-154 every weight 1/sigma^2 is finite (1e308) but their sums overflow; the same
-    # curve must give the same F1 state and OE_box as with ordinary equal errors
+# the reviewed path (a896c49) on ordinary errors, recorded before the change
+REVIEWED = {"planet": ("pass", 2.507454281461856), "eb_half": ("fail", 43.09203063661559)}
+BIN_WITNESS_TIMES = np.array(
+    [0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30,
+     1.00, 1.05, 1.10, 1.15, 1.20, 1.25, 1.30,
+     2.00, 2.05, 2.10, 2.15, 2.20, 2.25]
+)  # fmt: skip
+
+
+def _equal_errors(sigma: float):
+    lc, _ = make_lightcurve(PLANET, seed=3)
+    err = np.full_like(lc.flux_err, sigma)
+    return screen().f1_box(lc.time, lc.flux, err, PLANET.period, PLANET.t0, PLANET.duration)
+
+
+@pytest.mark.parametrize(("name", "spec"), [("planet", PLANET), ("eb_half", EB_HALF)])
+def test_ordinary_errors_keep_the_reviewed_f1(name, spec):
+    lc, _ = make_lightcurve(spec, seed=3)
+    r = screen().f1_box(lc.time, lc.flux, lc.flux_err, spec.period, spec.t0, spec.duration)
+    state, oe = REVIEWED[name]
+    assert r["state"] == state
+    assert math.isclose(r["metrics"]["oe_box"], oe, rel_tol=1e-9)
+
+
+@pytest.mark.parametrize("sigma", [1e-12, 1e3], ids=["floor", "ceiling"])
+def test_the_ends_of_the_range_are_assessed_like_ordinary_errors(sigma):
+    state, oe = REVIEWED["planet"]
+    r = _equal_errors(sigma)
+    assert r["state"] == state
+    assert math.isclose(r["metrics"]["oe_box"], oe, rel_tol=1e-9)
+
+
+@BEFORE_CODE
+def test_codex_first_witness_is_unassessed():
+    # equal sigma = 4.5e-153 on a curve whose raw reductions are representable (on a896c49 it
+    # is assessed by the raw path; E1's bound turned its pass into a fail)
     s = screen()
     lc, _ = make_lightcurve(PLANET, seed=3)
+    t, f = lc.time[::12], lc.flux[::12]
+    err = np.full_like(f, 4.5e-153)
+    assert np.isfinite(np.sum(1.0 / err**2))  # the witness's own precondition
+    r = s.f1_box(t, f, err, PLANET.period, PLANET.t0, PLANET.duration)
+    assert r["state"] == "not_assessed" and r["reason"] == INVALID
+
+
+@BEFORE_CODE
+def test_codex_second_witness_is_unassessed():
+    # 20 points: the flat total weight is finite, the sum of the three bin totals overflows
+    s = screen()
+    t = BIN_WITNESS_TIMES
+    f = 1.0 - 1e-4 * (np.arange(20) % 3)
+    err = 2.931545212024566e-154 * (1.0 + np.arange(20) / 64.0)
+    w = 1.0 / err**2
+    idx = np.floor((t - t.min()) / 0.5).astype(np.int64)
+    totals = np.array([w[idx == m].sum() for m in np.unique(idx)])
+    with np.errstate(over="ignore"):
+        assert np.isfinite(np.sum(w)) and not np.isfinite(np.sum(totals))  # the precondition
+    r = s.f1_box(t, f, err, 10.0, 5.0, 0.5)
+    assert r["state"] == "not_assessed" and r["reason"] == INVALID
+
+
+@BEFORE_CODE
+def test_the_case_of_errata_12_is_unassessed_in_the_core_and_the_report():
+    s = screen()
+    assert _equal_errors(1e-154)["reason"] == INVALID
+    lc, _ = make_lightcurve(PLANET, seed=3)
+    tiny = LightCurveData(lc.time, lc.flux, np.full_like(lc.flux_err, 1e-154), lc.sector,
+                          lc.year)  # fmt: skip
+    rec = s.compute_screen(tiny, _candidate(PLANET), _gate(), make_star())
+    assert rec["outcome"] == "unassessed"
+    assert rec["core"]["F1"]["state"] == "not_assessed"
+    assert rec["core"]["F1"]["reason"] == INVALID
+    for v in rec["report_only"].values():
+        assert v["state"] == "unavailable" and v["reason"] == INVALID
+
+
+@BEFORE_CODE
+@pytest.mark.parametrize("sigma", [9.99e-13, 1.001e3], ids=["below", "above"])
+def test_just_outside_the_range_is_unassessed(sigma):
+    r = _equal_errors(sigma)
+    assert r["state"] == "not_assessed" and r["reason"] == INVALID
+
+
+@BEFORE_CODE
+def test_the_record_cites_the_correction():
+    s = screen()
+    assert s.CORRECTION_SHA256 == CORRECTION_SHA256
+    lc, _ = make_lightcurve(PLANET, seed=3)
+    rec = s.compute_screen(lc, _candidate(PLANET), _gate(), make_star())
+    assert rec["spec_sha256"] == SPEC_SHA256
+    assert rec["spec_correction_sha256"] == CORRECTION_SHA256
+
+
+def test_the_floor_keeps_the_weighted_reductions_finite_at_1e7_points():
+    # section 4 of the correction: w <= 1e24 and N <= 1e7 bound every sum by 4e231 for |f| <= 1e100
+    s = screen()
+    n = 10_000_000
+    w = np.full(n, 1.0 / 1e-12**2)
+    x = np.where(np.arange(n) % 2 == 0, 1e100, -1e100)
+    m, sd = s._wmean(x, w), s._wstd(x, w)
+    assert m is not None and math.isfinite(m)
+    assert sd is not None and math.isfinite(sd)
+
+
+def test_the_reference_applies_the_same_rule():
+    lc, _ = make_lightcurve(PLANET, seed=3)
     args = (PLANET.period, PLANET.t0, PLANET.duration)
-    ordinary = s.f1_box(lc.time, lc.flux, np.full_like(lc.flux_err, 6e-4), *args)
-    tiny = s.f1_box(lc.time, lc.flux, np.full_like(lc.flux_err, 1e-154), *args)
-    assert ordinary["state"] in ("pass", "fail")
-    assert tiny["state"] == ordinary["state"]
-    assert math.isclose(tiny["metrics"]["oe_box"], ordinary["metrics"]["oe_box"], rel_tol=1e-9)
+    for sigma in (1e-154, 9.99e-13, 1.001e3, float("inf"), 0.0, -1.0):
+        r = f1_reference(lc.time, lc.flux, np.full_like(lc.flux_err, sigma), *args)
+        assert r.state == "not_assessed" and r.reason == INVALID, sigma
+    ok = f1_reference(lc.time, lc.flux, np.full_like(lc.flux_err, 1e-12), *args)
+    assert ok.state == REVIEWED["planet"][0]
 
 
 def test_an_unrepresentable_epoch_is_not_assessed():
