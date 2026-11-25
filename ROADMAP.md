@@ -73,7 +73,9 @@ how later work is done.
 
 ## Current phase
 
-**None is open.** Opening the next phase is the maintainer's decision.
+**None is open.** v0.5.12 is chartered and its charter is pending approval: see
+[the section below](#v0512-battery-version-5-corrections-before-calibration). It opens only when
+the maintainer approves the charter in #218, citing its SHA.
 
 ### Previous phase record: v0.5.11 Battery version 5: specification and software
 
@@ -1497,6 +1499,29 @@ section 7.
 - [ ] 6. The records are complete and the caps held: not met ("not demonstrated"; gaps G1 to G12).
 - [ ] 7. The gate passed and is stored: not met. The gate returned `REFUTED` on criterion 6; it is
   stored unchanged.
+
+## v0.5.12 Battery version 5: corrections before calibration
+
+Tracking: #218. **Charter pending approval:** [docs/plans/v0.5.12-charter.md](docs/plans/v0.5.12-charter.md),
+written on the maintainer's decision of 2026-11-25 (comment 7172688755). The phase opens only when
+the maintainer approves it in #218, citing its commit SHA; no item starts before. Records will be in
+`docs/validation/v0.5.12/`.
+
+**The question:** are version 5's core (F1, OE_box) and its report-only quantities correct enough
+to start the calibration? Three items: #222 (F1 with unequal weights), #223 (the step 1 cases and
+the report-only `computed` values) and F-1 (version 3's process-state dependence), with synthetic
+data and repository fixtures only. The calibration moved to
+[the v0.5.13 proposal](docs/plans/v0.5.13-proposal.md).
+
+The exit criteria are in the charter's section 8:
+- [ ] 1. #222 is answered by the fixed rule.
+- [ ] 2. #223 is covered.
+- [ ] 3. F-1's cause is found and recorded.
+- [ ] 4. Versions 1 to 4 did not move.
+- [ ] 5. Full CI.
+- [ ] 6. The records are complete and the caps were measured and met.
+
+At closure, not an exit criterion: the gate passed and is stored.
 
 ---
 
