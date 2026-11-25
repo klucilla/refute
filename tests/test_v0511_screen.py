@@ -186,6 +186,26 @@ def test_an_extreme_flux_error_never_raises_in_f1():
     assert all(v["state"] == "unavailable" for v in rec["report_only"].values())
 
 
+@pytest.mark.xfail(
+    strict=True,
+    raises=AssertionError,
+    reason="E1 (#218 comment 7161509920): a896c49 abstains when finite raw weights overflow in "
+    "their sums; the fix comes after this test",
+)
+def test_tiny_equal_errors_give_the_same_f1_as_ordinary_equal_errors():
+    # Codex's review of all the phase's commits, blocking item 1 (errata entry 12): with equal
+    # sigma = 1e-154 every weight 1/sigma^2 is finite (1e308) but their sums overflow; the same
+    # curve must give the same F1 state and OE_box as with ordinary equal errors
+    s = screen()
+    lc, _ = make_lightcurve(PLANET, seed=3)
+    args = (PLANET.period, PLANET.t0, PLANET.duration)
+    ordinary = s.f1_box(lc.time, lc.flux, np.full_like(lc.flux_err, 6e-4), *args)
+    tiny = s.f1_box(lc.time, lc.flux, np.full_like(lc.flux_err, 1e-154), *args)
+    assert ordinary["state"] in ("pass", "fail")
+    assert tiny["state"] == ordinary["state"]
+    assert math.isclose(tiny["metrics"]["oe_box"], ordinary["metrics"]["oe_box"], rel_tol=1e-9)
+
+
 def test_an_unrepresentable_epoch_is_not_assessed():
     s = screen()
     lc, _ = make_lightcurve(PLANET, seed=3)

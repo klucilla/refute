@@ -1,0 +1,13 @@
+{
+ "phase": "v0.5.11",
+ "purpose": "E1's regression test, committed before the fix in src/ (the maintainer's decision of 2026-11-25, #218 comment 7161509920, item 1), with its expected failure on the current code (a896c49) recorded. After the fix, the marker is removed in the diff and the ID must pass in JUnit, with every ID of step1/expected-tests.json.",
+ "labels": ["exploratory", "method_status: not_validated", "software acceptance"],
+ "strict_expected_failures": {
+  "tests/test_v0511_screen.py": {
+   "reason": "AssertionError on a896c49: with equal sigma = 1e-154 the raw weights are finite but their sums overflow, so F1 is not_assessed where ordinary equal errors give pass (errata entry 12) (xfail strict, raises=AssertionError)",
+   "ids": [
+    "test_tiny_equal_errors_give_the_same_f1_as_ordinary_equal_errors"
+   ]
+  }
+ }
+}
