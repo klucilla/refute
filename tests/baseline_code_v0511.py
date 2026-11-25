@@ -42,6 +42,19 @@ def _guard(fn):
 
 
 def outputs() -> dict[str, str]:
+    """Every output, computed with the current source in a fresh subprocess, like the baseline's.
+
+    CI run 45514526728 (2026-11-25) showed version 3's floats differing in their last digits
+    between an in-process computation after thousands of other tests and a fresh subprocess, on
+    the same machine and code. So both sides are computed in fresh subprocesses, in the same
+    environment."""
+    import tempfile
+
+    with tempfile.TemporaryDirectory() as tmp:
+        return _subprocess_outputs(REPO, Path(tmp) / "outputs")
+
+
+def _compute() -> dict[str, str]:
     """Every output, by name, computed with the ``refute`` this process imports."""
     from refute.core.io import dumps_json
     from refute.packs.tess.discover.measure import chain
@@ -111,7 +124,11 @@ def baseline_outputs(work: Path) -> dict[str, str]:
     tree = work / "baseline"
     with zipfile.ZipFile(archive) as z:
         z.extractall(tree)
-    out = work / "outputs"
+    return _subprocess_outputs(tree, work / "outputs")
+
+
+def _subprocess_outputs(tree: Path, out: Path) -> dict[str, str]:
+    """``_compute()`` in a fresh subprocess with the source under ``tree``."""
     env = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
     subprocess.run(
         [sys.executable, "-B", str(Path(__file__).resolve()), str(tree), str(out)],
@@ -131,7 +148,7 @@ def main(argv: list[str]) -> None:
     if not Path(refute.__file__).resolve().is_relative_to(tree):
         raise SystemExit(f"not the baseline's refute: {refute.__file__}")
     out.mkdir(parents=True, exist_ok=True)
-    for name, text in outputs().items():
+    for name, text in _compute().items():
         (out / name).write_text(text, encoding="utf-8", newline="\n")
 
 
