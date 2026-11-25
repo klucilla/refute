@@ -117,3 +117,25 @@ its impact. Recorded outputs are never edited.
 - **What was done:**
   - R1 and R2 were not started, and the src/ diff stays uncommitted in the working tree.
   - The stop returns to the maintainer with options.
+
+## 8. 2026-11-25: R2' failed D1's condition on one expected ID (a numerical tolerance)
+
+- **Source:** the journal, attempt `1223cf809f9f4452ad02dd9aaf4a0792` (unit `tests`, label
+  `step2-b`, launch_v8, approved repetition, 01:45:53Z to 02:08:51Z, 1381.8 CPU-s, completed).
+  The JUnit file is `.cache/v0511/junit/step2-b.xml`.
+- **The counts:** 171 tests, 1 failure, 0 errors, 0 skipped. 21 of the 22 expected IDs passed.
+- **The failed ID:**
+  `test_v0511_screen::test_f1_reproduces_the_reference_decisions_on_the_calibration_fixtures[correlated]`.
+  - The states agree (`pass`).
+  - OE_box was 0.0009411271062525408 in `screen_d5`, against 0.0009411271048073127 in the
+    reference, a relative difference of about 1.5e-9. The test's `rel_tol` is 1e-9.
+- **The cause:**
+  - The weights on a common scale ((min sigma / sigma)^2), added after Codex's second review
+    of the diff, change the rounding against the reference's 1/sigma^2.
+  - At OE_box near zero, the odd and even depths almost cancel, so the relative difference of
+    the statistic is amplified.
+- **What follows:**
+  - D1's deterministic condition fails, so nothing was committed in `src/`, and the stop
+    returns to the maintainer.
+  - R1' completed (`golden-before.json`, 20 outputs, none an error). After `git stash pop`, the
+    diff's SHA-256 was `35102b10…`, unchanged.
