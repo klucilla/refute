@@ -1,0 +1,10 @@
+{
+ "name": "gh",
+ "question": "One GitHub operation through the gh CLI (the extra arguments): an issue comment on #218, a read of runs or comments, or a workflow_dispatch of ci.yml on main. Permitted GitHub traffic only.",
+ "choices": "In a job without the container; the operation (the gh subcommand and its arguments) and the endpoint are journaled. Only these subcommands are used: issue comment 218 --repo klucilla/refute --body-file <committed or .cache file>; run list / run view --repo klucilla/refute; api GET repos/klucilla/refute/...; workflow run ci.yml --repo klucilla/refute --ref main. A data unit: the arguments make the unit.",
+ "argv": ["gh"],
+ "identity": [],
+ "key": "data",
+ "reserve": {"cpu_s": 60, "disk_bytes": 10000000},
+ "network": {"kind": "github", "endpoints": ["api.github.com:443"], "operations": ["gh issue comment", "gh run list", "gh run view", "gh api GET", "gh workflow run ci.yml"]}
+}

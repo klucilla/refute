@@ -1,0 +1,11 @@
+{
+ "name": "demo-check",
+ "question": "Check the meter's demonstration (charter, step 0) from the journal and the run outputs; any failed check stops the work before M1.",
+ "choices": "docs/validation/v0.5.12/step0/demo_check.py reads log.jsonl and the demonstration units' stdout; its record is copied to step0/demo-check.json.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/step0/demo_check.py"],
+ "identity": ["docs/validation/v0.5.12/step0/demo_check.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 60, "disk_bytes": 10000000},
+ "network": false,
+ "outputs": {"demo-check.json": "docs/validation/v0.5.12/step0/demo-check.json"}
+}

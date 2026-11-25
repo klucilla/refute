@@ -1,0 +1,51 @@
+{
+ "schema": "refute-v0512-container-1",
+ "decision": "#218 comment 7173638284, item 3",
+ "utc": "2026-11-25T20:37:20Z",
+ "appcontainer": {
+  "name": "refute.v0512.offline",
+  "sid": "S-1-15-2-1333847747-1456263914-2869990652-3725583999-2756808856-1759572286-2498989606",
+  "capabilities": [],
+  "profile": "created",
+  "created_outside_the_project": [
+   "HKCU registry key: Software/Classes/Local Settings/Software/Microsoft/Windows/CurrentVersion/AppContainer/Mappings/S-1-15-2-1333847747-1456263914-2869990652-3725583999-2756808856-1759572286-2498989606",
+   "folder: <local application-data folder>/Packages/refute.v0512.offline"
+  ],
+  "removal": "the maintainer's (v0.5.10's delete_profile.py pattern); the session never removes it"
+ },
+ "copies": {
+  ".cache/v0512/cpy": {
+   "source": "the base CPython 3.13.16 of .venv",
+   "files": 3365,
+   "bytes": 63930396,
+   "all_match": true
+  },
+  ".cache/v0512/git/mingw64/bin": {
+   "source": "Git for Windows, mingw64/bin",
+   "files": 157,
+   "bytes": 96761374,
+   "all_match": true
+  },
+  "python_exe_sha256": "cc3c36bac1c0cc4528c362576e4d3fd24c566cec7eb5eefb3f123739b6171f50",
+  "ruff_exe_sha256": "87f102f9a4ba087cfaa8eca4f5be335263d6ddf41201f9fda96cbd26ea3b7467"
+ },
+ "git_config_keys": [
+  "user.name",
+  "user.email",
+  "core.autocrlf"
+ ],
+ "grants": {
+  "read_execute_inherited": [
+   "."
+  ],
+  "modify_inherited": [
+   ".git",
+   ".cache/v0512",
+   ".ruff_cache"
+  ]
+ },
+ "seconds": {
+  "copies": 44.7,
+  "grants": 37.5
+ }
+}

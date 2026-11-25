@@ -1,0 +1,10 @@
+{
+ "name": "demo",
+ "question": "The meter's demonstration (charter, step 0): run one harmless fixture (the extra argument: cpu, transient, retain or network) in the offline AppContainer, so that the launcher's accounting of descendant CPU, transient and retained disk, and the network block can be checked.",
+ "choices": "docs/validation/v0.5.12/step0/demo.py; one mode per attempt, labelled with the mode (retain-a and retain-b for the two retain attempts). A data unit: the mode and label make each attempt its own unit.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/step0/demo.py"],
+ "identity": ["docs/validation/v0.5.12/step0/demo.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 120, "disk_bytes": 200000000},
+ "network": false
+}

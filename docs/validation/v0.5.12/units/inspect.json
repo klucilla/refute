@@ -1,0 +1,10 @@
+{
+ "name": "inspect",
+ "question": "Run one read-only inspection script (its path and arguments are the extra arguments) in the offline AppContainer, so that local reads are metered.",
+ "choices": "The script must read only; its output is its stdout under .cache/v0512/runs. A tree unit: the same script, arguments and code state is the same unit.",
+ "argv": ["{python}", "-I", "-B"],
+ "identity": [],
+ "key": "tree",
+ "reserve": {"cpu_s": 120, "disk_bytes": 20000000},
+ "network": false
+}

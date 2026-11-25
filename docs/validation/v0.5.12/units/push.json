@@ -1,0 +1,10 @@
+{
+ "name": "push",
+ "question": "Push main to GitHub (one push per batch), a permitted GitHub operation.",
+ "choices": "git push origin main, in a job without the container (it needs the network); its argv, endpoint and operation are journaled. A tree unit.",
+ "argv": ["git", "push", "origin", "main"],
+ "identity": [],
+ "key": "tree",
+ "reserve": {"cpu_s": 60, "disk_bytes": 10000000},
+ "network": {"kind": "github", "endpoints": ["github.com:443"], "operations": ["git push origin main"]}
+}

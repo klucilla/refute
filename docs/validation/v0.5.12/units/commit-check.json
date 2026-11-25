@@ -1,0 +1,10 @@
+{
+ "name": "commit-check",
+ "question": "Commit the staged changes through scripts/commit_checked.py (privacy check and ruff on the staged files), in the offline AppContainer, so that every commit is metered.",
+ "choices": "The extra arguments are -F and the message file. The container's interpreter copy and git copy. A tree unit: the same staged state is the same unit.",
+ "argv": ["{python}", "-B", "scripts/commit_checked.py"],
+ "identity": ["scripts/commit_checked.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 300, "disk_bytes": 100000000},
+ "network": false
+}

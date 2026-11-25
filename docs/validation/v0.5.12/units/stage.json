@@ -1,0 +1,10 @@
+{
+ "name": "stage",
+ "question": "Stage files for the next commit (git add, the extra arguments are the paths), in the offline AppContainer, so that staging is metered.",
+ "choices": "The container's copy of git (.cache/v0512/git). A tree unit: the same paths and code state is the same unit.",
+ "argv": ["git", "add", "--"],
+ "identity": [],
+ "key": "tree",
+ "reserve": {"cpu_s": 60, "disk_bytes": 50000000},
+ "network": false
+}
