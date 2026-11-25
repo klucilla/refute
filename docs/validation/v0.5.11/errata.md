@@ -294,3 +294,23 @@ its impact. Recorded outputs are never edited.
   - the phase is ready for the gate.
 - **Impact:** criterion 6 stays "not demonstrated" (gaps G1 to G12). No verdict changes, and the
   report remains a working exploratory report, not approved.
+
+## 17. 2026-11-25: the report is corrected in place for the gate and then approved
+
+- **Source:** `docs/reports/v0.5.11-report.md` as committed at `cf95b10`; the maintainer's
+  decision of 2026-11-25 (#218, comment 7165994585), items 0 and 2.
+- **The correction,** made in place in the commit that adds this entry, while the report was still
+  a working report:
+  - the gate's outcome: `REFUTED`, with criteria 1 to 5 met, 6 not met, and 7 not met;
+  - the close with declared limits;
+  - a section of declared limits:
+    - criterion 6;
+    - the gate's two important findings (#222, #223), including that every test curve has a
+      uniform σ;
+    - the screen's precedence outside `core/verdict.py`;
+    - the two recorded deviations;
+    - the gate prompt's deviation;
+  - the gate's tokens.
+- **Then approved** by the same decision, item 2. From then on, a correction to the report is a
+  separate dated file, and the report is not edited.
+- **Impact:** no verdict changes. Version 5 is not adopted.

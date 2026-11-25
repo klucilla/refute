@@ -73,24 +73,32 @@ how later work is done.
 
 ## Current phase
 
-**v0.5.11 Battery version 5: specification and software** (exploratory), **open since
-2026-11-24 at 22:58Z.**
-- **The charter:** [docs/plans/v0.5.11-charter.md](docs/plans/v0.5.11-charter.md) at
-  `eb70c13e04e910bb9cbd547c85c488a58ef9f0a4`. The maintainer approved it at that SHA after the
-  adviser's review (#218, comment 7146858167).
-- **The time box:** seven days, so execution stops at 2026-12-01 22:58Z unless an extension is
-  recorded first.
-- **The checkpoints:** the specification by day 2, step 1's push by day 4, and step 2's stop by
-  day 5.
-- **Stops:**
-  - the frozen specification goes on without a stop if its core is not empty;
-  - work **stops before the first commit in `src/`**, with the diff and Codex's review.
-- **Every local unit** runs through the metered launcher
-  [docs/validation/v0.5.11/tools/launch.py](docs/validation/v0.5.11/tools/launch.py). Its journal
-  is `docs/validation/v0.5.11/log.jsonl`, and its ledger is `caps-ledger.json`.
-- **The record of the split:**
-  [docs/plans/v0.5.11-consensus/](docs/plans/v0.5.11-consensus/README.md). What it moved out is
-  in [docs/plans/v0.5.12-proposal.md](docs/plans/v0.5.12-proposal.md), a proposal only.
+**None is open.** Opening the next phase is the maintainer's decision.
+
+### Previous phase record: v0.5.11 Battery version 5: specification and software
+
+**v0.5.11 Battery version 5: specification and software: closed on 2026-11-25 with declared
+limits (gate `REFUTED`: criterion 6 not demonstrated)**, by the maintainer's decision received at
+11:53 local (#218, comment 7165994585). It had opened on 2026-11-24 at 22:58Z (charter `eb70c13`);
+see [the section below](#v0511-battery-version-5-specification-and-software).
+- **The phase's answer:** battery version 5 was specified from the primary papers (frozen at
+  `ab828ce`, with correction 1 at `7bf74b1`). It was built in `src/` after tests written first
+  (`a896c49`, `f18d6f8`). Versions 1 to 4 and the old locks were shown unchanged.
+- **The limits are declared** in the report's section 7:
+  - criterion 6;
+  - the gate's two important findings, #222 and #223, which are preconditions of v0.5.12 before
+    any calibration;
+  - the screen's precedence outside `core/verdict.py`;
+  - the recorded deviations.
+- **The limits label:** 'closed with declared limits (gate REFUTED: criterion 6 not
+  demonstrated)'. Every later use of version 5 carries it.
+- **Version 5 is not adopted** for confirmatory use (charter).
+- **The report:** [docs/reports/v0.5.11-report.md](docs/reports/v0.5.11-report.md), approved by the
+  maintainer on 2026-11-25 (#218, comment 7165994585).
+- **The gate review:** [docs/gates/v0.5.11-review.md](docs/gates/v0.5.11-review.md), a fresh
+  Claude Fable 5.2 session on `cf95b100`, `REFUTED`, with
+  [its record](docs/gates/v0.5.11-gate-record.md). Its minor findings were posted to #59.
+- **The next phase is proposed only:** [docs/plans/v0.5.12-proposal.md](docs/plans/v0.5.12-proposal.md).
 
 ### Previous phase record: v0.5.10 Census and feasibility
 
@@ -1461,6 +1469,31 @@ section 8.
 - [ ] 9. The engine trial run and recorded: not met. G3 is partial, the G5 denominators differ,
   and five runs have no provenance.
 - [ ] 10. The incorporation plan written: not met in the gate.
+
+## v0.5.11 Battery version 5: specification and software
+
+Tracking: #218. Opened on 2026-11-24 at 22:58Z by the maintainer's decision (comment
+7146858167), which approved the charter at `eb70c13`. Charter:
+[docs/plans/v0.5.11-charter.md](docs/plans/v0.5.11-charter.md), with amendments 14 and 15; its
+exit criteria are in its section 8. Records: `docs/validation/v0.5.11/`, with the append-only
+journal `log.jsonl`.
+
+**The question:** can battery version 5 be specified from the primary papers and built in `src/`,
+so that the screen follows a frozen specification, level 2 stays version 2's verdict byte for
+byte, and versions 1 to 4 and every lock stay as they were?
+
+**Closed on 2026-11-25 with declared limits (gate `REFUTED`: criterion 6 not demonstrated)**
+(#218, comment 7165994585). The exit criteria of the charter's section 8, as the gate found them
+([docs/gates/v0.5.11-review.md](docs/gates/v0.5.11-review.md)). The limits are in the report's
+section 7.
+- [x] 1. The specification is frozen: met (`ab828ce`; correction 1 at `7bf74b1`).
+- [x] 2. The tests came first: met (`84010d0` before `a896c49`; `58c308d` before `f18d6f8`).
+- [x] 3. The `src/` change passed its stop: met, with the two recorded deviations.
+- [x] 4. Versions 1 to 4 did not move: met (proofs (i) to (iv); full CI evidence on `f18d6f8`).
+- [x] 5. No GPL code entered: met.
+- [ ] 6. The records are complete and the caps held: not met ("not demonstrated"; gaps G1 to G12).
+- [ ] 7. The gate passed and is stored: not met. The gate returned `REFUTED` on criterion 6; it is
+  stored unchanged.
 
 ---
 

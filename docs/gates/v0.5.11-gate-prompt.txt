@@ -1,0 +1,1 @@
+The exact prompt given to the v0.5.11 gate session (a fresh Claude Fable 5.2 session, launched by the maintainer's adviser on 2026-11-25). It included six focus points beyond the protocol and phase name, which the charter (docs/plans/v0.5.11-charter.md:471-472) does not provide for; recorded as the adviser's deviation.
