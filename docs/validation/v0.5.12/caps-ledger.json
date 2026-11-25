@@ -10,9 +10,9 @@
   "disk_bytes": 2000000000
  },
  "charged": {
-  "cpu_s": 110.594,
+  "cpu_s": 123.687,
   "download_bytes": 0,
-  "disk_peak_bytes": 251589398
+  "disk_peak_bytes": 278557250
  },
  "within_caps": "not demonstrated",
  "telemetry_complete": true,
@@ -136,6 +136,14 @@
    "start": "2026-11-25T20:40:35Z",
    "status": "ok",
    "cpu_s": 0.781,
+   "telemetry_complete": true
+  },
+  {
+   "attempt": "8accf5704f86480f88dd0090642b2eef",
+   "unit": "commit-check",
+   "start": "2026-11-25T21:14:10Z",
+   "status": "ok",
+   "cpu_s": 3.75,
    "telemetry_complete": true
   }
  ],
@@ -333,6 +341,81 @@
    "cpu_s": 1.812,
    "write_bytes": 160,
    "disk_bound_bytes": 250880834,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "851ea0b3b90944198f8f225333833810",
+   "start": "2026-11-25T21:14:07Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.906,
+   "write_bytes": 850450,
+   "disk_bound_bytes": 251752057,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "setup-cvenv",
+   "label": null,
+   "attempt": "91d7ebceb90e4cb7b0d1b49f8cd59198",
+   "start": "2026-11-25T21:14:21Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 50000000
+   },
+   "status": "failed",
+   "cpu_s": 1.906,
+   "write_bytes": 26671620,
+   "disk_bound_bytes": 277700845,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "inspect",
+   "label": "cvenv-diag",
+   "attempt": "df299fd4e9774ce78ecf700ea717c19e",
+   "start": "2026-11-25T21:15:06Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 1.984,
+   "write_bytes": 901,
+   "disk_bound_bytes": 277705956,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "inspect",
+   "label": "cvenv-diag2",
+   "attempt": "c84a0b9e4b584ec099bdcc89b27832ad",
+   "start": "2026-11-25T21:15:39Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000
+   },
+   "status": "failed",
+   "cpu_s": 1.688,
+   "write_bytes": 379,
+   "disk_bound_bytes": 277710340,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "a092410ec68e4e97845e60beb1d84a64",
+   "start": "2026-11-25T21:16:03Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.859,
+   "write_bytes": 843481,
+   "disk_bound_bytes": 278557250,
    "telemetry_complete": true
   }
  ]

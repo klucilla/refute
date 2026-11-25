@@ -1,0 +1,34 @@
+{
+ "schema": "refute-v0512-cvenv-1",
+ "decision": "#218 comment 7174740316, item 1 c",
+ "utc": "2026-11-25T21:14:22Z",
+ "copies": [
+  {
+   "source": ".venv/Scripts/python.exe",
+   "destination": ".cache/v0512/cvenv/Scripts/python.exe",
+   "sha256": "5bec0e6419a06b3d6728f1ec8ad36c689f571c80bfe5410d9da836ee2506a905"
+  },
+  {
+   "source": ".venv/Scripts/ruff.exe",
+   "destination": ".cache/v0512/cvenv/Scripts/ruff.exe",
+   "sha256": "87f102f9a4ba087cfaa8eca4f5be335263d6ddf41201f9fda96cbd26ea3b7467"
+  },
+  {
+   "source": ".cache/v0512/cpy/Lib/site-packages/_refute_venv.pth",
+   "destination": ".cache/v0512/cvenv/Lib/site-packages/_refute_venv.pth",
+   "sha256": "b918543e301a3eceb357c9da5ad5274a4cfb833643905acf76512e7039f7123c"
+  }
+ ],
+ "pyvenv_cfg_sha256": "9f757b12ae7e125774e23294fa722ee0e3a6751da8a0a2e1952b0bda7bcdf9db",
+ "home": ".cache/v0512/cpy",
+ "probe": {
+  "prefix_differs": true,
+  "refute": false,
+  "numpy": true,
+  "ruff": true,
+  "version": "3.13.16"
+ },
+ "probe_stderr_tail": "",
+ "downloads": "none: every source is inside the project",
+ "passed": false
+}
