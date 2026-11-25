@@ -1,0 +1,11 @@
+{
+ "name": "cvenv-check",
+ "question": "The container virtual environment's check, repeated once after the .pth copy (#218 comment 7176253382, item 2): sys.prefix differs from base_prefix, and numpy, ruff and refute (from C:/Projetos/refute/src) resolve.",
+ "choices": "docs/validation/v0.5.12/tools/cvenv_check.py through launch_v2, in the AppContainer with the cvenv's interpreter; its record is copied to step0/cvenv-check.json on success. A tree unit: the approved repetition of setup-cvenv's check.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/tools/cvenv_check.py"],
+ "identity": ["docs/validation/v0.5.12/tools/cvenv_check.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 60, "disk_bytes": 10000000},
+ "network": false,
+ "outputs": {"cvenv-check.json": "docs/validation/v0.5.12/step0/cvenv-check.json"}
+}
