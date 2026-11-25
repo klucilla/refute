@@ -1,0 +1,13 @@
+{
+ "schema": "refute-v0512-cvenv-check-1",
+ "decision": "#218 comment 7176253382, item 2",
+ "utc": "2026-11-25T22:22:01Z",
+ "executable": "python.exe",
+ "prefix_differs": true,
+ "numpy": true,
+ "ruff": true,
+ "refute_from_src": true,
+ "refute_file": "src/refute/__init__.py",
+ "refute_failure": null,
+ "passed": true
+}
