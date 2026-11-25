@@ -116,3 +116,44 @@ were stored by the metered unit `store-round`, with each SHA-256 checked on the 
 
 **The frozen specification:** `docs/plans/v0.5.11-spec.md` at commit `ab828ce`, SHA-256
 `d498a82ada2e31a5b47768d58d6af2e19af0a3c5e35364693f04886068612f15`.
+
+## Step 2: the three rounds on the src/ diff (2026-11-25)
+
+These rounds ran on the same thread, on the working-tree diff before any `src/` commit (charter,
+step 2). The files were stored unchanged by the metered unit `store-round` (launch_v6).
+
+| File | Bytes | SHA-256 |
+|---|---|---|
+| [step2-r1-codex-prompt.md](step2-r1-codex-prompt.md) | 2,907 | `4855f2bf10776d7261c1241b411c2c3e252188d20e82a0088de4dfc50a3f1796` |
+| [step2-r1-codex-answer.md](step2-r1-codex-answer.md) | 6,963 | `6ce947e5f7e4cc96a8d765cbbe6af834c7508723d5c297230263f6316d7fb9f9` |
+| [step2-r2-codex-prompt.md](step2-r2-codex-prompt.md) | 3,020 | `4b07045dad14da208263bb88452c2604dc9d2edce976f4b988f01698ea8a6634` |
+| [step2-r2-codex-answer.md](step2-r2-codex-answer.md) | 5,457 | `b2dfb00781643be86f4083701eaac5e3a2fd0cbcf26ec67f6667d32d1c233f18` |
+| [step2-r3-codex-prompt.md](step2-r3-codex-prompt.md) | 2,159 | `217cd8db7e19533fd9ba286f5b59845e40be12587b5793f409dcaa6bfed509e4` |
+| [step2-r3-codex-answer.md](step2-r3-codex-answer.md) | 2,477 | `b8b12c157323a944ab6b076db5364e34ebe274157bbbce17173fa3f567d576ce` |
+
+The tokens are the real sum of each round's events:
+
+| Round | Verdict | Blocking items | Input (cached) | Output | Tokens |
+|---|---|---|---|---|---|
+| 1 | `REFUTED` | 4 | 10,884,102 (10,544,512) | 41,937 | **381,527** |
+| 2 | `WEAKENED` | 3 | 13,002,796 (12,629,120) | 48,454 | **422,130** |
+| 3 | `SURVIVED` | none in the diff | 15,668,115 (15,273,216) | 53,167 | **448,066** |
+
+- **Round 1:**
+  1. contain numerical failures;
+  2. refuse an authored `entry: null` for versions 1 to 4;
+  3. attach the screen in `conclude_analysis` and serialize it only for version 5;
+  4. the frozen availability and coverage rules.
+- **Round 2:**
+  1. the frozen input predicate with weights on a common scale, and index checks;
+  2. a missing flattened curve;
+  3. 64-bit transfer counters in the launcher (`tools/launch_v6.py`).
+- **Round 3:** the reviewed diff may be committed once the approved repetition of the tests unit
+  passes on it. It also notes that the ledger's `netstat` description is inherited and should
+  name the source per version.
+- **The reviewed diff** is
+  [../../validation/v0.5.11/step2/src-change.diff](../../validation/v0.5.11/step2/src-change.diff):
+  `git diff HEAD -- src tests` at `168a36f`, SHA-256
+  `35102b10296f31d8d1cf80038295632bb8888588c0e3a42e81b22741221a7546`.
+- **The thread's total over 7 rounds:** 141,197 + 194,054 + 272,797 + 318,852 + 381,527 + 422,130
+  + 448,066 = **2,178,623** review tokens.
