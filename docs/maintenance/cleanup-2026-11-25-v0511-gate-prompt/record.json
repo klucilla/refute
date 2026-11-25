@@ -1,0 +1,19 @@
+{
+ "utc": "2026-11-25T17:05:16Z",
+ "decision": "#218, comment 7168908914, item 2",
+ "head": "3317f622a03492fff1ff4b4f217c8c36e800fb2c",
+ "stored_as": "docs/gates/v0.5.11-gate-prompt-full.txt",
+ "rows": [
+  {
+   "path": ".cache/v0511/gate-prompt-full/v0.5.11-gate-prompt-full.txt",
+   "bytes": 4043,
+   "sha256": "25f0f6a302deac2bcbd824f3f3af153bb6182dca93e896f344c6ac99fee5a5cc",
+   "head_blob_sha256": "25f0f6a302deac2bcbd824f3f3af153bb6182dca93e896f344c6ac99fee5a5cc",
+   "match": true,
+   "status": "deleted; integrated in git, not archived"
+  }
+ ],
+ "folders_removed": [
+  ".cache/v0511/gate-prompt-full/"
+ ]
+}
