@@ -23,7 +23,13 @@ from refute.packs.tess.detrend import detrend
 from refute.packs.tess.discover import injection as inj
 from refute.packs.tess.discover.transforms import Transform, transforms_for
 from refute.packs.tess.params import TessTestPlan
-from refute.packs.tess.pipeline import attack_candidate, expected_by_role, global_prewhitening
+from refute.packs.tess.pipeline import (
+    attack_candidate,
+    expected_by_role,
+    global_prewhitening,
+    is_v5,
+    screen_record,
+)
 from refute.packs.tess.search import search_period
 from refute.packs.tess.types import TessData
 
@@ -59,6 +65,10 @@ def chain(
     stage_verdict, stage_reason = aggregate([t for t in tests if t.name in staged], expected=staged)
     gate = next((t for t in tests if t.name == "snr"), None)
     candidate = gauntlet.candidate
+    extra: dict[str, Any] = {}
+    if is_v5(plan):
+        # v0.5.11, version 5 only: the screen (level 1) from the stage's final results
+        extra["screen"] = screen_record(gauntlet, tests, data.star, plan)
     return {
         "candidate": None
         if candidate is None
@@ -73,6 +83,7 @@ def chain(
         "stage_verdict_reason": stage_reason,
         "gate_passed": gate is not None and gate.status is TestStatus.PASS,
         "survived_stage_tests": stage_verdict.value in SURVIVING,
+        **extra,
     }
 
 

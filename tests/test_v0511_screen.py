@@ -41,9 +41,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from screen_reference import f1_reference  # noqa: E402
 
 SPEC_SHA256 = "d498a82ada2e31a5b47768d58d6af2e19af0a3c5e35364693f04886068612f15"
-NEEDS_SCREEN = pytest.mark.xfail(
-    strict=True, raises=ModuleNotFoundError, reason="screen_d5 does not exist before step 2"
-)
 EB_HALF = SignalSpec(period=1.8, t0=1325.7, depth=0.006, duration=2 / 24, odd_depth_factor=0.75)
 
 
@@ -69,7 +66,6 @@ def _gate(status=TestStatus.PASS) -> list[TestResult]:
     return [TestResult("snr", status, Severity.GATE, "gate", coverage=10, coverage_unit="u")]
 
 
-@NEEDS_SCREEN
 @pytest.mark.parametrize("correlated", [False, True], ids=["white", "correlated"])
 def test_f1_reproduces_the_reference_decisions_on_the_calibration_fixtures(correlated):
     s = screen()
@@ -83,7 +79,6 @@ def test_f1_reproduces_the_reference_decisions_on_the_calibration_fixtures(corre
         assert got["coverage"] == ref.coverage
 
 
-@NEEDS_SCREEN
 def test_f1_passes_a_planet_and_fails_a_binary_at_half_the_period():
     s = screen()
     lc, _ = make_lightcurve(PLANET, seed=3)
@@ -94,7 +89,6 @@ def test_f1_passes_a_planet_and_fails_a_binary_at_half_the_period():
     assert r["state"] == "fail" and r["metrics"]["oe_box"] > r["threshold"] == 3.0
 
 
-@NEEDS_SCREEN
 def test_f1_not_assessed_paths():
     s = screen()
     lc, _ = make_lightcurve(PLANET, seed=3)
@@ -119,7 +113,6 @@ def test_f1_not_assessed_paths():
     assert r["state"] == "not_assessed"
 
 
-@NEEDS_SCREEN
 def test_ineligible_gives_a_null_outcome_and_empty_maps():
     s = screen()
     lc, _ = make_lightcurve(PLANET, seed=3)
@@ -131,7 +124,6 @@ def test_ineligible_gives_a_null_outcome_and_empty_maps():
     assert rec["eligible"] is False and rec["outcome"] is None
 
 
-@NEEDS_SCREEN
 @pytest.mark.parametrize(
     ("state", "outcome"),
     [("pass", "retained"), ("fail", "rejected"), ("not_assessed", "unassessed")],
@@ -149,7 +141,6 @@ def test_precedence_and_a4_on_the_screen(monkeypatch, state, outcome):
     )
 
 
-@NEEDS_SCREEN
 def test_a_report_only_failure_changes_only_its_own_record(monkeypatch):
     s = screen()
     lc, _ = make_lightcurve(PLANET, seed=3)
@@ -174,7 +165,91 @@ def test_a_report_only_failure_changes_only_its_own_record(monkeypatch):
     assert changed["report_only"] != normal["report_only"]
 
 
-@NEEDS_SCREEN
+def test_an_extreme_flux_error_never_raises_in_f1():
+    # Codex's review of the step-2 diff, item 1: a finite, positive error whose weight overflows
+    s = screen()
+    lc, _ = make_lightcurve(PLANET, seed=3)
+    # (and its second review, item 1: the frozen predicate keeps such points valid; the weights
+    # on a common scale cannot represent the others, so F1 is not assessed, never a pass)
+    err = lc.flux_err.copy()
+    err[:5] = 1e-200
+    r = s.f1_box(lc.time, lc.flux, err, PLANET.period, PLANET.t0, PLANET.duration)
+    assert r["state"] == "not_assessed"
+    assert r["metrics"]["dropped"] == 0 and r["metrics"]["valid"] == lc.time.size
+    rec = s.compute_screen(
+        LightCurveData(lc.time, lc.flux, err, lc.sector, lc.year),
+        _candidate(PLANET),
+        _gate(),
+        make_star(),
+    )
+    assert rec["outcome"] == "unassessed"
+    assert all(v["state"] == "unavailable" for v in rec["report_only"].values())
+
+
+def test_an_unrepresentable_epoch_is_not_assessed():
+    s = screen()
+    lc, _ = make_lightcurve(PLANET, seed=3)
+    r = s.f1_box(lc.time, lc.flux, lc.flux_err, 1e-20, PLANET.t0, 1e-21)
+    assert r["state"] == "not_assessed"
+
+
+def test_an_eligible_case_without_a_curve_is_unassessed():
+    s = screen()
+    rec = s.compute_screen(None, _candidate(PLANET), _gate(), make_star())
+    assert rec["eligible"] is True and rec["outcome"] == "unassessed"
+    assert rec["core"]["F1"]["state"] == "not_assessed"
+    assert all(v["state"] == "unavailable" for v in rec["report_only"].values())
+
+
+def test_direct_finalization_without_a_curve_keeps_the_legacy_verdict():
+    from dataclasses import replace
+
+    from refute.packs.tess.params import TessTestPlan
+    from refute.packs.tess.pipeline import analyze_data, conclude_analysis
+    from refute.packs.tess.synthetic import discovery_v05_plan_dict, scenario_data
+
+    d = discovery_v05_plan_dict()
+    d["discovery"]["version"] = 5
+    d["discovery"]["entry"] = "search"
+    plan = TessTestPlan.model_validate(d)
+    data = scenario_data("planet")
+    a = analyze_data(data, plan, stage=1)
+    g = replace(a.gauntlet, flattened=None)
+    b = conclude_analysis(a.search, a.flattened_search, g, a.holdout, False, plan=plan, stage=1)
+    assert b.verdict == a.verdict and b.verdict_reason == a.verdict_reason
+    assert b.extras["screen"]["core"]["F1"]["state"] == "not_assessed"
+
+
+def test_a_shared_fit_failure_stays_in_its_dependents(monkeypatch):
+    # Codex's review of the step-2 diff, item 1: a LinAlgError in the shared trapezoid fit makes
+    # F1_trap, F3 and F4 unavailable and leaves the core, F2, U1 and the outcome unchanged
+    s = screen()
+    lc, _ = make_lightcurve(PLANET, seed=3)
+    star, cand = make_star(), _candidate(PLANET)
+    normal = s.compute_screen(lc, cand, _gate(), star)
+
+    def broken(*args, **kwargs):
+        raise np.linalg.LinAlgError("forced by the test")
+
+    monkeypatch.setattr(s, "_trapezoid", broken)
+    failed = s.compute_screen(lc, cand, _gate(), star)
+    assert failed["outcome"] == normal["outcome"] and failed["core"] == normal["core"]
+    for name in ("F1_trap", "F3", "F4"):
+        assert failed["report_only"][name]["state"] == "unavailable"
+        assert "LinAlgError" in failed["report_only"][name]["reason"]
+    for name in ("F2", "U1"):
+        assert failed["report_only"][name] == normal["report_only"][name]
+
+
+def test_f2_always_carries_its_two_flags():
+    s = screen()
+    lc, _ = make_lightcurve(PLANET, seed=3)
+    for duration in (PLANET.duration, 1e-7):
+        f2 = s.report_only(lc, _candidate(PLANET, duration=duration), make_star())["F2"]
+        assert "would_be_significant" in f2["metrics"]
+        assert "exception_first_condition" in f2["metrics"]
+
+
 def test_report_only_unavailable_paths():
     s = screen()
     lc, _ = make_lightcurve(PLANET, seed=3)
@@ -189,7 +264,6 @@ def test_report_only_unavailable_paths():
         assert "coverage" in ro[name] and "coverage_unit" in ro[name]
 
 
-@NEEDS_SCREEN
 def test_the_screen_record_and_its_determinism():
     s = screen()
     assert s.SPEC_SHA256 == SPEC_SHA256
@@ -204,7 +278,6 @@ def test_the_screen_record_and_its_determinism():
     assert rec["outcome"] in ("retained", "rejected", "unassessed")
 
 
-@NEEDS_SCREEN
 def test_the_screen_reads_the_curve_without_writing_it():
     s = screen()
     lc, _ = make_lightcurve(PLANET, seed=3)

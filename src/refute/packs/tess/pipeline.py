@@ -572,7 +572,24 @@ def analyze_data(
     # Blind holdout: raw data and sector metadata only. Never the global candidate.
     holdout = run_holdout(data.lc, data.sectors, plan)
     return conclude_analysis(
-        search, flat, gauntlet, holdout, catalogs is not None, plan=plan, stage=stage
+        search, flat, gauntlet, holdout, catalogs is not None, plan=plan, stage=stage,
+        star=data.star,
+    )  # fmt: skip
+
+
+def is_v5(plan: TessTestPlan | None) -> bool:
+    """True for a v0.5.11 claim (discovery version 5): version 2's path plus the screen."""
+    return plan is not None and plan.discovery is not None and plan.discovery.version == 5
+
+
+def screen_record(gauntlet: GauntletOutcome, tests, star, plan: TessTestPlan) -> dict:
+    """The version-5 screen record (``screen_d5.compute_screen``), from the gauntlet's curve and
+    final candidate and the final legacy results; it never changes them
+    (docs/plans/v0.5.11-spec.md)."""
+    from refute.packs.tess.screen_d5 import compute_screen
+
+    return compute_screen(
+        gauntlet.flattened, gauntlet.candidate, tests, star, plan.gauntlet.plausibility
     )
 
 
@@ -596,12 +613,15 @@ def conclude_analysis(
     *,
     plan: TessTestPlan | None = None,
     stage: int | None = None,
+    star=None,
 ) -> Analysis:
     """The end of an analysis: the coverage rule over every test, then the verdict.
 
     For a discover claim (a plan with a discovery section; v0.4, issue #174) the tests of a
     later stage are reported INCONCLUSIVE with zero coverage, and the verdict aggregates the
-    decisive tests only; the diagnostics are returned apart, in ``roles``."""
+    decisive tests only; the diagnostics are returned apart, in ``roles``. For a version-5 claim
+    (v0.5.11) the screen is attached last, in ``extras["screen"]``, after the verdict; ``star``
+    feeds only its report-only F3."""
     # Domain-agnostic coverage rule: a PASS that examined nothing is INCONCLUSIVE.
     tests = enforce_coverage([*gauntlet.tests, holdout.test])
     if plan is not None and plan.v05:
@@ -627,6 +647,9 @@ def conclude_analysis(
         from refute.core.inconclusive import with_classes
 
         roles.reason = with_classes(roles.reason, roles.decisive)
+    extras: dict[str, Any] = {}
+    if is_v5(plan):
+        extras["screen"] = screen_record(gauntlet, tests, star, plan)
     return Analysis(
         search,
         flattened,
@@ -635,6 +658,7 @@ def conclude_analysis(
         tests,
         roles.verdict.value,
         roles.reason,
+        extras=extras,
         roles=roles,
         stage=run_stage,
         deferred=deferred,
@@ -836,7 +860,11 @@ def v05_record(analysis: Analysis, data: TessData, plan: TessTestPlan) -> dict[s
     from refute.packs.tess.search import kept_peak_sde
 
     return {
-        "discovery_version": 4 if plan.is_v052 else 3 if plan.is_v051 else 2,
+        "discovery_version": 4
+        if plan.is_v052
+        else 3
+        if plan.is_v051
+        else (5 if plan.discovery is not None and plan.discovery.version == 5 else 2),
         "sensitivity_rule": "refute.core.sensitivity.enforce_sensitivity (#185)",
         "parameters": params,
         "sde_kept_peak": None
@@ -1047,6 +1075,9 @@ def build_result(
     if plan.is_v051:
         # v0.5.1 claims only (WP4), so the records of earlier claims keep their keys and bytes.
         record["v051"] = v051_record(analysis)
+    if is_v5(plan) and "screen" in analysis.extras:
+        # v0.5.11, version-5 claims only: the screen (level 1), never a verdict
+        record["screen"] = analysis.extras["screen"]
     if analysis.gauntlet.timing is not None:
         # M4 piece 3 (switch on only, so records with the switch off keep their keys).
         record["global_timing"] = analysis.gauntlet.timing

@@ -297,6 +297,11 @@ V05_TESTS = (
 )
 # v0.5.1 (discovery version 3): the EB route's diagnostic (plan, amendments 4 and 9)
 V051_TESTS = ("duration_excess",)
+# v0.5.11: the explicit version sets that replace ``version >= 2`` and ``version >= 3``
+# (docs/plans/v0.5.11-spec.md, section 2): version 5 runs version 2's path, so it joins the
+# v0.5 set and no other.
+V05_VERSIONS = (2, 3, 4, 5)
+V051_VERSIONS = (3, 4)
 GATE_TEST = "snr"
 METHOD_STATUS_REFERENCE = "docs/validation/v0.2.1/closing-2026-10-27.md"
 
@@ -406,7 +411,13 @@ class DiscoveryParams(_Model):
     # 1: v0.4. 2: v0.5, the sensitivity rule and the v0.5 tests (needs the plan's `stronger`).
     # 3: v0.5.1, the corrected battery (needs `stronger` and `v051`).
     # 4: v0.5.2, battery version 4 (needs `stronger`, `v051` and `v052`).
-    version: Literal[1, 2, 3, 4] = 1
+    # 5: v0.5.11, battery version 5 (exploratory): version 2's path and roles, plus the screen
+    #    of refute.packs.tess.screen_d5 (needs `stronger` and `entry: search`; never `v051` or
+    #    `v052`). docs/plans/v0.5.11-spec.md.
+    version: Literal[1, 2, 3, 4, 5] = 1
+    # v0.5.11: the entry of version 5, "search" only; refused for versions 1 to 4, and left out
+    # of the dump when absent, so every earlier plan resolves to the same bytes (issue #30).
+    entry: Literal["search"] | None = None
     decisive: list[str] = Field(min_length=1)
     diagnostic: list[str] = Field(default_factory=list)
     stages: dict[str, Literal[1, 2]] = Field(default_factory=dict)
@@ -426,8 +437,14 @@ class DiscoveryParams(_Model):
         both = sorted(set(self.decisive) & set(self.diagnostic))
         if both:
             raise ValueError("a test cannot be both decisive and diagnostic: " + ", ".join(both))
-        known = set(DISCOVERY_TESTS) | (set(V05_TESTS) if self.version >= 2 else set())
-        if self.version >= 3:
+        # v0.5.11: explicit version sets, so that version 5 joins version 2's set and no other
+        if self.version == 5 and self.entry != "search":
+            raise ValueError("discovery version 5 needs entry: search")
+        if self.version != 5 and "entry" in self.model_fields_set:
+            # an authored entry, null included, is refused for versions 1 to 4 (spec, section 3)
+            raise ValueError("discovery.entry goes with version 5 only")
+        known = set(DISCOVERY_TESTS) | (set(V05_TESTS) if self.version in V05_VERSIONS else set())
+        if self.version in V051_VERSIONS:
             known |= set(V051_TESTS)  # the version-3 diagnostic of the EB route (amendment 9)
         unknown = sorted(set(self.roles) - known)
         if unknown:
@@ -460,6 +477,14 @@ class DiscoveryParams(_Model):
             **{name: "decisive" for name in self.decisive},
             **{name: "diagnostic" for name in self.diagnostic},
         }
+
+    @model_serializer(mode="wrap")
+    def _without_absent_entry(self, handler: Any) -> dict[str, Any]:
+        """v0.5.11: a discovery section without ``entry`` dumps exactly as before it existed."""
+        out = handler(self)
+        if out.get("entry", 0) is None:
+            del out["entry"]
+        return out
 
     def stage_of(self, name: str) -> int:
         return int(self.stages.get(name, 1))
@@ -521,12 +546,12 @@ class TessTestPlan(_Model):
         or category for every decisive fatal or warning test (v0.5 acceptance, case 1.5); any
         other plan must not have the section."""
         version = self.discovery.version if self.discovery is not None else 1
-        version2 = version >= 2
+        version2 = version in V05_VERSIONS
         if version2 != (self.stronger is not None):
             raise ValueError(
                 "the `stronger` section goes with discovery version 2 or 3, and only with them"
             )
-        if (version >= 3) != (self.v051 is not None):
+        if (version in V051_VERSIONS) != (self.v051 is not None):
             raise ValueError("the `v051` section goes with discovery version 3, and only with it")
         if (version == 4) != (self.v052 is not None):
             raise ValueError("the `v052` section goes with discovery version 4, and only with it")
@@ -541,7 +566,7 @@ class TessTestPlan(_Model):
                 raise ValueError(
                     "decisive tests without a sensitivity rule: " + "; ".join(problems)
                 )
-        if version >= 3:
+        if version in V051_VERSIONS:
             # v0.5.1 WP5 (row 5.1): version 3 corrects the v0.5 battery and drops none of its
             # tests; every decisive or diagnostic test of v0.5 keeps a role
             from refute.packs.tess.calib05.values import V05_DECISIVE, V05_DIAGNOSTIC

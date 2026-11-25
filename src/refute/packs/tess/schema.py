@@ -87,7 +87,10 @@ class TessClaimSchema:
         # packaging rehearsal, row 5.4, found this check limited to version 2)
         version = int(discovery.get("version", 1))
         # a version-3 claim also gives a role to the diagnostic duration_excess (amendment 9)
-        expected = set(expected_tests(catalogs, version >= 2, version >= 3))
+        # v0.5.11: explicit version sets (version 5 has version 2's tests)
+        from refute.packs.tess.params import V05_VERSIONS, V051_VERSIONS
+
+        expected = set(expected_tests(catalogs, version in V05_VERSIONS, version in V051_VERSIONS))
         roles = set(discovery["decisive"]) | set(discovery["diagnostic"])
         if roles != expected:
             missing = sorted(expected - roles)
