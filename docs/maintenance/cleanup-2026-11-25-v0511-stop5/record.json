@@ -1,0 +1,101 @@
+{
+ "utc": "2026-11-25T12:18:00Z",
+ "decision": "#218, comment 7161509920, item 4",
+ "drive": "K:/Meu Drive/Pessoal/Projetos/refute/cache-archive-2026-11-25-v0511-stop5",
+ "files": 11,
+ "bytes": 1403899,
+ "all_match": true,
+ "folders_removed": [
+  ".cache/v0511/draft/"
+ ],
+ "rows": [
+  {
+   "path": ".cache/v0511/draft/screen_d5.py",
+   "bytes": 23034,
+   "sha256": "dfe84959c93fc097e796eb6d88935d2ba879f7fac12139c30cf9f80d9afd7bd5",
+   "destination_sha256": "dfe84959c93fc097e796eb6d88935d2ba879f7fac12139c30cf9f80d9afd7bd5",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/v0511/step2/check-pre-r1.diff",
+   "bytes": 52714,
+   "sha256": "35102b10296f31d8d1cf80038295632bb8888588c0e3a42e81b22741221a7546",
+   "destination_sha256": "35102b10296f31d8d1cf80038295632bb8888588c0e3a42e81b22741221a7546",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/v0511/step2/check-after-pop.diff",
+   "bytes": 52714,
+   "sha256": "35102b10296f31d8d1cf80038295632bb8888588c0e3a42e81b22741221a7546",
+   "destination_sha256": "35102b10296f31d8d1cf80038295632bb8888588c0e3a42e81b22741221a7546",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/v0511/step2/check-now.diff",
+   "bytes": 52714,
+   "sha256": "35102b10296f31d8d1cf80038295632bb8888588c0e3a42e81b22741221a7546",
+   "destination_sha256": "35102b10296f31d8d1cf80038295632bb8888588c0e3a42e81b22741221a7546",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/v0511/step2/check-pre-adjust.diff",
+   "bytes": 52714,
+   "sha256": "35102b10296f31d8d1cf80038295632bb8888588c0e3a42e81b22741221a7546",
+   "destination_sha256": "35102b10296f31d8d1cf80038295632bb8888588c0e3a42e81b22741221a7546",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/v0511/step2/check-pre-commit.diff",
+   "bytes": 53117,
+   "sha256": "c24bc496a3afdc7d5d402dbbb1f1058adc4190271bde4d570aad677a139c6ba4",
+   "destination_sha256": "c24bc496a3afdc7d5d402dbbb1f1058adc4190271bde4d570aad677a139c6ba4",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/v0511/step2/committed.diff",
+   "bytes": 53117,
+   "sha256": "c24bc496a3afdc7d5d402dbbb1f1058adc4190271bde4d570aad677a139c6ba4",
+   "destination_sha256": "c24bc496a3afdc7d5d402dbbb1f1058adc4190271bde4d570aad677a139c6ba4",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/v0511/step2/step2.diff",
+   "bytes": 40573,
+   "sha256": "2c016e4e5d6b967eeca767426782e7ca45413bb13bf8247210be54f27e2be18c",
+   "destination_sha256": "2c016e4e5d6b967eeca767426782e7ca45413bb13bf8247210be54f27e2be18c",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/v0511/step2/step2-r2.diff",
+   "bytes": 50680,
+   "sha256": "97366f3bcfd1d76591d084d17cab72cffa2c22288e3d22dd81d8cdfb4b698745",
+   "destination_sha256": "97366f3bcfd1d76591d084d17cab72cffa2c22288e3d22dd81d8cdfb4b698745",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/v0511/step2/step2-r3.diff",
+   "bytes": 53988,
+   "sha256": "4a35b8ff36f65a72ae46f7664e55a152cf9078b2365bdddde7c040e1f1867ad9",
+   "destination_sha256": "4a35b8ff36f65a72ae46f7664e55a152cf9078b2365bdddde7c040e1f1867ad9",
+   "match": true,
+   "status": "deleted, archived"
+  },
+  {
+   "path": ".cache/v0511/ci-rest-windows.log",
+   "bytes": 918534,
+   "sha256": "c0b8727f0e720659513592524cfc24474148afeae3db315f09a612d643cab668",
+   "destination_sha256": "c0b8727f0e720659513592524cfc24474148afeae3db315f09a612d643cab668",
+   "match": true,
+   "status": "deleted, archived"
+  }
+ ]
+}
