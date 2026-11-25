@@ -78,3 +78,22 @@ its impact. Recorded outputs are never edited.
   other rule is version 3's.
 - **A gap:** `.cache/tools/junit_counts.py` was chained after the refused launch in the same
   shell command and ran outside the meter. It found no file. This is gap G9.
+
+## 6. 2026-11-25: the corrected step-2 tests unit was interrupted for lost telemetry
+
+- **Source:** the journal, attempt `c1fc9e01d061448c857734e99b40ba6e` (unit `tests`, label
+  `step2-b`, launch_v4, 00:32:39Z to 00:41:32Z, 532.8 CPU-s).
+- **What happened:** the launcher stopped the job with reason `telemetry`, as version 4
+  requires, and no JUnit file was written.
+- **Two possible causes, which the journal cannot separate:**
+  - pytest deletes temporary files during the run, so a file can vanish between the scan's
+    listing and its `stat`, and the `FileNotFoundError` counted as a scan error;
+  - a `netstat -e` counter wrapped (it may be 32 bits wide) and read as a decrease.
+- **The correction:** `tools/launch_v5.py`.
+  - A vanished file is skipped, not an error. Any other scan error still stops the job.
+  - Each transfer counter is unwrapped once per poll when it was above 2^31.
+- **What follows:**
+  - The unit started, so its repetition needs the maintainer's approval in #218 (rule (d)). It
+    is requested at the stop.
+  - The JUnit evidence of the corrected diff is therefore not yet available.
+  - The earlier step-2 run (`step2-a`, 161 passed) is evidence for the earlier diff only.
