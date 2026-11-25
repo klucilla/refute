@@ -49,8 +49,9 @@ def hashes() -> dict[str, str]:
 
 def main() -> int:
     label = sys.argv[1]
-    if label not in ("before", "after"):
-        raise SystemExit("label must be before or after")
+    # "after-fix": the record after correction 1's src/ commit (#218 comment 7162573384, item 2)
+    if label not in ("before", "after", "after-fix"):
+        raise SystemExit("label must be before, after or after-fix")
     doc = {
         "labels": ["exploratory", "method_status: not_validated"],
         "head": subprocess.run(

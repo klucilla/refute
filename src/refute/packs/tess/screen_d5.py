@@ -17,6 +17,11 @@ Implements the frozen specification docs/plans/v0.5.11-spec.md (commit ab828ce, 
 
 Every [choice] of the specification is implemented as written. The equations' sources are in
 docs/plans/sources/v0.5.11-screen-papers-2026-11-24.md. No GPL implementation was read.
+
+**Correction 1** (docs/plans/v0.5.11-spec-correction-1.md, SHA-256 ``CORRECTION_SHA256``): every
+sigma of the cadences with finite time and flux must be finite and in [1e-12, 1e3]. Otherwise F1
+is ``not_assessed`` and each report-only quantity ``unavailable``, with the reason
+``invalid_uncertainty``. The weight is the unscaled 1/sigma^2.
 """
 
 from __future__ import annotations
@@ -27,6 +32,9 @@ from typing import Any
 import numpy as np
 
 SPEC_SHA256 = "d498a82ada2e31a5b47768d58d6af2e19af0a3c5e35364693f04886068612f15"
+CORRECTION_SHA256 = "62a5532f01c498901dd2c1546ad428e33cb4669efa14caf3d80d57f9b19b6df7"
+SIGMA_MIN, SIGMA_MAX = 1e-12, 1e3  # correction 1: the input range of sigma, both ends included
+INVALID_UNCERTAINTY = "invalid_uncertainty"
 LABELS = ["exploratory", "method_status: not_validated"]
 GATE_TEST = "snr"
 F1_THRESHOLD = 3.0
@@ -112,27 +120,20 @@ def _valid(time, flux, flux_err):
     return t[ok], f[ok], s[ok], int((~ok).sum())
 
 
+def _sigma_in_range(time, flux, flux_err) -> bool:
+    """Correction 1: every sigma of the cadences with finite t and f is finite and in
+    [SIGMA_MIN, SIGMA_MAX]."""
+    t, f, s = (np.asarray(x, dtype=float) for x in (time, flux, flux_err))
+    sm = s[np.isfinite(t) & np.isfinite(f)]
+    with np.errstate(invalid="ignore"):
+        return bool(np.all(np.isfinite(sm) & (sm >= SIGMA_MIN) & (sm <= SIGMA_MAX)))
+
+
 def _weights(s: np.ndarray) -> np.ndarray:
-    """The weights of the valid set.
-
-    - **Normally 1/sigma^2,** unscaled: the specification's own arithmetic, whenever every weight
-      is finite and positive.
-    - **Otherwise on a common scale,** (min sigma / sigma)^2. Every weighted mean and standard
-      deviation of the specification is unchanged by a common factor.
-    - **A ValueError** when a weight cannot be represented even at that scale: zero, or not
-      finite.
-
-    The maintainer's decision received on 2026-11-25 at 00:04 local, #218 comment 7151559282,
-    item 1."""
-    with np.errstate(all="ignore"):
-        w = 1.0 / s**2
-    if np.all(np.isfinite(w)) and np.all(w > 0):
-        return w
-    with np.errstate(all="ignore"):
-        w = (float(np.min(s)) / s) ** 2
-    if not np.all(np.isfinite(w)) or np.any(w <= 0):
-        raise ValueError("the weights of the valid set cannot be represented")
-    return w
+    """The weights of the valid set: the unscaled 1/sigma^2 of section 5. Under correction 1
+    every sigma is in [1e-12, 1e3], so every weight is in [1e-6, 1e24] and, for up to 1e7
+    points, no sum or weighted mean can overflow (the correction's section 4)."""
+    return 1.0 / s**2
 
 
 def _candidate_ok(period, t0, duration) -> bool:
@@ -210,12 +211,11 @@ def _f1_box(time, flux, flux_err, period, t0, duration) -> dict:
         return _core("not_assessed", "candidate not finite or not positive")
     t, f, s, dropped = _valid(time, flux, flux_err)
     counts = {"dropped": dropped, "valid": int(t.size)}
+    if not _sigma_in_range(time, flux, flux_err):
+        return _core("not_assessed", INVALID_UNCERTAINTY, 0, counts)
     if t.size < MIN_VALID:
         return _core("not_assessed", "fewer than 20 valid points", 0, counts)
-    try:
-        w = _weights(s)
-    except ValueError as exc:
-        return _core("not_assessed", str(exc), 0, counts)
+    w = _weights(s)
     k = _epochs(t, period, t0)
     in_tr = np.abs(t - (t0 + k * period)) <= duration / 2.0
     sel_by, good_by = {}, {}
@@ -663,12 +663,13 @@ def report_only(flattened, candidate, star, plausibility=None) -> dict:
     period, t0, duration = candidate.period, candidate.t0, candidate.duration
     names = ("F1_trap", "F2", "F3", "F4", "U1")
     t, f, s, _ = _valid(flattened.time, flattened.flux, flattened.flux_err)
-    if not _candidate_ok(period, t0, duration) or t.size < MIN_VALID:
+    if not _candidate_ok(period, t0, duration):
         return {n: _unavailable(n, "candidate or curve not usable") for n in names}
-    try:
-        w = _weights(s)
-    except ValueError as exc:
-        return {n: _unavailable(n, str(exc)) for n in names}
+    if not _sigma_in_range(flattened.time, flattened.flux, flattened.flux_err):
+        return {n: _unavailable(n, INVALID_UNCERTAINTY) for n in names}
+    if t.size < MIN_VALID:
+        return {n: _unavailable(n, "candidate or curve not usable") for n in names}
+    w = _weights(s)
 
     def noise():
         return _noise(t, f, w, period, t0, duration)
@@ -732,6 +733,7 @@ def compute_screen(flattened, candidate, tests, star=None, plausibility=None) ->
     record: dict[str, Any] = {
         "version": 5,
         "spec_sha256": SPEC_SHA256,
+        "spec_correction_sha256": CORRECTION_SHA256,
         "entry": "search",
         "eligible": eligible,
         "outcome": None,

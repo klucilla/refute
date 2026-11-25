@@ -188,15 +188,13 @@ def test_an_extreme_flux_error_never_raises_in_f1():
 
 # --- correction 1 of the specification: the input range of sigma -----------------------------
 # docs/plans/v0.5.11-spec-correction-1.md; the maintainer's decision of 2026-11-25, #218 comment
-# 7162573384, item 1. Written and pushed before the code: the strict expected failures below
-# fail on the module as committed at a896c49. The E1 test of 912087a (sigma = 1e-154 assessed
-# like ordinary errors) is withdrawn: the rule decides the opposite.
+# 7162573384, item 1. Written and pushed before the code (58c308d), where six of them were strict
+# expected failures on the module as committed at a896c49 (step2/expected-tests-ir.json). The E1
+# test of 912087a (sigma = 1e-154 assessed like ordinary errors) is withdrawn: the rule decides
+# the opposite.
 
 CORRECTION_SHA256 = "62a5532f01c498901dd2c1546ad428e33cb4669efa14caf3d80d57f9b19b6df7"
 INVALID = "invalid_uncertainty"
-BEFORE_CODE = pytest.mark.xfail(
-    strict=True, reason="spec correction 1: the input rule is not in the module at a896c49"
-)
 # the reviewed path (a896c49) on ordinary errors, recorded before the change
 REVIEWED = {"planet": ("pass", 2.507454281461856), "eb_half": ("fail", 43.09203063661559)}
 BIN_WITNESS_TIMES = np.array(
@@ -229,7 +227,6 @@ def test_the_ends_of_the_range_are_assessed_like_ordinary_errors(sigma):
     assert math.isclose(r["metrics"]["oe_box"], oe, rel_tol=1e-9)
 
 
-@BEFORE_CODE
 def test_codex_first_witness_is_unassessed():
     # equal sigma = 4.5e-153 on a curve whose raw reductions are representable (on a896c49 it
     # is assessed by the raw path; E1's bound turned its pass into a fail)
@@ -242,7 +239,6 @@ def test_codex_first_witness_is_unassessed():
     assert r["state"] == "not_assessed" and r["reason"] == INVALID
 
 
-@BEFORE_CODE
 def test_codex_second_witness_is_unassessed():
     # 20 points: the flat total weight is finite, the sum of the three bin totals overflows
     s = screen()
@@ -258,7 +254,6 @@ def test_codex_second_witness_is_unassessed():
     assert r["state"] == "not_assessed" and r["reason"] == INVALID
 
 
-@BEFORE_CODE
 def test_the_case_of_errata_12_is_unassessed_in_the_core_and_the_report():
     s = screen()
     assert _equal_errors(1e-154)["reason"] == INVALID
@@ -273,14 +268,12 @@ def test_the_case_of_errata_12_is_unassessed_in_the_core_and_the_report():
         assert v["state"] == "unavailable" and v["reason"] == INVALID
 
 
-@BEFORE_CODE
 @pytest.mark.parametrize("sigma", [9.99e-13, 1.001e3], ids=["below", "above"])
 def test_just_outside_the_range_is_unassessed(sigma):
     r = _equal_errors(sigma)
     assert r["state"] == "not_assessed" and r["reason"] == INVALID
 
 
-@BEFORE_CODE
 def test_the_record_cites_the_correction():
     s = screen()
     assert s.CORRECTION_SHA256 == CORRECTION_SHA256

@@ -1,0 +1,173 @@
+diff --git a/src/refute/packs/tess/screen_d5.py b/src/refute/packs/tess/screen_d5.py
+index eaa4980..d984c04 100644
+--- a/src/refute/packs/tess/screen_d5.py
++++ b/src/refute/packs/tess/screen_d5.py
+@@ -17,6 +17,11 @@ Implements the frozen specification docs/plans/v0.5.11-spec.md (commit ab828ce,
+ 
+ Every [choice] of the specification is implemented as written. The equations' sources are in
+ docs/plans/sources/v0.5.11-screen-papers-2026-11-24.md. No GPL implementation was read.
++
++**Correction 1** (docs/plans/v0.5.11-spec-correction-1.md, SHA-256 ``CORRECTION_SHA256``): every
++sigma of the cadences with finite time and flux must be finite and in [1e-12, 1e3]. Otherwise F1
++is ``not_assessed`` and each report-only quantity ``unavailable``, with the reason
++``invalid_uncertainty``. The weight is the unscaled 1/sigma^2.
+ """
+ 
+ from __future__ import annotations
+@@ -27,6 +32,9 @@ from typing import Any
+ import numpy as np
+ 
+ SPEC_SHA256 = "d498a82ada2e31a5b47768d58d6af2e19af0a3c5e35364693f04886068612f15"
++CORRECTION_SHA256 = "62a5532f01c498901dd2c1546ad428e33cb4669efa14caf3d80d57f9b19b6df7"
++SIGMA_MIN, SIGMA_MAX = 1e-12, 1e3  # correction 1: the input range of sigma, both ends included
++INVALID_UNCERTAINTY = "invalid_uncertainty"
+ LABELS = ["exploratory", "method_status: not_validated"]
+ GATE_TEST = "snr"
+ F1_THRESHOLD = 3.0
+@@ -112,27 +120,20 @@ def _valid(time, flux, flux_err):
+     return t[ok], f[ok], s[ok], int((~ok).sum())
+ 
+ 
++def _sigma_in_range(time, flux, flux_err) -> bool:
++    """Correction 1: every sigma of the cadences with finite t and f is finite and in
++    [SIGMA_MIN, SIGMA_MAX]."""
++    t, f, s = (np.asarray(x, dtype=float) for x in (time, flux, flux_err))
++    sm = s[np.isfinite(t) & np.isfinite(f)]
++    with np.errstate(invalid="ignore"):
++        return bool(np.all(np.isfinite(sm) & (sm >= SIGMA_MIN) & (sm <= SIGMA_MAX)))
++
++
+ def _weights(s: np.ndarray) -> np.ndarray:
+-    """The weights of the valid set.
+-
+-    - **Normally 1/sigma^2,** unscaled: the specification's own arithmetic, whenever every weight
+-      is finite and positive.
+-    - **Otherwise on a common scale,** (min sigma / sigma)^2. Every weighted mean and standard
+-      deviation of the specification is unchanged by a common factor.
+-    - **A ValueError** when a weight cannot be represented even at that scale: zero, or not
+-      finite.
+-
+-    The maintainer's decision received on 2026-11-25 at 00:04 local, #218 comment 7151559282,
+-    item 1."""
+-    with np.errstate(all="ignore"):
+-        w = 1.0 / s**2
+-    if np.all(np.isfinite(w)) and np.all(w > 0):
+-        return w
+-    with np.errstate(all="ignore"):
+-        w = (float(np.min(s)) / s) ** 2
+-    if not np.all(np.isfinite(w)) or np.any(w <= 0):
+-        raise ValueError("the weights of the valid set cannot be represented")
+-    return w
++    """The weights of the valid set: the unscaled 1/sigma^2 of section 5. Under correction 1
++    every sigma is in [1e-12, 1e3], so every weight is in [1e-6, 1e24] and, for up to 1e7
++    points, no sum or weighted mean can overflow (the correction's section 4)."""
++    return 1.0 / s**2
+ 
+ 
+ def _candidate_ok(period, t0, duration) -> bool:
+@@ -210,12 +211,11 @@ def _f1_box(time, flux, flux_err, period, t0, duration) -> dict:
+         return _core("not_assessed", "candidate not finite or not positive")
+     t, f, s, dropped = _valid(time, flux, flux_err)
+     counts = {"dropped": dropped, "valid": int(t.size)}
++    if not _sigma_in_range(time, flux, flux_err):
++        return _core("not_assessed", INVALID_UNCERTAINTY, 0, counts)
+     if t.size < MIN_VALID:
+         return _core("not_assessed", "fewer than 20 valid points", 0, counts)
+-    try:
+-        w = _weights(s)
+-    except ValueError as exc:
+-        return _core("not_assessed", str(exc), 0, counts)
++    w = _weights(s)
+     k = _epochs(t, period, t0)
+     in_tr = np.abs(t - (t0 + k * period)) <= duration / 2.0
+     sel_by, good_by = {}, {}
+@@ -663,12 +663,13 @@ def report_only(flattened, candidate, star, plausibility=None) -> dict:
+     period, t0, duration = candidate.period, candidate.t0, candidate.duration
+     names = ("F1_trap", "F2", "F3", "F4", "U1")
+     t, f, s, _ = _valid(flattened.time, flattened.flux, flattened.flux_err)
+-    if not _candidate_ok(period, t0, duration) or t.size < MIN_VALID:
++    if not _candidate_ok(period, t0, duration):
+         return {n: _unavailable(n, "candidate or curve not usable") for n in names}
+-    try:
+-        w = _weights(s)
+-    except ValueError as exc:
+-        return {n: _unavailable(n, str(exc)) for n in names}
++    if not _sigma_in_range(flattened.time, flattened.flux, flattened.flux_err):
++        return {n: _unavailable(n, INVALID_UNCERTAINTY) for n in names}
++    if t.size < MIN_VALID:
++        return {n: _unavailable(n, "candidate or curve not usable") for n in names}
++    w = _weights(s)
+ 
+     def noise():
+         return _noise(t, f, w, period, t0, duration)
+@@ -732,6 +733,7 @@ def compute_screen(flattened, candidate, tests, star=None, plausibility=None) ->
+     record: dict[str, Any] = {
+         "version": 5,
+         "spec_sha256": SPEC_SHA256,
++        "spec_correction_sha256": CORRECTION_SHA256,
+         "entry": "search",
+         "eligible": eligible,
+         "outcome": None,
+diff --git a/tests/test_v0511_screen.py b/tests/test_v0511_screen.py
+index 424aa36..c79cdf8 100644
+--- a/tests/test_v0511_screen.py
++++ b/tests/test_v0511_screen.py
+@@ -188,15 +188,13 @@ def test_an_extreme_flux_error_never_raises_in_f1():
+ 
+ # --- correction 1 of the specification: the input range of sigma -----------------------------
+ # docs/plans/v0.5.11-spec-correction-1.md; the maintainer's decision of 2026-11-25, #218 comment
+-# 7162573384, item 1. Written and pushed before the code: the strict expected failures below
+-# fail on the module as committed at a896c49. The E1 test of 912087a (sigma = 1e-154 assessed
+-# like ordinary errors) is withdrawn: the rule decides the opposite.
++# 7162573384, item 1. Written and pushed before the code (58c308d), where six of them were strict
++# expected failures on the module as committed at a896c49 (step2/expected-tests-ir.json). The E1
++# test of 912087a (sigma = 1e-154 assessed like ordinary errors) is withdrawn: the rule decides
++# the opposite.
+ 
+ CORRECTION_SHA256 = "62a5532f01c498901dd2c1546ad428e33cb4669efa14caf3d80d57f9b19b6df7"
+ INVALID = "invalid_uncertainty"
+-BEFORE_CODE = pytest.mark.xfail(
+-    strict=True, reason="spec correction 1: the input rule is not in the module at a896c49"
+-)
+ # the reviewed path (a896c49) on ordinary errors, recorded before the change
+ REVIEWED = {"planet": ("pass", 2.507454281461856), "eb_half": ("fail", 43.09203063661559)}
+ BIN_WITNESS_TIMES = np.array(
+@@ -229,7 +227,6 @@ def test_the_ends_of_the_range_are_assessed_like_ordinary_errors(sigma):
+     assert math.isclose(r["metrics"]["oe_box"], oe, rel_tol=1e-9)
+ 
+ 
+-@BEFORE_CODE
+ def test_codex_first_witness_is_unassessed():
+     # equal sigma = 4.5e-153 on a curve whose raw reductions are representable (on a896c49 it
+     # is assessed by the raw path; E1's bound turned its pass into a fail)
+@@ -242,7 +239,6 @@ def test_codex_first_witness_is_unassessed():
+     assert r["state"] == "not_assessed" and r["reason"] == INVALID
+ 
+ 
+-@BEFORE_CODE
+ def test_codex_second_witness_is_unassessed():
+     # 20 points: the flat total weight is finite, the sum of the three bin totals overflows
+     s = screen()
+@@ -258,7 +254,6 @@ def test_codex_second_witness_is_unassessed():
+     assert r["state"] == "not_assessed" and r["reason"] == INVALID
+ 
+ 
+-@BEFORE_CODE
+ def test_the_case_of_errata_12_is_unassessed_in_the_core_and_the_report():
+     s = screen()
+     assert _equal_errors(1e-154)["reason"] == INVALID
+@@ -273,14 +268,12 @@ def test_the_case_of_errata_12_is_unassessed_in_the_core_and_the_report():
+         assert v["state"] == "unavailable" and v["reason"] == INVALID
+ 
+ 
+-@BEFORE_CODE
+ @pytest.mark.parametrize("sigma", [9.99e-13, 1.001e3], ids=["below", "above"])
+ def test_just_outside_the_range_is_unassessed(sigma):
+     r = _equal_errors(sigma)
+     assert r["state"] == "not_assessed" and r["reason"] == INVALID
+ 
+ 
+-@BEFORE_CODE
+ def test_the_record_cites_the_correction():
+     s = screen()
+     assert s.CORRECTION_SHA256 == CORRECTION_SHA256

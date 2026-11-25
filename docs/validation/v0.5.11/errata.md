@@ -258,3 +258,21 @@ its impact. Recorded outputs are never edited.
   - G11: while preparing the commit of the correction, the agent ran `python -c "print(1)"`
     once outside the launcher. It used no data and wrote nothing.
   - G12: the file copy that overwrote the E1 change.
+
+## 15. 2026-11-25: the inspection unit that checked ir-fix's condition was marked interrupted
+
+- **Source:** the journal row of attempt `d387cf35…` (2026-11-25T13:13:56Z), unit `inspect`,
+  running `.cache/v0511/tools/check_expected_ir.py` on `.cache/v0511/junit/ir-fix.xml`.
+- **What happened:** the read-only script exited with code 0 and wrote its whole output, which
+  says "CONDITION HOLDS":
+  - 183 tests, 0 failures, 0 errors, 0 skipped;
+  - all 34 expected IDs passed.
+
+  The launcher then marked the unit `interrupted`, for `transfer`. The machine-wide counter
+  read 58,040,339 bytes over 0.548 s with no network use by the unit. The inspection unit
+  reserves 50 MB, so amendment 15's rule for zero-reservation units does not apply to it.
+- **What was done:** the same unit was not repeated. A different read-only script
+  (`.cache/tools/junit_counts.py`, attempt `067e33c3…`) recounted the file: 183 tests,
+  0 failures, 0 errors, 0 skipped. The JUnit file is the evidence; both readings agree.
+- **Impact:** none on the condition. It is one more instance of finding F-2 (the machine-wide
+  bound is loose).
