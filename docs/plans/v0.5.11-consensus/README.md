@@ -183,3 +183,27 @@ items 1 and 2.
     SHA-256 `c24bc496a3afdc7d5d402dbbb1f1058adc4190271bde4d570aad677a139c6ba4`.
 - **Its obligations:** it must be in Codex's review of all the phase's commits, before the gate,
   and in the independent gate. Its proof is the tests unit on the adjusted diff.
+
+## The review of all the phase's commits, before the gate (2026-11-25)
+
+This is the charter's section 7. It reviews the 21 commits from `dbdd78d` to `6031c35`, on the
+same thread, and was stored unchanged by the unit `store-round`.
+
+| File | Bytes | SHA-256 |
+|---|---|---|
+| [all-commits-codex-prompt.md](all-commits-codex-prompt.md) | 2,751 | `7e25ba4c203feba9d3c25814fb4d4d9bcebd683c5a23a08a3c524dd1c5683acb` |
+| [all-commits-codex-answer.md](all-commits-codex-answer.md) | 6,628 | `e1aa72a7260afa8a53f6fd5f2d0f6402ae6d7f0f4a6385e37daf8962c9e291bc` |
+
+- **Tokens, the real sum of its events:** 19,899,992 input (19,070,464 cached) and 63,601
+  output, so **893,129**.
+- **The thread's total** over 8 rounds is **3,071,752**.
+- **Verdict: `REFUTED` for proceeding to the gate now,** with three blocking items:
+  1. The weights adjustment can make an assessed F1 case abstain when the raw weights are
+     finite but their sums overflow (errata entry 12). The fix changes `src/` and needs the
+     maintainer's approval first.
+  2. Full CI on the final `src/` SHA, the completed report, and the gate authorization are still
+     missing.
+  3. The `step2-c` run's approval is now linked by errata entry 10.
+- **Its non-blocking findings** confirm the exact patch provenance, the golden and claim-hash
+  proofs, the 10/10 tag summary, the pre-registration order and both amendments as pure appends.
+  They also note three records whose text lags behind (errata entry 11).

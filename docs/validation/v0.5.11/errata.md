@@ -160,3 +160,50 @@ its impact. Recorded outputs are never edited.
     ledger from the journal.
 - **Impact:** none on any recorded quantity. The journal is unchanged. Only the ledger's
   charged transfer changes.
+
+## 10. 2026-11-25: the step2-c tests unit's approval, linked
+
+- **Source:** the journal, attempt `46cd4771161b418dabd5a238c8b8dbb9` (unit `tests`, label
+  `step2-c`, launch_v9, 03:05:33Z to 03:28:30Z, line 159 of `log.jsonl`). Its `before` row has
+  `repetition_approval: null`.
+- **The link** (Codex, the review of all the phase's commits, blocking item 3):
+  - The run was authorized by the maintainer's decision received on 2026-11-25 at 00:04 local
+    (#218, comment 7151559282, recorded at 03:04Z, before the run), item 3. That item asks for a
+    new tests unit, a new code state and not a repetition, on the adjusted diff checked by its
+    SHA-256.
+  - The adjusted diff's SHA-256 is
+    `c24bc496a3afdc7d5d402dbbb1f1058adc4190271bde4d570aad677a139c6ba4`. It was checked before
+    the run, and again just before the commit `a896c49`.
+  - The launcher saw a new logical key (another tree state), so it required no approval
+    argument.
+- **The journal row is preserved.** This entry is the link.
+
+## 11. 2026-11-25: records whose text lags behind amendment 2
+
+- **`units/tag-verify.json`:** its `choices` text still says "0.1 GB transfer reservation". Its
+  actual reservation is 0 (`5f41282`), and the run used 0 under launch_v9.
+- **`caps-ledger.json`:** its `transfer_note` still names `netstat -e` for every row. Since
+  launch_v6, the source is the 64-bit interface counters, and each `before` row names its own
+  source (`transfer_source`).
+- **The disk sampler:** it counts the growth of each `disk_extra` path above its size at the
+  unit's start. So for `tag-verify` the charged disk is not the whole-path peak, which includes
+  the existing warm tag environments.
+- **The spec files are not edited,** since they are identities of recorded runs. These entries
+  are the correction.
+
+## 12. 2026-11-25: the weights adjustment in a896c49 can make an assessed F1 case abstain
+
+- **Source:** the first `src/` commit `a896c49`. Codex, in the review of all the phase's
+  commits, blocking item 1, stored in `docs/plans/v0.5.11-consensus/all-commits-codex-answer.md`.
+- **The defect:**
+  - With equal flux errors σ = 1e-154, each weight 1/σ² (1e308) is finite.
+  - Their sums overflow, so a weighted mean is not available, and F1 gives `not_assessed`.
+  - The reviewed common-scale path gave `pass` (OE_box ≈ 0.123) on the same curve.
+- **No test caught it:**
+  - the extreme-error test covers a range that cannot be represented at all;
+  - the 400 reference fixtures use ordinary errors.
+- **What follows:**
+  - Correcting it changes `src/` again, which needs the maintainer's approval first. It is
+    requested at the stop, together with a regression test that keeps the 1e-9 reference
+    tolerance.
+  - The defect is in the committed code until then.

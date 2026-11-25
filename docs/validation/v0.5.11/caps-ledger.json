@@ -10,8 +10,8 @@
   "disk_bytes": 10000000000
  },
  "charged": {
-  "cpu_s": 11151.952,
-  "transfer_bytes": 3302385289,
+  "cpu_s": 11197.218,
+  "transfer_bytes": 3307879471,
   "disk_peak_bytes": 1000000000
  },
  "within_caps": "not demonstrated",
@@ -1597,6 +1597,96 @@
    "cpu_s": 0.141,
    "transfer_bytes_upper": 22932,
    "disk_peak_bytes": 16152228,
+   "telemetry_complete": true,
+   "overrun": []
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "61d62d6180674ff89af2f7a397081681",
+   "launcher": "launch_v6.py",
+   "start": "2026-11-25T03:35:19Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 50000000,
+    "transfer_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 0.75,
+   "transfer_bytes_upper": 97281,
+   "disk_peak_bytes": 16153717,
+   "telemetry_complete": true,
+   "overrun": []
+  },
+  {
+   "unit": "tag-verify",
+   "label": null,
+   "attempt": "062111bc55bf43c4b0f4b6f5b253fa7d",
+   "launcher": "launch_v6.py",
+   "start": "2026-11-25T03:35:38Z",
+   "reserve": {
+    "cpu_s": 3600,
+    "disk_bytes": 3000000000,
+    "transfer_bytes": 0
+   },
+   "status": "ok",
+   "cpu_s": 44.203,
+   "transfer_bytes_upper": 287648603,
+   "disk_peak_bytes": 16166469,
+   "telemetry_complete": true,
+   "overrun": []
+  },
+  {
+   "unit": "inspect",
+   "label": null,
+   "attempt": "b2aabcf450814f35812167b510388fa1",
+   "launcher": "launch_v6.py",
+   "start": "2026-11-25T03:36:19Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 50000000,
+    "transfer_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 0.094,
+   "transfer_bytes_upper": 4794858,
+   "disk_peak_bytes": 16167311,
+   "telemetry_complete": true,
+   "overrun": []
+  },
+  {
+   "unit": "inspect",
+   "label": null,
+   "attempt": "72b87cb24087461c926517566057072b",
+   "launcher": "launch_v6.py",
+   "start": "2026-11-25T03:39:56Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 50000000,
+    "transfer_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 0.078,
+   "transfer_bytes_upper": 15588,
+   "disk_peak_bytes": 16388572,
+   "telemetry_complete": true,
+   "overrun": []
+  },
+  {
+   "unit": "store-round",
+   "label": null,
+   "attempt": "8b4ce9fbe3f3421d8251de0843a4f3c3",
+   "launcher": "launch_v6.py",
+   "start": "2026-11-25T03:40:16Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000,
+    "transfer_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 0.141,
+   "transfer_bytes_upper": 586455,
+   "disk_peak_bytes": 16388973,
    "telemetry_complete": true,
    "overrun": []
   }
