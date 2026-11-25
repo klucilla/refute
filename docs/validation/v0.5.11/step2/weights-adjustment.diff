@@ -1,0 +1,29 @@
+diff --git a/src/refute/packs/tess/screen_d5.py b/src/refute/packs/tess/screen_d5.py
+index 34bec43..eaa4980 100644
+--- a/src/refute/packs/tess/screen_d5.py
++++ b/src/refute/packs/tess/screen_d5.py
+@@ -113,9 +113,21 @@ def _valid(time, flux, flux_err):
+ 
+ 
+ def _weights(s: np.ndarray) -> np.ndarray:
+-    """The weights 1/sigma^2 on a common scale, (min sigma / sigma)^2: every weighted mean and
+-    standard deviation of the specification is unchanged by a common factor. A ValueError when a
+-    weight of the valid set cannot be represented (zero or not finite at that scale)."""
++    """The weights of the valid set.
++
++    - **Normally 1/sigma^2,** unscaled: the specification's own arithmetic, whenever every weight
++      is finite and positive.
++    - **Otherwise on a common scale,** (min sigma / sigma)^2. Every weighted mean and standard
++      deviation of the specification is unchanged by a common factor.
++    - **A ValueError** when a weight cannot be represented even at that scale: zero, or not
++      finite.
++
++    The maintainer's decision received on 2026-11-25 at 00:04 local, #218 comment 7151559282,
++    item 1."""
++    with np.errstate(all="ignore"):
++        w = 1.0 / s**2
++    if np.all(np.isfinite(w)) and np.all(w > 0):
++        return w
+     with np.errstate(all="ignore"):
+         w = (float(np.min(s)) / s) ** 2
+     if not np.all(np.isfinite(w)) or np.any(w <= 0):

@@ -157,3 +157,29 @@ The tokens are the real sum of each round's events:
   `35102b10296f31d8d1cf80038295632bb8888588c0e3a42e81b22741221a7546`.
 - **The thread's total over 7 rounds:** 141,197 + 194,054 + 272,797 + 318,852 + 381,527 + 422,130
   + 448,066 = **2,178,623** review tokens.
+
+## A deviation: the weights adjustment after round 3 (2026-11-25)
+
+By the maintainer's decision received on 2026-11-25 at 00:04 local (#218, comment 7151559282),
+items 1 and 2.
+- **Why there was an adjustment.** The approved tests unit on the reviewed diff (`35102b10…`)
+  failed one of the 22 expected IDs: a relative difference of about 1.5e-9 against the reference
+  evaluator, at OE_box ≈ 9.4e-4 (errata entry 8).
+  - Option (A) was chosen. `screen_d5._weights` uses the unscaled 1/σ² whenever every weight of
+    the valid set is finite and positive, and the common scale only when they cannot be
+    represented.
+  - The frozen step-1 test does not change.
+- **The deviation.**
+  - There is no fourth Codex round on the diff: the rule limits the rounds to three.
+  - The first `src/` commit therefore carries round 3's `SURVIVED` on the diff `35102b10…`,
+    plus this adjustment, which no Codex round has reviewed.
+- **The adjustment's own diff:**
+  [../../validation/v0.5.11/step2/weights-adjustment.diff](../../validation/v0.5.11/step2/weights-adjustment.diff),
+  SHA-256 `04b3f048e1d47e19e61d1969fa677521f6e638d473967573f18716d66428bd57`, 1,403 bytes.
+  - It is `git diff` of `screen_d5.py` between the reviewed content (staged) and the adjusted
+    file.
+  - The full adjusted diff is
+    [../../validation/v0.5.11/step2/src-change-adjusted.diff](../../validation/v0.5.11/step2/src-change-adjusted.diff),
+    SHA-256 `c24bc496a3afdc7d5d402dbbb1f1058adc4190271bde4d570aad677a139c6ba4`.
+- **Its obligations:** it must be in Codex's review of all the phase's commits, before the gate,
+  and in the independent gate. Its proof is the tests unit on the adjusted diff.

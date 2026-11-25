@@ -1,0 +1,1283 @@
+diff --git a/src/refute/packs/tess/discover/measure.py b/src/refute/packs/tess/discover/measure.py
+index 4568786..8cb12a9 100644
+--- a/src/refute/packs/tess/discover/measure.py
++++ b/src/refute/packs/tess/discover/measure.py
+@@ -23,7 +23,13 @@ from refute.packs.tess.detrend import detrend
+ from refute.packs.tess.discover import injection as inj
+ from refute.packs.tess.discover.transforms import Transform, transforms_for
+ from refute.packs.tess.params import TessTestPlan
+-from refute.packs.tess.pipeline import attack_candidate, expected_by_role, global_prewhitening
++from refute.packs.tess.pipeline import (
++    attack_candidate,
++    expected_by_role,
++    global_prewhitening,
++    is_v5,
++    screen_record,
++)
+ from refute.packs.tess.search import search_period
+ from refute.packs.tess.types import TessData
+ 
+@@ -59,6 +65,10 @@ def chain(
+     stage_verdict, stage_reason = aggregate([t for t in tests if t.name in staged], expected=staged)
+     gate = next((t for t in tests if t.name == "snr"), None)
+     candidate = gauntlet.candidate
++    extra: dict[str, Any] = {}
++    if is_v5(plan):
++        # v0.5.11, version 5 only: the screen (level 1) from the stage's final results
++        extra["screen"] = screen_record(gauntlet, tests, data.star, plan)
+     return {
+         "candidate": None
+         if candidate is None
+@@ -73,6 +83,7 @@ def chain(
+         "stage_verdict_reason": stage_reason,
+         "gate_passed": gate is not None and gate.status is TestStatus.PASS,
+         "survived_stage_tests": stage_verdict.value in SURVIVING,
++        **extra,
+     }
+ 
+ 
+diff --git a/src/refute/packs/tess/params.py b/src/refute/packs/tess/params.py
+index 5b9b340..88736a4 100644
+--- a/src/refute/packs/tess/params.py
++++ b/src/refute/packs/tess/params.py
+@@ -297,6 +297,11 @@ V05_TESTS = (
+ )
+ # v0.5.1 (discovery version 3): the EB route's diagnostic (plan, amendments 4 and 9)
+ V051_TESTS = ("duration_excess",)
++# v0.5.11: the explicit version sets that replace ``version >= 2`` and ``version >= 3``
++# (docs/plans/v0.5.11-spec.md, section 2): version 5 runs version 2's path, so it joins the
++# v0.5 set and no other.
++V05_VERSIONS = (2, 3, 4, 5)
++V051_VERSIONS = (3, 4)
+ GATE_TEST = "snr"
+ METHOD_STATUS_REFERENCE = "docs/validation/v0.2.1/closing-2026-10-27.md"
+ 
+@@ -406,7 +411,13 @@ class DiscoveryParams(_Model):
+     # 1: v0.4. 2: v0.5, the sensitivity rule and the v0.5 tests (needs the plan's `stronger`).
+     # 3: v0.5.1, the corrected battery (needs `stronger` and `v051`).
+     # 4: v0.5.2, battery version 4 (needs `stronger`, `v051` and `v052`).
+-    version: Literal[1, 2, 3, 4] = 1
++    # 5: v0.5.11, battery version 5 (exploratory): version 2's path and roles, plus the screen
++    #    of refute.packs.tess.screen_d5 (needs `stronger` and `entry: search`; never `v051` or
++    #    `v052`). docs/plans/v0.5.11-spec.md.
++    version: Literal[1, 2, 3, 4, 5] = 1
++    # v0.5.11: the entry of version 5, "search" only; refused for versions 1 to 4, and left out
++    # of the dump when absent, so every earlier plan resolves to the same bytes (issue #30).
++    entry: Literal["search"] | None = None
+     decisive: list[str] = Field(min_length=1)
+     diagnostic: list[str] = Field(default_factory=list)
+     stages: dict[str, Literal[1, 2]] = Field(default_factory=dict)
+@@ -426,8 +437,14 @@ class DiscoveryParams(_Model):
+         both = sorted(set(self.decisive) & set(self.diagnostic))
+         if both:
+             raise ValueError("a test cannot be both decisive and diagnostic: " + ", ".join(both))
+-        known = set(DISCOVERY_TESTS) | (set(V05_TESTS) if self.version >= 2 else set())
+-        if self.version >= 3:
++        # v0.5.11: explicit version sets, so that version 5 joins version 2's set and no other
++        if self.version == 5 and self.entry != "search":
++            raise ValueError("discovery version 5 needs entry: search")
++        if self.version != 5 and "entry" in self.model_fields_set:
++            # an authored entry, null included, is refused for versions 1 to 4 (spec, section 3)
++            raise ValueError("discovery.entry goes with version 5 only")
++        known = set(DISCOVERY_TESTS) | (set(V05_TESTS) if self.version in V05_VERSIONS else set())
++        if self.version in V051_VERSIONS:
+             known |= set(V051_TESTS)  # the version-3 diagnostic of the EB route (amendment 9)
+         unknown = sorted(set(self.roles) - known)
+         if unknown:
+@@ -461,6 +478,14 @@ class DiscoveryParams(_Model):
+             **{name: "diagnostic" for name in self.diagnostic},
+         }
+ 
++    @model_serializer(mode="wrap")
++    def _without_absent_entry(self, handler: Any) -> dict[str, Any]:
++        """v0.5.11: a discovery section without ``entry`` dumps exactly as before it existed."""
++        out = handler(self)
++        if out.get("entry", 0) is None:
++            del out["entry"]
++        return out
++
+     def stage_of(self, name: str) -> int:
+         return int(self.stages.get(name, 1))
+ 
+@@ -521,12 +546,12 @@ class TessTestPlan(_Model):
+         or category for every decisive fatal or warning test (v0.5 acceptance, case 1.5); any
+         other plan must not have the section."""
+         version = self.discovery.version if self.discovery is not None else 1
+-        version2 = version >= 2
++        version2 = version in V05_VERSIONS
+         if version2 != (self.stronger is not None):
+             raise ValueError(
+                 "the `stronger` section goes with discovery version 2 or 3, and only with them"
+             )
+-        if (version >= 3) != (self.v051 is not None):
++        if (version in V051_VERSIONS) != (self.v051 is not None):
+             raise ValueError("the `v051` section goes with discovery version 3, and only with it")
+         if (version == 4) != (self.v052 is not None):
+             raise ValueError("the `v052` section goes with discovery version 4, and only with it")
+@@ -541,7 +566,7 @@ class TessTestPlan(_Model):
+                 raise ValueError(
+                     "decisive tests without a sensitivity rule: " + "; ".join(problems)
+                 )
+-        if version >= 3:
++        if version in V051_VERSIONS:
+             # v0.5.1 WP5 (row 5.1): version 3 corrects the v0.5 battery and drops none of its
+             # tests; every decisive or diagnostic test of v0.5 keeps a role
+             from refute.packs.tess.calib05.values import V05_DECISIVE, V05_DIAGNOSTIC
+diff --git a/src/refute/packs/tess/pipeline.py b/src/refute/packs/tess/pipeline.py
+index 57c452d..3d02203 100644
+--- a/src/refute/packs/tess/pipeline.py
++++ b/src/refute/packs/tess/pipeline.py
+@@ -572,7 +572,24 @@ def analyze_data(
+     # Blind holdout: raw data and sector metadata only. Never the global candidate.
+     holdout = run_holdout(data.lc, data.sectors, plan)
+     return conclude_analysis(
+-        search, flat, gauntlet, holdout, catalogs is not None, plan=plan, stage=stage
++        search, flat, gauntlet, holdout, catalogs is not None, plan=plan, stage=stage,
++        star=data.star,
++    )  # fmt: skip
++
++
++def is_v5(plan: TessTestPlan | None) -> bool:
++    """True for a v0.5.11 claim (discovery version 5): version 2's path plus the screen."""
++    return plan is not None and plan.discovery is not None and plan.discovery.version == 5
++
++
++def screen_record(gauntlet: GauntletOutcome, tests, star, plan: TessTestPlan) -> dict:
++    """The version-5 screen record (``screen_d5.compute_screen``), from the gauntlet's curve and
++    final candidate and the final legacy results; it never changes them
++    (docs/plans/v0.5.11-spec.md)."""
++    from refute.packs.tess.screen_d5 import compute_screen
++
++    return compute_screen(
++        gauntlet.flattened, gauntlet.candidate, tests, star, plan.gauntlet.plausibility
+     )
+ 
+ 
+@@ -596,12 +613,15 @@ def conclude_analysis(
+     *,
+     plan: TessTestPlan | None = None,
+     stage: int | None = None,
++    star=None,
+ ) -> Analysis:
+     """The end of an analysis: the coverage rule over every test, then the verdict.
+ 
+     For a discover claim (a plan with a discovery section; v0.4, issue #174) the tests of a
+     later stage are reported INCONCLUSIVE with zero coverage, and the verdict aggregates the
+-    decisive tests only; the diagnostics are returned apart, in ``roles``."""
++    decisive tests only; the diagnostics are returned apart, in ``roles``. For a version-5 claim
++    (v0.5.11) the screen is attached last, in ``extras["screen"]``, after the verdict; ``star``
++    feeds only its report-only F3."""
+     # Domain-agnostic coverage rule: a PASS that examined nothing is INCONCLUSIVE.
+     tests = enforce_coverage([*gauntlet.tests, holdout.test])
+     if plan is not None and plan.v05:
+@@ -627,6 +647,9 @@ def conclude_analysis(
+         from refute.core.inconclusive import with_classes
+ 
+         roles.reason = with_classes(roles.reason, roles.decisive)
++    extras: dict[str, Any] = {}
++    if is_v5(plan):
++        extras["screen"] = screen_record(gauntlet, tests, star, plan)
+     return Analysis(
+         search,
+         flattened,
+@@ -635,6 +658,7 @@ def conclude_analysis(
+         tests,
+         roles.verdict.value,
+         roles.reason,
++        extras=extras,
+         roles=roles,
+         stage=run_stage,
+         deferred=deferred,
+@@ -836,7 +860,11 @@ def v05_record(analysis: Analysis, data: TessData, plan: TessTestPlan) -> dict[s
+     from refute.packs.tess.search import kept_peak_sde
+ 
+     return {
+-        "discovery_version": 4 if plan.is_v052 else 3 if plan.is_v051 else 2,
++        "discovery_version": 4
++        if plan.is_v052
++        else 3
++        if plan.is_v051
++        else (5 if plan.discovery is not None and plan.discovery.version == 5 else 2),
+         "sensitivity_rule": "refute.core.sensitivity.enforce_sensitivity (#185)",
+         "parameters": params,
+         "sde_kept_peak": None
+@@ -1047,6 +1075,9 @@ def build_result(
+     if plan.is_v051:
+         # v0.5.1 claims only (WP4), so the records of earlier claims keep their keys and bytes.
+         record["v051"] = v051_record(analysis)
++    if is_v5(plan) and "screen" in analysis.extras:
++        # v0.5.11, version-5 claims only: the screen (level 1), never a verdict
++        record["screen"] = analysis.extras["screen"]
+     if analysis.gauntlet.timing is not None:
+         # M4 piece 3 (switch on only, so records with the switch off keep their keys).
+         record["global_timing"] = analysis.gauntlet.timing
+diff --git a/src/refute/packs/tess/schema.py b/src/refute/packs/tess/schema.py
+index d1e270c..1c0224e 100644
+--- a/src/refute/packs/tess/schema.py
++++ b/src/refute/packs/tess/schema.py
+@@ -87,7 +87,10 @@ class TessClaimSchema:
+         # packaging rehearsal, row 5.4, found this check limited to version 2)
+         version = int(discovery.get("version", 1))
+         # a version-3 claim also gives a role to the diagnostic duration_excess (amendment 9)
+-        expected = set(expected_tests(catalogs, version >= 2, version >= 3))
++        # v0.5.11: explicit version sets (version 5 has version 2's tests)
++        from refute.packs.tess.params import V05_VERSIONS, V051_VERSIONS
++
++        expected = set(expected_tests(catalogs, version in V05_VERSIONS, version in V051_VERSIONS))
+         roles = set(discovery["decisive"]) | set(discovery["diagnostic"])
+         if roles != expected:
+             missing = sorted(expected - roles)
+diff --git a/src/refute/packs/tess/screen_d5.py b/src/refute/packs/tess/screen_d5.py
+new file mode 100644
+index 0000000..eaa4980
+--- /dev/null
++++ b/src/refute/packs/tess/screen_d5.py
+@@ -0,0 +1,773 @@
++"""The screen of battery version 5 (discovery version 5): level 1, never a verdict.
++
++Implements the frozen specification docs/plans/v0.5.11-spec.md (commit ab828ce, SHA-256
++``SPEC_SHA256``), v0.5.11, exploratory, ``method_status: not_validated``.
++
++- **The core** is F1, decided by OE_box alone (K25 Eq. 11, threshold 3).
++- **Report-only:** F1_trap, F2, F3, F4 and U1. Their paper thresholds are displayed, never
++  applied.
++- **Inputs:** the version-2 gauntlet's flattened curve and final candidate, plus the star record
++  for F3. They are never written.
++- **Separation:** nothing here enters ``aggregate`` or any legacy rule, and no random number is
++  drawn.
++- **Containment:** a numerical failure never leaves this module.
++  - In F1 it gives ``not_assessed``.
++  - In a report-only quantity it gives ``unavailable``, for that quantity and for those that
++    depend on the same fit. The core, the other quantities and level 2 are unaffected.
++
++Every [choice] of the specification is implemented as written. The equations' sources are in
++docs/plans/sources/v0.5.11-screen-papers-2026-11-24.md. No GPL implementation was read.
++"""
++
++from __future__ import annotations
++
++import math
++from typing import Any
++
++import numpy as np
++
++SPEC_SHA256 = "d498a82ada2e31a5b47768d58d6af2e19af0a3c5e35364693f04886068612f15"
++LABELS = ["exploratory", "method_status: not_validated"]
++GATE_TEST = "snr"
++F1_THRESHOLD = 3.0
++MIN_VALID = 20
++MIN_IN_PER_EPOCH = 3
++MIN_BASELINE = 10
++MIN_BINS = 3
++MIN_CELL_IN = 3
++MIN_CELL_REF = 10
++MIN_FRED_CELLS = 10
++N_TCE = 1
++F2_MAX_DURATION_RATIO = 0.1
++Q_IN_REDUCED = (0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4)
++MAX_COND = 1e12
++F1_UNIT = "parity epochs with data"
++PAPER = {
++    "F1_trap": {"OE_trap": 3.0, "OE_trap_T": 10.0},
++    "F2": {"MS4": 0.0, "MS5": -1.0, "MS6": -1.0, "F_red_bypass": 1.8, "depth_ratio": 0.1},
++    "F3": {"Rp_earth": 22.0},
++    "F4": {"V": 1.5},
++    "U1": {"MS1": 0.2, "MS2": 0.8, "MS3": 0.8},
++}
++UNITS = {
++    "F1_trap": "fit cadences",
++    "F2": "phase cells with data",
++    "F3": "fit cadences",
++    "F4": "fit cadences",
++    "U1": "phase cells with data",
++}
++NUMERICAL = (ArithmeticError, ValueError, TypeError, np.linalg.LinAlgError)
++F2_FLAGS = {"would_be_significant": None, "exception_first_condition": None}
++
++
++# --- shared quantities (spec section 5) -------------------------------------------------------
++
++
++def _finite(*values) -> bool:
++    return all(v is not None and math.isfinite(v) for v in values)
++
++
++def _wmean(x: np.ndarray, w: np.ndarray) -> float | None:
++    if x.size == 0:
++        return None
++    sw = float(np.sum(w))
++    if not math.isfinite(sw) or sw <= 0:
++        return None
++    m = float(np.sum(w * x) / sw)
++    return m if math.isfinite(m) else None
++
++
++def _wstd(x: np.ndarray, w: np.ndarray) -> float | None:
++    m = _wmean(x, w)
++    if m is None:
++        return None
++    v = float(np.sum(w * (x - m) ** 2) / np.sum(w))
++    return math.sqrt(v) if math.isfinite(v) and v >= 0 else None
++
++
++INT_EXACT = float(2**53)  # integers above this are not exact in a float64
++
++
++def _as_index(x: np.ndarray) -> np.ndarray:
++    """Floats that hold integers, cast to int64 only when finite and exactly representable;
++    otherwise a ValueError, which the guards turn into not_assessed or unavailable."""
++    if x.size and (not np.all(np.isfinite(x)) or float(np.max(np.abs(x))) >= INT_EXACT):
++        raise ValueError("an epoch or bin index is not finite or not exactly representable")
++    return x.astype(np.int64)
++
++
++def _epochs(t: np.ndarray, period: float, t0: float) -> np.ndarray:
++    return _as_index(np.floor((t - t0) / period + 0.5))
++
++
++def _phase_distance(t: np.ndarray, period: float, t0: float, phi: float) -> np.ndarray:
++    return np.abs(np.mod(t - t0 - phi * period + period / 2.0, period) - period / 2.0)
++
++
++def _valid(time, flux, flux_err):
++    """The valid points of the frozen predicate (t, f and sigma finite, sigma > 0) and the count
++    dropped."""
++    t, f, s = (np.asarray(x, dtype=float) for x in (time, flux, flux_err))
++    ok = np.isfinite(t) & np.isfinite(f) & np.isfinite(s) & (s > 0)
++    return t[ok], f[ok], s[ok], int((~ok).sum())
++
++
++def _weights(s: np.ndarray) -> np.ndarray:
++    """The weights of the valid set.
++
++    - **Normally 1/sigma^2,** unscaled: the specification's own arithmetic, whenever every weight
++      is finite and positive.
++    - **Otherwise on a common scale,** (min sigma / sigma)^2. Every weighted mean and standard
++      deviation of the specification is unchanged by a common factor.
++    - **A ValueError** when a weight cannot be represented even at that scale: zero, or not
++      finite.
++
++    The maintainer's decision received on 2026-11-25 at 00:04 local, #218 comment 7151559282,
++    item 1."""
++    with np.errstate(all="ignore"):
++        w = 1.0 / s**2
++    if np.all(np.isfinite(w)) and np.all(w > 0):
++        return w
++    with np.errstate(all="ignore"):
++        w = (float(np.min(s)) / s) ** 2
++    if not np.all(np.isfinite(w)) or np.any(w <= 0):
++        raise ValueError("the weights of the valid set cannot be represented")
++    return w
++
++
++def _candidate_ok(period, t0, duration) -> bool:
++    return _finite(period, t0, duration) and period > 0 and duration > 0
++
++
++def _noise(t, f, w, period, t0, duration):
++    """(sigma_w, sigma_r, baseline mask), or (None, None, mask) when unavailable."""
++    base = _phase_distance(t, period, t0, 0.0) > duration
++    tb, fb, wb = t[base], f[base], w[base]
++    if tb.size < MIN_BASELINE:
++        return None, None, base
++    sigma_w = _wstd(fb, wb)
++    if sigma_w is None:
++        return None, None, base
++    t_first = float(t.min())
++    idx = _as_index(np.floor((tb - t_first) / duration))
++    means, weights, counts = [], [], []
++    for m in np.unique(idx):
++        sel = idx == m
++        if int(sel.sum()) < 2:
++            continue
++        mean = _wmean(fb[sel], wb[sel])
++        if mean is None:
++            return None, None, base
++        means.append(mean)
++        weights.append(float(wb[sel].sum()))
++        counts.append(int(sel.sum()))
++    if len(means) < MIN_BINS:
++        return None, None, base
++    means_a, weights_a, counts_a = np.array(means), np.array(weights), np.array(counts)
++    sigma_bin = _wstd(means_a, weights_a)
++    if sigma_bin is None:
++        return None, None, base
++    expected = float(np.mean(sigma_w**2 / counts_a))
++    sigma_r2 = max(0.0, sigma_bin**2 - expected)
++    if not _finite(sigma_r2):
++        return None, None, base
++    return sigma_w, math.sqrt(sigma_r2), base
++
++
++def _pink(sigma_w: float, sigma_r: float, n: int, n_epochs: int) -> float | None:
++    if n <= 0 or n_epochs <= 0:
++        return None
++    v = math.sqrt(sigma_w**2 / n + sigma_r**2 / n_epochs)
++    return v if math.isfinite(v) and v > 0 else None
++
++
++def _core(state: str, reason: str, coverage: int = 0, metrics: dict | None = None) -> dict:
++    return {
++        "state": state,
++        "reason": reason,
++        "coverage": int(coverage),
++        "coverage_unit": F1_UNIT,
++        "metrics": metrics or {},
++        "threshold": F1_THRESHOLD,
++    }
++
++
++# --- F1, the core (spec sections 4 and 6) -------------------------------------------------------
++
++
++def f1_box(time, flux, flux_err, period, t0, duration) -> dict:
++    """F1 by OE_box (K25 Eq. 11): pass, fail or not_assessed. A numerical failure gives
++    not_assessed."""
++    try:
++        with np.errstate(all="ignore"):
++            return _f1_box(time, flux, flux_err, period, t0, duration)
++    except NUMERICAL as exc:
++        return _core("not_assessed", f"numerical failure: {type(exc).__name__}")
++
++
++def _f1_box(time, flux, flux_err, period, t0, duration) -> dict:
++    if not _candidate_ok(period, t0, duration):
++        return _core("not_assessed", "candidate not finite or not positive")
++    t, f, s, dropped = _valid(time, flux, flux_err)
++    counts = {"dropped": dropped, "valid": int(t.size)}
++    if t.size < MIN_VALID:
++        return _core("not_assessed", "fewer than 20 valid points", 0, counts)
++    try:
++        w = _weights(s)
++    except ValueError as exc:
++        return _core("not_assessed", str(exc), 0, counts)
++    k = _epochs(t, period, t0)
++    in_tr = np.abs(t - (t0 + k * period)) <= duration / 2.0
++    sel_by, good_by = {}, {}
++    for parity, name in ((1, "odd"), (0, "even")):
++        sel = in_tr & (np.mod(k, 2) == parity)
++        ks, n_in = np.unique(k[sel], return_counts=True)
++        sel_by[name] = (sel, ks)
++        good_by[name] = int((n_in >= MIN_IN_PER_EPOCH).sum())
++    coverage = good_by["odd"] + good_by["even"]
++    sigma_w, sigma_r, base = _noise(t, f, w, period, t0, duration)
++    if sigma_w is None:
++        return _core("not_assessed", "noise unavailable (baseline or bins)", coverage, counts)
++    base_mean = _wmean(f[base], w[base])
++    if base_mean is None:
++        return _core("not_assessed", "baseline mean unavailable", coverage, counts)
++    out = {}
++    for name in ("odd", "even"):
++        sel, ks = sel_by[name]
++        n = int(sel.sum())
++        if good_by[name] == 0 or n < MIN_IN_PER_EPOCH:
++            reason = f"too few in-transit points for the {name} parity"
++            return _core("not_assessed", reason, coverage, counts)
++        m_in = _wmean(f[sel], w[sel])
++        sigma_tr = _pink(sigma_w, sigma_r, n, int(ks.size))
++        if m_in is None or sigma_tr is None:
++            reason = f"depth or pink noise unavailable for the {name} parity"
++            return _core("not_assessed", reason, coverage, counts)
++        out[name] = (base_mean - m_in, sigma_tr, n, int(ks.size))
++    d_odd, s_odd, n_odd, e_odd = out["odd"]
++    d_even, s_even, n_even, e_even = out["even"]
++    denom = math.sqrt(s_odd**2 + s_even**2)
++    if not math.isfinite(denom) or denom <= 0:
++        return _core("not_assessed", "denominator not positive", coverage, counts)
++    oe = abs(d_odd - d_even) / denom
++    if not math.isfinite(oe):
++        return _core("not_assessed", "OE_box not finite", coverage, counts)
++    metrics = {
++        **counts,
++        "oe_box": oe,
++        "delta_odd": d_odd,
++        "delta_even": d_even,
++        "sigma_odd": s_odd,
++        "sigma_even": s_even,
++        "n_odd": n_odd,
++        "n_even": n_even,
++        "epochs_odd": e_odd,
++        "epochs_even": e_even,
++        "sigma_w": sigma_w,
++        "sigma_r": sigma_r,
++    }
++    state = "fail" if oe > F1_THRESHOLD else "pass"
++    return _core(state, f"OE_box {oe:.3f} vs {F1_THRESHOLD}", coverage, metrics)
++
++
++# --- report-only (spec sections 5 and 6) --------------------------------------------------------
++
++
++def _ro(name: str, state: str, reason: str, coverage: int, metrics=None) -> dict:
++    return {
++        "state": state,
++        "reason": reason,
++        "coverage": int(coverage),
++        "coverage_unit": UNITS[name],
++        "metrics": metrics or {},
++        "paper_thresholds": dict(PAPER[name]),
++    }
++
++
++def _unavailable(name: str, reason: str, coverage: int = 0, metrics=None) -> dict:
++    if name == "F2":
++        metrics = {**F2_FLAGS, **(metrics or {})}
++    return _ro(name, "unavailable", reason, coverage, metrics)
++
++
++def _mes(t, f, w, period, t0, duration, sigma_w, sigma_r, base):
++    """The MES grid: a list of (j, phi, mes, depth) for cells with a finite value; None when the
++    grid is unavailable."""
++    ratio = 4.0 * period / duration
++    if not math.isfinite(ratio) or ratio > t.size:
++        return None
++    cells = []
++    for j in range(int(math.ceil(ratio))):
++        phi = j * (duration / 4.0) / period
++        d = _phase_distance(t, period, t0, phi)
++        inn = d <= duration / 2.0
++        ref = base & (d > duration)
++        n = int(inn.sum())
++        if n < MIN_CELL_IN or int(ref.sum()) < MIN_CELL_REF:
++            continue
++        m_ref, m_in = _wmean(f[ref], w[ref]), _wmean(f[inn], w[inn])
++        if m_ref is None or m_in is None:
++            continue
++        depth = m_ref - m_in
++        idx = _as_index(np.floor((t[inn] - t0 - phi * period) / period + 0.5))
++        n_epochs = int(np.unique(idx).size)
++        sigma = _pink(sigma_w, sigma_r, n, n_epochs)
++        if sigma is None or not math.isfinite(depth):
++            continue
++        mes = depth / sigma
++        if math.isfinite(mes):
++            cells.append((j, phi, mes, depth))
++    return cells
++
++
++def _cell_distance(phi_a: float, phi_b: float, period: float) -> float:
++    x = (phi_a - phi_b) * period
++    return abs(((x + period / 2.0) % period) - period / 2.0)
++
++
++def _pick(cells, keep, value):
++    """The first cell (smallest j) with the largest value among those kept."""
++    best = None
++    for c in cells:
++        if not keep(c):
++            continue
++        if best is None or value(c) > value(best):
++            best = c
++    return best
++
++
++def _events(cells, period, duration):
++    pri = _pick(cells, lambda c: True, lambda c: c[2])
++    if pri is None:
++        return None
++
++    def far(c, others, sep):
++        return all(_cell_distance(c[1], o[1], period) >= sep * duration for o in others)
++
++    sec = _pick(cells, lambda c: far(c, [pri], 2), lambda c: c[2])
++    if sec is None:
++        return pri, None, None, None, None
++    ter = _pick(cells, lambda c: far(c, [pri, sec], 2), lambda c: c[2])
++    pos = _pick(cells, lambda c: far(c, [pri, sec], 3), lambda c: -c[2])
++    rest = [c[2] for c in cells if far(c, [pri, sec], 2)]
++    fred = float(np.std(np.array(rest))) if len(rest) >= MIN_FRED_CELLS else None
++    if fred is not None and not math.isfinite(fred):
++        fred = None
++    return pri, sec, ter, pos, fred
++
++
++def _num(x):
++    """A finite float, or None."""
++    return float(x) if x is not None and math.isfinite(x) else None
++
++
++def _f2_u1(t, f, w, period, t0, duration, sigma_w, sigma_r, base):
++    from scipy.special import erfcinv
++
++    def both(reason: str, cov: int):
++        return _unavailable("F2", reason, cov), _unavailable("U1", reason, cov)
++
++    if sigma_w is None:
++        return both("noise unavailable", 0)
++    cells = _mes(t, f, w, period, t0, duration, sigma_w, sigma_r, base)
++    if cells is None:
++        return both("the MES grid exceeds the number of valid cadences", 0)
++    ev = _events(cells, period, duration)
++    cov = len(cells)
++    if ev is None or ev[1] is None or ev[2] is None or ev[3] is None:
++        return both("an event (pri, sec, ter or pos) has no candidate cell", cov)
++    pri, sec, ter, pos, fred = ev
++    fa1 = _num(math.sqrt(2.0) * erfcinv(duration / (period * N_TCE)))
++    fa2 = _num(math.sqrt(2.0) * erfcinv(duration / period))
++    if fa1 is None or fa2 is None:
++        return both("FA1 or FA2 not finite", cov)
++    mes_pos = -pos[2]
++    fred_ok = fred is not None and fred > 0
++    ms1 = _num(pri[2] / fred - fa1) if fred_ok else None
++    ms2 = _num((pri[2] - ter[2]) - fa2)
++    ms3 = _num((pri[2] - mes_pos) - fa2)
++    ms4 = _num(sec[2] / fred - fa1) if fred_ok else None
++    ms5 = _num((sec[2] - ter[2]) - fa2)
++    ms6 = _num((sec[2] - mes_pos) - fa2)
++    events = {
++        "MES_pri": pri[2],
++        "phase_pri": pri[1],
++        "MES_sec": sec[2],
++        "phase_sec": sec[1],
++        "MES_ter": ter[2],
++        "phase_ter": ter[1],
++        "MES_pos": mes_pos,
++        "phase_pos": pos[1],
++        "F_red": fred,
++        "FA1": fa1,
++        "FA2": fa2,
++    }
++    u1 = _ro("U1", "computed", "model shift MS1 to MS3", cov,
++             {**events, "MS1": ms1, "MS2": ms2, "MS3": ms3})  # fmt: skip
++    if duration / period > F2_MAX_DURATION_RATIO:
++        return _unavailable("F2", "T/P above 0.1", cov, events), u1
++    d_pri, d_sec = pri[3], sec[3]
++    # K25 IV.3: MS4 > 0 is ignored when F_red > 1.8; null when a needed input is unavailable
++    if fred is None:
++        first = None
++    elif fred > 1.8:
++        first = True
++    elif ms4 is None:
++        first = None
++    else:
++        first = ms4 > 0
++    if first is None or ms5 is None or ms6 is None:
++        significant = None
++    else:
++        significant = bool(ms5 > -1 and ms6 > -1 and first)
++    if _finite(d_pri, d_sec) and d_pri > 0:
++        first_condition = bool(d_sec < 0.1 * d_pri)
++    else:
++        first_condition = None
++    metrics = {
++        **events,
++        "delta_pri": d_pri,
++        "delta_sec": d_sec,
++        "MS4": ms4,
++        "MS5": ms5,
++        "MS6": ms6,
++        "would_be_significant": significant,
++        "exception_first_condition": first_condition,
++    }
++    return _ro("F2", "computed", "model shift MS4 to MS6", cov, metrics), u1
++
++
++def _trap_model(t, t0, depth, q, q_in, f0, period):
++    dt = np.mod(t - t0 + period / 2.0, period) - period / 2.0
++    total = q * period
++    tau = q_in * total
++    half = total / 2.0
++    ad = np.abs(dt)
++    ramp = (half - ad) / tau if tau > 0 else np.zeros_like(ad)
++    shape = np.where(ad <= half - tau, 1.0, np.where(ad < half, ramp, 0.0))
++    return f0 - depth * shape
++
++
++def _fit(fun, x0, lower, upper):
++    """``least_squares`` with the frozen settings, or None when the bounds collapse, the start is
++    not finite or outside its bounds, or the solver fails."""
++    from scipy.optimize import least_squares
++
++    x0, lo, hi = (np.asarray(v, dtype=float) for v in (x0, lower, upper))
++    if not (np.all(np.isfinite(x0)) and np.all(np.isfinite(lo)) and np.all(np.isfinite(hi))):
++        return None
++    if np.any(lo >= hi) or np.any(x0 < lo) or np.any(x0 > hi):
++        return None
++    try:
++        fit = least_squares(
++            fun,
++            x0,
++            bounds=(lo, hi),
++            method="trf",
++            x_scale="jac",
++            ftol=1e-10,
++            xtol=1e-10,
++            gtol=1e-10,
++            max_nfev=2000,
++        )
++    except NUMERICAL:
++        return None
++    if fit.status <= 0 or not np.all(np.isfinite(fit.x)) or not np.all(np.isfinite(fit.fun)):
++        return None
++    return fit
++
++
++def _uncertainties(fit, n_pts: int) -> np.ndarray | None:
++    k = fit.x.size
++    if n_pts - k < 1 or np.any(fit.active_mask != 0):
++        return None
++    jtj = fit.jac.T @ fit.jac
++    if not np.all(np.isfinite(jtj)):
++        return None
++    try:
++        if np.linalg.cond(jtj) > MAX_COND:
++            return None
++        cov = np.linalg.inv(jtj) * float(np.sum(fit.fun**2) / (n_pts - k))
++    except np.linalg.LinAlgError:
++        return None
++    var = np.diag(cov)
++    if not np.all(np.isfinite(var)) or np.any(var <= 0):
++        return None
++    return np.sqrt(var)
++
++
++def _trapezoid(t, f, s, period, t0c, duration, depth0):
++    """The overall fit: (params dict, fit cadences) or (None, cadences)."""
++    k = _epochs(t, period, t0c)
++    sel = np.abs(t - (t0c + k * period)) <= 2.0 * duration
++    tt, ff, ss = t[sel], f[sel], s[sel]
++    n = int(tt.size)
++    if n < 6:
++        return None, n
++    q_lo = duration / (10.0 * period)
++    q0 = min(max(duration / period, q_lo), 0.5)
++    d0 = min(max(depth0, 0.0), 1.0)
++    lo = [t0c - duration / 2.0, 0.0, q_lo, 0.5]
++    hi = [t0c + duration / 2.0, 1.0, 0.5, 1.5]
++    best = None
++    for q_in in Q_IN_REDUCED:
++
++        def res(x, q_in=q_in):
++            return (ff - _trap_model(tt, x[0], x[1], x[2], q_in, x[3], period)) / ss
++
++        fit = _fit(res, [t0c, d0, q0, 1.0], lo, hi)
++        if fit is None:
++            continue
++        chi2 = float(np.sum(fit.fun**2))
++        if best is None or chi2 < best[0]:
++            best = (chi2, q_in, fit.x)
++    if best is None:
++        return None, n
++    _, q_in0, x = best
++
++    def res5(y):
++        return (ff - _trap_model(tt, y[0], y[1], y[2], y[3], y[4], period)) / ss
++
++    start = [x[0], x[1], x[2], q_in0, x[3]]
++    fit = _fit(res5, start, lo[:3] + [0.0, 0.5], hi[:3] + [0.5, 1.5])
++    if fit is None:
++        return None, n
++    t0, depth, q, q_in, f0 = (float(v) for v in fit.x)
++    return {"t0": t0, "depth": depth, "q": q, "q_in": q_in, "f0": f0}, n
++
++
++def _parity_fit(t, f, s, period, t0c, duration, overall, parity):
++    k = _epochs(t, period, t0c)
++    sel = (np.abs(t - (t0c + k * period)) <= 2.0 * duration) & (np.mod(k, 2) == parity)
++    tt, ff, ss = t[sel], f[sel], s[sel]
++    n = int(tt.size)
++    if n < 4:
++        return None, n
++    q, q_in, f0 = overall["q"], overall["q_in"], overall["f0"]
++
++    def res(x):
++        return (ff - _trap_model(tt, x[0], x[1], q, q_in, f0, period)) / ss
++
++    lo, hi = [t0c - duration / 2.0, 0.0], [t0c + duration / 2.0, 1.0]
++    x0 = [min(max(overall["t0"], lo[0]), hi[0]), min(max(overall["depth"], 0.0), 1.0)]
++    fit = _fit(res, x0, lo, hi)
++    if fit is None:
++        return None, n
++    err = _uncertainties(fit, n)
++    if err is None:
++        return None, n
++    return (float(fit.x[0]), float(fit.x[1]), float(err[0]), float(err[1])), n
++
++
++def _f1_trap(t, f, s, period, t0, duration, overall):
++    if overall is None:
++        return _unavailable("F1_trap", "the overall trapezoid did not converge")
++    odd, n_odd = _parity_fit(t, f, s, period, t0, duration, overall, 1)
++    even, n_even = _parity_fit(t, f, s, period, t0, duration, overall, 0)
++    counts = {"fit_cadences_odd": n_odd, "fit_cadences_even": n_even}
++    cov = n_odd + n_even
++    if odd is None or even is None:
++        return _unavailable("F1_trap", "a parity fit or its uncertainties were refused", cov,
++                            counts)  # fmt: skip
++    (to, do, sto, sdo), (te, de, ste, sde) = odd, even
++    den_d, den_t = math.sqrt(sdo**2 + sde**2), math.sqrt(sto**2 + ste**2)
++    if not (den_d > 0 and den_t > 0):
++        return _unavailable("F1_trap", "a denominator is not positive", cov, counts)
++    oe_d, oe_t = _num(abs(do - de) / den_d), _num(abs(to - te) / den_t)
++    if oe_d is None or oe_t is None:
++        return _unavailable("F1_trap", "a statistic is not finite", cov, counts)
++    metrics = {**counts, "OE_trap": oe_d, "OE_trap_T": oe_t}
++    return _ro("F1_trap", "computed", "odd and even trapezoid fits", cov, metrics)
++
++
++def _reliable_radius(star, plausibility) -> float | None:
++    """The stellar radius under the legacy plausibility rule (gauntlet.check_plausibility)."""
++    if star is None:
++        return None
++    unreliable = {d.upper() for d in plausibility.unreliable_tic_dispositions}
++    if star.disposition and star.disposition.upper() in unreliable:
++        return None
++    r, e = star.radius_rsun, star.radius_err_rsun
++    if not (_finite(r) and r > 0 and _finite(e) and e > 0):
++        return None
++    if e / r > plausibility.max_stellar_radius_rel_err:
++        return None
++    return float(r)
++
++
++def _delta_f(overall) -> float | None:
++    if overall is None or not _finite(overall["f0"]) or overall["f0"] <= 0:
++        return None
++    df = overall["depth"] / overall["f0"]
++    return df if math.isfinite(df) and 0 < df < 1 else None
++
++
++def _f3(overall, n, star, plausibility):
++    from astropy import units as u
++
++    df = _delta_f(overall)
++    if df is None:
++        return _unavailable("F3", "no converged trapezoid with 0 < dF < 1", n)
++    r = _reliable_radius(star, plausibility)
++    if r is None:
++        return _unavailable("F3", "no reliable stellar radius (legacy rule)", n)
++    rp = _num(float((r * math.sqrt(df) * u.R_sun).to(u.R_earth).value))
++    if rp is None:
++        return _unavailable("F3", "Rp not finite", n)
++    return _ro("F3", "computed", "Rp = R* sqrt(dF) (SM03 Eq. 6)", n,
++               {"dF": df, "R_star_rsun": r, "Rp_earth": rp})  # fmt: skip
++
++
++def _f4(t, period, overall, n):
++    df = _delta_f(overall)
++    if df is None:
++        return _unavailable("F4", "no converged trapezoid with 0 < dF < 1", n)
++    q, q_in, t0 = overall["q"], overall["q_in"], overall["t0"]
++    if not q_in < 0.5:
++        return _unavailable("F4", "no flat bottom (q_in = 0.5)", n)
++    t_t, t_f = q * period, q * period * (1.0 - 2.0 * q_in)
++    dt = np.abs(np.mod(t - t0 + period / 2.0, period) - period / 2.0)
++    if not np.any(dt < t_f / 2.0):
++        return _unavailable("F4", "no cadence inside the flat interval", n)
++    s_t = math.sin(t_t * math.pi / period) ** 2
++    if not (math.isfinite(s_t) and s_t > 0):
++        return _unavailable("F4", "Eq. 7 ratio undefined", n)
++    ratio = math.sin(t_f * math.pi / period) ** 2 / s_t
++    denom = 1.0 - ratio
++    if not (math.isfinite(denom) and denom > 0):
++        return _unavailable("F4", "Eq. 7 denominator not positive", n)
++    bracket = ((1 - math.sqrt(df)) ** 2 - ratio * (1 + math.sqrt(df)) ** 2) / denom
++    if not (math.isfinite(bracket) and bracket >= 0):
++        return _unavailable("F4", "Eq. 7 bracket negative", n)
++    b = math.sqrt(bracket)
++    return _ro("F4", "computed", "V = sqrt(dF) + b (SM03 Eqs. 6, 7)", n,
++               {"dF": df, "b": b, "V": math.sqrt(df) + b})  # fmt: skip
++
++
++def _guard(names, fn):
++    """Run ``fn``; a numerical failure makes every quantity in ``names`` unavailable."""
++    try:
++        with np.errstate(all="ignore"):
++            return fn()
++    except NUMERICAL as exc:
++        why = f"numerical failure: {type(exc).__name__}"
++        out = tuple(_unavailable(n, why) for n in names)
++        return out if len(out) > 1 else out[0]
++
++
++def report_only(flattened, candidate, star, plausibility=None) -> dict:
++    """F1_trap, F2, F3, F4 and U1: computed or unavailable; no effect on the screen."""
++    from refute.packs.tess.params import PlausibilityParams
++
++    plausibility = plausibility or PlausibilityParams()
++    period, t0, duration = candidate.period, candidate.t0, candidate.duration
++    names = ("F1_trap", "F2", "F3", "F4", "U1")
++    t, f, s, _ = _valid(flattened.time, flattened.flux, flattened.flux_err)
++    if not _candidate_ok(period, t0, duration) or t.size < MIN_VALID:
++        return {n: _unavailable(n, "candidate or curve not usable") for n in names}
++    try:
++        w = _weights(s)
++    except ValueError as exc:
++        return {n: _unavailable(n, str(exc)) for n in names}
++
++    def noise():
++        return _noise(t, f, w, period, t0, duration)
++
++    noise_out = _guard(("F2", "U1"), noise)
++    if isinstance(noise_out, tuple) and len(noise_out) == 2:
++        f2, u1 = noise_out
++        sigma_w = sigma_r = None
++        base = _phase_distance(t, period, t0, 0.0) > duration
++    else:
++        sigma_w, sigma_r, base = noise_out
++        f2, u1 = _guard(
++            ("F2", "U1"), lambda: _f2_u1(t, f, w, period, t0, duration, sigma_w, sigma_r, base)
++        )
++
++    def overall_fit():
++        # the start needs only the box depth, not the noise (spec section 5)
++        inn = _phase_distance(t, period, t0, 0.0) <= duration / 2.0
++        m_base, m_in = _wmean(f[base], w[base]), _wmean(f[inn], w[inn])
++        if m_base is None or m_in is None:
++            return None, 0
++        return _trapezoid(t, f, s, period, t0, duration, m_base - m_in)
++
++    fitted = _guard(("F1_trap",), overall_fit)
++    if isinstance(fitted, dict):  # the shared fit failed numerically: its dependents too
++        why = fitted["reason"]
++        return {
++            "F1_trap": fitted,
++            "F2": f2,
++            "F3": _unavailable("F3", why),
++            "F4": _unavailable("F4", why),
++            "U1": u1,
++        }
++    overall, n = fitted
++    return {
++        "F1_trap": _guard(("F1_trap",), lambda: _f1_trap(t, f, s, period, t0, duration, overall)),
++        "F2": f2,
++        "F3": _guard(("F3",), lambda: _f3(overall, n, star, plausibility)),
++        "F4": _guard(("F4",), lambda: _f4(t, period, overall, n)),
++        "U1": u1,
++    }
++
++
++# --- the screen record (spec section 3) ---------------------------------------------------------
++
++
++def _eligible(candidate, tests) -> tuple[bool, str]:
++    gate = next((r for r in tests if r.name == GATE_TEST), None)
++    if gate is None:
++        return False, "no gate test in the final results"
++    if gate.status.value != "PASS":
++        return False, f"the gate test is {gate.status.value}"
++    if candidate is None or not _candidate_ok(candidate.period, candidate.t0, candidate.duration):
++        return False, "no final candidate with finite P > 0, t0 and T > 0"
++    return True, "the gate passed and the candidate is finite"
++
++
++def compute_screen(flattened, candidate, tests, star=None, plausibility=None) -> dict[str, Any]:
++    """The screen record: never a verdict, never an input of the legacy aggregation."""
++    eligible, why = _eligible(candidate, tests)
++    record: dict[str, Any] = {
++        "version": 5,
++        "spec_sha256": SPEC_SHA256,
++        "entry": "search",
++        "eligible": eligible,
++        "outcome": None,
++        "reason": why,
++        "core": {},
++        "report_only": {},
++        "labels": list(LABELS),
++    }
++    if not eligible:
++        return record
++    if flattened is None:
++        # Codex's second review of the step-2 diff, item 2: eligible, but no curve to measure
++        why = "no flattened curve"
++        record["core"] = {"F1": _core("not_assessed", why)}
++        record["report_only"] = {n: _unavailable(n, why) for n in UNITS}
++        record["outcome"], record["reason"] = "unassessed", "a core test was not assessed"
++        return record
++    f1 = f1_box(
++        flattened.time,
++        flattened.flux,
++        flattened.flux_err,
++        candidate.period,
++        candidate.t0,
++        candidate.duration,
++    )
++    record["core"] = {"F1": f1}
++    try:
++        record["report_only"] = report_only(flattened, candidate, star, plausibility)
++    except NUMERICAL as exc:  # a last guard: the core and level 2 are never affected
++        why = f"numerical failure: {type(exc).__name__}"
++        record["report_only"] = {n: _unavailable(n, why) for n in UNITS}
++    states = [c["state"] for c in record["core"].values()]
++    if "fail" in states:
++        record["outcome"], record["reason"] = "rejected", "a core test failed"
++    elif "not_assessed" in states:
++        record["outcome"], record["reason"] = "unassessed", "a core test was not assessed"
++    else:
++        record["outcome"], record["reason"] = "retained", "every core test was assessed and passed"
++    return record
+diff --git a/tests/test_v0511_identity.py b/tests/test_v0511_identity.py
+index 5fca8f4..1688fb6 100644
+--- a/tests/test_v0511_identity.py
++++ b/tests/test_v0511_identity.py
+@@ -36,9 +36,6 @@ import baseline_code_v0511 as bc  # noqa: E402
+ 
+ TARGET = bc.TARGET
+ CONTEXT = {"claim_id": "synthetic-v5", "claim_kind": "discover", "hypothesis": "h"}
+-NEEDS_V5 = pytest.mark.xfail(
+-    strict=True, raises=ValidationError, reason="discovery version 5 does not exist before step 2"
+-)
+ 
+ 
+ def v5_plan_dict() -> dict:
+@@ -79,6 +76,18 @@ def test_an_authored_entry_is_refused_for_versions_1_to_4(plan):
+         TessTestPlan.model_validate(d)
+ 
+ 
++@pytest.mark.parametrize(
++    "plan", [discovery_plan_dict, discovery_v05_plan_dict, discovery_v051_plan_dict,
++             discovery_v052_plan_dict],
++)  # fmt: skip
++def test_an_authored_null_entry_is_refused_for_versions_1_to_4(plan):
++    # Codex's review of the step-2 diff, item 2: an explicit null is an authored entry too
++    d = plan()
++    d["discovery"]["entry"] = None
++    with pytest.raises(ValidationError):
++        TessTestPlan.model_validate(d)
++
++
+ @pytest.mark.parametrize(
+     "plan", [discovery_plan_dict, discovery_v05_plan_dict, discovery_v051_plan_dict,
+              discovery_v052_plan_dict],
+@@ -109,7 +118,6 @@ def test_a4_an_inconclusive_or_missing_decisive_test_never_gives_survived():
+ # --- version 5 (strict expected failures until step 2) --------------------------------------
+ 
+ 
+-@NEEDS_V5
+ def test_version_5_requires_entry_search():
+     TessTestPlan.model_validate(v5_plan_dict())
+     bad = v5_plan_dict()
+@@ -139,7 +147,6 @@ def _strip_v5(obj):
+     return obj
+ 
+ 
+-@NEEDS_V5
+ @pytest.mark.parametrize("scenario", ["planet_three_years", "eb_odd_even", "noise"])
+ def test_version_5_equals_version_2_through_analyze_and_build_result(scenario):
+     from refute.packs.tess.pipeline import analyze_data, build_result
+@@ -148,6 +155,7 @@ def test_version_5_equals_version_2_through_analyze_and_build_result(scenario):
+     p2 = TessTestPlan.model_validate(discovery_v05_plan_dict())
+     data = scenario_data(scenario)
+     a5, a2 = analyze_data(data, p5, stage=2), analyze_data(data, p2, stage=2)
++    assert "screen" in a5.extras and "screen" not in a2.extras
+     assert a5.verdict == a2.verdict and a5.verdict_reason == a2.verdict_reason
+     assert [t.to_dict() for t in a5.tests] == [t.to_dict() for t in a2.tests]
+     assert a5.deferred == a2.deferred and a5.stage == a2.stage
+@@ -157,7 +165,6 @@ def test_version_5_equals_version_2_through_analyze_and_build_result(scenario):
+     assert _strip_v5(r5) == _strip_v5(r2)
+ 
+ 
+-@NEEDS_V5
+ @pytest.mark.parametrize("stage", [1, 2])
+ def test_version_5_equals_version_2_through_the_measurement_chain(stage):
+     from refute.packs.tess.discover.measure import chain
+@@ -166,12 +173,13 @@ def test_version_5_equals_version_2_through_the_measurement_chain(stage):
+     p2 = TessTestPlan.model_validate(discovery_v05_plan_dict())
+     data = scenario_data("planet_three_years")
+     c5, c2 = chain(data, p5, stage), chain(data, p2, stage)
++    assert "screen" in c5 and "screen" not in c2
++    assert c5["screen"]["version"] == 5
+     assert _strip_v5(c5) == _strip_v5(c2)
+     assert c5["stage_verdict"] == c2["stage_verdict"]
+     assert c5["stage_verdict_reason"] == c2["stage_verdict_reason"]
+ 
+ 
+-@NEEDS_V5
+ def test_version_5_equals_version_2_in_the_error_record():
+     from refute.packs.tess.pipeline import TessAnalyzer
+ 
+@@ -182,7 +190,6 @@ def test_version_5_equals_version_2_in_the_error_record():
+     assert _strip_v5(json.loads(dumps_json(e5))) == _strip_v5(json.loads(dumps_json(e2)))
+ 
+ 
+-@NEEDS_V5
+ def test_version_5_keeps_the_legacy_error_type_and_message():
+     from refute.packs.tess.pipeline import analyze_data
+ 
+@@ -200,7 +207,6 @@ def test_version_5_keeps_the_legacy_error_type_and_message():
+     assert errors[0] == errors[1]
+ 
+ 
+-@NEEDS_V5
+ def test_version_5_is_deterministic():
+     from refute.packs.tess.pipeline import analyze_data, build_result
+ 
+@@ -213,7 +219,6 @@ def test_version_5_is_deterministic():
+     assert outs[0] == outs[1]
+ 
+ 
+-@NEEDS_V5
+ def test_the_version_5_plan_dump_differs_from_version_2_only_by_version_and_entry():
+     d5 = TessTestPlan.model_validate(v5_plan_dict()).model_dump(mode="json")
+     d2 = TessTestPlan.model_validate(discovery_v05_plan_dict()).model_dump(mode="json")
+diff --git a/tests/test_v0511_screen.py b/tests/test_v0511_screen.py
+index 77d1558..283e3af 100644
+--- a/tests/test_v0511_screen.py
++++ b/tests/test_v0511_screen.py
+@@ -41,9 +41,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
+ from screen_reference import f1_reference  # noqa: E402
+ 
+ SPEC_SHA256 = "d498a82ada2e31a5b47768d58d6af2e19af0a3c5e35364693f04886068612f15"
+-NEEDS_SCREEN = pytest.mark.xfail(
+-    strict=True, raises=ModuleNotFoundError, reason="screen_d5 does not exist before step 2"
+-)
+ EB_HALF = SignalSpec(period=1.8, t0=1325.7, depth=0.006, duration=2 / 24, odd_depth_factor=0.75)
+ 
+ 
+@@ -69,7 +66,6 @@ def _gate(status=TestStatus.PASS) -> list[TestResult]:
+     return [TestResult("snr", status, Severity.GATE, "gate", coverage=10, coverage_unit="u")]
+ 
+ 
+-@NEEDS_SCREEN
+ @pytest.mark.parametrize("correlated", [False, True], ids=["white", "correlated"])
+ def test_f1_reproduces_the_reference_decisions_on_the_calibration_fixtures(correlated):
+     s = screen()
+@@ -83,7 +79,6 @@ def test_f1_reproduces_the_reference_decisions_on_the_calibration_fixtures(corre
+         assert got["coverage"] == ref.coverage
+ 
+ 
+-@NEEDS_SCREEN
+ def test_f1_passes_a_planet_and_fails_a_binary_at_half_the_period():
+     s = screen()
+     lc, _ = make_lightcurve(PLANET, seed=3)
+@@ -94,7 +89,6 @@ def test_f1_passes_a_planet_and_fails_a_binary_at_half_the_period():
+     assert r["state"] == "fail" and r["metrics"]["oe_box"] > r["threshold"] == 3.0
+ 
+ 
+-@NEEDS_SCREEN
+ def test_f1_not_assessed_paths():
+     s = screen()
+     lc, _ = make_lightcurve(PLANET, seed=3)
+@@ -119,7 +113,6 @@ def test_f1_not_assessed_paths():
+     assert r["state"] == "not_assessed"
+ 
+ 
+-@NEEDS_SCREEN
+ def test_ineligible_gives_a_null_outcome_and_empty_maps():
+     s = screen()
+     lc, _ = make_lightcurve(PLANET, seed=3)
+@@ -131,7 +124,6 @@ def test_ineligible_gives_a_null_outcome_and_empty_maps():
+     assert rec["eligible"] is False and rec["outcome"] is None
+ 
+ 
+-@NEEDS_SCREEN
+ @pytest.mark.parametrize(
+     ("state", "outcome"),
+     [("pass", "retained"), ("fail", "rejected"), ("not_assessed", "unassessed")],
+@@ -149,7 +141,6 @@ def test_precedence_and_a4_on_the_screen(monkeypatch, state, outcome):
+     )
+ 
+ 
+-@NEEDS_SCREEN
+ def test_a_report_only_failure_changes_only_its_own_record(monkeypatch):
+     s = screen()
+     lc, _ = make_lightcurve(PLANET, seed=3)
+@@ -174,7 +165,91 @@ def test_a_report_only_failure_changes_only_its_own_record(monkeypatch):
+     assert changed["report_only"] != normal["report_only"]
+ 
+ 
+-@NEEDS_SCREEN
++def test_an_extreme_flux_error_never_raises_in_f1():
++    # Codex's review of the step-2 diff, item 1: a finite, positive error whose weight overflows
++    s = screen()
++    lc, _ = make_lightcurve(PLANET, seed=3)
++    # (and its second review, item 1: the frozen predicate keeps such points valid; the weights
++    # on a common scale cannot represent the others, so F1 is not assessed, never a pass)
++    err = lc.flux_err.copy()
++    err[:5] = 1e-200
++    r = s.f1_box(lc.time, lc.flux, err, PLANET.period, PLANET.t0, PLANET.duration)
++    assert r["state"] == "not_assessed"
++    assert r["metrics"]["dropped"] == 0 and r["metrics"]["valid"] == lc.time.size
++    rec = s.compute_screen(
++        LightCurveData(lc.time, lc.flux, err, lc.sector, lc.year),
++        _candidate(PLANET),
++        _gate(),
++        make_star(),
++    )
++    assert rec["outcome"] == "unassessed"
++    assert all(v["state"] == "unavailable" for v in rec["report_only"].values())
++
++
++def test_an_unrepresentable_epoch_is_not_assessed():
++    s = screen()
++    lc, _ = make_lightcurve(PLANET, seed=3)
++    r = s.f1_box(lc.time, lc.flux, lc.flux_err, 1e-20, PLANET.t0, 1e-21)
++    assert r["state"] == "not_assessed"
++
++
++def test_an_eligible_case_without_a_curve_is_unassessed():
++    s = screen()
++    rec = s.compute_screen(None, _candidate(PLANET), _gate(), make_star())
++    assert rec["eligible"] is True and rec["outcome"] == "unassessed"
++    assert rec["core"]["F1"]["state"] == "not_assessed"
++    assert all(v["state"] == "unavailable" for v in rec["report_only"].values())
++
++
++def test_direct_finalization_without_a_curve_keeps_the_legacy_verdict():
++    from dataclasses import replace
++
++    from refute.packs.tess.params import TessTestPlan
++    from refute.packs.tess.pipeline import analyze_data, conclude_analysis
++    from refute.packs.tess.synthetic import discovery_v05_plan_dict, scenario_data
++
++    d = discovery_v05_plan_dict()
++    d["discovery"]["version"] = 5
++    d["discovery"]["entry"] = "search"
++    plan = TessTestPlan.model_validate(d)
++    data = scenario_data("planet")
++    a = analyze_data(data, plan, stage=1)
++    g = replace(a.gauntlet, flattened=None)
++    b = conclude_analysis(a.search, a.flattened_search, g, a.holdout, False, plan=plan, stage=1)
++    assert b.verdict == a.verdict and b.verdict_reason == a.verdict_reason
++    assert b.extras["screen"]["core"]["F1"]["state"] == "not_assessed"
++
++
++def test_a_shared_fit_failure_stays_in_its_dependents(monkeypatch):
++    # Codex's review of the step-2 diff, item 1: a LinAlgError in the shared trapezoid fit makes
++    # F1_trap, F3 and F4 unavailable and leaves the core, F2, U1 and the outcome unchanged
++    s = screen()
++    lc, _ = make_lightcurve(PLANET, seed=3)
++    star, cand = make_star(), _candidate(PLANET)
++    normal = s.compute_screen(lc, cand, _gate(), star)
++
++    def broken(*args, **kwargs):
++        raise np.linalg.LinAlgError("forced by the test")
++
++    monkeypatch.setattr(s, "_trapezoid", broken)
++    failed = s.compute_screen(lc, cand, _gate(), star)
++    assert failed["outcome"] == normal["outcome"] and failed["core"] == normal["core"]
++    for name in ("F1_trap", "F3", "F4"):
++        assert failed["report_only"][name]["state"] == "unavailable"
++        assert "LinAlgError" in failed["report_only"][name]["reason"]
++    for name in ("F2", "U1"):
++        assert failed["report_only"][name] == normal["report_only"][name]
++
++
++def test_f2_always_carries_its_two_flags():
++    s = screen()
++    lc, _ = make_lightcurve(PLANET, seed=3)
++    for duration in (PLANET.duration, 1e-7):
++        f2 = s.report_only(lc, _candidate(PLANET, duration=duration), make_star())["F2"]
++        assert "would_be_significant" in f2["metrics"]
++        assert "exception_first_condition" in f2["metrics"]
++
++
+ def test_report_only_unavailable_paths():
+     s = screen()
+     lc, _ = make_lightcurve(PLANET, seed=3)
+@@ -189,7 +264,6 @@ def test_report_only_unavailable_paths():
+         assert "coverage" in ro[name] and "coverage_unit" in ro[name]
+ 
+ 
+-@NEEDS_SCREEN
+ def test_the_screen_record_and_its_determinism():
+     s = screen()
+     assert s.SPEC_SHA256 == SPEC_SHA256
+@@ -204,7 +278,6 @@ def test_the_screen_record_and_its_determinism():
+     assert rec["outcome"] in ("retained", "rejected", "unassessed")
+ 
+ 
+-@NEEDS_SCREEN
+ def test_the_screen_reads_the_curve_without_writing_it():
+     s = screen()
+     lc, _ = make_lightcurve(PLANET, seed=3)
