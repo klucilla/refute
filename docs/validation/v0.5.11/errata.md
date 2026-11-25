@@ -97,3 +97,23 @@ its impact. Recorded outputs are never edited.
     is requested at the stop.
   - The JUnit evidence of the corrected diff is therefore not yet available.
   - The earlier step-2 run (`step2-a`, 161 passed) is evidence for the earlier diff only.
+
+## 7. 2026-11-25: the background transfer makes a 0.1 GB reservation stop any unit after about a minute
+
+- **Source:** the journal, attempt `85930b7ea6974b68820350fd0374bb48` (unit `inspect`, a 90 s
+  read-only measurement under launch_v6, 01:29:12Z).
+- **What happened:**
+  - Its 50 MB reservation stopped it after 37.7 s: the machine's 64-bit counters rose by
+    52,922,530 bytes, about 1.4 MB/s, with no network use by the unit.
+  - Earlier readings were about 0.17 MB/s (a 1 s probe) and 0.4 MB/s (a 113 s unit).
+  - The counters sum all 66 interfaces. They include virtual ones, so the same bytes may be
+    counted more than once, and the bound is a loose upper bound.
+- **The consequence for the amendment of 2026-11-25** (charter, section 14): at that rate, a
+  unit without network that reserves 0.1 GB is stopped at 90 MB, after about a minute, whatever
+  it does.
+  - Its stop level is 90 % of a reservation that is not above twice the 50 MB margin.
+  - R1 (golden-local, about 2 to 5 minutes), R2 (the tests, about 10 minutes) and the tag
+    verification would be stopped, each wasting an approved repetition.
+- **What was done:**
+  - R1 and R2 were not started, and the src/ diff stays uncommitted in the working tree.
+  - The stop returns to the maintainer with options.

@@ -4,6 +4,6 @@
  "choices": "Every tracked YAML mapping with pack and kind, through load_claim; an error is recorded with its type and message. The extra argument is the label; each label is its own data unit, run once.",
  "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.11/tools/claim_hashes.py"],
  "identity": ["docs/validation/v0.5.11/tools/claim_hashes.py"],
- "reserve": {"cpu_s": 300, "transfer_bytes": 50000000, "disk_bytes": 50000000},
+ "reserve": {"cpu_s": 300, "transfer_bytes": 100000000, "disk_bytes": 50000000},
  "network": false
 }

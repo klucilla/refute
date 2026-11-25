@@ -1,0 +1,10 @@
+{
+ "name": "tag-verify",
+ "question": "Proof (iii) of the charter's section 2.3: does scripts/verify_locked_tags.py give joint PASS on every locked tag, each in its own warm environment under .cache/lock-compat, after the src/ change?",
+ "choices": "The script as committed; the extra arguments are --out and a new folder under .cache/v0511; no network declared (the warm environments are reused; uv sync --frozen); 0.1 GB transfer reservation (charter, section 14). A data unit, run once.",
+ "argv": ["{python}", "-I", "-B", "scripts/verify_locked_tags.py"],
+ "identity": ["scripts/verify_locked_tags.py"],
+ "reserve": {"cpu_s": 3600, "transfer_bytes": 100000000, "disk_bytes": 3000000000},
+ "network": false,
+ "disk_extra": [".cache/lock-compat", "uv-cache"]
+}

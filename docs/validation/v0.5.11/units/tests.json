@@ -5,7 +5,7 @@
  "argv": ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "scripts/run_tests_affinity.ps1"],
  "identity": ["scripts/run_tests_affinity.ps1"],
  "key": "tree",
- "reserve": {"cpu_s": 3600, "transfer_bytes": 1000000000, "disk_bytes": 1000000000},
+ "reserve": {"cpu_s": 3600, "transfer_bytes": 100000000, "disk_bytes": 1000000000},
  "network": false,
  "disk_extra": ["pytest-temp"]
 }
