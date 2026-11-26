@@ -1,0 +1,16 @@
+{
+ "kind": "adoption",
+ "decision": "#218 comment 7197519001, item 1",
+ "adopted": "docs/plans/v0.5.12-spec-correction-2-r1.md",
+ "commit": "38c02ae5bde2701962662e126505d4f6b0328bb7",
+ "sha256": "c24e7fd936929d713f53755b53233cc453e3e65a043f887b2f9e1511869873db",
+ "as_it_stands": true,
+ "declared_limits": "those revision 1 carries, Codex's round-3 limit included",
+ "adviser_checked": [
+  "the SHA",
+  "the formula of N_eff,par, with B1 (A)'s exact wording",
+  "the reviewed text and the package unchanged",
+  "checks 2 and 3 without red noise: 38 rejections in 14,000 null curves (0.27 %, the nominal rate)"
+ ],
+ "not_edited": ["docs/plans/v0.5.11-spec.md", "docs/plans/v0.5.11-spec-correction-1.md"]
+}

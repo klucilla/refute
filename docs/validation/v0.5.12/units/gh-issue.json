@@ -1,0 +1,10 @@
+{
+ "name": "gh-issue",
+ "question": "Open one GitHub issue that a recorded decision asks for (the extra arguments: issue create --repo klucilla/refute --title <title> --body-file <committed file>). Permitted GitHub traffic only.",
+ "choices": "A new unit file (rule (c)); units/gh.json is unchanged. In a job without the container; the operation and the endpoint are journaled. Only the subcommand issue create on klucilla/refute, with a committed body file. A data unit: the arguments make the unit.",
+ "argv": ["gh"],
+ "identity": [],
+ "key": "data",
+ "reserve": {"cpu_s": 60, "disk_bytes": 10000000},
+ "network": {"kind": "github", "endpoints": ["api.github.com:443"], "operations": ["gh issue create"]}
+}
