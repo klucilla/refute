@@ -1,0 +1,115 @@
+{
+ "offline": "UV_OFFLINE=1; git clone from the local repository path",
+ "steps": [
+  {
+   "argv": [
+    "git",
+    "clone",
+    "--quiet",
+    "<local path>",
+    "<local path>"
+   ],
+   "exit_code": 0,
+   "seconds": 3.6,
+   "output_head": []
+  },
+  {
+   "argv": [
+    "uv",
+    "sync",
+    "--frozen"
+   ],
+   "exit_code": 0,
+   "seconds": 8.0,
+   "output_head": [
+    "Using CPython 3.13.16",
+    "Creating virtual environment at: .venv",
+    "   Building refute @ file:///C:/Projetos/refute/.cache/v0513prep/clean-clone",
+    "      Built refute @ file:///C:/Projetos/refute/.cache/v0513prep/clean-clone",
+    "Prepared 1 package in 761ms",
+    "Installed 103 packages in 6.16s"
+   ]
+  },
+  {
+   "argv": [
+    "uv",
+    "run",
+    "refute",
+    "--version"
+   ],
+   "exit_code": 0,
+   "seconds": 0.7,
+   "output_head": [
+    "refute 0.5.0"
+   ]
+  },
+  {
+   "argv": [
+    "uv",
+    "run",
+    "refute",
+    "packs"
+   ],
+   "exit_code": 0,
+   "seconds": 2.1,
+   "output_head": [
+    "ml 0.3.0.dev0: ML papers: drawn claims reproduced from the repository at the pinned commit on the VM (docker backend, build ladder, budget), then attacked; verdicts per claim",
+    "tess 0.2.0.dev0: TESS SPOC 2-min transits: BLS search, gauntlet v0.2 (pixel, neighbor, alias, systematics and catalog tests), blind holdout by year"
+   ]
+  },
+  {
+   "argv": [
+    "uv",
+    "run",
+    "refute",
+    "verify",
+    "calibration/self_claim.yaml"
+   ],
+   "exit_code": 2,
+   "seconds": 2.3,
+   "output_head": [
+    "TAMPERED",
+    "  claim matches its lock by historical projection tess-calibration-v0.1@5214f2e: locked 5701c54cb088f1d33895f73d98244d0ea214ddb3f861340d8261b817e189a53f, full resolved hash now f88521edaa2bb645f2aa890dc3a0c23bcbd405611582444e983b485be13232dc; the projection shows that the claim content and the values resolved at lock time are intact; it does not show that the current code evaluates the claim the same way",
+    "  code hash mismatch: locked 624f5f900334abcdc614a679a3fdc4ce9c9e8a465f2d3e553d71b24c199f4cfa, now e557588874075b2e73eae386c54cf3cf7653cc270c61835c638b7335a0d48829; modified: pyproject.toml; modified: src/refute/__init__.py; modified: src/refute/cli.py; added: src/refute/core/budget.py; added: src/refute/core/chi2.py; modified: src/refute/core/claim.py; modified: src/refute/core/dossier.py; modified: src/refute/core/environment.py; added: src/refute/core/inconclusive.py; added: src/refute/core/ledger.py; modified: src/refute/core/lock.py; added: src/refute/core/lock_compat.py; modified: src/refute/core/pack.py; added: src/refute/core/paper.py; added: src/refute/core/reply.py; added: src/refute/core/reproduce.py; added: src/refute/core/review.py; modified: src/refute/core/run.py; modified: src/refute/core/runner.py; added: src/refute/core/seal.py; added: src/refute/core/sensitivity.py; modified: src/refute/core/verdict.py; added: src/refute/drand.py; added: src/refute/packs/ml/__init__.py; added: src/refute/packs/ml/_reaper.py; added: src/refute/packs/ml/attacks.py; added: src/refute/packs/ml/container_reader.py; added: src/refute/packs/ml/coverage_hook.py; added: src/refute/packs/ml/docker_backend.py; added: src/refute/packs/ml/extract.py; added: src/refute/packs/ml/fetch.py; added: src/refute/packs/ml/integration.py; added: src/refute/packs/ml/ladder.py; added: src/refute/packs/ml/orchestrate.py; added: src/refute/packs/ml/patches.py; added: src/refute/packs/ml/predicates.py; added: src/refute/packs/ml/production.py; added: src/refute/packs/ml/readers.py; added: src/refute/packs/ml/recompute.py; added: src/refute/packs/ml/repository.py; added: src/refute/packs/ml/reproduction.py; added: src/refute/packs/ml/rules.py; added: src/refute/packs/ml/sandbox.py; added: src/refute/packs/ml/schema.py; added: src/refute/packs/ml/seeds.py; added: src/refute/packs/ml/synthetic.py; added: src/refute/packs/ml/tbevents.py; added: src/refute/packs/ml/uncertainty.py; modified: src/refute/packs/tess/__init__.py; added: src/refute/packs/tess/a0.py; added: src/refute/packs/tess/a0_v4.py; modified: src/refute/packs/tess/adapter.py; added: src/refute/packs/tess/battery.py; added: src/refute/packs/tess/battery_v5.py; added: src/refute/packs/tess/battery_v51.py; added: src/refute/packs/tess/battery_v51_diff.py; added: src/refute/packs/tess/battery_v52.py; added: src/refute/packs/tess/calib05/__init__.py; added: src/refute/packs/tess/calib05/c1.py; added: src/refute/packs/tess/calib05/c2.py; added: src/refute/packs/tess/calib05/c3run.py; added: src/refute/packs/tess/calib05/c3select.py; added: src/refute/packs/tess/calib05/plans.py; added: src/refute/packs/tess/calib05/runner.py; added: src/refute/packs/tess/calib05/steps.py; added: src/refute/packs/tess/calib05/values.py; added: src/refute/packs/tess/calib051/__init__.py; added: src/refute/packs/tess/calib051/claim.py; added: src/refute/packs/tess/calib051/plans.py; added: src/refute/packs/tess/calib051/tasks.py; added: src/refute/packs/tess/calib051/values.py; modified: src/refute/packs/tess/calibration.py; added: src/refute/packs/tess/centroid_v5.py; modified: src/refute/packs/tess/detrend.py; added: src/refute/packs/tess/detrend_fast.py; added: src/refute/packs/tess/discover/__init__.py; added: src/refute/packs/tess/discover/case.py; added: src/refute/packs/tess/discover/claim.py; added: src/refute/packs/tess/discover/dedup.py; added: src/refute/packs/tess/discover/funnel.py; added: src/refute/packs/tess/discover/injection.py; added: src/refute/packs/tess/discover/measure.py; added: src/refute/packs/tess/discover/paired.py; added: src/refute/packs/tess/discover/pilot.py; added: src/refute/packs/tess/discover/promotion_v05.py; added: src/refute/packs/tess/discover/protocol.py; added: src/refute/packs/tess/discover/runs.py; added: src/refute/packs/tess/discover/selection.py; added: src/refute/packs/tess/discover/steps.py; added: src/refute/packs/tess/discover/transforms.py; added: src/refute/packs/tess/domain.py; added: src/refute/packs/tess/duration.py; added: src/refute/packs/tess/ebcatalog.py; modified: src/refute/packs/tess/events.py; modified: src/refute/packs/tess/exporter.py; added: src/refute/packs/tess/frozen.py; modified: src/refute/packs/tess/gauntlet.py; modified: src/refute/packs/tess/holdout.py; added: src/refute/packs/tess/inconclusive.py; modified: src/refute/packs/tess/params.py; modified: src/refute/packs/tess/pipeline.py; added: src/refute/packs/tess/pipeline_v52.py; added: src/refute/packs/tess/power.py; added: src/refute/packs/tess/prewhiten.py; added: src/refute/packs/tess/rednoise.py; added: src/refute/packs/tess/rednoise_fast.py; modified: src/refute/packs/tess/report.py; modified: src/refute/packs/tess/schema.py; added: src/refute/packs/tess/screen_d5.py; modified: src/refute/packs/tess/search.py; modified: src/refute/packs/tess/synthetic.py; added: src/refute/packs/tess/timing.py; modified: src/refute/packs/tess/types.py; added: src/refute/selection/__init__.py; added: src/refute/selection/filters.py; added: src/refute/selection/frame.py; added: src/refute/selection/inventory.py; added: src/refute/selection/publication.py; added: src/refute/selection/walk.py; modified: uv.lock",
+    "  note: only the code component differs from the lock; the claim (directly or by its historical projection), every attachment and the LOCK_HISTORY.md entry match it. This names the component that differs; it does not say whether the change is legitimate or harmless (docs/lock-format.md, \"When only the code differs\")."
+   ]
+  },
+  {
+   "argv": [
+    "uv",
+    "run",
+    "refute",
+    "verify",
+    "calibration/v0.5.6/claim.yaml"
+   ],
+   "exit_code": 2,
+   "seconds": 2.5,
+   "output_head": [
+    "TAMPERED",
+    "  code hash mismatch: locked e1a89af9784a51baad9479044c0c678664104e571e4434e287519cc1e08d0cab, now e557588874075b2e73eae386c54cf3cf7653cc270c61835c638b7335a0d48829; modified: src/refute/packs/tess/discover/measure.py; modified: src/refute/packs/tess/params.py; modified: src/refute/packs/tess/pipeline.py; modified: src/refute/packs/tess/schema.py; added: src/refute/packs/tess/screen_d5.py",
+    "  note: only the code component differs from the lock; the claim (directly or by its historical projection), every attachment and the LOCK_HISTORY.md entry match it. This names the component that differs; it does not say whether the change is legitimate or harmless (docs/lock-format.md, \"When only the code differs\")."
+   ]
+  },
+  {
+   "argv": [
+    "uv",
+    "run",
+    "refute",
+    "check-dossier",
+    "calibration/v0.3/main/dossiers/2302.12465/dossier"
+   ],
+   "exit_code": 0,
+   "seconds": 0.7,
+   "output_head": [
+    "core: intact against its seal",
+    "annex reply: intact against its manifest",
+    "annex review-codex: intact against its manifest",
+    "annex review-opus: intact against its manifest",
+    "annex verification: intact against its manifest",
+    "OK: manifest intact"
+   ]
+  }
+ ],
+ "source_head": "65e83be5f016957e0186c02a409f3a388914c06a",
+ "total_seconds": 19.9
+}
