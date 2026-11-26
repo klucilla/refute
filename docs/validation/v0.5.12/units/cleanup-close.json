@@ -1,0 +1,11 @@
+{
+ "name": "cleanup-close",
+ "question": "The cleanup of .cache/v0512 at v0.5.12's close (#218 comment 7202383280, item 6): archive what has value to the Drive with a checked SHA-256 manifest, delete it, and delete the regenerable copies (cpy, git, cvenv), by literal path inside .cache/v0512.",
+ "choices": "docs/maintenance/cleanup-2026-11-26-v0512-close/cleanup.py, committed before the run; a new unit file (rule (c)). Through launch_v4 (outside the AppContainer, in the launcher's job object). Writes outside the project only to the Drive archive folder; record.json beside the script. A data unit: the arguments make the unit.",
+ "argv": ["{python}", "-I", "-B", "docs/maintenance/cleanup-2026-11-26-v0512-close/cleanup.py"],
+ "identity": ["docs/maintenance/cleanup-2026-11-26-v0512-close/cleanup.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 300, "disk_bytes": 10000000},
+ "timeout_s": 1800,
+ "network": false
+}

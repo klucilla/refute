@@ -1,0 +1,12 @@
+{
+ "schema": "refute-v0512-sitecustomize-install-1",
+ "decision": "#218 comment 7190662570, item 1",
+ "utc": "2026-11-26T11:26:28Z",
+ "source": "docs/validation/v0.5.12/tools/cvenv_sitecustomize.py",
+ "destination": ".cache/v0512/cvenv/Lib/site-packages/sitecustomize.py",
+ "source_sha256_before": "7bed44910a01992590dc320755372adfaecb3c81fa66f791e1b6f7a7e6123c91",
+ "source_sha256_after": "7bed44910a01992590dc320755372adfaecb3c81fa66f791e1b6f7a7e6123c91",
+ "destination_sha256": "7bed44910a01992590dc320755372adfaecb3c81fa66f791e1b6f7a7e6123c91",
+ "venv_changed": false,
+ "passed": true
+}
