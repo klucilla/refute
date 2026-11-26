@@ -1,0 +1,56 @@
+{
+ "schema": "refute-v0513-amendment1-power-1c",
+ "mode": "exploratory",
+ "method_status": "not_validated",
+ "model": "135 non-SB1 at 0.15 and 172 SB1 at q; common probability at full precision; frozen power_v2 functions; FP bands 153/154; planet bands 85/86",
+ "rows": [
+  {
+   "fp_bands": [
+    153,
+    154
+   ],
+   "p_survive": 0.15,
+   "planet_arm_pass": 0.959134,
+   "fp_arm_pass": 0.992454,
+   "joint_pass": 0.945942,
+   "assumed_non_sb1_survival": 0.15,
+   "assumed_sb1_survival": 0.15
+  },
+  {
+   "fp_bands": [
+    153,
+    154
+   ],
+   "p_survive": 0.23403908794788272,
+   "planet_arm_pass": 0.959134,
+   "fp_arm_pass": 0.141138,
+   "joint_pass": 0.134514,
+   "assumed_non_sb1_survival": 0.15,
+   "assumed_sb1_survival": 0.3
+  },
+  {
+   "fp_bands": [
+    153,
+    154
+   ],
+   "p_survive": 0.34609120521172637,
+   "planet_arm_pass": 0.959134,
+   "fp_arm_pass": 0.0,
+   "joint_pass": 0.0,
+   "assumed_non_sb1_survival": 0.15,
+   "assumed_sb1_survival": 0.5
+  },
+  {
+   "fp_bands": [
+    153,
+    154
+   ],
+   "p_survive": 0.45814332247556994,
+   "planet_arm_pass": 0.959134,
+   "fp_arm_pass": 0.0,
+   "joint_pass": 0.0,
+   "assumed_non_sb1_survival": 0.15,
+   "assumed_sb1_survival": 0.7
+  }
+ ]
+}

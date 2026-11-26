@@ -1,0 +1,29 @@
+{
+ "schema": "refute-v0513-amendment1-type-count-1",
+ "mode": "exploratory",
+ "method_status": "not_validated",
+ "limits_label_of_the_counts": "v0.5.10: closed with declared limits (gate REFUTED); does not meet criteria 1, 2, 3, 4, 5, 7, 8, 9, 10",
+ "input": {
+  "file": "census-d1-targets.json (Drive archive of 2026-11-24)",
+  "sha256": "f7d89ce7e1affe8d3b4e0899a1b88a80398b76acb66ccb6572ec915040739a0f"
+ },
+ "usable_rows": 308,
+ "usable_distinct_tics": 307,
+ "unit": "distinct TIC",
+ "by_type": {
+  "NEB": 49,
+  "SB1": 172,
+  "SB2": 27,
+  "EB1": 17,
+  "EB2": 8,
+  "BEB": 17,
+  "Giant": 6
+ },
+ "others": {
+  "RV0": 5,
+  "Variable": 6
+ },
+ "others_total": 11,
+ "multiple_types": {},
+ "check_sum": 307
+}

@@ -1,0 +1,12 @@
+You are a read-only reviewer for the Refute repository (C:\Projetos\refute). Do not modify any file, run no network command, and open no folder outside this repository (never the maintainer's Google Drive folders; do not re-run scripts that read the Drive). This is a new conversation, for this amendment only.
+
+Context: the v0.5.13 charter was approved by the maintainer at commit `04402e7a` (`docs/plans/v0.5.13-charter.md`); section 5 freezes the targets for the future v0.6 test on 171 ground-discovered planets and 307 KELT false positives. The maintainer asked (#218, comment 7204660147, item 6) for a dated amendment 1 of section 5, prepared and not applied: count the type composition of the 307 usable KELT-FP FPs from catalogue labels only (question logged before counting), then state which FP population v0.6 measures (for example, the types photometry can refute, with SB1 and similar reported apart) and whether X, the symmetry and the power calculation change, with the power recalculated by the frozen script. Known when written: only the type count. Divergence between you and the draft goes to the more conservative option.
+
+The draft (uncommitted, in the working tree): `docs/plans/v0.5.13-charter-amendment-1.md`, with `docs/plans/v0.5.13-amendment-1/` (type_count.py and type-count.json, power_a1.py and power-a1.json, power_a1b.py and power-a1b.json, log.jsonl). The frozen calculator is `docs/plans/v0.5.13-charter-prep/power_v2.py`.
+
+Round 1 of at most 3. Answer in English:
+
+1. **Verdict:** `APPROVABLE` or `NOT_APPROVABLE`.
+2. **Blocking items**, numbered, each with file and line, the rule or loophole (post-hoc choice, relaxed target, eligibility manipulation, leakage, an inconsistency with the approved charter, CLAUDE.md or ROADMAP.md), and the **exact replacement wording**.
+3. **Your choices**: (a) the measured population (is "photometrically decidable" well defined and fixed before data? should RV0, Variable, NEB or SB2 move? is excluding SB1 from the safety denominator a relaxation of an approved target, and if so how should it be framed — e.g. a separate second safety rule on all 307, or a pre-declared infeasibility path?); (b) X, the band floors, the symmetry lock (which FP set should it use?) and the coverage floor; (c) whether the power treatment is honest and correctly uses the frozen functions; (d) whether the count's provenance and the log order are adequate.
+4. **Non-blocking items.**

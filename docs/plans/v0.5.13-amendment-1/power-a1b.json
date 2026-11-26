@@ -1,0 +1,38 @@
+{
+ "schema": "refute-v0513-amendment1-power-1b",
+ "mode": "exploratory",
+ "method_status": "not_validated",
+ "measured_population": "135 = NEB 49 + SB2 27 + EB1 17 + BEB 17 + EB2 8 + Giant 6 + RV0 5 + Variable 6",
+ "rows": [
+  {
+   "fp_bands": [
+    67,
+    68
+   ],
+   "p_survive": 0.1,
+   "planet_arm_pass": 0.959134,
+   "fp_arm_pass": 0.991072,
+   "joint_pass": 0.91093
+  },
+  {
+   "fp_bands": [
+    67,
+    68
+   ],
+   "p_survive": 0.15,
+   "planet_arm_pass": 0.959134,
+   "fp_arm_pass": 0.836648,
+   "joint_pass": 0.76929
+  },
+  {
+   "fp_bands": [
+    67,
+    68
+   ],
+   "p_survive": 0.2,
+   "planet_arm_pass": 0.959134,
+   "fp_arm_pass": 0.333954,
+   "joint_pass": 0.30717
+  }
+ ]
+}

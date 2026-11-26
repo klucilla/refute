@@ -1,0 +1,105 @@
+{
+ "schema": "refute-v0513-amendment1-power-1",
+ "mode": "exploratory",
+ "method_status": "not_validated",
+ "frozen_calculator": "docs/plans/v0.5.13-charter-prep/power_v2.py (imported unchanged)",
+ "rules": {
+  "X": 0.25,
+  "Y": 0.8,
+  "Z": 0.7,
+  "D": 0.15,
+  "band_X": 0.4,
+  "band_Y": 0.65,
+  "band_Z": 0.6
+ },
+ "planning_model": {
+  "p_assess": 0.85,
+  "p_retain": 0.9,
+  "planet_bands": [
+   85,
+   86
+  ]
+ },
+ "A_all_307_mixture": [
+  {
+   "fp_bands": [
+    153,
+    154
+   ],
+   "p_survive": 0.15,
+   "planet_arm_pass": 0.959134,
+   "fp_arm_pass": 0.992454,
+   "joint_pass": 0.945942,
+   "assumed_measured_survival": 0.15,
+   "assumed_sb1_like_survival": 0.15
+  },
+  {
+   "fp_bands": [
+    153,
+    154
+   ],
+   "p_survive": 0.239414,
+   "planet_arm_pass": 0.959134,
+   "fp_arm_pass": 0.100917,
+   "joint_pass": 0.096182,
+   "assumed_measured_survival": 0.15,
+   "assumed_sb1_like_survival": 0.3
+  },
+  {
+   "fp_bands": [
+    153,
+    154
+   ],
+   "p_survive": 0.358632,
+   "planet_arm_pass": 0.959134,
+   "fp_arm_pass": 0.0,
+   "joint_pass": 0.0,
+   "assumed_measured_survival": 0.15,
+   "assumed_sb1_like_survival": 0.5
+  },
+  {
+   "fp_bands": [
+    153,
+    154
+   ],
+   "p_survive": 0.47785,
+   "planet_arm_pass": 0.959134,
+   "fp_arm_pass": 0.0,
+   "joint_pass": 0.0,
+   "assumed_measured_survival": 0.15,
+   "assumed_sb1_like_survival": 0.7
+  }
+ ],
+ "B_measured_124": [
+  {
+   "fp_bands": [
+    62,
+    62
+   ],
+   "p_survive": 0.1,
+   "planet_arm_pass": 0.959134,
+   "fp_arm_pass": 0.984137,
+   "joint_pass": 0.896914
+  },
+  {
+   "fp_bands": [
+    62,
+    62
+   ],
+   "p_survive": 0.15,
+   "planet_arm_pass": 0.959134,
+   "fp_arm_pass": 0.80347,
+   "joint_pass": 0.732289
+  },
+  {
+   "fp_bands": [
+    62,
+    62
+   ],
+   "p_survive": 0.2,
+   "planet_arm_pass": 0.959134,
+   "fp_arm_pass": 0.313281,
+   "joint_pass": 0.285385
+  }
+ ]
+}
