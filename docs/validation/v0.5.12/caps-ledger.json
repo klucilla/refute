@@ -10,7 +10,7 @@
   "disk_bytes": 2000000000
  },
  "charged": {
-  "cpu_s": 2810.95,
+  "cpu_s": 3824.7,
   "download_bytes": 0,
   "disk_peak_bytes": 417702701
  },
@@ -2300,6 +2300,66 @@
    "cpu_s": 1.766,
    "write_bytes": 3114,
    "disk_bound_bytes": 287909359,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "4f6ebe16573e4f42b846d495fea3defa",
+   "start": "2026-11-26T16:10:18Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.969,
+   "write_bytes": 866934,
+   "disk_bound_bytes": 288817568,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "45866e0b32d344ce8bb783b2917c7c50",
+   "start": "2026-11-26T16:10:27Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000
+   },
+   "status": "ok",
+   "cpu_s": 3.859,
+   "write_bytes": 1347669,
+   "disk_bound_bytes": 289419146,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "cache-cleanup",
+   "label": null,
+   "attempt": "f7fb64b373db4340935837e8735ecf00",
+   "start": "2026-11-26T16:10:36Z",
+   "reserve": {
+    "cpu_s": 30,
+    "disk_bytes": 5000000
+   },
+   "status": "ok",
+   "cpu_s": 1.828,
+   "write_bytes": 26352,
+   "disk_bound_bytes": 288111442,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "explore-candidate3",
+   "label": null,
+   "attempt": "2644c4d7bde14858bbf184d2f564c964",
+   "start": "2026-11-26T16:10:44Z",
+   "reserve": {
+    "cpu_s": 2400,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 1006.094,
+   "write_bytes": 51606,
+   "disk_bound_bytes": 288117603,
    "telemetry_complete": true
   }
  ]

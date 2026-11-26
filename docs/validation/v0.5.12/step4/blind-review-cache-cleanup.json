@@ -1,0 +1,20 @@
+{
+ "schema": "refute-v0512-cache-cleanup",
+ "folder": ".cache/v0512/blind-review",
+ "deleted": [
+  {
+   "path": ".cache/v0512/blind-review/v0.5.12-correction-2-blind-review.md",
+   "bytes": 21901,
+   "sha256": "9e55f7f2d96115c4128c46f9d17e70d4028d9efa6cec68729a49f0d0d8bd43eb",
+   "kept_as": "docs/plans/v0.5.12-correction-2-blind-review-result/v0.5.12-correction-2-blind-review.md"
+  },
+  {
+   "path": ".cache/v0512/blind-review/v0.5.12-correction-2-blind-review-prompt.txt",
+   "bytes": 3004,
+   "sha256": "06e5765aaaf74f8dd75123fd8d0948e05a3cdfdee78c01a6555e57e29ac6c451",
+   "kept_as": "docs/plans/v0.5.12-correction-2-blind-review-result/v0.5.12-correction-2-blind-review-prompt.txt"
+  }
+ ],
+ "folder_removed": true,
+ "left_in_folder": []
+}
