@@ -1,0 +1,481 @@
+{
+ "schema": "refute-v0513-power-1",
+ "mode": "exploratory",
+ "method_status": "not_validated",
+ "sample": {
+  "planets": 171,
+  "fps": 307,
+  "source": "v0.5.10 census (d1)"
+ },
+ "rules": "one-sided 95 % Wilson bounds; symmetry: 90 % Newcombe method 10 on |difference|",
+ "design_alternatives": [
+  {
+   "axis": "safety",
+   "coverage": 1.0,
+   "n": 307,
+   "threshold": 0.2,
+   "power": 0.8,
+   "true_rate_at_power": 0.1445
+  },
+  {
+   "axis": "safety",
+   "coverage": 1.0,
+   "n": 307,
+   "threshold": 0.2,
+   "power": 0.9,
+   "true_rate_at_power": 0.1359
+  },
+  {
+   "axis": "safety",
+   "coverage": 1.0,
+   "n": 307,
+   "threshold": 0.25,
+   "power": 0.8,
+   "true_rate_at_power": 0.1913
+  },
+  {
+   "axis": "safety",
+   "coverage": 1.0,
+   "n": 307,
+   "threshold": 0.25,
+   "power": 0.9,
+   "true_rate_at_power": 0.1817
+  },
+  {
+   "axis": "safety",
+   "coverage": 1.0,
+   "n": 307,
+   "threshold": 0.3,
+   "power": 0.8,
+   "true_rate_at_power": 0.2354
+  },
+  {
+   "axis": "safety",
+   "coverage": 1.0,
+   "n": 307,
+   "threshold": 0.3,
+   "power": 0.9,
+   "true_rate_at_power": 0.225
+  },
+  {
+   "axis": "sensitivity",
+   "coverage": 1.0,
+   "n": 171,
+   "threshold": 0.75,
+   "power": 0.8,
+   "true_rate_at_power": 0.8282
+  },
+  {
+   "axis": "sensitivity",
+   "coverage": 1.0,
+   "n": 171,
+   "threshold": 0.75,
+   "power": 0.9,
+   "true_rate_at_power": 0.8404
+  },
+  {
+   "axis": "sensitivity",
+   "coverage": 1.0,
+   "n": 171,
+   "threshold": 0.8,
+   "power": 0.8,
+   "true_rate_at_power": 0.8721
+  },
+  {
+   "axis": "sensitivity",
+   "coverage": 1.0,
+   "n": 171,
+   "threshold": 0.8,
+   "power": 0.9,
+   "true_rate_at_power": 0.8828
+  },
+  {
+   "axis": "sensitivity",
+   "coverage": 1.0,
+   "n": 171,
+   "threshold": 0.85,
+   "power": 0.8,
+   "true_rate_at_power": 0.9153
+  },
+  {
+   "axis": "sensitivity",
+   "coverage": 1.0,
+   "n": 171,
+   "threshold": 0.85,
+   "power": 0.9,
+   "true_rate_at_power": 0.9241
+  },
+  {
+   "axis": "safety",
+   "coverage": 0.8,
+   "n": 246,
+   "threshold": 0.2,
+   "power": 0.8,
+   "true_rate_at_power": 0.1381
+  },
+  {
+   "axis": "safety",
+   "coverage": 0.8,
+   "n": 246,
+   "threshold": 0.2,
+   "power": 0.9,
+   "true_rate_at_power": 0.1288
+  },
+  {
+   "axis": "safety",
+   "coverage": 0.8,
+   "n": 246,
+   "threshold": 0.25,
+   "power": 0.8,
+   "true_rate_at_power": 0.1846
+  },
+  {
+   "axis": "safety",
+   "coverage": 0.8,
+   "n": 246,
+   "threshold": 0.25,
+   "power": 0.9,
+   "true_rate_at_power": 0.174
+  },
+  {
+   "axis": "safety",
+   "coverage": 0.8,
+   "n": 246,
+   "threshold": 0.3,
+   "power": 0.8,
+   "true_rate_at_power": 0.2276
+  },
+  {
+   "axis": "safety",
+   "coverage": 0.8,
+   "n": 246,
+   "threshold": 0.3,
+   "power": 0.9,
+   "true_rate_at_power": 0.2161
+  },
+  {
+   "axis": "sensitivity",
+   "coverage": 0.8,
+   "n": 137,
+   "threshold": 0.75,
+   "power": 0.8,
+   "true_rate_at_power": 0.84
+  },
+  {
+   "axis": "sensitivity",
+   "coverage": 0.8,
+   "n": 137,
+   "threshold": 0.75,
+   "power": 0.9,
+   "true_rate_at_power": 0.8531
+  },
+  {
+   "axis": "sensitivity",
+   "coverage": 0.8,
+   "n": 137,
+   "threshold": 0.8,
+   "power": 0.8,
+   "true_rate_at_power": 0.8807
+  },
+  {
+   "axis": "sensitivity",
+   "coverage": 0.8,
+   "n": 137,
+   "threshold": 0.8,
+   "power": 0.9,
+   "true_rate_at_power": 0.8921
+  },
+  {
+   "axis": "sensitivity",
+   "coverage": 0.8,
+   "n": 137,
+   "threshold": 0.85,
+   "power": 0.8,
+   "true_rate_at_power": 0.9206
+  },
+  {
+   "axis": "sensitivity",
+   "coverage": 0.8,
+   "n": 137,
+   "threshold": 0.85,
+   "power": 0.9,
+   "true_rate_at_power": 0.93
+  },
+  {
+   "axis": "safety",
+   "coverage": 0.7,
+   "n": 215,
+   "threshold": 0.2,
+   "power": 0.8,
+   "true_rate_at_power": 0.1363
+  },
+  {
+   "axis": "safety",
+   "coverage": 0.7,
+   "n": 215,
+   "threshold": 0.2,
+   "power": 0.9,
+   "true_rate_at_power": 0.1264
+  },
+  {
+   "axis": "safety",
+   "coverage": 0.7,
+   "n": 215,
+   "threshold": 0.25,
+   "power": 0.8,
+   "true_rate_at_power": 0.1804
+  },
+  {
+   "axis": "safety",
+   "coverage": 0.7,
+   "n": 215,
+   "threshold": 0.25,
+   "power": 0.9,
+   "true_rate_at_power": 0.1693
+  },
+  {
+   "axis": "safety",
+   "coverage": 0.7,
+   "n": 215,
+   "threshold": 0.3,
+   "power": 0.8,
+   "true_rate_at_power": 0.225
+  },
+  {
+   "axis": "safety",
+   "coverage": 0.7,
+   "n": 215,
+   "threshold": 0.3,
+   "power": 0.9,
+   "true_rate_at_power": 0.2128
+  },
+  {
+   "axis": "sensitivity",
+   "coverage": 0.7,
+   "n": 120,
+   "threshold": 0.75,
+   "power": 0.8,
+   "true_rate_at_power": 0.8403
+  },
+  {
+   "axis": "sensitivity",
+   "coverage": 0.7,
+   "n": 120,
+   "threshold": 0.75,
+   "power": 0.9,
+   "true_rate_at_power": 0.8543
+  },
+  {
+   "axis": "sensitivity",
+   "coverage": 0.7,
+   "n": 120,
+   "threshold": 0.8,
+   "power": 0.8,
+   "true_rate_at_power": 0.8865
+  },
+  {
+   "axis": "sensitivity",
+   "coverage": 0.7,
+   "n": 120,
+   "threshold": 0.8,
+   "power": 0.9,
+   "true_rate_at_power": 0.8984
+  },
+  {
+   "axis": "sensitivity",
+   "coverage": 0.7,
+   "n": 120,
+   "threshold": 0.85,
+   "power": 0.8,
+   "true_rate_at_power": 0.9241
+  },
+  {
+   "axis": "sensitivity",
+   "coverage": 0.7,
+   "n": 120,
+   "threshold": 0.85,
+   "power": 0.9,
+   "true_rate_at_power": 0.9339
+  },
+  {
+   "axis": "coverage_planets",
+   "coverage": null,
+   "n": 171,
+   "threshold": 0.6,
+   "power": 0.8,
+   "true_rate_at_power": 0.6933
+  },
+  {
+   "axis": "coverage_planets",
+   "coverage": null,
+   "n": 171,
+   "threshold": 0.6,
+   "power": 0.9,
+   "true_rate_at_power": 0.7085
+  },
+  {
+   "axis": "coverage_planets",
+   "coverage": null,
+   "n": 171,
+   "threshold": 0.7,
+   "power": 0.8,
+   "true_rate_at_power": 0.7836
+  },
+  {
+   "axis": "coverage_planets",
+   "coverage": null,
+   "n": 171,
+   "threshold": 0.7,
+   "power": 0.9,
+   "true_rate_at_power": 0.7971
+  },
+  {
+   "axis": "coverage_planets",
+   "coverage": null,
+   "n": 171,
+   "threshold": 0.8,
+   "power": 0.8,
+   "true_rate_at_power": 0.8721
+  },
+  {
+   "axis": "coverage_planets",
+   "coverage": null,
+   "n": 171,
+   "threshold": 0.8,
+   "power": 0.9,
+   "true_rate_at_power": 0.8828
+  },
+  {
+   "axis": "coverage_fps",
+   "coverage": null,
+   "n": 307,
+   "threshold": 0.6,
+   "power": 0.8,
+   "true_rate_at_power": 0.6691
+  },
+  {
+   "axis": "coverage_fps",
+   "coverage": null,
+   "n": 307,
+   "threshold": 0.6,
+   "power": 0.9,
+   "true_rate_at_power": 0.6808
+  },
+  {
+   "axis": "coverage_fps",
+   "coverage": null,
+   "n": 307,
+   "threshold": 0.7,
+   "power": 0.8,
+   "true_rate_at_power": 0.7646
+  },
+  {
+   "axis": "coverage_fps",
+   "coverage": null,
+   "n": 307,
+   "threshold": 0.7,
+   "power": 0.9,
+   "true_rate_at_power": 0.775
+  },
+  {
+   "axis": "coverage_fps",
+   "coverage": null,
+   "n": 307,
+   "threshold": 0.8,
+   "power": 0.8,
+   "true_rate_at_power": 0.8555
+  },
+  {
+   "axis": "coverage_fps",
+   "coverage": null,
+   "n": 307,
+   "threshold": 0.8,
+   "power": 0.9,
+   "true_rate_at_power": 0.8641
+  },
+  {
+   "axis": "stratum_safety",
+   "coverage": 0.8,
+   "n": 82,
+   "threshold": 0.35,
+   "power": 0.8,
+   "true_rate_at_power": 0.2238
+  },
+  {
+   "axis": "stratum_safety",
+   "coverage": 0.8,
+   "n": 82,
+   "threshold": 0.4,
+   "power": 0.8,
+   "true_rate_at_power": 0.27
+  },
+  {
+   "axis": "stratum_sensitivity",
+   "coverage": 0.8,
+   "n": 46,
+   "threshold": 0.65,
+   "power": 0.8,
+   "true_rate_at_power": 0.8188
+  },
+  {
+   "axis": "stratum_sensitivity",
+   "coverage": 0.8,
+   "n": 46,
+   "threshold": 0.7,
+   "power": 0.8,
+   "true_rate_at_power": 0.8577
+  }
+ ],
+ "proposal": {
+  "X": 0.25,
+  "Y": 0.8,
+  "Z": 0.7,
+  "D": 0.15,
+  "scenario": {
+   "fp_survival": 0.15,
+   "planet_retention": 0.9,
+   "assessed_share": 0.85,
+   "abstention_both_arms": 0.15
+  },
+  "power_by_part": {
+   "safety": 0.9918,
+   "sensitivity": 0.9683,
+   "coverage_planets": 0.9993,
+   "coverage_fps": 1.0,
+   "symmetry": 0.9931
+  },
+  "joint_power_AND_independent": 0.953
+ },
+ "symmetry": [
+  {
+   "abstention_both_arms": 0.1,
+   "D": 0.1,
+   "power": 0.9238
+  },
+  {
+   "abstention_both_arms": 0.1,
+   "D": 0.15,
+   "power": 0.9991
+  },
+  {
+   "abstention_both_arms": 0.2,
+   "D": 0.1,
+   "power": 0.6783
+  },
+  {
+   "abstention_both_arms": 0.2,
+   "D": 0.15,
+   "power": 0.9776
+  },
+  {
+   "abstention_both_arms": 0.3,
+   "D": 0.1,
+   "power": 0.4871
+  },
+  {
+   "abstention_both_arms": 0.3,
+   "D": 0.15,
+   "power": 0.9303
+  }
+ ]
+}
