@@ -1,0 +1,11 @@
+{
+ "name": "claim-hashes-after",
+ "question": "The 'after' claim hashes (charter, step 5; #218 comment 7199254242, item 3b): identity verification, not a rerun (charter, section 4). Their payloads must equal step0/claim-hashes-before-host.json byte for byte, provenance fields excluded, with no unexpected error or skip.",
+ "choices": "docs/validation/v0.5.12/tools/claim_hashes.py after, through launch_v3, as the 'before' host run was; a new unit file (rule (c)) so that its record goes to step5/claim-hashes-after.json. A data unit, run once.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/tools/claim_hashes.py"],
+ "identity": ["docs/validation/v0.5.12/tools/claim_hashes.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 300, "disk_bytes": 20000000},
+ "network": false,
+ "outputs": {"claim-hashes-after.json": "docs/validation/v0.5.12/step5/claim-hashes-after.json"}
+}

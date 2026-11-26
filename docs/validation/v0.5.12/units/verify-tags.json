@@ -1,0 +1,11 @@
+{
+ "name": "verify-tags",
+ "question": "scripts/verify_locked_tags.py (charter, step 5; #218 comment 7199254242, item 3b): joint PASS on every locked tag, in the warm environments under .cache/lock-compat/, offline, with their growth charged.",
+ "choices": "Through launch_v3 with UV_OFFLINE=1 and the lock-compat scan in the disk bound; the extra arguments are --out <a new folder under .cache/v0512>. Identity verification, not a rerun (charter, section 4). A data unit, run once.",
+ "argv": ["{python}", "-I", "-B", "scripts/verify_locked_tags.py"],
+ "identity": ["scripts/verify_locked_tags.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 900, "disk_bytes": 300000000},
+ "network": false,
+ "lock_compat_scan": true
+}
