@@ -1,0 +1,10 @@
+{
+ "name": "gh-comment",
+ "question": "One issue comment that a recorded decision asks for, on an issue other than #218 (the maintainer's decision of 2026-11-26, #218 comment 7202383280, item 1: finding 8 on #224, the minor findings on #59). The extra arguments: issue comment <224|59> --repo klucilla/refute --body-file <committed file>. Permitted GitHub traffic only.",
+ "choices": "A new unit file (rule (c)); units/gh.json is unchanged. In a job without the container; the operation and the endpoint are journaled. Only the subcommand issue comment on klucilla/refute issues 224 and 59, with a committed body file. A data unit: the arguments make the unit.",
+ "argv": ["gh"],
+ "identity": [],
+ "key": "data",
+ "reserve": {"cpu_s": 60, "disk_bytes": 10000000},
+ "network": {"kind": "github", "endpoints": ["api.github.com:443"], "operations": ["gh issue comment"]}
+}
