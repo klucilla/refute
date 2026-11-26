@@ -1,0 +1,11 @@
+{
+ "name": "cleanup-close2",
+ "question": "The one approved repetition of the cleanup of .cache/v0512 at v0.5.12's close (#218 comment 7202817195, item 1): the SAME script as cleanup-close (committed at 30cc0f2), with a 500 MB disk reservation. It overwrites the partial Drive copies, checks every copy, and deletes the originals in .cache only after every copy matches. Nothing is deleted on the Drive.",
+ "choices": "docs/maintenance/cleanup-2026-11-26-v0512-close/cleanup.py, unchanged since 30cc0f2; a new unit file (rule (c)); through launch_v4. A data unit: the arguments make the unit.",
+ "argv": ["{python}", "-I", "-B", "docs/maintenance/cleanup-2026-11-26-v0512-close/cleanup.py"],
+ "identity": ["docs/maintenance/cleanup-2026-11-26-v0512-close/cleanup.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 300, "disk_bytes": 500000000},
+ "timeout_s": 1800,
+ "network": false
+}
