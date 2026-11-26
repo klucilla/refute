@@ -1,0 +1,31 @@
+{
+ "schema": "refute-v0513-power-2",
+ "mode": "exploratory",
+ "method_status": "not_validated",
+ "model": {
+  "planet_bands": [
+   85,
+   86
+  ],
+  "fp_bands": [
+   153,
+   154
+  ],
+  "p_assess": 0.85,
+  "p_retain": 0.9,
+  "p_survive": 0.15
+ },
+ "rules": {
+  "X": 0.25,
+  "Y": 0.8,
+  "Z": 0.7,
+  "D": 0.15,
+  "band_X": 0.4,
+  "band_Y": 0.65,
+  "band_Z": 0.6
+ },
+ "planet_arm_pass": 0.959134,
+ "fp_arm_pass": 0.992454,
+ "joint_pass_full_and_rule": 0.945942,
+ "codex_round_1_value": 0.9459
+}
