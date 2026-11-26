@@ -1,0 +1,11 @@
+{
+ "name": "step2-probe",
+ "question": "The charter, step 2 (#223): on the approval code (src/ unchanged since f18d6f8), does every assertion of the committed case record pass, apart from the failures it documents before this run? Any undocumented failure stops the work.",
+ "choices": "docs/validation/v0.5.12/step2/probe.py with tests/v0512_case_eval.py and tests/v0512_fixtures.py, outside pytest's collection, through launch_v3; its record is copied to step2/probe-result.json. A data unit, run once.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/step2/probe.py"],
+ "identity": ["docs/validation/v0.5.12/step2/probe.py", "tests/v0512_case_eval.py", "tests/v0512_fixtures.py", "docs/validation/v0.5.12/step2/cases.json", "src/refute/packs/tess/screen_d5.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 300, "disk_bytes": 10000000},
+ "network": false,
+ "outputs": {"probe-result.json": "docs/validation/v0.5.12/step2/probe-result.json"}
+}

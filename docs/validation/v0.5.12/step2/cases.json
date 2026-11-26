@@ -1,0 +1,2529 @@
+{
+ "schema": "refute-v0512-step2-cases",
+ "labels": [
+  "exploratory",
+  "method_status: not_validated"
+ ],
+ "decision": "#218 comment 7197519001, item 3; the charter, step 2",
+ "inventory": "docs/validation/v0.5.12/step2/inventory.json",
+ "approval_code": "f18d6f8",
+ "f1_expectations": "correction 2 revision 1 (SHA-256 c24e7fd9...), tests/v0512_oracles.py",
+ "report_only_expectations": "the frozen section 5, tests/v0512_oracles.py",
+ "tolerance_rule": "|value - expected| <= max(atol, rtol * |expected|)",
+ "tolerances": {
+  "oracle arithmetic on the realized fixture": {
+   "rtol": 1e-09
+  },
+  "oracle fit values (OE_trap, OE_trap_T)": {
+   "rtol": 1e-06
+  },
+  "model fit values: C05 at sigma 1e-7 (depth 0.05, noiseless in effect); C06 at sigma 5e-5 (depth 0.04: about 84 flat cadences give SE(dF) near 5.5e-6, so 1e-3 is about seven standard errors; a sigma of 1e-7 made F1 fail on the cadence sampling alone, OE_box 44, and the isolation case needs F1 to pass)": {
+   "rtol": 0.001
+  }
+ },
+ "unreachable": {
+  "B07": "line 231 repeats _wmean(f[base], w[base]); _noise returned sigma_w only after _wstd's own _wmean of the same arrays was not None (lines 89 to 91, 149)",
+  "B18 B19": "erfcinv(T/P) is finite for 0 < T/P < 2; T/P >= 2 leaves no cell 2T from the primary (_cell_distance <= P/2 < 2T), so line 378 returns first",
+  "B23": "_uncertainties returns sqrt(var) with finite var > 0, so each sigma >= sqrt(4.9e-324) and its square is not 0; the sum is never NaN (also witnessed by fault injection, R23)",
+  "corrected C <= 0": "revision 1, section 4 and its bound in section 6 (defensive)"
+ },
+ "cases": [
+  {
+   "id": "C01",
+   "title": "a planet",
+   "kind": "natural",
+   "branches": [],
+   "entry": "compute_screen",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "star": {
+     "disposition": null,
+     "radius_rsun": 2.0,
+     "radius_err_rsun": 0.1
+    }
+   },
+   "patches": [],
+   "expect": {
+    "F1": {
+     "state": "pass",
+     "reason_prefix": "OE_box "
+    },
+    "F2": {
+     "state": "computed",
+     "reason": "model shift MS4 to MS6",
+     "coverage": 143,
+     "would_be_significant": false,
+     "exception_first_condition": true,
+     "values": {
+      "MES_pri": {
+       "expected": 204.9591249213452,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_pri": {
+       "expected": 0.0,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_sec": {
+       "expected": 2.7931773816804486,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_sec": {
+       "expected": 0.32376126126126126,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_ter": {
+       "expected": 2.715038228717275,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_ter": {
+       "expected": 0.4434121621621621,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_pos": {
+       "expected": 2.382034546684882,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_pos": {
+       "expected": 0.6756756756756757,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "F_red": {
+       "expected": 1.0982258280753991,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "FA1": {
+       "expected": 2.195145626868884,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "FA2": {
+       "expected": 2.195145626868884,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "delta_pri": {
+       "expected": 0.0019956521083596135,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "delta_sec": {
+       "expected": 2.7459468752599747e-05,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS4": {
+       "expected": 0.34820867265199906,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS5": {
+       "expected": -2.1170064739057106,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS6": {
+       "expected": -1.7840027918733172,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      }
+     }
+    },
+    "U1": {
+     "state": "computed",
+     "reason": "model shift MS1 to MS3",
+     "coverage": 143,
+     "values": {
+      "MES_pri": {
+       "expected": 204.9591249213452,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_pri": {
+       "expected": 0.0,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_sec": {
+       "expected": 2.7931773816804486,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_sec": {
+       "expected": 0.32376126126126126,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_ter": {
+       "expected": 2.715038228717275,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_ter": {
+       "expected": 0.4434121621621621,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_pos": {
+       "expected": 2.382034546684882,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_pos": {
+       "expected": 0.6756756756756757,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "F_red": {
+       "expected": 1.0982258280753991,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "FA1": {
+       "expected": 2.195145626868884,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "FA2": {
+       "expected": 2.195145626868884,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS1": {
+       "expected": 184.4323399791914,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS2": {
+       "expected": 200.04894106575904,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS3": {
+       "expected": 200.38194474779144,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      }
+     }
+    },
+    "F1_trap": {
+     "state": "computed",
+     "values": {
+      "fit_cadences_odd": {
+       "expected": 182,
+       "atol": 0,
+       "rtol": 0,
+       "source": "oracle"
+      },
+      "fit_cadences_even": {
+       "expected": 241,
+       "atol": 0,
+       "rtol": 0,
+       "source": "oracle"
+      },
+      "OE_trap": {
+       "expected": 0.4262192236283287,
+       "source": "oracle",
+       "atol": 1e-09,
+       "rtol": 1e-06
+      },
+      "OE_trap_T": {
+       "expected": 0.044706908015055676,
+       "source": "oracle",
+       "atol": 1e-09,
+       "rtol": 1e-06
+      }
+     }
+    }
+   },
+   "documented": [],
+   "oracle_values": {
+    "F1": {
+     "corrected_oe_box": 0.3005790564476599,
+     "frozen_oe_box": 0.3006199043185351
+    }
+   }
+  },
+  {
+   "id": "C02",
+   "title": "a binary with unequal depths at half the period",
+   "kind": "natural",
+   "branches": [],
+   "entry": "f1_box",
+   "recipe": {
+    "model": "box",
+    "depth": 0.005,
+    "depth_odd": 0.01,
+    "seed": 12
+   },
+   "patches": [],
+   "expect": {
+    "F1": {
+     "state": "fail",
+     "reason_prefix": "OE_box "
+    }
+   },
+   "documented": [],
+   "oracle_values": {
+    "F1": {
+     "corrected_oe_box": 249.90120392811357,
+     "frozen_oe_box": 253.85896830824493
+    }
+   }
+  },
+  {
+   "id": "C03",
+   "title": "a binary with a secondary away from phase 0.5",
+   "kind": "natural",
+   "branches": [],
+   "entry": "report_only",
+   "recipe": {
+    "model": "box",
+    "depth": 0.01,
+    "seed": 13,
+    "secondary": {
+     "offset_days": 1.6,
+     "depth": 0.004
+    }
+   },
+   "patches": [],
+   "expect": {
+    "F2": {
+     "state": "computed",
+     "reason": "model shift MS4 to MS6",
+     "coverage": 143,
+     "would_be_significant": true,
+     "exception_first_condition": false,
+     "values": {
+      "MES_pri": {
+       "expected": 49.1252910595903,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_pri": {
+       "expected": 0.0,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_sec": {
+       "expected": 17.815581123885675,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_sec": {
+       "expected": 0.4293355855855856,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_ter": {
+       "expected": -0.5216991112828806,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_ter": {
+       "expected": 0.32376126126126126,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_pos": {
+       "expected": 0.7123299860317267,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_pos": {
+       "expected": 0.5982545045045046,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "F_red": {
+       "expected": 0.04322523705422929,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "FA1": {
+       "expected": 2.195145626868884,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "FA2": {
+       "expected": 2.195145626868884,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "delta_pri": {
+       "expected": 0.009896169147435852,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "delta_sec": {
+       "expected": 0.0035889050315849325,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS4": {
+       "expected": 409.9617871745568,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS5": {
+       "expected": 16.14213460829967,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS6": {
+       "expected": 14.908105510985065,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      }
+     }
+    },
+    "U1": {
+     "state": "computed",
+     "reason": "model shift MS1 to MS3",
+     "coverage": 143,
+     "values": {
+      "MES_pri": {
+       "expected": 49.1252910595903,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_pri": {
+       "expected": 0.0,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_sec": {
+       "expected": 17.815581123885675,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_sec": {
+       "expected": 0.4293355855855856,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_ter": {
+       "expected": -0.5216991112828806,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_ter": {
+       "expected": 0.32376126126126126,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_pos": {
+       "expected": 0.7123299860317267,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_pos": {
+       "expected": 0.5982545045045046,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "F_red": {
+       "expected": 0.04322523705422929,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "FA1": {
+       "expected": 2.195145626868884,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "FA2": {
+       "expected": 2.195145626868884,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS1": {
+       "expected": 1134.300439069612,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS2": {
+       "expected": 47.451844544004295,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS3": {
+       "expected": 46.21781544668969,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      }
+     }
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "C04",
+   "title": "an occultation that meets F2's exception",
+   "kind": "natural",
+   "branches": [],
+   "entry": "report_only",
+   "recipe": {
+    "model": "box",
+    "depth": 0.01,
+    "seed": 14,
+    "secondary": {
+     "offset_days": 1.85,
+     "depth": 0.0005
+    }
+   },
+   "patches": [],
+   "expect": {
+    "F2": {
+     "state": "computed",
+     "reason": "model shift MS4 to MS6",
+     "coverage": 143,
+     "would_be_significant": true,
+     "exception_first_condition": true,
+     "values": {
+      "MES_pri": {
+       "expected": 376.57780638986213,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_pri": {
+       "expected": 0.0,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_sec": {
+       "expected": 18.586997927711206,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_sec": {
+       "expected": 0.49971846846846846,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_ter": {
+       "expected": 0.12530295188531523,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_ter": {
+       "expected": 0.40822072072072074,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_pos": {
+       "expected": 1.4803155430834685,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_pos": {
+       "expected": 0.8375563063063063,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "F_red": {
+       "expected": 0.3371235032748823,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "FA1": {
+       "expected": 2.195145626868884,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "FA2": {
+       "expected": 2.195145626868884,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "delta_pri": {
+       "expected": 0.009987118695483077,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "delta_sec": {
+       "expected": 0.0004929407717261247,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS4": {
+       "expected": 52.93894543220456,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS5": {
+       "expected": 16.266549348957007,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS6": {
+       "expected": 14.911536757758855,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      }
+     }
+    },
+    "U1": {
+     "state": "computed",
+     "reason": "model shift MS1 to MS3",
+     "coverage": 143,
+     "values": {
+      "MES_pri": {
+       "expected": 376.57780638986213,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_pri": {
+       "expected": 0.0,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_sec": {
+       "expected": 18.586997927711206,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_sec": {
+       "expected": 0.49971846846846846,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_ter": {
+       "expected": 0.12530295188531523,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_ter": {
+       "expected": 0.40822072072072074,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_pos": {
+       "expected": 1.4803155430834685,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_pos": {
+       "expected": 0.8375563063063063,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "F_red": {
+       "expected": 0.3371235032748823,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "FA1": {
+       "expected": 2.195145626868884,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "FA2": {
+       "expected": 2.195145626868884,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS1": {
+       "expected": 1114.8370480105168,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS2": {
+       "expected": 374.2573578111079,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS3": {
+       "expected": 372.90234521990976,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      }
+     }
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "C05",
+   "title": "a grazing binary (F4)",
+   "kind": "natural",
+   "branches": [],
+   "entry": "report_only",
+   "recipe": {
+    "model": "trapezoid",
+    "trapezoid": {
+     "depth": 0.05,
+     "q": 0.03,
+     "q_in": 0.45,
+     "f0": 1.0
+    },
+    "sigma": 1e-07,
+    "seed": 15
+   },
+   "patches": [],
+   "expect": {
+    "F1": {
+     "state": "fail",
+     "reason_prefix": "OE_box "
+    },
+    "F4": {
+     "state": "computed",
+     "values": {
+      "dF": {
+       "expected": 0.05,
+       "source": "model",
+       "atol": 1e-06,
+       "rtol": 0.001
+      },
+      "b": {
+       "expected": 0.7705355202129706,
+       "source": "model",
+       "atol": 1e-06,
+       "rtol": 0.001
+      },
+      "V": {
+       "expected": 0.9941423179629495,
+       "source": "model",
+       "atol": 1e-06,
+       "rtol": 0.001
+      }
+     }
+    }
+   },
+   "documented": [],
+   "oracle_values": {
+    "F1": {
+     "corrected_oe_box": 396.2166622855672,
+     "frozen_oe_box": 396.27050704524856
+    }
+   }
+  },
+  {
+   "id": "C06",
+   "title": "a giant with a star record (F3): the paper-threshold crossing",
+   "kind": "natural",
+   "branches": [],
+   "entry": "compute_screen",
+   "recipe": {
+    "model": "trapezoid",
+    "trapezoid": {
+     "depth": 0.04,
+     "q": 0.03,
+     "q_in": 0.1,
+     "f0": 1.0
+    },
+    "sigma": 5e-05,
+    "seed": 16,
+    "star": {
+     "disposition": null,
+     "radius_rsun": 2.0,
+     "radius_err_rsun": 0.1
+    }
+   },
+   "patches": [],
+   "expect": {
+    "F1": {
+     "state": "pass",
+     "reason_prefix": "OE_box "
+    },
+    "F3": {
+     "state": "computed",
+     "paper_threshold_crossed": true,
+     "values": {
+      "dF": {
+       "expected": 0.04,
+       "source": "model",
+       "atol": 1e-06,
+       "rtol": 0.001
+      },
+      "R_star_rsun": {
+       "expected": 2.0,
+       "atol": 0.0,
+       "rtol": 0.0,
+       "source": "model"
+      },
+      "Rp_earth": {
+       "expected": 43.63054828240385,
+       "source": "model",
+       "atol": 0.001,
+       "rtol": 0.001
+      }
+     }
+    }
+   },
+   "documented": [],
+   "oracle_values": {
+    "F1": {
+     "corrected_oe_box": 0.36358742332418403,
+     "frozen_oe_box": 0.3711897518162162
+    }
+   }
+  },
+  {
+   "id": "C07",
+   "title": "the crossing's isolation: C06 without the star record",
+   "kind": "natural",
+   "branches": [],
+   "entry": "compute_screen",
+   "recipe": {
+    "model": "trapezoid",
+    "trapezoid": {
+     "depth": 0.04,
+     "q": 0.03,
+     "q_in": 0.1,
+     "f0": 1.0
+    },
+    "sigma": 5e-05,
+    "seed": 16
+   },
+   "patches": [],
+   "expect": {
+    "F1": {
+     "state": "pass",
+     "reason_prefix": "OE_box "
+    },
+    "F3": {
+     "state": "unavailable",
+     "reason": "no reliable stellar radius (legacy rule)"
+    },
+    "isolation": {
+     "same_core_and_outcome_as": "C06",
+     "outcome": "retained",
+     "gate_results_unchanged": true
+    }
+   },
+   "documented": [],
+   "oracle_values": {
+    "F1": {
+     "corrected_oe_box": 0.36358742332418403,
+     "frozen_oe_box": 0.3711897518162162
+    }
+   }
+  },
+  {
+   "id": "C08",
+   "title": "a null (noise only)",
+   "kind": "natural",
+   "branches": [],
+   "entry": "compute_screen",
+   "recipe": {
+    "seed": 18
+   },
+   "patches": [],
+   "expect": {
+    "F1": {
+     "state": "pass",
+     "reason_prefix": "OE_box "
+    },
+    "F2": {
+     "state": "computed",
+     "reason": "model shift MS4 to MS6",
+     "coverage": 143,
+     "would_be_significant": false,
+     "exception_first_condition": false,
+     "values": {
+      "MES_pri": {
+       "expected": 1.9529013113893627,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_pri": {
+       "expected": 0.41525900900900903,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_sec": {
+       "expected": 1.7900748460863831,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_sec": {
+       "expected": 0.5701013513513513,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_ter": {
+       "expected": 1.7514081407439006,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_ter": {
+       "expected": 0.23226351351351351,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_pos": {
+       "expected": 2.1172075292955648,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_pos": {
+       "expected": 0.07038288288288289,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "F_red": {
+       "expected": 0.8095734065476583,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "FA1": {
+       "expected": 2.195145626868884,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "FA2": {
+       "expected": 2.195145626868884,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "delta_pri": {
+       "expected": 2.0528025429511487e-05,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "delta_sec": {
+       "expected": 1.8816466427096223e-05,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS4": {
+       "expected": 0.01598783133099868,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS5": {
+       "expected": -2.1564789215264017,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS6": {
+       "expected": -2.5222783100780655,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      }
+     }
+    },
+    "U1": {
+     "state": "computed",
+     "reason": "model shift MS1 to MS3",
+     "coverage": 143,
+     "values": {
+      "MES_pri": {
+       "expected": 1.9529013113893627,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_pri": {
+       "expected": 0.41525900900900903,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_sec": {
+       "expected": 1.7900748460863831,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_sec": {
+       "expected": 0.5701013513513513,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_ter": {
+       "expected": 1.7514081407439006,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_ter": {
+       "expected": 0.23226351351351351,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MES_pos": {
+       "expected": 2.1172075292955648,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "phase_pos": {
+       "expected": 0.07038288288288289,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "F_red": {
+       "expected": 0.8095734065476583,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "FA1": {
+       "expected": 2.195145626868884,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "FA2": {
+       "expected": 2.195145626868884,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS1": {
+       "expected": 0.21711408373266305,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS2": {
+       "expected": -1.993652456223422,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      },
+      "MS3": {
+       "expected": -2.3594518447750863,
+       "source": "oracle",
+       "atol": 1e-12,
+       "rtol": 1e-09
+      }
+     }
+    }
+   },
+   "documented": [],
+   "oracle_values": {
+    "F1": {
+     "corrected_oe_box": 1.34432054776608,
+     "frozen_oe_box": 1.3787403847821096
+    }
+   }
+  },
+  {
+   "id": "N01",
+   "title": "the epoch index is not exactly representable",
+   "kind": "natural",
+   "branches": [
+    "B01",
+    "B02"
+   ],
+   "entry": "f1_box",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "t0": 3.700000000000133e+16
+   },
+   "patches": [],
+   "expect": {
+    "F1": {
+     "state": "not_assessed",
+     "reason": "numerical failure: ValueError"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "N02",
+   "title": "period NaN",
+   "kind": "natural",
+   "branches": [
+    "B03"
+   ],
+   "entry": "f1_box",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "period": NaN
+   },
+   "patches": [],
+   "expect": {
+    "F1": {
+     "state": "not_assessed",
+     "reason": "candidate not finite or not positive"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "N03",
+   "title": "one sigma above 1e3",
+   "kind": "natural",
+   "branches": [
+    "B04"
+   ],
+   "entry": "f1_box",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "mods": [
+     {
+      "name": "sigma_at",
+      "index": 7,
+      "value": 2000.0
+     }
+    ]
+   },
+   "patches": [],
+   "expect": {
+    "F1": {
+     "state": "not_assessed",
+     "reason": "invalid_uncertainty"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "N04",
+   "title": "15 cadences",
+   "kind": "natural",
+   "branches": [
+    "B05"
+   ],
+   "entry": "f1_box",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "mods": [
+     {
+      "name": "first",
+      "count": 15
+     }
+    ]
+   },
+   "patches": [],
+   "expect": {
+    "F1": {
+     "state": "not_assessed",
+     "reason": "fewer than 20 valid points"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "N05",
+   "title": "no baseline (T = 3.5 d)",
+   "kind": "natural",
+   "branches": [
+    "B06",
+    "B12",
+    "B13"
+   ],
+   "entry": "report_only+f1_box",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "duration": 3.5
+   },
+   "patches": [],
+   "expect": {
+    "F1": {
+     "state": "not_assessed",
+     "reason": "noise unavailable (baseline or bins)"
+    },
+    "F2": {
+     "state": "unavailable",
+     "reason": "noise unavailable"
+    },
+    "U1": {
+     "state": "unavailable",
+     "reason": "noise unavailable"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "N06",
+   "title": "fewer than 3 baseline bins",
+   "kind": "natural",
+   "branches": [
+    "B06"
+   ],
+   "entry": "f1_box",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "mods": [
+     {
+      "name": "window",
+      "start": 1326.0708333333332,
+      "end": 1326.3520833333332
+     }
+    ]
+   },
+   "patches": [],
+   "expect": {
+    "F1": {
+     "state": "not_assessed",
+     "reason": "noise unavailable (baseline or bins)"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "N07",
+   "title": "a constant baseline: s2 = 0 (corrected); the pink noise is 0 (approval)",
+   "kind": "natural",
+   "branches": [
+    "B06"
+   ],
+   "entry": "f1_box",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "mods": [
+     {
+      "name": "constant_baseline"
+     }
+    ]
+   },
+   "patches": [],
+   "expect": {
+    "F1": {
+     "state": "not_assessed",
+     "reason": "noise unavailable (baseline or bins)"
+    }
+   },
+   "documented": [
+    {
+     "assertion": "F1.reason",
+     "approval": "depth or pink noise unavailable for the odd parity",
+     "raises": "AssertionError",
+     "why": "approval: sigma_w = sigma_r = 0, so _pink returns None (line 245); corrected: s2 = 0 (revision 1, section 4)"
+    }
+   ],
+   "oracle_values": {}
+  },
+  {
+   "id": "N08",
+   "title": "one baseline flux 1e300 at sigma 1e-12: the weighted sum overflows",
+   "kind": "natural",
+   "branches": [
+    "B06"
+   ],
+   "entry": "f1_box",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "mods": [
+     {
+      "name": "set",
+      "where": "baseline_first",
+      "flux": 1e+300,
+      "sigma": 1e-12
+     }
+    ]
+   },
+   "patches": [],
+   "expect": {
+    "F1": {
+     "state": "not_assessed",
+     "reason": "noise unavailable (baseline or bins)"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "N10",
+   "title": "no odd in-transit cadence",
+   "kind": "natural",
+   "branches": [
+    "B10"
+   ],
+   "entry": "f1_box",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "mods": [
+     {
+      "name": "drop",
+      "where": "odd_in"
+     }
+    ]
+   },
+   "patches": [],
+   "expect": {
+    "F1": {
+     "state": "not_assessed",
+     "reason": "too few in-transit points for the odd parity"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "N11",
+   "title": "no even in-transit cadence",
+   "kind": "natural",
+   "branches": [
+    "B10"
+   ],
+   "entry": "f1_box",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "mods": [
+     {
+      "name": "drop",
+      "where": "even_in"
+     }
+    ]
+   },
+   "patches": [],
+   "expect": {
+    "F1": {
+     "state": "not_assessed",
+     "reason": "too few in-transit points for the even parity"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "N12",
+   "title": "odd in-transit flux 1e300 at sigma 1e-12",
+   "kind": "natural",
+   "branches": [
+    "B11"
+   ],
+   "entry": "f1_box",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "mods": [
+     {
+      "name": "set",
+      "where": "odd_in",
+      "flux": 1e+300,
+      "sigma": 1e-12
+     }
+    ]
+   },
+   "patches": [],
+   "expect": {
+    "F1": {
+     "state": "not_assessed",
+     "reason": "depth or pink noise unavailable for the odd parity"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "N13",
+   "title": "even in-transit flux 1e300 at sigma 1e-12",
+   "kind": "natural",
+   "branches": [
+    "B11"
+   ],
+   "entry": "f1_box",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "mods": [
+     {
+      "name": "set",
+      "where": "even_in",
+      "flux": 1e+300,
+      "sigma": 1e-12
+     }
+    ]
+   },
+   "patches": [],
+   "expect": {
+    "F1": {
+     "state": "not_assessed",
+     "reason": "depth or pink noise unavailable for the even parity"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "N14",
+   "title": "flux 0 but one baseline point 3e-162, sigma 1e-12: the variances underflow",
+   "kind": "natural",
+   "branches": [
+    "B08"
+   ],
+   "entry": "f1_box",
+   "recipe": {
+    "model": "null",
+    "sigma": 1e-12,
+    "mods": [
+     {
+      "name": "set",
+      "where": "all",
+      "flux": 0.0
+     },
+     {
+      "name": "set",
+      "where": "baseline_first",
+      "flux": 3e-162
+     }
+    ]
+   },
+   "patches": [],
+   "expect": {
+    "F1": {
+     "state": "not_assessed",
+     "reason": "denominator not positive"
+    }
+   },
+   "documented": [
+    {
+     "assertion": "F1.reason",
+     "approval": "depth or pink noise unavailable for the odd parity",
+     "raises": "AssertionError",
+     "why": "approval: sigma_w rounds to 0, so _pink returns None (line 245); corrected: both variances round to 0 and the denominator is 0 (line 251's guard)"
+    }
+   ],
+   "oracle_values": {}
+  },
+  {
+   "id": "N15",
+   "title": "odd in-transit flux -1.6e308 and even +1.6e308 at sigma 1e3",
+   "kind": "natural",
+   "branches": [
+    "B09"
+   ],
+   "entry": "f1_box",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "mods": [
+     {
+      "name": "set",
+      "where": "odd_in",
+      "flux": -1.6e+308,
+      "sigma": 1000.0
+     },
+     {
+      "name": "set",
+      "where": "even_in",
+      "flux": 1.6e+308,
+      "sigma": 1000.0
+     }
+    ]
+   },
+   "patches": [],
+   "expect": {
+    "F1": {
+     "state": "not_assessed",
+     "reason": "OE_box not finite"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R14",
+   "title": "400 cadences, T = 0.03 d: the MES grid exceeds N",
+   "kind": "natural",
+   "branches": [
+    "B14",
+    "B15"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "duration": 0.03,
+    "mods": [
+     {
+      "name": "first",
+      "count": 400
+     }
+    ]
+   },
+   "patches": [],
+   "expect": {
+    "F2": {
+     "state": "unavailable",
+     "reason": "the MES grid exceeds the number of valid cadences"
+    },
+    "U1": {
+     "state": "unavailable",
+     "reason": "the MES grid exceeds the number of valid cadences"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R16",
+   "title": "T = P/3.5: no cell 2T from the primary",
+   "kind": "natural",
+   "branches": [
+    "B16",
+    "B17"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "duration": 1.0571428571428572
+   },
+   "patches": [],
+   "expect": {
+    "F2": {
+     "state": "unavailable",
+     "reason": "an event (pri, sec, ter or pos) has no candidate cell"
+    },
+    "U1": {
+     "state": "unavailable",
+     "reason": "an event (pri, sec, ter or pos) has no candidate cell"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R20",
+   "title": "T/P just above 0.1, with a secondary 1.0 d away",
+   "kind": "natural",
+   "branches": [
+    "B20"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "box",
+    "depth": 0.006,
+    "seed": 20,
+    "duration": 0.371,
+    "model_duration": 0.371,
+    "secondary": {
+     "offset_days": 1.0,
+     "depth": 0.003
+    }
+   },
+   "patches": [],
+   "expect": {
+    "F2": {
+     "state": "unavailable",
+     "reason": "T/P above 0.1"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R21",
+   "title": "no cadence within 2T of a transit",
+   "kind": "natural",
+   "branches": [
+    "B21",
+    "B25",
+    "B28"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "star": {
+     "disposition": null,
+     "radius_rsun": 2.0,
+     "radius_err_rsun": 0.1
+    },
+    "mods": [
+     {
+      "name": "drop",
+      "where": "near_transit"
+     }
+    ]
+   },
+   "patches": [],
+   "expect": {
+    "F1_trap": {
+     "state": "unavailable",
+     "reason": "the overall trapezoid did not converge"
+    },
+    "F3": {
+     "state": "unavailable",
+     "reason": "no converged trapezoid with 0 < dF < 1"
+    },
+    "F4": {
+     "state": "unavailable",
+     "reason": "no converged trapezoid with 0 < dF < 1"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R22",
+   "title": "three odd fit cadences",
+   "kind": "natural",
+   "branches": [
+    "B22"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "trapezoid",
+    "trapezoid": {
+     "depth": 0.04,
+     "q": 0.03,
+     "q_in": 0.1,
+     "f0": 1.0
+    },
+    "sigma": 1e-07,
+    "seed": 22,
+    "mods": [
+     {
+      "name": "drop_odd_fit_but",
+      "keep": 3
+     }
+    ]
+   },
+   "patches": [],
+   "expect": {
+    "F1_trap": {
+     "state": "unavailable",
+     "reason": "a parity fit or its uncertainties were refused"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R23",
+   "title": "zero parity sigma (fault)",
+   "kind": "fault_injection",
+   "branches": [
+    "B23"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "trapezoid",
+    "trapezoid": {
+     "depth": 0.04,
+     "q": 0.03,
+     "q_in": 0.1,
+     "f0": 1.0
+    },
+    "sigma": 1e-07,
+    "seed": 23
+   },
+   "patches": [
+    {
+     "target": "_parity_fit",
+     "returns": {
+      "odd": [
+       1326.3,
+       0.04,
+       0.0,
+       0.0
+      ],
+      "even": [
+       1326.3,
+       0.04,
+       0.0,
+       0.0
+      ]
+     }
+    }
+   ],
+   "expect": {
+    "F1_trap": {
+     "state": "unavailable",
+     "reason": "a denominator is not positive"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R24",
+   "title": "parity t0 of +-1e308 (fault)",
+   "kind": "fault_injection",
+   "branches": [
+    "B24"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "trapezoid",
+    "trapezoid": {
+     "depth": 0.04,
+     "q": 0.03,
+     "q_in": 0.1,
+     "f0": 1.0
+    },
+    "sigma": 1e-07,
+    "seed": 24
+   },
+   "patches": [
+    {
+     "target": "_parity_fit",
+     "returns": {
+      "odd": [
+       1e+308,
+       0.04,
+       1.0,
+       1.0
+      ],
+      "even": [
+       -1e+308,
+       0.04,
+       1.0,
+       1.0
+      ]
+     }
+    }
+   ],
+   "expect": {
+    "F1_trap": {
+     "state": "unavailable",
+     "reason": "a statistic is not finite"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R26",
+   "title": "no star record",
+   "kind": "natural",
+   "branches": [
+    "B26"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "trapezoid",
+    "trapezoid": {
+     "depth": 0.04,
+     "q": 0.03,
+     "q_in": 0.1,
+     "f0": 1.0
+    },
+    "sigma": 1e-07,
+    "seed": 26
+   },
+   "patches": [],
+   "expect": {
+    "F3": {
+     "state": "unavailable",
+     "reason": "no reliable stellar radius (legacy rule)"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R27",
+   "title": "a stellar radius of 1.7e308: Rp overflows",
+   "kind": "natural",
+   "branches": [
+    "B27"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "trapezoid",
+    "trapezoid": {
+     "depth": 0.04,
+     "q": 0.03,
+     "q_in": 0.1,
+     "f0": 1.0
+    },
+    "sigma": 1e-07,
+    "seed": 27,
+    "star": {
+     "disposition": null,
+     "radius_rsun": 1.7e+308,
+     "radius_err_rsun": 1.7e+306
+    }
+   },
+   "patches": [],
+   "expect": {
+    "F3": {
+     "state": "unavailable",
+     "reason": "Rp not finite"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R29",
+   "title": "q_in = 0.5 (fault)",
+   "kind": "fault_injection",
+   "branches": [
+    "B29"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11
+   },
+   "patches": [
+    {
+     "target": "_trapezoid",
+     "returns": {
+      "t0": 1326.3,
+      "depth": 0.01,
+      "q": 0.03,
+      "q_in": 0.5,
+      "f0": 1.0
+     }
+    }
+   ],
+   "expect": {
+    "F4": {
+     "state": "unavailable",
+     "reason": "no flat bottom (q_in = 0.5)"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R30",
+   "title": "a flat interval between cadences (fault)",
+   "kind": "fault_injection",
+   "branches": [
+    "B30"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11
+   },
+   "patches": [
+    {
+     "target": "_trapezoid",
+     "returns": {
+      "t0": 1326.3012999999999,
+      "depth": 0.01,
+      "q": 1e-06,
+      "q_in": 0.2,
+      "f0": 1.0
+     }
+    }
+   ],
+   "expect": {
+    "F4": {
+     "state": "unavailable",
+     "reason": "no cadence inside the flat interval"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R31",
+   "title": "q = 1e-320 on a cadence (fault)",
+   "kind": "fault_injection",
+   "branches": [
+    "B31"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11
+   },
+   "patches": [
+    {
+     "target": "_trapezoid",
+     "returns": {
+      "t0": 1325.6944444444443,
+      "depth": 0.01,
+      "q": 1e-320,
+      "q_in": 0.0,
+      "f0": 1.0
+     }
+    }
+   ],
+   "expect": {
+    "F4": {
+     "state": "unavailable",
+     "reason": "Eq. 7 ratio undefined"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R32",
+   "title": "q_in = 0 (fault)",
+   "kind": "fault_injection",
+   "branches": [
+    "B32"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11
+   },
+   "patches": [
+    {
+     "target": "_trapezoid",
+     "returns": {
+      "t0": 1326.3,
+      "depth": 0.01,
+      "q": 0.03,
+      "q_in": 0.0,
+      "f0": 1.0
+     }
+    }
+   ],
+   "expect": {
+    "F4": {
+     "state": "unavailable",
+     "reason": "Eq. 7 denominator not positive"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R33",
+   "title": "dF = 0.25, q_in = 0.1 (fault)",
+   "kind": "fault_injection",
+   "branches": [
+    "B33"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11
+   },
+   "patches": [
+    {
+     "target": "_trapezoid",
+     "returns": {
+      "t0": 1326.3,
+      "depth": 0.25,
+      "q": 0.03,
+      "q_in": 0.1,
+      "f0": 1.0
+     }
+    }
+   ],
+   "expect": {
+    "F4": {
+     "state": "unavailable",
+     "reason": "Eq. 7 bracket negative"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R34",
+   "title": "_noise raises (fault)",
+   "kind": "fault_injection",
+   "branches": [
+    "B34",
+    "B35"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11
+   },
+   "patches": [
+    {
+     "target": "_noise",
+     "raises": "ValueError"
+    }
+   ],
+   "expect": {
+    "F2": {
+     "state": "unavailable",
+     "reason": "numerical failure: ValueError"
+    },
+    "U1": {
+     "state": "unavailable",
+     "reason": "numerical failure: ValueError"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R36",
+   "title": "_trapezoid raises (fault)",
+   "kind": "fault_injection",
+   "branches": [
+    "B36",
+    "B57",
+    "B58"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "star": {
+     "disposition": null,
+     "radius_rsun": 2.0,
+     "radius_err_rsun": 0.1
+    }
+   },
+   "patches": [
+    {
+     "target": "_trapezoid",
+     "raises": "ValueError"
+    }
+   ],
+   "expect": {
+    "F1_trap": {
+     "state": "unavailable",
+     "reason": "numerical failure: ValueError"
+    },
+    "F3": {
+     "state": "unavailable",
+     "reason": "numerical failure: ValueError"
+    },
+    "F4": {
+     "state": "unavailable",
+     "reason": "numerical failure: ValueError"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R37",
+   "title": "_mes raises (fault)",
+   "kind": "fault_injection",
+   "branches": [
+    "B37",
+    "B38"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11
+   },
+   "patches": [
+    {
+     "target": "_mes",
+     "raises": "ValueError"
+    }
+   ],
+   "expect": {
+    "F2": {
+     "state": "unavailable",
+     "reason": "numerical failure: ValueError"
+    },
+    "U1": {
+     "state": "unavailable",
+     "reason": "numerical failure: ValueError"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R39",
+   "title": "_parity_fit raises (fault)",
+   "kind": "fault_injection",
+   "branches": [
+    "B39"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11
+   },
+   "patches": [
+    {
+     "target": "_trapezoid",
+     "returns": {
+      "t0": 1326.3,
+      "depth": 0.01,
+      "q": 0.03,
+      "q_in": 0.2,
+      "f0": 1.0
+     }
+    },
+    {
+     "target": "_parity_fit",
+     "raises": "ValueError"
+    }
+   ],
+   "expect": {
+    "F1_trap": {
+     "state": "unavailable",
+     "reason": "numerical failure: ValueError"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R40",
+   "title": "_reliable_radius raises (fault)",
+   "kind": "fault_injection",
+   "branches": [
+    "B40"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "star": {
+     "disposition": null,
+     "radius_rsun": 2.0,
+     "radius_err_rsun": 0.1
+    }
+   },
+   "patches": [
+    {
+     "target": "_trapezoid",
+     "returns": {
+      "t0": 1326.3,
+      "depth": 0.01,
+      "q": 0.03,
+      "q_in": 0.2,
+      "f0": 1.0
+     }
+    },
+    {
+     "target": "_reliable_radius",
+     "raises": "ValueError"
+    }
+   ],
+   "expect": {
+    "F3": {
+     "state": "unavailable",
+     "reason": "numerical failure: ValueError"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R41",
+   "title": "q_in None: TypeError in F4 only (fault)",
+   "kind": "fault_injection",
+   "branches": [
+    "B41"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11
+   },
+   "patches": [
+    {
+     "target": "_trapezoid",
+     "returns": {
+      "t0": 1326.3,
+      "depth": 0.01,
+      "q": 0.03,
+      "q_in": null,
+      "f0": 1.0
+     }
+    }
+   ],
+   "expect": {
+    "F4": {
+     "state": "unavailable",
+     "reason": "numerical failure: TypeError"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R42",
+   "title": "period NaN",
+   "kind": "natural",
+   "branches": [
+    "B42",
+    "B43",
+    "B44",
+    "B45",
+    "B46"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "period": NaN
+   },
+   "patches": [],
+   "expect": {
+    "F1_trap": {
+     "state": "unavailable",
+     "reason": "candidate or curve not usable"
+    },
+    "F2": {
+     "state": "unavailable",
+     "reason": "candidate or curve not usable"
+    },
+    "F3": {
+     "state": "unavailable",
+     "reason": "candidate or curve not usable"
+    },
+    "F4": {
+     "state": "unavailable",
+     "reason": "candidate or curve not usable"
+    },
+    "U1": {
+     "state": "unavailable",
+     "reason": "candidate or curve not usable"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R47",
+   "title": "one sigma above 1e3",
+   "kind": "natural",
+   "branches": [
+    "B47",
+    "B48",
+    "B49",
+    "B50",
+    "B51"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "mods": [
+     {
+      "name": "sigma_at",
+      "index": 7,
+      "value": 2000.0
+     }
+    ]
+   },
+   "patches": [],
+   "expect": {
+    "F1_trap": {
+     "state": "unavailable",
+     "reason": "invalid_uncertainty"
+    },
+    "F2": {
+     "state": "unavailable",
+     "reason": "invalid_uncertainty"
+    },
+    "F3": {
+     "state": "unavailable",
+     "reason": "invalid_uncertainty"
+    },
+    "F4": {
+     "state": "unavailable",
+     "reason": "invalid_uncertainty"
+    },
+    "U1": {
+     "state": "unavailable",
+     "reason": "invalid_uncertainty"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R52",
+   "title": "15 cadences",
+   "kind": "natural",
+   "branches": [
+    "B52",
+    "B53",
+    "B54",
+    "B55",
+    "B56"
+   ],
+   "entry": "report_only",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "mods": [
+     {
+      "name": "first",
+      "count": 15
+     }
+    ]
+   },
+   "patches": [],
+   "expect": {
+    "F1_trap": {
+     "state": "unavailable",
+     "reason": "candidate or curve not usable"
+    },
+    "F2": {
+     "state": "unavailable",
+     "reason": "candidate or curve not usable"
+    },
+    "F3": {
+     "state": "unavailable",
+     "reason": "candidate or curve not usable"
+    },
+    "F4": {
+     "state": "unavailable",
+     "reason": "candidate or curve not usable"
+    },
+    "U1": {
+     "state": "unavailable",
+     "reason": "candidate or curve not usable"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R59",
+   "title": "eligible, no flattened curve",
+   "kind": "natural",
+   "branches": [
+    "B59",
+    "B60",
+    "B61",
+    "B62",
+    "B63",
+    "B64"
+   ],
+   "entry": "compute_screen:no_curve",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11
+   },
+   "patches": [],
+   "expect": {
+    "F1": {
+     "state": "not_assessed",
+     "reason": "no flattened curve"
+    },
+    "F1_trap": {
+     "state": "unavailable",
+     "reason": "no flattened curve"
+    },
+    "F2": {
+     "state": "unavailable",
+     "reason": "no flattened curve"
+    },
+    "F3": {
+     "state": "unavailable",
+     "reason": "no flattened curve"
+    },
+    "F4": {
+     "state": "unavailable",
+     "reason": "no flattened curve"
+    },
+    "U1": {
+     "state": "unavailable",
+     "reason": "no flattened curve"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  },
+  {
+   "id": "R65",
+   "title": "a flux that holds a string",
+   "kind": "natural",
+   "branches": [
+    "B65",
+    "B66",
+    "B67",
+    "B68",
+    "B69"
+   ],
+   "entry": "compute_screen",
+   "recipe": {
+    "model": "box",
+    "depth": 0.002,
+    "seed": 11,
+    "mods": [
+     {
+      "name": "flux_text",
+      "index": 5
+     }
+    ]
+   },
+   "patches": [],
+   "expect": {
+    "F1": {
+     "state": "not_assessed",
+     "reason": "numerical failure: ValueError"
+    },
+    "F1_trap": {
+     "state": "unavailable",
+     "reason": "numerical failure: ValueError"
+    },
+    "F2": {
+     "state": "unavailable",
+     "reason": "numerical failure: ValueError"
+    },
+    "F3": {
+     "state": "unavailable",
+     "reason": "numerical failure: ValueError"
+    },
+    "F4": {
+     "state": "unavailable",
+     "reason": "numerical failure: ValueError"
+    },
+    "U1": {
+     "state": "unavailable",
+     "reason": "numerical failure: ValueError"
+    }
+   },
+   "documented": [],
+   "oracle_values": {}
+  }
+ ]
+}
