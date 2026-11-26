@@ -38,18 +38,16 @@ PAIRS = 3
 
 
 def seed_absent() -> list[str]:
+    """The seed check at the parent of F-1's freeze commit, by the new checker
+    ``f1_seed_check_parent.py`` (#218 comment 7199932177, item 1: the repetition's only change;
+    the two in-tree checks of the earlier attempts found the attempts' own records)."""
     r = subprocess.run(
-        ["git", "-C", str(ROOT), "grep", "-l", "-w", "2026112601"], capture_output=True, text=True
+        [sys.executable, "-I", "-B", "docs/validation/v0.5.12/step3/f1_seed_check_parent.py"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
     )
-    # the journal and the ledger carry this unit's own "before" entry, whose question names the
-    # seed (a checker defect of the first attempt; the advance approval, use 2 of 2)
-    own = (
-        "docs/validation/v0.5.12/step3/",
-        "docs/validation/v0.5.12/units/f1",
-        "docs/validation/v0.5.12/log.jsonl",
-        "docs/validation/v0.5.12/caps-ledger.json",
-    )
-    return [p for p in r.stdout.splitlines() if not p.startswith(own)]
+    return [] if r.returncode == 0 else [r.stdout.strip() or r.stderr.strip()[-500:]]
 
 
 def probe(cond: str, out_dir: Path, tag: str) -> dict:
