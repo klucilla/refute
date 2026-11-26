@@ -1,0 +1,385 @@
+diff --git a/src/refute/packs/tess/screen_d5.py b/src/refute/packs/tess/screen_d5.py
+index d984c04..1ac07a3 100644
+--- a/src/refute/packs/tess/screen_d5.py
++++ b/src/refute/packs/tess/screen_d5.py
+@@ -22,6 +22,13 @@ docs/plans/sources/v0.5.11-screen-papers-2026-11-24.md. No GPL implementation wa
+ sigma of the cadences with finite time and flux must be finite and in [1e-12, 1e3]. Otherwise F1
+ is ``not_assessed`` and each report-only quantity ``unavailable``, with the reason
+ ``invalid_uncertainty``. The weight is the unscaled 1/sigma^2.
++
++**Correction 2** (docs/plans/v0.5.12-spec-correction-2-r1.md, revision 1, adopted at SHA-256
++``CORRECTION_2_SHA256``): F1's noise by parity. ``s2`` is the baseline's reduced chi-square, the
++red variance is the inverse-variance weighted moment of the bin means with a positive prefix sum
++for C, and each parity's variance is ``s2/W_par + sigma_r^2/N_eff,par``; the OE numerator is the
++difference of the two in-transit weighted means. F2 and U1 keep ``_noise`` (a declared
++report-only limit).
+ """
+ 
+ from __future__ import annotations
+@@ -33,6 +40,7 @@ import numpy as np
+ 
+ SPEC_SHA256 = "d498a82ada2e31a5b47768d58d6af2e19af0a3c5e35364693f04886068612f15"
+ CORRECTION_SHA256 = "62a5532f01c498901dd2c1546ad428e33cb4669efa14caf3d80d57f9b19b6df7"
++CORRECTION_2_SHA256 = "c24e7fd936929d713f53755b53233cc453e3e65a043f887b2f9e1511869873db"
+ SIGMA_MIN, SIGMA_MAX = 1e-12, 1e3  # correction 1: the input range of sigma, both ends included
+ INVALID_UNCERTAINTY = "invalid_uncertainty"
+ LABELS = ["exploratory", "method_status: not_validated"]
+@@ -175,6 +183,48 @@ def _noise(t, f, w, period, t0, duration):
+     return sigma_w, math.sqrt(sigma_r2), base
+ 
+ 
++def _noise_f1(t, f, w, period, t0, duration):
++    """F1's noise (correction 2 revision 1, section 4): (s2, sigma_r^2, m_b), or None when
++    unavailable (fewer than 10 baseline points or 3 bins, non-finite arithmetic, s2 <= 0 or
++    C <= 0; C <= 0 is a defensive guard)."""
++    base = _phase_distance(t, period, t0, 0.0) > duration
++    tb, fb, wb = t[base], f[base], w[base]
++    n_b = int(tb.size)
++    if n_b < MIN_BASELINE:
++        return None
++    m_b = _wmean(fb, wb)
++    if m_b is None:
++        return None
++    s2 = float(np.sum(wb * (fb - m_b) ** 2) / (n_b - 1))
++    if not math.isfinite(s2) or s2 <= 0:
++        return None
++    idx = _as_index(np.floor((tb - float(t.min())) / duration))
++    means, weights = [], []
++    for m in np.unique(idx):
++        sel = idx == m
++        if int(sel.sum()) < 2:
++            continue
++        mean = _wmean(fb[sel], wb[sel])
++        if mean is None:
++            return None
++        means.append(mean)
++        weights.append(float(wb[sel].sum()))
++    if len(means) < MIN_BINS:
++        return None
++    mu, wk = np.array(means), np.array(weights)
++    big_b = float(np.sum(wk))
++    mu_bar = float(np.sum(wk * mu) / big_b)
++    q0 = float(np.sum(wk * (mu - mu_bar) ** 2))
++    prefix = np.concatenate(([0.0], np.cumsum(wk)[:-1]))
++    c = float(2.0 * np.sum(wk * (prefix / big_b)))
++    if not _finite(big_b, mu_bar, q0, c) or c <= 0:
++        return None
++    sigma_r2 = (q0 - s2 * (mu.size - 1)) / c
++    if not _finite(sigma_r2):
++        return None
++    return s2, max(0.0, sigma_r2), m_b
++
++
+ def _pink(sigma_w: float, sigma_r: float, n: int, n_epochs: int) -> float | None:
+     if n <= 0 or n_epochs <= 0:
+         return None
+@@ -225,12 +275,10 @@ def _f1_box(time, flux, flux_err, period, t0, duration) -> dict:
+         sel_by[name] = (sel, ks)
+         good_by[name] = int((n_in >= MIN_IN_PER_EPOCH).sum())
+     coverage = good_by["odd"] + good_by["even"]
+-    sigma_w, sigma_r, base = _noise(t, f, w, period, t0, duration)
+-    if sigma_w is None:
++    noise = _noise_f1(t, f, w, period, t0, duration)
++    if noise is None:
+         return _core("not_assessed", "noise unavailable (baseline or bins)", coverage, counts)
+-    base_mean = _wmean(f[base], w[base])
+-    if base_mean is None:
+-        return _core("not_assessed", "baseline mean unavailable", coverage, counts)
++    s2, sigma_r2, base_mean = noise
+     out = {}
+     for name in ("odd", "even"):
+         sel, ks = sel_by[name]
+@@ -239,32 +287,43 @@ def _f1_box(time, flux, flux_err, period, t0, duration) -> dict:
+             reason = f"too few in-transit points for the {name} parity"
+             return _core("not_assessed", reason, coverage, counts)
+         m_in = _wmean(f[sel], w[sel])
+-        sigma_tr = _pink(sigma_w, sigma_r, n, int(ks.size))
+-        if m_in is None or sigma_tr is None:
++        w_e = np.bincount(np.searchsorted(ks, k[sel]), weights=w[sel])
++        w_par = float(np.sum(w_e))
++        n_eff = w_par**2 / float(np.sum(w_e**2))
++        var = s2 / w_par + sigma_r2 / n_eff
++        if m_in is None or not _finite(var):
+             reason = f"depth or pink noise unavailable for the {name} parity"
+             return _core("not_assessed", reason, coverage, counts)
+-        out[name] = (base_mean - m_in, sigma_tr, n, int(ks.size))
+-    d_odd, s_odd, n_odd, e_odd = out["odd"]
+-    d_even, s_even, n_even, e_even = out["even"]
+-    denom = math.sqrt(s_odd**2 + s_even**2)
++        out[name] = (m_in, var, n, int(ks.size), n_eff, w_par)
++    m_odd, v_odd, n_odd, e_odd, eff_odd, w_odd = out["odd"]
++    m_even, v_even, n_even, e_even, eff_even, w_even = out["even"]
++    denom = math.sqrt(v_odd + v_even)
+     if not math.isfinite(denom) or denom <= 0:
+         return _core("not_assessed", "denominator not positive", coverage, counts)
+-    oe = abs(d_odd - d_even) / denom
++    for name, var in (("odd", v_odd), ("even", v_even)):
++        if var <= 0.0:
++            reason = f"depth or pink noise unavailable for the {name} parity"
++            return _core("not_assessed", reason, coverage, counts)
++    oe = abs(m_odd - m_even) / denom
+     if not math.isfinite(oe):
+         return _core("not_assessed", "OE_box not finite", coverage, counts)
+     metrics = {
+         **counts,
+         "oe_box": oe,
+-        "delta_odd": d_odd,
+-        "delta_even": d_even,
+-        "sigma_odd": s_odd,
+-        "sigma_even": s_even,
++        "delta_odd": base_mean - m_odd,
++        "delta_even": base_mean - m_even,
++        "sigma_odd": math.sqrt(v_odd),
++        "sigma_even": math.sqrt(v_even),
+         "n_odd": n_odd,
+         "n_even": n_even,
+         "epochs_odd": e_odd,
+         "epochs_even": e_even,
+-        "sigma_w": sigma_w,
+-        "sigma_r": sigma_r,
++        "epochs_eff_odd": eff_odd,
++        "epochs_eff_even": eff_even,
++        "s2": s2,
++        "weight_odd": w_odd,
++        "weight_even": w_even,
++        "sigma_r": math.sqrt(sigma_r2),
+     }
+     state = "fail" if oe > F1_THRESHOLD else "pass"
+     return _core(state, f"OE_box {oe:.3f} vs {F1_THRESHOLD}", coverage, metrics)
+@@ -734,6 +793,7 @@ def compute_screen(flattened, candidate, tests, star=None, plausibility=None) ->
+         "version": 5,
+         "spec_sha256": SPEC_SHA256,
+         "spec_correction_sha256": CORRECTION_SHA256,
++        "spec_correction_2_sha256": CORRECTION_2_SHA256,
+         "entry": "search",
+         "eligible": eligible,
+         "outcome": None,
+diff --git a/tests/test_v0511_screen.py b/tests/test_v0511_screen.py
+index c79cdf8..e4fd186 100644
+--- a/tests/test_v0511_screen.py
++++ b/tests/test_v0511_screen.py
+@@ -38,8 +38,15 @@ from refute.packs.tess.synthetic import (
+ from refute.packs.tess.types import Candidate, LightCurveData
+ 
+ sys.path.insert(0, str(Path(__file__).resolve().parent))
++import v0512_oracles as corrected  # noqa: E402
+ from screen_reference import f1_reference  # noqa: E402
+ 
++# v0.5.12, correction 2 revision 1 (docs/plans/v0.5.12-spec-correction-2-r1.md, adopted at
++# SHA-256 c24e7fd9..., section 6 and the blind review's B2): F1's noise by parity supersedes the
++# frozen F1 values of a896c49 and of the calibration fixtures. The tests that asserted them in
++# memory now assert the corrected rule against the independent oracle (tests/v0512_oracles.py);
++# the frozen reference stays for the decisions it still documents.
++
+ SPEC_SHA256 = "d498a82ada2e31a5b47768d58d6af2e19af0a3c5e35364693f04886068612f15"
+ EB_HALF = SignalSpec(period=1.8, t0=1325.7, depth=0.006, duration=2 / 24, odd_depth_factor=0.75)
+ 
+@@ -67,16 +74,16 @@ def _gate(status=TestStatus.PASS) -> list[TestResult]:
+ 
+ 
+ @pytest.mark.parametrize("correlated", [False, True], ids=["white", "correlated"])
+-def test_f1_reproduces_the_reference_decisions_on_the_calibration_fixtures(correlated):
++def test_f1_reproduces_the_corrected_oracle_on_the_calibration_fixtures(correlated):
+     s = screen()
+     kwargs = dict(CORRELATED_PROFILE) if correlated else {}
+     for seed in range(1, 201):
+         lc, _ = make_lightcurve(PLANET, seed=seed, **kwargs)
+         args = (lc.time, lc.flux, lc.flux_err, PLANET.period, PLANET.t0, PLANET.duration)
+-        got, ref = s.f1_box(*args), f1_reference(*args)
+-        assert got["state"] == ref.state, seed
+-        assert math.isclose(got["metrics"]["oe_box"], ref.metrics["oe_box"], rel_tol=1e-9)
+-        assert got["coverage"] == ref.coverage
++        got, ref = s.f1_box(*args), corrected.f1_corrected(*args)
++        assert got["state"] == ref["state"], seed
++        assert math.isclose(got["metrics"]["oe_box"], ref["metrics"]["oe_box"], rel_tol=1e-9)
++        assert got["coverage"] == f1_reference(*args).coverage
+ 
+ 
+ def test_f1_passes_a_planet_and_fails_a_binary_at_half_the_period():
+@@ -211,20 +218,24 @@ def _equal_errors(sigma: float):
+ 
+ 
+ @pytest.mark.parametrize(("name", "spec"), [("planet", PLANET), ("eb_half", EB_HALF)])
+-def test_ordinary_errors_keep_the_reviewed_f1(name, spec):
++def test_ordinary_errors_follow_the_corrected_f1(name, spec):
++    # REVIEWED (a896c49) is superseded for F1 by correction 2 (B2); the states stay
+     lc, _ = make_lightcurve(spec, seed=3)
+-    r = screen().f1_box(lc.time, lc.flux, lc.flux_err, spec.period, spec.t0, spec.duration)
+-    state, oe = REVIEWED[name]
+-    assert r["state"] == state
+-    assert math.isclose(r["metrics"]["oe_box"], oe, rel_tol=1e-9)
++    args = (lc.time, lc.flux, lc.flux_err, spec.period, spec.t0, spec.duration)
++    r, ref = screen().f1_box(*args), corrected.f1_corrected(*args)
++    assert r["state"] == ref["state"] == REVIEWED[name][0]
++    assert math.isclose(r["metrics"]["oe_box"], ref["metrics"]["oe_box"], rel_tol=1e-9)
+ 
+ 
+ @pytest.mark.parametrize("sigma", [1e-12, 1e3], ids=["floor", "ceiling"])
+ def test_the_ends_of_the_range_are_assessed_like_ordinary_errors(sigma):
+-    state, oe = REVIEWED["planet"]
++    # equal errors: the corrected OE_box does not depend on their common scale
++    lc, _ = make_lightcurve(PLANET, seed=3)
++    p, t0, d = PLANET.period, PLANET.t0, PLANET.duration
++    ref = corrected.f1_corrected(lc.time, lc.flux, np.full_like(lc.flux_err, 1e-3), p, t0, d)
+     r = _equal_errors(sigma)
+-    assert r["state"] == state
+-    assert math.isclose(r["metrics"]["oe_box"], oe, rel_tol=1e-9)
++    assert r["state"] == ref["state"] == REVIEWED["planet"][0]
++    assert math.isclose(r["metrics"]["oe_box"], ref["metrics"]["oe_box"], rel_tol=1e-9)
+ 
+ 
+ def test_codex_first_witness_is_unassessed():
+diff --git a/tests/test_v0512_223_cases.py b/tests/test_v0512_223_cases.py
+index 77e309e..e511195 100644
+--- a/tests/test_v0512_223_cases.py
++++ b/tests/test_v0512_223_cases.py
+@@ -5,11 +5,11 @@ shared with the standalone probe (``tests/v0512_case_eval.py``). Exploratory,
+ 
+ - F1's expectations are those of correction 2 revision 1 (adopted at SHA-256 c24e7fd9...); the
+   report-only expectations are those of the frozen section 5.
+-- **Strict expected failures,** only for the failures the case record documented before the
+-  probe (Codex's round 2, item 3): N07 and N14, F1's reason on the approval code. Each is
+-  ``xfail(strict=True, raises=AssertionError)``; any other failure raises ``RuntimeError``, which
+-  the marker does not accept. The ``src/`` change removes both markers.
+-- The repeated probe (``step2/probe-result-2.json``) passed with exactly these two failures.
++- **Strict expected failures:** none since correction 2's ``src/`` change, which removed the two
++  markers of N07 and N14 (F1's reason on the approval code, documented in the case record before
++  the probe). Any failure the case record does not document raises ``RuntimeError``.
++- The repeated probe (``step2/probe-result-2.json``) passed on the approval code with exactly
++  those two failures.
+ """
+ 
+ from __future__ import annotations
+@@ -25,24 +25,10 @@ import v0512_case_eval as ev  # noqa: E402
+ DOC = ev.load()
+ BY_ID = {c["id"]: c for c in DOC["cases"]}
+ UNREACHABLE = {"B07", "B18", "B19", "B23"}  # proofs in cases.json; issue #225; not tested
+-XFAIL = {
+-    "N07": "approval code: a constant baseline gives sigma_w = 0 and _pink returns None "
+-    "(line 245); correction 2 revision 1: s2 = 0, noise unavailable",
+-    "N14": "approval code: sigma_w rounds to 0 and _pink returns None (line 245); correction 2 "
+-    "revision 1: both variances round to 0, the denominator is not positive",
+-}
++DOCUMENTED_ON_APPROVAL = {"N07", "N14"}  # the approval code's documented failures
+ 
+ 
+-def _param(case):
+-    marks = []
+-    if case["id"] in XFAIL:
+-        marks.append(
+-            pytest.mark.xfail(strict=True, raises=AssertionError, reason=XFAIL[case["id"]])
+-        )
+-    return pytest.param(case, id=case["id"], marks=marks)
+-
+-
+-@pytest.mark.parametrize("case", [_param(c) for c in DOC["cases"]])
++@pytest.mark.parametrize("case", [pytest.param(c, id=c["id"]) for c in DOC["cases"]])
+ def test_case(case):
+     outcomes = ev.evaluate(case, BY_ID)
+     assert outcomes, "a case with no assertion"
+@@ -80,4 +66,4 @@ def test_each_report_only_record_has_a_computed_witness_with_values():
+ 
+ def test_the_documented_failures_are_those_of_the_case_record():
+     documented = {c["id"] for c in DOC["cases"] if c["documented"]}
+-    assert documented == set(XFAIL)
++    assert documented == DOCUMENTED_ON_APPROVAL
+diff --git a/tests/test_v0512_correction2.py b/tests/test_v0512_correction2.py
+index 81fbfc9..2d6bae7 100644
+--- a/tests/test_v0512_correction2.py
++++ b/tests/test_v0512_correction2.py
+@@ -7,12 +7,12 @@ written before the ``src/`` change. Exploratory, ``method_status: not_validated`
+   example (25/18 against the legacy 1); an admissible dominant-bin witness for C; an admissible
+   witness with weight ratios near 1e30 (the rounding of Q0, blind review N10); the effective
+   epoch count.
+-- **Strict expected failures against the approval code**, each with its ID and reason, all
+-  ``xfail(strict=True, raises=AssertionError)``; the ``src/`` change removes them:
++- **The witnesses against the approval code** (strict expected failures until correction 2's
++  ``src/`` change, which removed the markers):
+   - ``test_p95_witness_passes_under_the_correction`` and
+-    ``test_b6_witness_passes_under_the_correction``: the approval code fails them;
++    ``test_b6_witness_passes_under_the_correction``: the approval code failed them;
+   - ``test_t2_corrected_sigma_odd_is_smaller``: the corrected sigma_odd is smaller;
+-  - ``test_src_f1_matches_the_oracle[*]``: the approval code's F1 is not the corrected one.
++  - ``test_src_f1_matches_the_oracle[*]``: the approval code's F1 was not the corrected one.
+ - **Kept, passing before and after:** the unequal-depth binary test and the report-only tests of
+   ``tests/test_v0511_screen.py``; the legacy MES noise (``_noise``), which F2 and U1 keep.
+ """
+@@ -34,12 +34,6 @@ import v0512_oracles as oc  # noqa: E402
+ from screen_reference import f1_reference  # noqa: E402
+ 
+ SIGMA0 = 6e-4
+-XFAIL = pytest.mark.xfail(
+-    strict=True,
+-    raises=AssertionError,
+-    reason="the approval code's F1 is the frozen estimator; correction 2 revision 1 changes it "
+-    "(removed by the src/ change)",
+-)
+ 
+ 
+ def screen():
+@@ -198,19 +192,16 @@ def test_the_oracle_witnesses_are_what_the_suite_needs():
+ # --- strict expected failures against the approval code --------------------------------------
+ 
+ 
+-@XFAIL
+ def test_p95_witness_passes_under_the_correction():
+     t, f, s = family("P9.5", 1)
+     assert screen().f1_box(t, f, s, fx.P, fx.T0, fx.T)["state"] == "pass"
+ 
+ 
+-@XFAIL
+ def test_b6_witness_passes_under_the_correction():
+     t, f, s = family("B6", 1)
+     assert screen().f1_box(t, f, s, fx.P, fx.T0, fx.T)["state"] == "pass"
+ 
+ 
+-@XFAIL
+ def test_t2_corrected_sigma_odd_is_smaller():
+     t, f, s = family("T2", 1)
+     frozen = f1_reference(t, f, s, fx.P, fx.T0, fx.T).metrics["sigma_odd"]
+@@ -221,7 +212,6 @@ def test_t2_corrected_sigma_odd_is_smaller():
+ KEYS = ("oe_box", "sigma_odd", "sigma_even", "s2", "sigma_r", "epochs_eff_odd", "epochs_eff_even")
+ 
+ 
+-@XFAIL
+ @pytest.mark.parametrize("name", ["planet", "binary", "P9.5", "B6", "T2"])
+ def test_src_f1_matches_the_oracle(name):
+     t, f, s = family("U" if name == "planet" else name, 1)
+diff --git a/tests/v0512_oracles.py b/tests/v0512_oracles.py
+index a19ab75..aa09cb5 100644
+--- a/tests/v0512_oracles.py
++++ b/tests/v0512_oracles.py
+@@ -86,10 +86,10 @@ def corrected_noise(t, f, w, period, t0, duration):
+     c = float(2.0 * np.sum(wk * (prefix / big_b)))
+     if not (math.isfinite(q0) and math.isfinite(c) and math.isfinite(mu_bar)) or c <= 0:
+         return None
+-    sig_r2 = max(0.0, (q0 - s2 * (mu.size - 1)) / c)
++    sig_r2 = (q0 - s2 * (mu.size - 1)) / c
+     if not math.isfinite(sig_r2):
+         return None
+-    return s2, sig_r2, m_b, base
++    return s2, max(0.0, sig_r2), m_b, base
+ 
+ 
+ def f1_corrected(time, flux, flux_err, period, t0, duration) -> dict:
+@@ -134,9 +134,9 @@ def _f1(time, flux, flux_err, period, t0, duration):
+         if int((n_in >= 3).sum()) == 0 or n < 3:
+             return _na(f"too few in-transit points for the {name} parity", counts)
+         m_in = _wmean(f[sel], w[sel])
+-        w_par = float(np.sum(w[sel]))
+         inv = np.searchsorted(ks, k[sel])
+         w_e = np.bincount(inv, weights=w[sel])
++        w_par = float(np.sum(w_e))
+         n_eff = w_par**2 / float(np.sum(w_e**2))
+         var = s2 / w_par + sig_r2 / n_eff
+         if m_in is None or not math.isfinite(var):
+@@ -145,6 +145,9 @@ def _f1(time, flux, flux_err, period, t0, duration):
+     denom = math.sqrt(out["odd"][1] + out["even"][1])
+     if not math.isfinite(denom) or denom <= 0:
+         return _na("denominator not positive", counts)
++    for name in ("odd", "even"):
++        if out[name][1] <= 0.0:
++            return _na(f"depth or pink noise unavailable for the {name} parity", counts)
+     oe = abs(out["odd"][0] - out["even"][0]) / denom
+     if not math.isfinite(oe):
+         return _na("OE_box not finite", counts)
