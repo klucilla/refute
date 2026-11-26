@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="11" failures="0" errors="0" time="158.2450741">
+    <testsuite name="tests/tamper/build-fails.test.ts" timestamp="2026-11-26T20:41:08.335Z" hostname="AMDR732GB" tests="11" failures="0" errors="0" skipped="0" time="158.2450741">
+        <testcase classname="tests/tamper/build-fails.test.ts" name="the build fails on provoked defects &gt; control: the unmodified copy builds" time="17.8759641">
+        </testcase>
+        <testcase classname="tests/tamper/build-fails.test.ts" name="the build fails on provoked defects &gt; 1. a hand-typed number fails the build" time="18.6467684">
+        </testcase>
+        <testcase classname="tests/tamper/build-fails.test.ts" name="the build fails on provoked defects &gt; 2. an invalid pointer fails the build" time="10.9424943">
+        </testcase>
+        <testcase classname="tests/tamper/build-fails.test.ts" name="the build fails on provoked defects &gt; 3. a right number with the wrong meaning fails the build" time="11.0319688">
+        </testcase>
+        <testcase classname="tests/tamper/build-fails.test.ts" name="the build fails on provoked defects &gt; 4. an altered release file fails the build (hash mismatch)" time="11.0519304">
+        </testcase>
+        <testcase classname="tests/tamper/build-fails.test.ts" name="the build fails on provoked defects &gt; 6. a hand-written data-fact attribute cannot vouch for a number" time="18.829734">
+        </testcase>
+        <testcase classname="tests/tamper/build-fails.test.ts" name="the build fails on provoked defects &gt; 7. an edited verdict in the synthetic run fails the build" time="11.1915305">
+        </testcase>
+        <testcase classname="tests/tamper/build-fails.test.ts" name="the build fails on provoked defects &gt; 8. a changed English criterion blocks the pt-BR page (the English page is unaffected)" time="18.0910412">
+        </testcase>
+        <testcase classname="tests/tamper/build-fails.test.ts" name="the build fails on provoked defects &gt; 9. changed English prose only marks the pt-BR page as possibly out of date" time="16.117905">
+        </testcase>
+        <testcase classname="tests/tamper/build-fails.test.ts" name="the build fails on provoked defects &gt; 10. changed release data block every pt-BR page that shows results" time="15.3222483">
+        </testcase>
+        <testcase classname="tests/tamper/build-fails.test.ts" name="the build fails on provoked defects &gt; 5. a reordered release file with a matching hash still fails the build (meaning)" time="9.140184">
+        </testcase>
+    </testsuite>
+</testsuites>

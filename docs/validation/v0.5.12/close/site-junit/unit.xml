@@ -1,0 +1,605 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="285" failures="0" errors="0" time="61.9747132">
+    <testsuite name="tests/unit/ci-workflow.test.ts" timestamp="2026-11-26T20:38:12.996Z" hostname="AMDR732GB" tests="6" failures="0" errors="0" skipped="0" time="0.0049995">
+        <testcase classname="tests/unit/ci-workflow.test.ts" name="CI workflows &gt; has exactly one workflow, ci.yml" time="0.0017276">
+        </testcase>
+        <testcase classname="tests/unit/ci-workflow.test.ts" name="CI workflows &gt; ci.yml: contains no deployment or Pages step" time="0.0003593">
+        </testcase>
+        <testcase classname="tests/unit/ci-workflow.test.ts" name="CI workflows &gt; ci.yml: runs on pushes to main and pull requests only" time="0.000158">
+        </testcase>
+        <testcase classname="tests/unit/ci-workflow.test.ts" name="CI workflows &gt; ci.yml: has read-only permissions" time="0.0002109">
+        </testcase>
+        <testcase classname="tests/unit/ci-workflow.test.ts" name="CI workflows &gt; ci.yml: pins every action by full commit SHA, from the allowed list" time="0.0008678">
+        </testcase>
+        <testcase classname="tests/unit/ci-workflow.test.ts" name="CI workflows &gt; ci.yml: does not keep the checkout token" time="0.0002249">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/contrast.test.ts" timestamp="2026-11-26T20:38:13.002Z" hostname="AMDR732GB" tests="179" failures="0" errors="0" skipped="0" time="0.0220801">
+        <testcase classname="tests/unit/contrast.test.ts" name="tokens.css structure &gt; uses the same palette for the manual light theme and the system light preference" time="0.0028703">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; ink on bg &gt;= 4.5:1" time="0.0004967">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; ink-muted on bg &gt;= 4.5:1" time="0.000185">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; ink-faint on bg &gt;= 4.5:1" time="0.00019">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; accent on bg &gt;= 4.5:1" time="0.0001855">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; link on bg &gt;= 4.5:1" time="0.000271">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; focus ring on bg &gt;= 3:1" time="0.0001682">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; ink on bg-elev &gt;= 4.5:1" time="0.0001337">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; ink-muted on bg-elev &gt;= 4.5:1" time="0.0002078">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; ink-faint on bg-elev &gt;= 4.5:1" time="0.0002666">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; accent on bg-elev &gt;= 4.5:1" time="0.0001474">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; link on bg-elev &gt;= 4.5:1" time="0.000123">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; focus ring on bg-elev &gt;= 3:1" time="0.0000763">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; ink on bg-sunk &gt;= 4.5:1" time="0.0000658">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; ink-muted on bg-sunk &gt;= 4.5:1" time="0.0000692">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; ink-faint on bg-sunk &gt;= 4.5:1" time="0.0000667">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; accent on bg-sunk &gt;= 4.5:1" time="0.0000597">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; link on bg-sunk &gt;= 4.5:1" time="0.0000673">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; focus ring on bg-sunk &gt;= 3:1" time="0.0000623">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; ink-muted on placeholder stripe &gt;= 4.5:1" time="0.0000626">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; ink-faint on placeholder stripe &gt;= 4.5:1" time="0.0000514">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; ink on next panel glow &gt;= 4.5:1" time="0.0000857">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; ink-muted on next panel glow &gt;= 4.5:1" time="0.0000521">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; accent on next panel glow &gt;= 4.5:1" time="0.000072">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; nav link (ink-muted) on header over ink &gt;= 4.5:1" time="0.0001054">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; nav current (ink) on header over ink &gt;= 4.5:1" time="0.000088">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; focus ring on header over ink &gt;= 3:1" time="0.0000575">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; nav link (ink-muted) on header over accent &gt;= 4.5:1" time="0.000049">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; nav current (ink) on header over accent &gt;= 4.5:1" time="0.000053">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; focus ring on header over accent &gt;= 3:1" time="0.0000444">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; nav link (ink-muted) on header over star-core &gt;= 4.5:1" time="0.0000519">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; nav current (ink) on header over star-core &gt;= 4.5:1" time="0.0000484">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; focus ring on header over star-core &gt;= 3:1" time="0.0000449">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; nav link (ink-muted) on header over star-mid &gt;= 4.5:1" time="0.0000762">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; nav current (ink) on header over star-mid &gt;= 4.5:1" time="0.0000592">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; focus ring on header over star-mid &gt;= 3:1" time="0.0000538">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; current-page underline (accent) on bg &gt;= 3:1" time="0.0000451">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; v-survived badge text on badge over bg &gt;= 4.5:1" time="0.0000729">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; badge gloss (ink-muted) on v-survived badge over bg &gt;= 4.5:1" time="0.0000483">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; v-survived badge text on badge over bg-elev &gt;= 4.5:1" time="0.0000427">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; badge gloss (ink-muted) on v-survived badge over bg-elev &gt;= 4.5:1" time="0.0000458">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; v-survived badge text on badge over bg-sunk &gt;= 4.5:1" time="0.0000405">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; badge gloss (ink-muted) on v-survived badge over bg-sunk &gt;= 4.5:1" time="0.0000493">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; v-survived badge text on badge over placeholder stripe &gt;= 4.5:1" time="0.0000514">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; badge gloss (ink-muted) on v-survived badge over placeholder stripe &gt;= 4.5:1" time="0.000054">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; v-weakened badge text on badge over bg &gt;= 4.5:1" time="0.0000455">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; badge gloss (ink-muted) on v-weakened badge over bg &gt;= 4.5:1" time="0.0000459">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; v-weakened badge text on badge over bg-elev &gt;= 4.5:1" time="0.0000702">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; badge gloss (ink-muted) on v-weakened badge over bg-elev &gt;= 4.5:1" time="0.000092">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; v-weakened badge text on badge over bg-sunk &gt;= 4.5:1" time="0.0000875">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; badge gloss (ink-muted) on v-weakened badge over bg-sunk &gt;= 4.5:1" time="0.0000578">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; v-weakened badge text on badge over placeholder stripe &gt;= 4.5:1" time="0.0000855">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; badge gloss (ink-muted) on v-weakened badge over placeholder stripe &gt;= 4.5:1" time="0.0000689">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; v-refuted badge text on badge over bg &gt;= 4.5:1" time="0.0000551">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; badge gloss (ink-muted) on v-refuted badge over bg &gt;= 4.5:1" time="0.0000518">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; v-refuted badge text on badge over bg-elev &gt;= 4.5:1" time="0.0000439">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; badge gloss (ink-muted) on v-refuted badge over bg-elev &gt;= 4.5:1" time="0.0000636">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; v-refuted badge text on badge over bg-sunk &gt;= 4.5:1" time="0.0000445">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; badge gloss (ink-muted) on v-refuted badge over bg-sunk &gt;= 4.5:1" time="0.000049">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; v-refuted badge text on badge over placeholder stripe &gt;= 4.5:1" time="0.0000478">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; badge gloss (ink-muted) on v-refuted badge over placeholder stripe &gt;= 4.5:1" time="0.0000588">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; v-inconclusive badge text on badge over bg &gt;= 4.5:1" time="0.0000682">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; badge gloss (ink-muted) on v-inconclusive badge over bg &gt;= 4.5:1" time="0.0000668">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; v-inconclusive badge text on badge over bg-elev &gt;= 4.5:1" time="0.0000502">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; badge gloss (ink-muted) on v-inconclusive badge over bg-elev &gt;= 4.5:1" time="0.0000399">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; v-inconclusive badge text on badge over bg-sunk &gt;= 4.5:1" time="0.0000458">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; badge gloss (ink-muted) on v-inconclusive badge over bg-sunk &gt;= 4.5:1" time="0.0000531">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; v-inconclusive badge text on badge over placeholder stripe &gt;= 4.5:1" time="0.0000854">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; badge gloss (ink-muted) on v-inconclusive badge over placeholder stripe &gt;= 4.5:1" time="0.0000735">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; primary button text at rest &gt;= 4.5:1" time="0.0000514">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; primary button text on hover (sRGB brightness) &gt;= 4.5:1" time="0.0000856">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; primary button text on hover (linear brightness) &gt;= 4.5:1" time="0.0000682">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; default button text &gt;= 4.5:1" time="0.000063">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; active language (bg on ink) &gt;= 4.5:1" time="0.0000419">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; theme toggle at rest (ink-muted on bg) &gt;= 4.5:1" time="0.0000441">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; theme toggle on hover (ink on bg) &gt;= 4.5:1" time="0.0000405">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; skip link (accent-ink on accent) &gt;= 4.5:1" time="0.0000377">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; source label (ink-muted on bg) &gt;= 4.5:1" time="0.0000432">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; pending test name (ink on card) &gt;= 4.5:1" time="0.0000394">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; pending test question (ink-muted on card) &gt;= 4.5:1" time="0.001806">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; pending label &quot;not tested yet&quot; (ink-muted on card) &gt;= 4.5:1" time="0.0001092">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; pending test dashed border (rule-strong on card) &gt;= 1.5:1" time="0.0000528">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; revealed test question (ink-muted on bg) &gt;= 4.5:1" time="0.0000671">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; step indicator (ink on bg) &gt;= 4.5:1" time="0.0001324">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; technical details toggle (link on bg) &gt;= 4.5:1" time="0.00009">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; technical details toggle (link on card) &gt;= 4.5:1" time="0.0000752">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; axis labels (ink-muted on bg) &gt;= 4.5:1" time="0.0000592">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; custom-scenario tag (ink on card) &gt;= 4.5:1" time="0.0000843">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; scenario chip selected (bg on ink) &gt;= 4.5:1" time="0.0000836">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, night theme &gt; scenario chip (ink on card colour) &gt;= 4.5:1" time="0.0000693">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; ink on bg &gt;= 4.5:1" time="0.0000817">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; ink-muted on bg &gt;= 4.5:1" time="0.0000951">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; ink-faint on bg &gt;= 4.5:1" time="0.0000676">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; accent on bg &gt;= 4.5:1" time="0.0000725">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; link on bg &gt;= 4.5:1" time="0.0000707">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; focus ring on bg &gt;= 3:1" time="0.0001125">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; ink on bg-elev &gt;= 4.5:1" time="0.0000843">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; ink-muted on bg-elev &gt;= 4.5:1" time="0.0001051">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; ink-faint on bg-elev &gt;= 4.5:1" time="0.0000685">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; accent on bg-elev &gt;= 4.5:1" time="0.000072">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; link on bg-elev &gt;= 4.5:1" time="0.0000736">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; focus ring on bg-elev &gt;= 3:1" time="0.0001055">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; ink on bg-sunk &gt;= 4.5:1" time="0.0001274">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; ink-muted on bg-sunk &gt;= 4.5:1" time="0.0000951">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; ink-faint on bg-sunk &gt;= 4.5:1" time="0.0000752">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; accent on bg-sunk &gt;= 4.5:1" time="0.0000701">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; link on bg-sunk &gt;= 4.5:1" time="0.0000655">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; focus ring on bg-sunk &gt;= 3:1" time="0.0000739">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; ink-muted on placeholder stripe &gt;= 4.5:1" time="0.0000751">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; ink-faint on placeholder stripe &gt;= 4.5:1" time="0.0000709">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; ink on next panel glow &gt;= 4.5:1" time="0.0000754">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; ink-muted on next panel glow &gt;= 4.5:1" time="0.0000757">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; accent on next panel glow &gt;= 4.5:1" time="0.0000919">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; nav link (ink-muted) on header over ink &gt;= 4.5:1" time="0.0000723">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; nav current (ink) on header over ink &gt;= 4.5:1" time="0.0000735">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; focus ring on header over ink &gt;= 3:1" time="0.0000706">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; nav link (ink-muted) on header over accent &gt;= 4.5:1" time="0.0000771">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; nav current (ink) on header over accent &gt;= 4.5:1" time="0.0000745">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; focus ring on header over accent &gt;= 3:1" time="0.0000739">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; nav link (ink-muted) on header over star-core &gt;= 4.5:1" time="0.0000783">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; nav current (ink) on header over star-core &gt;= 4.5:1" time="0.000072">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; focus ring on header over star-core &gt;= 3:1" time="0.0000752">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; nav link (ink-muted) on header over star-mid &gt;= 4.5:1" time="0.0000714">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; nav current (ink) on header over star-mid &gt;= 4.5:1" time="0.0000525">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; focus ring on header over star-mid &gt;= 3:1" time="0.0000661">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; current-page underline (accent) on bg &gt;= 3:1" time="0.0000954">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; v-survived badge text on badge over bg &gt;= 4.5:1" time="0.0001124">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; badge gloss (ink-muted) on v-survived badge over bg &gt;= 4.5:1" time="0.0001272">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; v-survived badge text on badge over bg-elev &gt;= 4.5:1" time="0.0001006">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; badge gloss (ink-muted) on v-survived badge over bg-elev &gt;= 4.5:1" time="0.0001432">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; v-survived badge text on badge over bg-sunk &gt;= 4.5:1" time="0.0000864">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; badge gloss (ink-muted) on v-survived badge over bg-sunk &gt;= 4.5:1" time="0.0000885">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; v-survived badge text on badge over placeholder stripe &gt;= 4.5:1" time="0.000149">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; badge gloss (ink-muted) on v-survived badge over placeholder stripe &gt;= 4.5:1" time="0.0001156">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; v-weakened badge text on badge over bg &gt;= 4.5:1" time="0.0000649">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; badge gloss (ink-muted) on v-weakened badge over bg &gt;= 4.5:1" time="0.0000595">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; v-weakened badge text on badge over bg-elev &gt;= 4.5:1" time="0.0000669">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; badge gloss (ink-muted) on v-weakened badge over bg-elev &gt;= 4.5:1" time="0.0000498">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; v-weakened badge text on badge over bg-sunk &gt;= 4.5:1" time="0.0000458">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; badge gloss (ink-muted) on v-weakened badge over bg-sunk &gt;= 4.5:1" time="0.0000448">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; v-weakened badge text on badge over placeholder stripe &gt;= 4.5:1" time="0.00007">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; badge gloss (ink-muted) on v-weakened badge over placeholder stripe &gt;= 4.5:1" time="0.0000609">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; v-refuted badge text on badge over bg &gt;= 4.5:1" time="0.0000584">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; badge gloss (ink-muted) on v-refuted badge over bg &gt;= 4.5:1" time="0.000079">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; v-refuted badge text on badge over bg-elev &gt;= 4.5:1" time="0.0000485">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; badge gloss (ink-muted) on v-refuted badge over bg-elev &gt;= 4.5:1" time="0.0000557">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; v-refuted badge text on badge over bg-sunk &gt;= 4.5:1" time="0.000045">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; badge gloss (ink-muted) on v-refuted badge over bg-sunk &gt;= 4.5:1" time="0.0000455">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; v-refuted badge text on badge over placeholder stripe &gt;= 4.5:1" time="0.0000454">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; badge gloss (ink-muted) on v-refuted badge over placeholder stripe &gt;= 4.5:1" time="0.0000426">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; v-inconclusive badge text on badge over bg &gt;= 4.5:1" time="0.0000549">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; badge gloss (ink-muted) on v-inconclusive badge over bg &gt;= 4.5:1" time="0.0000534">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; v-inconclusive badge text on badge over bg-elev &gt;= 4.5:1" time="0.0000562">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; badge gloss (ink-muted) on v-inconclusive badge over bg-elev &gt;= 4.5:1" time="0.0000533">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; v-inconclusive badge text on badge over bg-sunk &gt;= 4.5:1" time="0.0000609">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; badge gloss (ink-muted) on v-inconclusive badge over bg-sunk &gt;= 4.5:1" time="0.0000686">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; v-inconclusive badge text on badge over placeholder stripe &gt;= 4.5:1" time="0.0001143">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; badge gloss (ink-muted) on v-inconclusive badge over placeholder stripe &gt;= 4.5:1" time="0.0000771">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; primary button text at rest &gt;= 4.5:1" time="0.0000595">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; primary button text on hover (sRGB brightness) &gt;= 4.5:1" time="0.0000784">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; primary button text on hover (linear brightness) &gt;= 4.5:1" time="0.0000753">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; default button text &gt;= 4.5:1" time="0.0000803">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; active language (bg on ink) &gt;= 4.5:1" time="0.0000849">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; theme toggle at rest (ink-muted on bg) &gt;= 4.5:1" time="0.0000656">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; theme toggle on hover (ink on bg) &gt;= 4.5:1" time="0.0000649">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; skip link (accent-ink on accent) &gt;= 4.5:1" time="0.000055">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; source label (ink-muted on bg) &gt;= 4.5:1" time="0.0000551">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; pending test name (ink on card) &gt;= 4.5:1" time="0.000058">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; pending test question (ink-muted on card) &gt;= 4.5:1" time="0.0000574">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; pending label &quot;not tested yet&quot; (ink-muted on card) &gt;= 4.5:1" time="0.0000611">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; pending test dashed border (rule-strong on card) &gt;= 1.5:1" time="0.0000906">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; revealed test question (ink-muted on bg) &gt;= 4.5:1" time="0.0000623">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; step indicator (ink on bg) &gt;= 4.5:1" time="0.0000823">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; technical details toggle (link on bg) &gt;= 4.5:1" time="0.0000564">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; technical details toggle (link on card) &gt;= 4.5:1" time="0.0000544">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; axis labels (ink-muted on bg) &gt;= 4.5:1" time="0.0000542">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; custom-scenario tag (ink on card) &gt;= 4.5:1" time="0.0000525">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; scenario chip selected (bg on ink) &gt;= 4.5:1" time="0.0000515">
+        </testcase>
+        <testcase classname="tests/unit/contrast.test.ts" name="contrast, log theme &gt; scenario chip (ink on card colour) &gt;= 4.5:1" time="0.0000529">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/dependency-age.test.ts" timestamp="2026-11-26T20:38:13.036Z" hostname="AMDR732GB" tests="7" failures="0" errors="0" skipped="0" time="0.0062566">
+        <testcase classname="tests/unit/dependency-age.test.ts" name="dependency age check &gt; passes when every entry predates the cutoff" time="0.0023403">
+        </testcase>
+        <testcase classname="tests/unit/dependency-age.test.ts" name="dependency age check &gt; flags a transitive entry newer than the cutoff" time="0.000957">
+        </testcase>
+        <testcase classname="tests/unit/dependency-age.test.ts" name="dependency age check &gt; flags an optional platform entry newer than the cutoff" time="0.0004026">
+        </testcase>
+        <testcase classname="tests/unit/dependency-age.test.ts" name="dependency age check &gt; flags a cutoff that is less than the minimum age" time="0.0002327">
+        </testcase>
+        <testcase classname="tests/unit/dependency-age.test.ts" name="dependency age check &gt; reports network failures as unverified, never as violations" time="0.000341">
+        </testcase>
+        <testcase classname="tests/unit/dependency-age.test.ts" name="dependency age check &gt; flags entries that do not come from the npm registry" time="0.0002536">
+        </testcase>
+        <testcase classname="tests/unit/dependency-age.test.ts" name="dependency age check &gt; accepts only exceptions listed by exact name and version" time="0.000309">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/deploy-scripts.test.ts" timestamp="2026-11-26T20:38:13.037Z" hostname="AMDR732GB" tests="1" failures="0" errors="0" skipped="0" time="58.612208">
+        <testcase classname="tests/unit/deploy-scripts.test.ts" name="deploy scripts &gt; remote-apply.sh: success, served difference, leftover link, unreadable release, no space; nothing removed" time="58.610311">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/dev-server.test.ts" timestamp="2026-11-26T20:38:13.038Z" hostname="AMDR732GB" tests="1" failures="0" errors="0" skipped="0" time="0.0031377">
+        <testcase classname="tests/unit/dev-server.test.ts" name="local servers &gt; listen on 127.0.0.1 only" time="0.0019504">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/editorial.test.ts" timestamp="2026-11-26T20:38:13.038Z" hostname="AMDR732GB" tests="8" failures="0" errors="0" skipped="0" time="0.1455513">
+        <testcase classname="tests/unit/editorial.test.ts" name="editorial approval &gt; the recorded approval matches the current text (approved by the maintainer)" time="0.0177982">
+        </testcase>
+        <testcase classname="tests/unit/editorial.test.ts" name="editorial approval &gt; parses the status source, with one or more quoted purposes per phase" time="0.0480404">
+        </testcase>
+        <testcase classname="tests/unit/editorial.test.ts" name="editorial approval &gt; is a draft until approved" time="0.0126178">
+        </testcase>
+        <testcase classname="tests/unit/editorial.test.ts" name="editorial approval &gt; is approved while none of the three sources changes" time="0.0158728">
+        </testcase>
+        <testcase classname="tests/unit/editorial.test.ts" name="editorial approval &gt; is voided by an edit to status.yaml" time="0.0146056">
+        </testcase>
+        <testcase classname="tests/unit/editorial.test.ts" name="editorial approval &gt; is voided by an edit to the English status strings" time="0.012138">
+        </testcase>
+        <testcase classname="tests/unit/editorial.test.ts" name="editorial approval &gt; is voided by an edit to the Portuguese status strings" time="0.0116726">
+        </testcase>
+        <testcase classname="tests/unit/editorial.test.ts" name="editorial approval &gt; refuses an approval that does not cover the three sources" time="0.0109087">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/facts-v040.test.ts" timestamp="2026-11-26T20:38:13.040Z" hostname="AMDR732GB" tests="9" failures="0" errors="0" skipped="0" time="0.044259">
+        <testcase classname="tests/unit/facts-v040.test.ts" name="v0.4.0: the funnel adds up &gt; every funnel star has exactly one stage-1 outcome" time="0.0049034">
+        </testcase>
+        <testcase classname="tests/unit/facts-v040.test.ts" name="v0.4.0: the funnel adds up &gt; the stars whose signal passed the gate are those with any outcome but &quot;no significant signal&quot;" time="0.0012366">
+        </testcase>
+        <testcase classname="tests/unit/facts-v040.test.ts" name="v0.4.0: the funnel adds up &gt; eligible stars are counted once, and the cap promoted no more than were eligible" time="0.0015691">
+        </testcase>
+        <testcase classname="tests/unit/facts-v040.test.ts" name="v0.4.0: the funnel adds up &gt; the injection summary covers the curves without a gate-passing signal of their own" time="0.0019676">
+        </testcase>
+        <testcase classname="tests/unit/facts-v040.test.ts" name="v0.4.0: the rows say what they are said to say &gt; each stage-2 row belongs to its own case, in the report order (controls, then promoted)" time="0.0027462">
+        </testcase>
+        <testcase classname="tests/unit/facts-v040.test.ts" name="v0.4.0: the rows say what they are said to say &gt; exactly one case SURVIVED, and its conclusion says it is not support for the candidate" time="0.0016141">
+        </testcase>
+        <testcase classname="tests/unit/facts-v040.test.ts" name="v0.4.0: the rows say what they are said to say &gt; each injection row is a fraction of its own injections, within its interval" time="0.0042443">
+        </testcase>
+        <testcase classname="tests/unit/facts-v040.test.ts" name="v0.4.0: the rows say what they are said to say &gt; transformed curves: per star = inverted + rotations, the funnel = per star x stars, and survivors never exceed gate passes" time="0.0073748">
+        </testcase>
+        <testcase classname="tests/unit/facts-v040.test.ts" name="v0.4.0: the rows say what they are said to say &gt; the method is not validated, in the locked claim and in the report" time="0.0168412">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/facts.test.ts" timestamp="2026-11-26T20:38:13.042Z" hostname="AMDR732GB" tests="12" failures="0" errors="0" skipped="0" time="0.7781504">
+        <testcase classname="tests/unit/facts.test.ts" name="fact registry against the real v0.1.0 files &gt; resolves every declared fact with its meaning" time="0.1671508">
+        </testcase>
+        <testcase classname="tests/unit/facts.test.ts" name="fact registry against the real v0.1.0 files &gt; links each fact to its file at the release commit" time="0.0014989">
+        </testcase>
+        <testcase classname="tests/unit/facts.test.ts" name="fact registry against the real v0.1.0 files &gt; links a quoted statement to its line" time="0.0015275">
+        </testcase>
+        <testcase classname="tests/unit/facts.test.ts" name="fact registry against the real v0.1.0 files &gt; rejects an id that is not declared" time="0.001895">
+        </testcase>
+        <testcase classname="tests/unit/facts.test.ts" name="meaning checks &gt; accepts the correct declaration" time="0.000923">
+        </testcase>
+        <testcase classname="tests/unit/facts.test.ts" name="meaning checks &gt; rejects an invalid pointer" time="0.0008912">
+        </testcase>
+        <testcase classname="tests/unit/facts.test.ts" name="meaning checks &gt; rejects a real number with the wrong meaning (criterion name)" time="0.0005928">
+        </testcase>
+        <testcase classname="tests/unit/facts.test.ts" name="meaning checks &gt; rejects a real number with the wrong meaning (count does not match the target list)" time="0.0005583">
+        </testcase>
+        <testcase classname="tests/unit/facts.test.ts" name="meaning checks &gt; checks units: &quot;days&quot; needs a _days key, &quot;targets&quot; needs a count check" time="0.0006867">
+        </testcase>
+        <testcase classname="tests/unit/facts.test.ts" name="meaning checks &gt; rejects an outcome outside its vocabulary" time="0.0006826">
+        </testcase>
+        <testcase classname="tests/unit/facts.test.ts" name="meaning checks &gt; rejects a quote that is missing or ambiguous" time="0.0017564">
+        </testcase>
+        <testcase classname="tests/unit/facts.test.ts" name="meaning checks &gt; fails the registry when the release file is reordered, even with a matching hash" time="0.5981343">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/i18n-numbers.test.ts" timestamp="2026-11-26T20:38:13.044Z" hostname="AMDR732GB" tests="2" failures="0" errors="0" skipped="0" time="0.0079699">
+        <testcase classname="tests/unit/i18n-numbers.test.ts" name="i18n strings (en) &gt; contain no unsourced digits" time="0.0047418">
+        </testcase>
+        <testcase classname="tests/unit/i18n-numbers.test.ts" name="i18n strings (pt-br) &gt; contain no unsourced digits" time="0.0013755">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/launch-gate.test.ts" timestamp="2026-11-26T20:38:13.045Z" hostname="AMDR732GB" tests="8" failures="0" errors="0" skipped="0" time="0.006195">
+        <testcase classname="tests/unit/launch-gate.test.ts" name="launch gate: npm audit &gt; is READY with no advisories" time="0.0016445">
+        </testcase>
+        <testcase classname="tests/unit/launch-gate.test.ts" name="launch gate: npm audit &gt; is BLOCKED by a high advisory" time="0.0006595">
+        </testcase>
+        <testcase classname="tests/unit/launch-gate.test.ts" name="launch gate: npm audit &gt; is BLOCKED by a critical advisory" time="0.0002513">
+        </testcase>
+        <testcase classname="tests/unit/launch-gate.test.ts" name="launch gate: npm audit &gt; reports but does not block moderate and low advisories" time="0.0002947">
+        </testcase>
+        <testcase classname="tests/unit/launch-gate.test.ts" name="launch gate: npm audit &gt; is UNVERIFIED (still blocking launch) when the registry is unreachable" time="0.000334">
+        </testcase>
+        <testcase classname="tests/unit/launch-gate.test.ts" name="launch gate: combination &gt; maps dependency-age exit codes" time="0.000322">
+        </testcase>
+        <testcase classname="tests/unit/launch-gate.test.ts" name="launch gate: combination &gt; blocks launch until editorial text is approved and unchanged" time="0.0002018">
+        </testcase>
+        <testcase classname="tests/unit/launch-gate.test.ts" name="launch gate: combination &gt; is READY only when every check is READY" time="0.0001726">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/number-scan.test.ts" timestamp="2026-11-26T20:38:13.047Z" hostname="AMDR732GB" tests="8" failures="0" errors="0" skipped="0" time="0.0066668">
+        <testcase classname="tests/unit/number-scan.test.ts" name="unsourced number scan &gt; flags a hand-typed number in visible text" time="0.0031797">
+        </testcase>
+        <testcase classname="tests/unit/number-scan.test.ts" name="unsourced number scan &gt; accepts numbers inside a data-fact element, including nested markup" time="0.0002866">
+        </testcase>
+        <testcase classname="tests/unit/number-scan.test.ts" name="unsourced number scan &gt; accepts numbers inside a justified data-number-ok element, but not an empty one" time="0.0003292">
+        </testcase>
+        <testcase classname="tests/unit/number-scan.test.ts" name="unsourced number scan &gt; accepts allowlisted tokens only" time="0.0002518">
+        </testcase>
+        <testcase classname="tests/unit/number-scan.test.ts" name="unsourced number scan &gt; checks accessible-text attributes, &lt;title&gt; and meta descriptions" time="0.0004265">
+        </testcase>
+        <testcase classname="tests/unit/number-scan.test.ts" name="unsourced number scan &gt; does not exempt aria-hidden content: it is still visible" time="0.0001994">
+        </testcase>
+        <testcase classname="tests/unit/number-scan.test.ts" name="unsourced number scan &gt; ignores scripts, styles and numeric character references" time="0.0002639">
+        </testcase>
+        <testcase classname="tests/unit/number-scan.test.ts" name="unsourced number scan &gt; ignores digits in non-text attributes" time="0.0001667">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/precompress.test.ts" timestamp="2026-11-26T20:38:13.049Z" hostname="AMDR732GB" tests="2" failures="0" errors="0" skipped="0" time="0.0463986">
+        <testcase classname="tests/unit/precompress.test.ts" name="precompress &gt; writes a .gz next to each text file that gets smaller, and decompresses to the same bytes" time="0.0241096">
+        </testcase>
+        <testcase classname="tests/unit/precompress.test.ts" name="precompress &gt; produces the same bytes on every run" time="0.0202597">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/remote-and-fetch.test.ts" timestamp="2026-11-26T20:38:13.050Z" hostname="AMDR732GB" tests="8" failures="0" errors="0" skipped="0" time="0.5825859">
+        <testcase classname="tests/unit/remote-and-fetch.test.ts" name="verifyRemote &gt; is OK when GitHub matches the vendored data" time="0.0894495">
+        </testcase>
+        <testcase classname="tests/unit/remote-and-fetch.test.ts" name="verifyRemote &gt; is MISMATCH when the tag was moved to another commit" time="0.0710839">
+        </testcase>
+        <testcase classname="tests/unit/remote-and-fetch.test.ts" name="verifyRemote &gt; is MISMATCH when a remote file differs" time="0.0786734">
+        </testcase>
+        <testcase classname="tests/unit/remote-and-fetch.test.ts" name="verifyRemote &gt; is UNVERIFIED, never MISMATCH, when the network is down" time="0.0578962">
+        </testcase>
+        <testcase classname="tests/unit/remote-and-fetch.test.ts" name="fetchRelease &gt; rewrites byte-identical files and the same hashes from the same commit" time="0.0958882">
+        </testcase>
+        <testcase classname="tests/unit/remote-and-fetch.test.ts" name="fetchRelease &gt; refuses a restricted-licence source and writes nothing" time="0.0735057">
+        </testcase>
+        <testcase classname="tests/unit/remote-and-fetch.test.ts" name="fetchRelease &gt; refuses a file under the right-of-reply embargo and writes nothing" time="0.0687556">
+        </testcase>
+        <testcase classname="tests/unit/remote-and-fetch.test.ts" name="fetchRelease &gt; reports a network failure as NetworkError and writes nothing" time="0.0451154">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/synthetic.test.ts" timestamp="2026-11-26T20:38:13.052Z" hostname="AMDR732GB" tests="15" failures="0" errors="0" skipped="0" time="0.5227011">
+        <testcase classname="tests/unit/synthetic.test.ts" name="synthetic runs: real output &gt; passes verification" time="0.0434648">
+        </testcase>
+        <testcase classname="tests/unit/synthetic.test.ts" name="synthetic runs: real output &gt; was produced by refute at the v0.1.0 commit, with all four verdicts represented" time="0.0125772">
+        </testcase>
+        <testcase classname="tests/unit/synthetic.test.ts" name="synthetic runs: real output &gt; applied the same test thresholds as the locked v0.1 self-claim" time="0.0190046">
+        </testcase>
+        <testcase classname="tests/unit/synthetic.test.ts" name="synthetic runs: real output &gt; was produced by refute at the v0.2.0 commit, with all four verdicts and the new battery" time="0.0067411">
+        </testcase>
+        <testcase classname="tests/unit/synthetic.test.ts" name="synthetic runs: real output &gt; applied the same test thresholds as the locked v0.2 self-claim" time="0.0232395">
+        </testcase>
+        <testcase classname="tests/unit/synthetic.test.ts" name="synthetic runs: real output &gt; resolves rendered ids and rejects unknown ones" time="0.0079205">
+        </testcase>
+        <testcase classname="tests/unit/synthetic.test.ts" name="synthetic runs: tampered copies &gt; rejects an edited verdict (hash mismatch)" time="0.1086105">
+        </testcase>
+        <testcase classname="tests/unit/synthetic.test.ts" name="synthetic runs: tampered copies &gt; rejects output attributed to another refute commit, even with a matching hash" time="0.0927487">
+        </testcase>
+        <testcase classname="tests/unit/synthetic.test.ts" name="synthetic runs: tampered copies &gt; rejects output from a different generator or environment" time="0.0860131">
+        </testcase>
+        <testcase classname="tests/unit/synthetic.test.ts" name="synthetic runs: tampered copies &gt; rejects an invented verdict value (schema)" time="0.082453">
+        </testcase>
+        <testcase classname="tests/unit/synthetic.test.ts" name="gauntlet definition against the run &gt; matches the v0.1.0 run" time="0.0063497">
+        </testcase>
+        <testcase classname="tests/unit/synthetic.test.ts" name="gauntlet definition against the run &gt; matches the v0.2.0 run" time="0.0104083">
+        </testcase>
+        <testcase classname="tests/unit/synthetic.test.ts" name="gauntlet definition against the run &gt; fails when Refute ran a test the definition does not present (a new battery)" time="0.0069901">
+        </testcase>
+        <testcase classname="tests/unit/synthetic.test.ts" name="gauntlet definition against the run &gt; fails when the definition presents a test Refute did not run" time="0.0071931">
+        </testcase>
+        <testcase classname="tests/unit/synthetic.test.ts" name="gauntlet definition against the run &gt; fails on a showcase scenario that was not run, or an unknown documentation fact" time="0.0063602">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/translation.test.ts" timestamp="2026-11-26T20:38:13.055Z" hostname="AMDR732GB" tests="11" failures="0" errors="0" skipped="0" time="0.540434">
+        <testcase classname="tests/unit/translation.test.ts" name="translation status &gt; the committed record matches the current English text and data (every page current)" time="0.0031962">
+        </testcase>
+        <testcase classname="tests/unit/translation.test.ts" name="translation status &gt; marks a page stale when English prose it uses changes" time="0.1039822">
+        </testcase>
+        <testcase classname="tests/unit/translation.test.ts" name="translation status &gt; blocks a page when the English meaning of a criterion changes" time="0.090207">
+        </testcase>
+        <testcase classname="tests/unit/translation.test.ts" name="translation status &gt; blocks the v0.4 results page when the human reading of a case changes, and no other page" time="0.0866178">
+        </testcase>
+        <testcase classname="tests/unit/translation.test.ts" name="translation status &gt; blocks a page when the explanation of a verdict changes" time="0.0908507">
+        </testcase>
+        <testcase classname="tests/unit/translation.test.ts" name="translation status &gt; blocks every page that shows results when release data change, but not the privacy page" time="0.0004499">
+        </testcase>
+        <testcase classname="tests/unit/translation.test.ts" name="translation status &gt; blocks the privacy page, and only it, when any English privacy text changes" time="0.0808286">
+        </testcase>
+        <testcase classname="tests/unit/translation.test.ts" name="translation status &gt; marks every page stale when the Portuguese text changed after the review" time="0.0004714">
+        </testcase>
+        <testcase classname="tests/unit/translation.test.ts" name="translation status &gt; records the reviewed Portuguese text and its commit" time="0.0003767">
+        </testcase>
+        <testcase classname="tests/unit/translation.test.ts" name="translation status &gt; refuses a page without a translation configuration" time="0.000731">
+        </testcase>
+        <testcase classname="tests/unit/translation.test.ts" name="translation page configuration &gt; every page that renders a namespace declares it (notes: the blind-test editorial note)" time="0.080358">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/verify-local.test.ts" timestamp="2026-11-26T20:38:13.057Z" hostname="AMDR732GB" tests="8" failures="0" errors="0" skipped="0" time="0.6451193">
+        <testcase classname="tests/unit/verify-local.test.ts" name="verifyLocal on the real data &gt; reports no problem" time="0.0387747">
+        </testcase>
+        <testcase classname="tests/unit/verify-local.test.ts" name="verifyLocal on tampered copies &gt; detects a changed value in a release file (hash mismatch)" time="0.102887">
+        </testcase>
+        <testcase classname="tests/unit/verify-local.test.ts" name="verifyLocal on tampered copies &gt; detects an unexpected extra file" time="0.0967527">
+        </testcase>
+        <testcase classname="tests/unit/verify-local.test.ts" name="verifyLocal on tampered copies &gt; refuses restricted-licence data anywhere under releases/" time="0.0923712">
+        </testcase>
+        <testcase classname="tests/unit/verify-local.test.ts" name="verifyLocal on tampered copies &gt; refuses a result still under the right-of-reply embargo" time="0.0864741">
+        </testcase>
+        <testcase classname="tests/unit/verify-local.test.ts" name="verifyLocal on tampered copies &gt; validates the schema of the summary even when the hash matches" time="0.0797782">
+        </testcase>
+        <testcase classname="tests/unit/verify-local.test.ts" name="verifyLocal on tampered copies &gt; refuses data for a release that is still pending" time="0.0720128">
+        </testcase>
+        <testcase classname="tests/unit/verify-local.test.ts" name="verifyLocal on tampered copies &gt; detects a manifest pointing at another commit" time="0.0743873">
+        </testcase>
+    </testsuite>
+</testsuites>

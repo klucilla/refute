@@ -1,0 +1,8 @@
+run-heavy: reserved for Windows: 4 physical cores (logical 0,1,2,3,4,5,6,7); command runs on mask 0xFFFFFF00; max workers 10
+[2m17:37:01[22m [34m[types][39m Generated [2m78ms[22m
+[2m17:37:01[22m [34m[check][39m Getting diagnostics for Astro files in C:\Projetos\refute-site...
+Result (128 files): 
+- 0 errors
+- 0 warnings
+- 0 hints
+

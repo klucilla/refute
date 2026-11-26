@@ -98,7 +98,7 @@ comment 7202383280. It had opened on 2026-11-25 at 20:24Z (charter `7df389c`, am
 - **The report:** [docs/reports/v0.5.12-report.md](docs/reports/v0.5.12-report.md), approved by the
   maintainer (#218, comment 7202383280, item 4), with
   [a dated correction](docs/reports/v0.5.12-report-correction-2026-11-26.md) for what happened
-  after its approval (gaps G11 to G13; deviations 15 to 17).
+  after its approval (gaps G11 to G13; deviations 15 to 18; the approved cleanup and site text).
 - **The gate review:**
   - [docs/gates/v0.5.12-review.md](docs/gates/v0.5.12-review.md): a fresh Claude Fable 5.2
     session on `5a018544`, `REFUTED`, the binding verdict;

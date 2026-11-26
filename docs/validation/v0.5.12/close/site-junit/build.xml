@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="72" failures="0" errors="0" time="0.0862387">
+    <testsuite name="tests/build/accessible-text.test.ts" timestamp="2026-11-26T20:38:26.139Z" hostname="AMDR732GB" tests="27" failures="0" errors="0" skipped="0" time="0.0427605">
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; has a build to inspect" time="0.0014452">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; get-involved\index.html: no accessible string copied from the English page" time="0.001874">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; get-involved\index.html: verdict identifiers are marked lang=&quot;en&quot;" time="0.0006032">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; how-it-works\attacks\blind-test\index.html: no accessible string copied from the English page" time="0.0016156">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; how-it-works\attacks\blind-test\index.html: verdict identifiers are marked lang=&quot;en&quot;" time="0.0012165">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; how-it-works\attacks\odd-even\index.html: no accessible string copied from the English page" time="0.0014087">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; how-it-works\attacks\odd-even\index.html: verdict identifiers are marked lang=&quot;en&quot;" time="0.0017278">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; how-it-works\attacks\plausibility\index.html: no accessible string copied from the English page" time="0.0017293">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; how-it-works\attacks\plausibility\index.html: verdict identifiers are marked lang=&quot;en&quot;" time="0.0008744">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; how-it-works\attacks\secondary-eclipse\index.html: no accessible string copied from the English page" time="0.0015778">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; how-it-works\attacks\secondary-eclipse\index.html: verdict identifiers are marked lang=&quot;en&quot;" time="0.000773">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; how-it-works\attacks\snr\index.html: no accessible string copied from the English page" time="0.0016057">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; how-it-works\attacks\snr\index.html: verdict identifiers are marked lang=&quot;en&quot;" time="0.0007886">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; how-it-works\index.html: no accessible string copied from the English page" time="0.001727">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; how-it-works\index.html: verdict identifiers are marked lang=&quot;en&quot;" time="0.0006952">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; index.html: no accessible string copied from the English page" time="0.0036037">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; index.html: verdict identifiers are marked lang=&quot;en&quot;" time="0.0021685">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; privacy\index.html: no accessible string copied from the English page" time="0.0013034">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; privacy\index.html: verdict identifiers are marked lang=&quot;en&quot;" time="0.000484">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; results\index.html: no accessible string copied from the English page" time="0.0032926">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; results\index.html: verdict identifiers are marked lang=&quot;en&quot;" time="0.0027947">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; results\v0.1\index.html: no accessible string copied from the English page" time="0.0021855">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; results\v0.1\index.html: verdict identifiers are marked lang=&quot;en&quot;" time="0.0011491">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; results\v0.4\index.html: no accessible string copied from the English page" time="0.0018593">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; results\v0.4\index.html: verdict identifiers are marked lang=&quot;en&quot;" time="0.0008519">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; status\index.html: no accessible string copied from the English page" time="0.0012854">
+        </testcase>
+        <testcase classname="tests/build/accessible-text.test.ts" name="accessible text in translated pages &gt; status\index.html: verdict identifiers are marked lang=&quot;en&quot;" time="0.0005511">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/build/budget.test.ts" timestamp="2026-11-26T20:38:26.147Z" hostname="AMDR732GB" tests="8" failures="0" errors="0" skipped="0" time="0.0038209">
+        <testcase classname="tests/build/budget.test.ts" name="home page weight (en) &gt; has a build to inspect" time="0.0014353">
+        </testcase>
+        <testcase classname="tests/build/budget.test.ts" name="home page weight (en) &gt; gzip 130.0 KB &lt;= 300 KB" time="0.0001859">
+        </testcase>
+        <testcase classname="tests/build/budget.test.ts" name="home page weight (en) &gt; raw 381.4 KB &lt;= 500 KB" time="0.0001244">
+        </testcase>
+        <testcase classname="tests/build/budget.test.ts" name="home page weight (en) &gt; does not grow beyond the recorded size (+2%): 381.4 KB &lt;= 388.9 KB" time="0.0001358">
+        </testcase>
+        <testcase classname="tests/build/budget.test.ts" name="home page weight (pt-br) &gt; has a build to inspect" time="0.0002481">
+        </testcase>
+        <testcase classname="tests/build/budget.test.ts" name="home page weight (pt-br) &gt; gzip 131.4 KB &lt;= 300 KB" time="0.0000994">
+        </testcase>
+        <testcase classname="tests/build/budget.test.ts" name="home page weight (pt-br) &gt; raw 389.3 KB &lt;= 500 KB" time="0.0000955">
+        </testcase>
+        <testcase classname="tests/build/budget.test.ts" name="home page weight (pt-br) &gt; does not grow beyond the recorded size (+2%): 389.3 KB &lt;= 395.9 KB" time="0.0000883">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/build/synthetic-values.test.ts" timestamp="2026-11-26T20:38:26.149Z" hostname="AMDR732GB" tests="37" failures="0" errors="0" skipped="0" time="0.0396573">
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values &gt; appear on the home pages and the attack pages" time="0.0019225">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in how-it-works/attacks/blind-test/index.html &gt; has a build to inspect" time="0.0003417">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in how-it-works/attacks/blind-test/index.html &gt; renders values from the run" time="0.0002126">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in how-it-works/attacks/blind-test/index.html &gt; shows exactly the saved value for every synthetic id" time="0.0148754">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in how-it-works/attacks/odd-even/index.html &gt; has a build to inspect" time="0.0003089">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in how-it-works/attacks/odd-even/index.html &gt; renders values from the run" time="0.0001604">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in how-it-works/attacks/odd-even/index.html &gt; shows exactly the saved value for every synthetic id" time="0.0002352">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in how-it-works/attacks/plausibility/index.html &gt; has a build to inspect" time="0.0002739">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in how-it-works/attacks/plausibility/index.html &gt; renders values from the run" time="0.0001503">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in how-it-works/attacks/plausibility/index.html &gt; shows exactly the saved value for every synthetic id" time="0.0002747">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in how-it-works/attacks/secondary-eclipse/index.html &gt; has a build to inspect" time="0.0002272">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in how-it-works/attacks/secondary-eclipse/index.html &gt; renders values from the run" time="0.0000877">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in how-it-works/attacks/secondary-eclipse/index.html &gt; shows exactly the saved value for every synthetic id" time="0.0001488">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in how-it-works/attacks/snr/index.html &gt; has a build to inspect" time="0.0001825">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in how-it-works/attacks/snr/index.html &gt; renders values from the run" time="0.0000718">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in how-it-works/attacks/snr/index.html &gt; shows exactly the saved value for every synthetic id" time="0.0001228">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in index.html &gt; has a build to inspect" time="0.0002336">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in index.html &gt; renders values from the run" time="0.000079">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in index.html &gt; shows exactly the saved value for every synthetic id" time="0.0129017">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in pt-br/how-it-works/attacks/blind-test/index.html &gt; has a build to inspect" time="0.0003125">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in pt-br/how-it-works/attacks/blind-test/index.html &gt; renders values from the run" time="0.0001646">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in pt-br/how-it-works/attacks/blind-test/index.html &gt; shows exactly the saved value for every synthetic id" time="0.0001824">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in pt-br/how-it-works/attacks/odd-even/index.html &gt; has a build to inspect" time="0.0001895">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in pt-br/how-it-works/attacks/odd-even/index.html &gt; renders values from the run" time="0.0001108">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in pt-br/how-it-works/attacks/odd-even/index.html &gt; shows exactly the saved value for every synthetic id" time="0.0001272">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in pt-br/how-it-works/attacks/plausibility/index.html &gt; has a build to inspect" time="0.0002176">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in pt-br/how-it-works/attacks/plausibility/index.html &gt; renders values from the run" time="0.0000711">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in pt-br/how-it-works/attacks/plausibility/index.html &gt; shows exactly the saved value for every synthetic id" time="0.0001634">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in pt-br/how-it-works/attacks/secondary-eclipse/index.html &gt; has a build to inspect" time="0.0002023">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in pt-br/how-it-works/attacks/secondary-eclipse/index.html &gt; renders values from the run" time="0.0000963">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in pt-br/how-it-works/attacks/secondary-eclipse/index.html &gt; shows exactly the saved value for every synthetic id" time="0.0001406">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in pt-br/how-it-works/attacks/snr/index.html &gt; has a build to inspect" time="0.0001697">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in pt-br/how-it-works/attacks/snr/index.html &gt; renders values from the run" time="0.0000583">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in pt-br/how-it-works/attacks/snr/index.html &gt; shows exactly the saved value for every synthetic id" time="0.0001755">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in pt-br/index.html &gt; has a build to inspect" time="0.000192">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in pt-br/index.html &gt; renders values from the run" time="0.0000757">
+        </testcase>
+        <testcase classname="tests/build/synthetic-values.test.ts" name="synthetic values in pt-br/index.html &gt; shows exactly the saved value for every synthetic id" time="0.0021266">
+        </testcase>
+    </testsuite>
+</testsuites>
