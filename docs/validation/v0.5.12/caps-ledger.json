@@ -10,7 +10,7 @@
   "disk_bytes": 2000000000
  },
  "charged": {
-  "cpu_s": 7272.294,
+  "cpu_s": 7303.731,
   "download_bytes": 0,
   "disk_peak_bytes": 457191465
  },
@@ -6046,6 +6046,171 @@
    "cpu_s": 1.922,
    "write_bytes": 160,
    "disk_bound_bytes": 305280884,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "124916e119a342e694636874c0ff132b",
+   "start": "2026-11-26T20:33:55Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.938,
+   "write_bytes": 1000093,
+   "disk_bound_bytes": 306288546,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "f32827aa97084cdc966d6aceffd3bc7f",
+   "start": "2026-11-26T20:33:57Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000
+   },
+   "status": "ok",
+   "cpu_s": 4.422,
+   "write_bytes": 2109464,
+   "disk_bound_bytes": 307638815,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "cleanup-close2",
+   "label": null,
+   "attempt": "831aa21636834a948c34d0ecec6a1a69",
+   "start": "2026-11-26T20:34:06Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 500000000
+   },
+   "status": "ok",
+   "cpu_s": 11.891,
+   "write_bytes": 77163970,
+   "disk_bound_bytes": 382703243,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "inspect",
+   "label": null,
+   "attempt": "78befd4bb2c74fc38567a4adbf1e4d5e",
+   "start": "2026-11-26T20:34:35Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 1.531,
+   "write_bytes": 87,
+   "disk_bound_bytes": 15950999,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "site-local",
+   "label": null,
+   "attempt": "b75ca3951a8b4c1e8ed77cbad36ea7fc",
+   "start": "2026-11-26T20:34:51Z",
+   "reserve": {
+    "cpu_s": 1500,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 1.859,
+   "write_bytes": 2281,
+   "disk_bound_bytes": 15956777,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "site-local",
+   "label": null,
+   "attempt": "26fec69e8c9e4aeca98f133df80fe4ce",
+   "start": "2026-11-26T20:34:53Z",
+   "reserve": {
+    "cpu_s": 1500,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 1.625,
+   "write_bytes": 5377,
+   "disk_bound_bytes": 15965700,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "site-local",
+   "label": null,
+   "attempt": "b24fbbddc0c4496883678d43a966ac98",
+   "start": "2026-11-26T20:34:55Z",
+   "reserve": {
+    "cpu_s": 1500,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 1.656,
+   "write_bytes": 256,
+   "disk_bound_bytes": 15969446,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "site-local",
+   "label": null,
+   "attempt": "406a86890ca840f1a7e1a5b5b0a415d6",
+   "start": "2026-11-26T20:35:26Z",
+   "reserve": {
+    "cpu_s": 1500,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 1.547,
+   "write_bytes": 60538,
+   "disk_bound_bytes": 16031804,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "site-local",
+   "label": null,
+   "attempt": "67b4ac3bd63b42e19518d9706a82b7a4",
+   "start": "2026-11-26T20:35:28Z",
+   "reserve": {
+    "cpu_s": 1500,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 2.031,
+   "write_bytes": 132673,
+   "disk_bound_bytes": 16107636,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "site-local",
+   "label": null,
+   "attempt": "24ec9153b27644748890213dbfddacda",
+   "start": "2026-11-26T20:35:30Z",
+   "reserve": {
+    "cpu_s": 1500,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 1.531,
+   "write_bytes": 225,
+   "disk_bound_bytes": 15982065,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "inspect",
+   "label": null,
+   "attempt": "a05cc2d3118e4b35b2cca74232858ef4",
+   "start": "2026-11-26T20:35:38Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 1.406,
+   "write_bytes": 3125,
+   "disk_bound_bytes": 15986199,
    "telemetry_complete": true
   }
  ]
