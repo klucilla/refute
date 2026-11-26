@@ -1,0 +1,10 @@
+{
+ "name": "ruff-format2",
+ "question": "Format the given new files with the project's ruff (the extra arguments: the paths), so that the checked commit's ruff format passes.",
+ "choices": "A new unit file (rule (c)): units/ruff-format.json named the ruff binary by a relative path, which the job's CreateProcessW did not find (its attempt is abandoned in the journal). This one runs the .venv's ruff as a module. It rewrites only the files named. A tree unit: the same paths and code state is the same unit.",
+ "argv": ["{python}", "-I", "-B", "-m", "ruff", "format", "--"],
+ "identity": [],
+ "key": "tree",
+ "reserve": {"cpu_s": 60, "disk_bytes": 5000000},
+ "network": false
+}

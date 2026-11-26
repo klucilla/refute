@@ -10,13 +10,13 @@
   "disk_bytes": 2000000000
  },
  "charged": {
-  "cpu_s": 3878.873,
+  "cpu_s": 3884.607,
   "download_bytes": 0,
   "disk_peak_bytes": 417702701
  },
  "within_caps": "not demonstrated",
  "telemetry_complete": true,
- "gaps": 4,
+ "gaps": 11,
  "gaps_file": "docs/validation/v0.5.12/meter-gaps.json",
  "charging_rule": "measured use for settled attempts with complete telemetry; otherwise the larger of the reservation and the measured use; the bootstrap charged once by cross-reference to v0.5.11's journal",
  "downloads_rule": "every offline unit runs in the AppContainer with no capability; only units declaring GitHub or review traffic have network, with their operations journaled",
@@ -2675,6 +2675,36 @@
    "cpu_s": 1.938,
    "write_bytes": 50456,
    "disk_bound_bytes": 288928132,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "b1d7685748be41a381e8a71e7cfe41b8",
+   "start": "2026-11-26T16:36:18Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.859,
+   "write_bytes": 856400,
+   "disk_bound_bytes": 289830492,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "69545b1cd20747f385d29521a35c862e",
+   "start": "2026-11-26T16:36:20Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000
+   },
+   "status": "ok",
+   "cpu_s": 3.875,
+   "write_bytes": 3985815,
+   "disk_bound_bytes": 293067416,
    "telemetry_complete": true
   }
  ]
