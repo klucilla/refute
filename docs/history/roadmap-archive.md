@@ -29,15 +29,15 @@ comment 7202383280. It had opened on 2026-11-25 at 20:24Z (charter `7df389c`, am
   - the BLAS dependence.
 - **The limits label:** 'closed with declared limits (gate REFUTED: criteria 2 and 6 not met)'.
   Every later use of this phase's correction, cases or tests carries it.
-- **The report:** [docs/reports/v0.5.12-report.md](docs/reports/v0.5.12-report.md), approved by the
+- **The report:** [docs/reports/v0.5.12-report.md](../reports/v0.5.12-report.md), approved by the
   maintainer (#218, comment 7202383280, item 4), with
-  [a dated correction](docs/reports/v0.5.12-report-correction-2026-11-26.md) for what happened
+  [a dated correction](../reports/v0.5.12-report-correction-2026-11-26.md) for what happened
   after its approval (gaps G11 to G13; deviations 15 to 18; the approved cleanup and site text).
 - **The gate review:**
-  - [docs/gates/v0.5.12-review.md](docs/gates/v0.5.12-review.md): a fresh Claude Fable 5.2
+  - [docs/gates/v0.5.12-review.md](../gates/v0.5.12-review.md): a fresh Claude Fable 5.2
     session on `5a018544`, `REFUTED`, the binding verdict;
   - Codex's second opinion, also `REFUTED`;
-  - [the record](docs/gates/v0.5.12-gate-record.md).
+  - [the record](../gates/v0.5.12-gate-record.md).
 
   Its minor findings were posted to #59 (finding 8 to #224).
 - **Preconditions of v0.5.13:** #224, #226 (before any lock) and #227 (before calibrating U1);
@@ -61,12 +61,12 @@ see [the section below](#v0511-battery-version-5-specification-and-software).
 - **The limits label:** 'closed with declared limits (gate REFUTED: criterion 6 not
   demonstrated)'. Every later use of version 5 carries it.
 - **Version 5 is not adopted** for confirmatory use (charter).
-- **The report:** [docs/reports/v0.5.11-report.md](docs/reports/v0.5.11-report.md), approved by the
+- **The report:** [docs/reports/v0.5.11-report.md](../reports/v0.5.11-report.md), approved by the
   maintainer on 2026-11-25 (#218, comment 7165994585).
-- **The gate review:** [docs/gates/v0.5.11-review.md](docs/gates/v0.5.11-review.md), a fresh
+- **The gate review:** [docs/gates/v0.5.11-review.md](../gates/v0.5.11-review.md), a fresh
   Claude Fable 5.2 session on `cf95b100`, `REFUTED`, with
-  [its record](docs/gates/v0.5.11-gate-record.md). Its minor findings were posted to #59.
-- **The next phase was proposed only:** [docs/plans/v0.5.13-proposal.md](docs/plans/v0.5.13-proposal.md).
+  [its record](../gates/v0.5.11-gate-record.md). Its minor findings were posted to #59.
+- **The next phase was proposed only:** [docs/plans/v0.5.13-proposal.md](../plans/v0.5.13-proposal.md).
   *(Written as `docs/plans/v0.5.12-proposal.md`; renamed on 2026-11-25 by the maintainer's
   decision, #218 comment 7172688755: v0.5.12 became a short correction phase, and the
   calibration moved to v0.5.13.)*
@@ -85,14 +85,14 @@ It had opened on 2026-11-24 at 15:52Z (charter `b71fa48`, amendment `d1301ad`); 
     2, 3, 4, 5, 7, 8, 9, 10'. Every later result that uses this phase's counts or tables carries
     it.
 - **The engine trial (part f) is exploratory and post hoc,** and none of it is used as evidence.
-- **The report:** [docs/reports/v0.5.10-report.md](docs/reports/v0.5.10-report.md), approved by the
+- **The report:** [docs/reports/v0.5.10-report.md](../reports/v0.5.10-report.md), approved by the
   maintainer on 2026-11-24 (#218, comment 7144131066).
-- **The gate review:** [docs/gates/v0.5.10-review.md](docs/gates/v0.5.10-review.md), a fresh Codex
+- **The gate review:** [docs/gates/v0.5.10-review.md](../gates/v0.5.10-review.md), a fresh Codex
   session, `REFUTED`. Its findings were tracked in #221.
 - **The rules carried into the next charter** are in the report's section 9 and in
-  [docs/plans/next-phases-2026-11-24.md](docs/plans/next-phases-2026-11-24.md).
+  [docs/plans/next-phases-2026-11-24.md](../plans/next-phases-2026-11-24.md).
 - **The version-5 specification stays a draft:**
-  [docs/plans/battery-v5-spec.md](docs/plans/battery-v5-spec.md). Nothing in it is adopted.
+  [docs/plans/battery-v5-spec.md](../plans/battery-v5-spec.md). Nothing in it is adopted.
 
 ### Previous phase record: v0.5.9 Ephemeris entry: exploratory prototype
 
@@ -108,13 +108,13 @@ important finding, corrected)** (opened on 2026-11-23 by the maintainer's decisi
     it. With the consensus, 9 of the 14 were INCONCLUSIVE in both.
   - The 8 controls kept their class, and no ERROR remains.
   - No verdict, rule or threshold changed, and nothing changed in `src/`.
-- **The report:** [docs/reports/v0.5.9-report.md](docs/reports/v0.5.9-report.md), approved by the
+- **The report:** [docs/reports/v0.5.9-report.md](../reports/v0.5.9-report.md), approved by the
   maintainer on 2026-11-24 (#218, comment 7130900283, item 3).
 - **The gate review** returned `WEAKENED`, with one important finding and no critical one
-  ([docs/gates/v0.5.9-review.md](docs/gates/v0.5.9-review.md)).
+  ([docs/gates/v0.5.9-review.md](../gates/v0.5.9-review.md)).
   - **The important finding** (the `.cache` cleanups of 2026-11-24 had no record in the
     repository) is tracked in #220. It is corrected by the record
-    [docs/maintenance/cache-archive-2026-11-24/](docs/maintenance/cache-archive-2026-11-24/README.md).
+    [docs/maintenance/cache-archive-2026-11-24/](../maintenance/cache-archive-2026-11-24/README.md).
   - **The minor findings** are on #59 (comment 7131152693). Findings 2 to 6 and 8 were applied to
     the report, the records and the specification before the report's approval.
 - **Method status:** `method_status: not_validated` stands, under the limits label 'WEAKENED; does
@@ -131,14 +131,14 @@ comment 7107165120; see [the section below](#v058-output-stability)).
   - Doors 1, 2 and 4 were not found, and door 3 was found.
   - No verdict, rule or threshold changed.
 - **The gate review** returned `WEAKENED`, with one important finding and no critical one
-  ([docs/gates/v0.5.8-review.md](docs/gates/v0.5.8-review.md)).
+  ([docs/gates/v0.5.8-review.md](../gates/v0.5.8-review.md)).
   - **The important finding** (door 1's reading in the report) is tracked in #219. It is answered
     by a dated correction,
-    [docs/reports/v0.5.8-report-correction-2026-11-23.md](docs/reports/v0.5.8-report-correction-2026-11-23.md).
+    [docs/reports/v0.5.8-report-correction-2026-11-23.md](../reports/v0.5.8-report-correction-2026-11-23.md).
     The approved report is not edited.
   - **The minor findings** are on #59.
   - **The lock tags:** `verify_locked_tags.py` gave joint PASS, 10 of 10, including the v0.5.6 tag
-    ([docs/gates/v0.5.8-verify-locked-tags.md](docs/gates/v0.5.8-verify-locked-tags.md)).
+    ([docs/gates/v0.5.8-verify-locked-tags.md](../gates/v0.5.8-verify-locked-tags.md)).
 - **Method status:** `method_status: not_validated` stands, under the limits label 'WEAKENED; does
   not meet D1, D2, D4, T2a'.
 
@@ -151,7 +151,7 @@ amended advance rule, case (c); see [the section below](#v057-the-tois-own-signa
 - **The diagnostic:** an approved rerun traced both flips to the seeding, not to the environment or
   to nondeterminism.
 - **Unmet exit criteria:** 2 to 5, listed in the section. None is ticked without evidence.
-- **The report:** [docs/reports/v0.5.7-report.md](docs/reports/v0.5.7-report.md), approved by the
+- **The report:** [docs/reports/v0.5.7-report.md](../reports/v0.5.7-report.md), approved by the
   maintainer on 2026-11-23 (#218, comment 7106670379).
 - `method_status: not_validated` stands, and no earlier verdict changes.
 
@@ -164,16 +164,16 @@ strictly"; see [the section below](#v056-apply-with-declared-limits)).
 - **Part B's claim** (agreement of the labelled battery with TFOPWG dispositions) is `SURVIVED`,
   under the limits label 'WEAKENED; does not meet D1, D2, D4, T2a'. It is agreement, not
   independence.
-- **The public report** is [docs/reports/v0.5.6-report.md](docs/reports/v0.5.6-report.md).
+- **The public report** is [docs/reports/v0.5.6-report.md](../reports/v0.5.6-report.md).
   - **Its addendum of 2026-11-23** (a new file; the report is not edited):
-    [docs/reports/v0.5.6-report-addendum-2026-11-23.md](docs/reports/v0.5.6-report-addendum-2026-11-23.md).
+    [docs/reports/v0.5.6-report-addendum-2026-11-23.md](../reports/v0.5.6-report-addendum-2026-11-23.md).
     It records how the claim's events moved in v0.5.8. The locked verdict stands as recorded.
 - **The reviews:**
   - Codex's review of the phase returned `SURVIVED`;
   - the independent gate review returned `SURVIVED`, with no critical or important finding
-    ([docs/gates/v0.5.6-review.md](docs/gates/v0.5.6-review.md));
+    ([docs/gates/v0.5.6-review.md](../gates/v0.5.6-review.md));
   - its two checks passed in the pinned environment
-    ([docs/gates/v0.5.6-verify-outputs.md](docs/gates/v0.5.6-verify-outputs.md)).
+    ([docs/gates/v0.5.6-verify-outputs.md](../gates/v0.5.6-verify-outputs.md)).
 - **The gate's minor findings** are on #59.
 - **Method status:** `method_status: not_validated` stands.
 
@@ -185,18 +185,18 @@ strictly"; see [the section below](#v056-apply-with-declared-limits)).
   result that uses it carries the label. v0.5 stays `WEAKENED`; no target is relaxed and no
   verdict changes. No exit criterion of any v0.5 correction phase, nor of v0.5.5, is ticked.
 - **The pause ends with this relaunch.** The pause of 2026-11-21 stays as history: its
-  [record](docs/plans/v0.5.5-v05-line-pause-record.md), its
-  [corrections](docs/plans/v0.5.5-v05-line-pause-record-corrections.md) and its triggers. T3b's
+  [record](../plans/v0.5.5-v05-line-pause-record.md), its
+  [corrections](../plans/v0.5.5-v05-line-pause-record-corrections.md) and its triggers. T3b's
   trigger (NExScI's answer, until 2026-12-05) still holds. The pause of 2026-11-13 and its record
-  ([pause record](docs/validation/v0.5.4/pause-record.md),
-  [pause-record corrections](docs/validation/v0.5.4/pause-record-corrections.md)) remain historical.
+  ([pause record](../validation/v0.5.4/pause-record.md),
+  [pause-record corrections](../validation/v0.5.4/pause-record-corrections.md)) remain historical.
 
 ### Previous phase record: v0.5.4 Information checks
 
 **v0.5.4 Information checks: closed on 2026-11-13** (the maintainer's decision of 2026-11-13, #217;
-[first-half report](docs/validation/v0.5.4/h1-stop-report.md),
-[second-half report](docs/validation/v0.5.4/h2-stop-report.md),
-[pause record](docs/validation/v0.5.4/pause-record.md)). It was not a correction round, and it
+[first-half report](../validation/v0.5.4/h1-stop-report.md),
+[second-half report](../validation/v0.5.4/h2-stop-report.md),
+[pause record](../validation/v0.5.4/pause-record.md)). It was not a correction round, and it
 neither passed nor failed a target.
 - **First half.** I1 placed 103 of T2a's 169 `systematics` losses in class (i). I4 returned
   `route`.
@@ -205,7 +205,7 @@ neither passed nor failed a target.
   - Steps 2 and 3 (I3's population version), steps 5 and 6 (I2's first stage) and step 7 were
     `INCONCLUSIVE`.
   - Step 4 found that no stellar precision of 1, 2 or 3 % is shown to be enough for D1 under B0's
-    oracle. *(See [pause-record corrections](docs/validation/v0.5.4/pause-record-corrections.md).)*
+    oracle. *(See [pause-record corrections](../validation/v0.5.4/pause-record-corrections.md).)*
   - T3b's count showed a shortage of 9.
 - **Method status.** v0.5.4 did not deliver a validated method (`method_status: not_validated`).
 
@@ -213,8 +213,8 @@ neither passed nor failed a target.
 
 **v0.5.3 Battery corrections, round 3: closed on 2026-11-12 as not approved, by item 2 of its
 criterion** (the maintainer's decision of 2026-11-12, #217;
-[closing record](docs/validation/v0.5.3/closing-record.md),
-[independent review](docs/validation/v0.5.3/closing-review.md)).
+[closing record](../validation/v0.5.3/closing-record.md),
+[independent review](../validation/v0.5.3/closing-review.md)).
 
 - **T2a and D2 fail their frozen rules** in the development forecasts. T2a's `K_B` is 331 against
   552 needed. D2 keeps 141 of 178 against 156 needed.
@@ -226,7 +226,7 @@ criterion** (the maintainer's decision of 2026-11-12, #217;
 ### Previous phase record: v0.5.2 Battery corrections, round 2
 
 **v0.5.2 Battery corrections, round 2: closed on 2026-11-10 as not approved** (the maintainer's
-decision of 2026-11-10, #216; [closing record](docs/validation/v0.5.2/closing-record.md))
+decision of 2026-11-10, #216; [closing record](../validation/v0.5.2/closing-record.md))
 
 - No target passed or was declared infeasible; all stay outstanding. It counts as the second of the
   three correction rounds of the advance rule. No acceptance ran, no confirmation data was used, and
@@ -241,7 +241,7 @@ decision of 2026-11-10, #216; [closing record](docs/validation/v0.5.2/closing-re
 ### Previous phase record: v0.5.1 Battery corrections
 
 **v0.5.1 Battery corrections: closed on 2026-11-08 as not approved** (the maintainer's decision of
-2026-11-08, #208; [closing record](docs/validation/v0.5.1/closing-record.md))
+2026-11-08, #208; [closing record](../validation/v0.5.1/closing-record.md))
 
 - Closed before its confirmation by stop rule 6 of its plan: no target passed or was declared
   infeasible, and all stay outstanding. It counts as the first of the three correction rounds of
@@ -260,12 +260,12 @@ decision of 2026-11-10, #216; [closing record](docs/validation/v0.5.2/closing-re
   ticked with their evidence in the v0.5 section. The first gate review (2026-11-05) returned
   `REFUTED` (criterion 7 not yet applied); after its findings were answered, the second gate
   review returned `WEAKENED`, with its issues open and tracked. Both reports, as they came out,
-  and the dossiers they were given: [calibration/v0.5/gate/](calibration/v0.5/gate/).
+  and the dossiers they were given: [calibration/v0.5/gate/](../../calibration/v0.5/gate/).
 - **Results.** Reported as they came out, pass or fail: the synthetic confirmation (C1), the
   paired real-data benchmark (C2) and the newly drawn real controls (C3), in
-  [calibration/v0.5/runs/](calibration/v0.5/runs/); the failed targets (D1 EB1/EB2, D2, D4, T2a)
+  [calibration/v0.5/runs/](../../calibration/v0.5/runs/); the failed targets (D1 EB1/EB2, D2, D4, T2a)
   are recorded as results, with no rerun and no retuning. The trade-off and its numbers:
-  [calibration/v0.5/results/closing-record.md](calibration/v0.5/results/closing-record.md).
+  [calibration/v0.5/results/closing-record.md](../../calibration/v0.5/results/closing-record.md).
 - **Still open:** the release v0.5.0 and its texts, after the maintainer's approval; the issues
   the second gate listed: #201, #202, #203, #204, #200 (with #183), #206, #195 (item 4), #205,
   and the scope issues kept open (#184, #182, #181, #191, #180, #9, #192) or moved (#176).
@@ -280,9 +280,9 @@ The opening record of v0.5, kept as it was:
   the findings of the v0.4 pilot (#176, #179 to #196, plus #9, #12, #195, #196). The maintainer
   delegated the scope, and the renumbering of the later phases, to a consensus between Claude
   and Codex, taken on 2026-11-03 (the consensus record is in the tracking issue, #199).
-- **Plan and scope:** [docs/plans/v0.5-plan.md](docs/plans/v0.5-plan.md), with its caps and its
+- **Plan and scope:** [docs/plans/v0.5-plan.md](../plans/v0.5-plan.md), with its caps and its
   stop rule; acceptance documents, written before any code:
-  [docs/plans/v0.5-acceptance.md](docs/plans/v0.5-acceptance.md).
+  [docs/plans/v0.5-acceptance.md](../plans/v0.5-acceptance.md).
 - **Renumbering.** v0.5 Stronger tests is inserted; the variable stars pack becomes v0.6, the
   mathematics pack v0.7 and Refute@Home v0.8. Each moved section keeps its text, with a note.
 - **Method status.** No method is validated: every v0.5 output carries
@@ -295,9 +295,9 @@ published (2026-11-03, https://github.com/klucilla/refute/releases/tag/v0.4.0).
 
 **v0.4 Discover (pilot with a funnel): closed; exit criteria met and published (P7); release v0.4.0 pending**
 
-- **Gate.** The v0.4 exit criteria are met. The independent gate review of 2026-11-01 (the seventh reviewer session) returned `SURVIVED`, and the criteria are ticked with their evidence in the v0.4 section. Both gate reviews are published in [docs/gates/v0.4-review.md](docs/gates/v0.4-review.md).
-- **Publication (P7), done by the maintainer's steps of 2026-11-02 and 2026-11-03 (UTC):** the two Zenodo records (https://doi.org/10.5281/zenodo.23874043, the reproduction inputs; https://doi.org/10.5281/zenodo.23898648, the five stage-2 dossiers), the results in [calibration/v0.4/results/](calibration/v0.4/results/README.md), the results comment on #177 and a note on each of #179 to #194.
-- **Still open:** the release v0.4.0 and its version bump (P7, last step), after the maintainer's approval; the live re-read of VizieR's rules page, while the CDS does not answer (L9 of [calibration/v0.4/sources/data-licenses-2026-11-01.md](calibration/v0.4/sources/data-licenses-2026-11-01.md)).
+- **Gate.** The v0.4 exit criteria are met. The independent gate review of 2026-11-01 (the seventh reviewer session) returned `SURVIVED`, and the criteria are ticked with their evidence in the v0.4 section. Both gate reviews are published in [docs/gates/v0.4-review.md](../gates/v0.4-review.md).
+- **Publication (P7), done by the maintainer's steps of 2026-11-02 and 2026-11-03 (UTC):** the two Zenodo records (https://doi.org/10.5281/zenodo.23874043, the reproduction inputs; https://doi.org/10.5281/zenodo.23898648, the five stage-2 dossiers), the results in [calibration/v0.4/results/](../../calibration/v0.4/results/README.md), the results comment on #177 and a note on each of #179 to #194.
+- **Still open:** the release v0.4.0 and its version bump (P7, last step), after the maintainer's approval; the live re-read of VizieR's rules page, while the CDS does not answer (L9 of [calibration/v0.4/sources/data-licenses-2026-11-01.md](../../calibration/v0.4/sources/data-licenses-2026-11-01.md)).
 - **v0.5 is not open.** It awaits the maintainer's decision.
 - **Opening and scope.** v0.4 opened on 2026-10-29 by the maintainer's decision, as a pilot of complete, auditable cases. Its scope amendments are recorded in its section below: amendments 1 to 5 and the funnel amendment of #9. Tracking: issue #177.
 - **Method status.** No method is validated: every v0.4 report carries `method_status: not_validated`.
@@ -306,7 +306,7 @@ published (2026-11-03, https://github.com/klucilla/refute/releases/tag/v0.4.0).
 ### Previous phase record: v0.2.1 Gauntlet fixes (resumed)
 
 **Ended as not approved on 2026-10-27, by the maintainer's decision**, with the hypotheses recorded
-([closing record](docs/validation/v0.2.1/closing-2026-10-27.md)): no gate review passed and no exit
+([closing record](../validation/v0.2.1/closing-2026-10-27.md)): no gate review passed and no exit
 criterion is met or ticked. v0.4 Discover, next in the order decided on 2026-10-17, opened on
 2026-10-29 by the maintainer's decision (above). The text below is kept as it was.
 
@@ -316,13 +316,13 @@ the order of the sections below is unchanged, and no exit criterion of any phase
 The v0.2.1 work continues from branch `claude/v0-2-1-reopen` and reaches `main` only by
 the maintainer's approval. Its exit criteria do not change, and the FAIL of the v0.2
 calibration stays a valid result. Plan:
-[docs/plans/v0.2.1-reopen-plan.md](docs/plans/v0.2.1-reopen-plan.md).
+[docs/plans/v0.2.1-reopen-plan.md](../plans/v0.2.1-reopen-plan.md).
 
 **History of the exception.**
 - **v0.3 opened** on 2026-10-14 by the maintainer's decision, as an explicit exception to "How
   phases work". It was not an approved gate of v0.2.1: no v0.2.1 exit criterion was ticked,
   its population study was closed by a scope decision, and no gate review was run
-  ([closure record](docs/validation/v0.2.1/population/closure-record.md)).
+  ([closure record](../validation/v0.2.1/population/closure-record.md)).
 - **v0.2.1 reopened in parallel** on 2026-10-17, with v0.3 keeping the priority until its
   seal.
 - **v0.3 closed** on 2026-10-20 with a gate review `WEAKENED` and its issues tracked (see its
@@ -356,8 +356,8 @@ Prove the engine works by replicating published TESS planets.
 - [x] Any dossier can be reproduced with the commands it contains.
 
 **Closed on 2026-10-07.** Gate review: WEAKENED, with both important findings
-resolved ([docs/gates/v0.1-review.md](docs/gates/v0.1-review.md)). Self-claim
-result: FAIL ([calibration/POSTMORTEM.md](calibration/POSTMORTEM.md)). Evidence:
+resolved ([docs/gates/v0.1-review.md](../gates/v0.1-review.md)). Self-claim
+result: FAIL ([calibration/POSTMORTEM.md](../../calibration/POSTMORTEM.md)). Evidence:
 [release v0.1.0](https://github.com/klucilla/refute/releases/tag/v0.1.0).
 
 ---
@@ -393,14 +393,14 @@ Make the attacks serious and add independent review.
 
 **Closed on 2026-10-11.** Gate review: Claude's gate verdict: WEAKENED; Codex
 provided a second review but did not assign a gate verdict
-([docs/gates/v0.2-review.md](docs/gates/v0.2-review.md)). The closing requirement
+([docs/gates/v0.2-review.md](../gates/v0.2-review.md)). The closing requirement
 asked for the problems of a WEAKENED gate to be recorded in issues; instead, the
 important findings (rows 4, 5 and 7) were fixed before the close (commits 4c6d805
 and f479823, and tag v0.2.0-calibration-lock), and every finding has its resolution
 in docs/gates/v0.2-review.md. Self-claim result: FAIL. Planets recovered: 10 of 10
 (required at least 9); false positives flagged without `eb_catalog`: 7 of 10
 (required at least 6); planets refuted: 4 of 10 (required at most 1)
-([calibration/v0.2/POSTMORTEM.md](calibration/v0.2/POSTMORTEM.md)). Evidence:
+([calibration/v0.2/POSTMORTEM.md](../../calibration/v0.2/POSTMORTEM.md)). Evidence:
 [release v0.2.0](https://github.com/klucilla/refute/releases/tag/v0.2.0), archived
 on Zenodo with version DOI
 [10.5281/zenodo.23301001](https://doi.org/10.5281/zenodo.23301001) and concept DOI
@@ -464,7 +464,7 @@ before any v0.2.1 lock or result.
 
 **Population study closed by a scope decision on 2026-10-14**, without a demonstration
 that approval was impossible
-([closure record](docs/validation/v0.2.1/population/closure-record.md)):
+([closure record](../validation/v0.2.1/population/closure-record.md)):
 - M0 to M3: FAILS on the development population, with full integrity.
 - Confirmation: not run; no drand round was declared.
 - M4 and M5: not implemented, not measured.
@@ -477,7 +477,7 @@ restricted to one **profile proposed for validation**, `three-observing-years/1`
 inside an **operational domain** defined by quantities read before any hidden flux is accessed
 (exactly three observing years, one sector in each, two-minute cadence, the sectors' coverage and
 the spacings between the years, within declared tolerances; the population study's
-[Amendment B](docs/validation/v0.2.1/population-study.md)). It becomes a validated profile only
+[Amendment B](../validation/v0.2.1/population-study.md)). It becomes a validated profile only
 when its confirmation and its replication succeed; a curve's membership is not demonstrated
 performance, and a note in a dossier does not make the profile validated. Curves outside the
 domain are reported INCONCLUSIVE ("outside the validated scope") under the profile, with each
@@ -489,29 +489,29 @@ FAILs (development campaign 1, M0 to M3), the R_min study, and stage 1's develop
 kept as results; this amendment does not make them a success, and the original claim stays not
 validated. A widening beyond the domain (the timing rule's T4, the undetermined hidden noise, other
 geometries) is future work with its own specifications. The plan, its gates and its budget:
-[plan B](docs/validation/v0.2.1/reopen/stage-1/plan-b/README.md) (frozen on adoption; optional
+[plan B](../validation/v0.2.1/reopen/stage-1/plan-b/README.md) (frozen on adoption; optional
 improvements go to the backlog, and only a problem of validity, safety or execution reopens it).
 
 **Plan B ended on 2026-10-27, by the maintainer's decision**
-([closing record](docs/validation/v0.2.1/reopen/stage-1/plan-b/closing-2026-10-27.md)). Its gate
+([closing record](../validation/v0.2.1/reopen/stage-1/plan-b/closing-2026-10-27.md)). Its gate
 3b (the real controls' availability) did not reach its minimum: in the metadata screening, 11
 confirmed planets and 0 known false positives inside the domain D1 to D5, against 20 + 20
-([gate 3b](docs/validation/v0.2.1/reopen/stage-1/real-controls/gate-3b.md)). That result and its
+([gate 3b](../validation/v0.2.1/reopen/stage-1/real-controls/gate-3b.md)). That result and its
 block, every FAIL and every criterion are preserved; X2f never ran, and no lot of plan B ran. A
 viability diagnosis informed the next step
-([report](docs/validation/v0.2.1/reopen/stage-1/viability-3b/report.md), with its
-[corrected readings](docs/validation/v0.2.1/reopen/stage-1/viability-3b/readings-corrected.md)).
+([report](../validation/v0.2.1/reopen/stage-1/viability-3b/report.md), with its
+[corrected readings](../validation/v0.2.1/reopen/stage-1/viability-3b/readings-corrected.md)).
 **Next:** one comparative viability package, prepared for the maintainer's authorization
-([package](docs/validation/v0.2.1/reopen/stage-1/viability-cd/README.md)); after its screening the
+([package](../validation/v0.2.1/reopen/stage-1/viability-cd/README.md)); after its screening the
 maintainer chooses an executable proposal within the ceiling, or ends v0.2.1 as not approved. No
 new domain, generation, T4 or lot is authorized.
 
 **The package ran and v0.2.1 ended as not approved on 2026-10-27, by the maintainer's decision.**
-Its lot ([report](docs/validation/v0.2.1/reopen/stage-1/viability-cd/report.md); issue #173): C
+Its lot ([report](../validation/v0.2.1/reopen/stage-1/viability-cd/report.md); issue #173): C
 (three years) and D (four or five years) both INDETERMINATE by the rule fixed before the lot (no
 holdout FAIL); the step over specification C's twelve error-model pairs met the PASS rule with no
 pair, so by the investment rule the effort ended. The hypotheses for future research are recorded
-in the [closing record](docs/validation/v0.2.1/closing-2026-10-27.md); this is not a proof of
+in the [closing record](../validation/v0.2.1/closing-2026-10-27.md); this is not a proof of
 infeasibility, and every result, FAIL and criterion is preserved.
 
 **The exit criteria under amendment B.** Their wording is unchanged. Under the amendment, the
@@ -591,7 +591,7 @@ The exit criteria below are not met and none is marked done. Each pending criter
 - **TESS corrections** (holdout capacity and FAIL rule, correlated noise, timing with an
   ingress model, prewhitening, `period_alias`): deferred with no target version. Input:
   revision 3 of the corrections plan and its 6 open rows
-  ([corrections plan](docs/validation/v0.2.1/population/corrections-plan/README.md)),
+  ([corrections plan](../validation/v0.2.1/population/corrections-plan/README.md)),
   under the resumption conditions of the closure record.
 - **Directed mode** of the holdout (a claimed ephemeris): a separate pending item, outside
   the TESS corrections and their budget (corrections plan, revision 3, Appendix A).
@@ -616,7 +616,7 @@ The original "Replica" idea: re-derive published results.
 - Scope limited to papers that run on consumer hardware.
 
 **Exit criteria** (changed on 2026-10-14 by the maintainer, before any selection;
-plan: [docs/plans/v0.3-plan.md](docs/plans/v0.3-plan.md))
+plan: [docs/plans/v0.3-plan.md](../plans/v0.3-plan.md))
 - [x] 5 papers processed end to end (the main sample), with every verdict path,
       including `NOT_REPRODUCIBLE`, shown to be handled correctly by a controlled
       test (an artifact built to be non-reproducible), whether or not the real
@@ -632,7 +632,7 @@ plan: [docs/plans/v0.3-plan.md](docs/plans/v0.3-plan.md))
 - some WP4 acceptance rows are not covered;
 - some deviations from the plan were recorded only at the gate.
 
-Record: [calibration/v0.3/main/gate/README.md](calibration/v0.3/main/gate/README.md).
+Record: [calibration/v0.3/main/gate/README.md](../../calibration/v0.3/main/gate/README.md).
 
 ---
 
@@ -683,9 +683,9 @@ The scope items above stay listed; the amendments say which are deferred or resi
   exporter gives the duration without an uncertainty, with a justified absence that cites the
   method `trapezoid-least-squares-1` as not accepted: its acceptance failed (coverage of the
   68 % interval 0.54 and 0.55 at SNR 20 and 40, against a band of 0.61 to 0.74;
-  [record](docs/validation/v0.4/wp4-duration-acceptance.md)). The FAIL stays recorded and
+  [record](../validation/v0.4/wp4-duration-acceptance.md)). The FAIL stays recorded and
   visible; no other method is tried in this phase. Phase acceptance criterion 8
-  ([v0.4-acceptance.md](docs/plans/v0.4-acceptance.md)) is met by that justified absence.
+  ([v0.4-acceptance.md](../plans/v0.4-acceptance.md)) is met by that justified absence.
 - **Funnel amendment of #9.** On the N stars, transformed curves go through the light-curve
   tests; the full battery runs only where pixel files exist (promoted stars and controls);
   denominators are kept separate (eligible, promoted by the cap, survivors); a missing test
@@ -725,7 +725,7 @@ The scope items above stay listed; the amendments say which are deferred or resi
 **Gate.** The second independent gate review (the seventh reviewer session, 2026-11-01) returned `SURVIVED`: every acceptance
 item MET and no critical or important finding. The first returned `REFUTED` (criteria 2 and 9),
 and its findings were answered (#177, #179 to #195). Both reports are published in
-[docs/gates/v0.4-review.md](docs/gates/v0.4-review.md) (an English translation; the second
+[docs/gates/v0.4-review.md](../gates/v0.4-review.md) (an English translation; the second
 review's original is in `docs/gates/v0.4-review-2.pt.md`, and the first's is cited by hash in
 `calibration/v0.4/results/anchor-3-detail.json`).
 
@@ -753,8 +753,8 @@ on the same curves.
 Opened on 2026-11-03 by the maintainer's decision. The scope and the renumbering of the later
 phases were delegated by the maintainer to a consensus between Claude and Codex, taken on
 2026-11-03 (record in the tracking issue, #199). Plan, caps and stop rule:
-[docs/plans/v0.5-plan.md](docs/plans/v0.5-plan.md); acceptance documents:
-[docs/plans/v0.5-acceptance.md](docs/plans/v0.5-acceptance.md).
+[docs/plans/v0.5-plan.md](../plans/v0.5-plan.md); acceptance documents:
+[docs/plans/v0.5-acceptance.md](../plans/v0.5-acceptance.md).
 
 **Scope** (the plan's work packages; WP5 and WP9 are optional and are dropped first)
 - Sensitivity rule (#185): a fatal or warning test PASSes only when it could have detected its
@@ -784,41 +784,41 @@ phases were delegated by the maintainer to a consensus between Claude and Codex,
       noise) run with counts from a JUnit XML file; each test accepted (decisive) or recorded as
       failed (diagnostic only).
       *Evidence:* the acceptance documents (`559eaf0`) before the first code (`0deb97f`); the
-      acceptance run and its roles ([README](docs/validation/v0.5/acceptance/README.md)); its 133
+      acceptance run and its roles ([README](../validation/v0.5/acceptance/README.md)); its 133
       rows counted from a JUnit XML (133, 11 failures, 3 skipped;
-      [criterion2/README.md](calibration/v0.5/results/criterion2/README.md)).
+      [criterion2/README.md](../../calibration/v0.5/results/criterion2/README.md)).
 - [x] No synthetic test that passes at the start of v0.5 fails at its end without a written
       justification made before; historical claims give their recorded verdicts and hashes.
       *Evidence:* the v0.4.0 baseline (4,176 passing tests) against the final suite (4,538 tests,
       0 failures, 0 errors, 91 skipped), the two timestamp-dependent IDs explained; the historical
       locks 8 of 8 PASS and the v0.5 compatibility tests
-      ([criterion2/](calibration/v0.5/results/criterion2/README.md)).
+      ([criterion2/](../../calibration/v0.5/results/criterion2/README.md)).
 - [x] No fatal or warning test of the v0.5 battery can PASS without its declared sensitivity
       (engine rule, shown by a sabotage case).
       *Evidence:* `tests/test_sensitivity.py` (sabotage cases), `tests/test_v05_battery.py`,
       passing in the final suite.
 - [x] The synthetic confirmation set run once on frozen code and reported, pass or fail.
       *Evidence:* C1, once, round 6613448
-      ([runs/c1-confirmation/](calibration/v0.5/runs/c1-confirmation/)): D1 EB1 and EB2 FAIL,
+      ([runs/c1-confirmation/](../../calibration/v0.5/runs/c1-confirmation/)): D1 EB1 and EB2 FAIL,
       D2 FAIL, D4 FAIL; the others PASS, NW not decidable.
 - [x] The paired real-data measurements (reused benchmark and new controls) locked, run and
       reported, pass or fail, with reviewer reports for the dossiers the protocol draws.
       *Evidence:* C2 (T2a FAIL; T2b, T2c PASS) and C3 (T3a, T3b PASS)
-      ([runs/](calibration/v0.5/runs/)); four independent reviews of the dossiers drawn by
-      [reviews/RULE.md](calibration/v0.5/reviews/RULE.md), each objection mapped to an issue.
+      ([runs/](../../calibration/v0.5/runs/)); four independent reviews of the dossiers drawn by
+      [reviews/RULE.md](../../calibration/v0.5/reviews/RULE.md), each objection mapped to an issue.
 - [x] One new-control dossier reproduced in a clean clone from the generated instructions alone;
       the empty-checkout test runs in CI.
       *Met with one recorded deviation:* the TESS-EB table was placed from an official VizieR
       mirror, verified by the claim's content hash, while the CDS did not answer
-      ([reviews/criterion6/](calibration/v0.5/reviews/criterion6/), #206); criterion 6 as written
+      ([reviews/criterion6/](../../calibration/v0.5/reviews/criterion6/), #206); criterion 6 as written
       requires nothing placed by hand. The empty-checkout test runs in CI.
 - [x] Every scope issue closed, kept open with the part left, or moved with its reason; no
       `.cache/test-*` folder remains after the suite.
-      *Evidence:* [results/criterion7.md](calibration/v0.5/results/criterion7.md) (12 closed, 8
+      *Evidence:* [results/criterion7.md](../../calibration/v0.5/results/criterion7.md) (12 closed, 8
       kept open, 2 moved); none left after the final suite.
 - [x] Gate: an independent review returns `SURVIVED`, or `WEAKENED` with its issues open.
       *Evidence:* the second gate review, `WEAKENED`, with its issues open and tracked
-      ([gate/gate-2-report.md](calibration/v0.5/gate/gate-2-report.md)).
+      ([gate/gate-2-report.md](../../calibration/v0.5/gate/gate-2-report.md)).
 
 ---
 
@@ -826,12 +826,12 @@ phases were delegated by the maintainer to a consensus between Claude and Codex,
 
 A correction phase on the line of v0.5, by the advance rule (the maintainer's decision of
 2026-11-05). Opened on 2026-11-06 by the maintainer's decision; the scope delegated to a Claude and
-Codex consensus, taken the same day (record: [docs/plans/v0.5.1-consensus/](docs/plans/v0.5.1-consensus/README.md)).
-Plan, caps and stop rule: [docs/plans/v0.5.1-plan.md](docs/plans/v0.5.1-plan.md). Tracking: #208.
+Codex consensus, taken the same day (record: [docs/plans/v0.5.1-consensus/](../plans/v0.5.1-consensus/README.md)).
+Plan, caps and stop rule: [docs/plans/v0.5.1-plan.md](../plans/v0.5.1-plan.md). Tracking: #208.
 Correction round 1 of at most 3.
 
 **Closed on 2026-11-08 as not approved, before its confirmation** (the maintainer's decision; plan,
-amendment 11; [closing record](docs/validation/v0.5.1/closing-record.md)). The exit criteria below
+amendment 11; [closing record](../validation/v0.5.1/closing-record.md)). The exit criteria below
 are kept as written and none is ticked.
 
 **The targets** (v0.5's definitions, measured the same way; none relaxed): D1 for EB1 and EB2
@@ -878,20 +878,20 @@ SE, V1, V2, ER and NR; D3; D5; T2b; T2c; T3a; T3b; the historical locks and clai
 
 ## v0.5.2 Battery corrections, round 2
 
-Scope: [docs/plans/v0.5.2-scope-proposal.md](docs/plans/v0.5.2-scope-proposal.md). Tracking: #216.
+Scope: [docs/plans/v0.5.2-scope-proposal.md](../plans/v0.5.2-scope-proposal.md). Tracking: #216.
 Stage 1, a bounded diagnostic, ended on 2026-11-08; stage 2 (correction code, acceptance runs,
 protocol) runs under the maintainer's delegation of the same date, whose hard maxima are 2,000
 processor-hours of development and acceptance, 150 of calibration, 1.0 M review tokens and 12
 agent-days.
 
 **Closed on 2026-11-10 as not approved, before any acceptance** (the maintainer's decision;
-[closing record](docs/validation/v0.5.2/closing-record.md)). No target passed or was declared
+[closing record](../validation/v0.5.2/closing-record.md)). No target passed or was declared
 infeasible.
 
 **Why.** v0.5.1 closed as not approved, with every failed target of v0.5 outstanding (D1 for EB1 and
 EB2, D2, D4, T2a). This is correction round 2 of at most 3 under the advance rule.
 
-**Lessons of v0.5.1** ([closing record](docs/validation/v0.5.1/closing-record.md)): a runner hands
+**Lessons of v0.5.1** ([closing record](../validation/v0.5.1/closing-record.md)): a runner hands
 the tests the pipeline's own series, proved before any acceptance run; treat real and pseudo-windows
 equivalently, testing the mask asymmetry first; an estimator's calibration includes its selection;
 "pass every row" is a design limit, so the criterion is fixed before the code; a sabotage must be
@@ -908,8 +908,8 @@ candidate battery version 5 with its development forecasts) ran under the mainta
 2026-11-11 and 2026-11-12.
 
 **Closed on 2026-11-12 as not approved, by item 2 of its criterion** (the maintainer's decision;
-[closing record](docs/validation/v0.5.3/closing-record.md),
-[independent review](docs/validation/v0.5.3/closing-review.md)). No target passed or was declared
+[closing record](../validation/v0.5.3/closing-record.md),
+[independent review](../validation/v0.5.3/closing-review.md)). No target passed or was declared
 infeasible, and none has a basis for an infeasibility record.
 
 **Why.** v0.5.2 closed as not approved, with every failed target of v0.5 outstanding (D1 for EB1 and
@@ -917,7 +917,7 @@ EB2, D2, D4, T2a). This is correction round 3, the last of the advance rule. **I
 without success, the maintainer decides between changing the approach, recording infeasibility, or
 pausing the line.**
 
-**Lessons of v0.5.2** ([closing record](docs/validation/v0.5.2/closing-record.md)): forecast the
+**Lessons of v0.5.2** ([closing record](../validation/v0.5.2/closing-record.md)): forecast the
 targets before pricing an acceptance; keep the message and the inputs of every INCONCLUSIVE; a warning
 test's INCONCLUSIVE blocks the verdict while its FAIL only weakens it, a design question for the
 maintainer; an estimator's calibrated domain is a coverage limit, to be sized against the target's
@@ -929,10 +929,10 @@ before its run; hosts of many sectors outlast the 30-minute batch.
 
 ## v0.5.4 Information checks (change of approach after round 3)
 
-Tracking: #217. Design: [docs/plans/v0.5.3-after-round3-decision.md](docs/plans/v0.5.3-after-round3-decision.md).
+Tracking: #217. Design: [docs/plans/v0.5.3-after-round3-decision.md](../plans/v0.5.3-after-round3-decision.md).
 
 **Closed on 2026-11-13. The v0.5 line is paused by the maintainer's decision of that day**
-([pause record](docs/validation/v0.5.4/pause-record.md)). The pause relaxes no target, declares
+([pause record](../validation/v0.5.4/pause-record.md)). The pause relaxes no target, declares
 none infeasible and changes no verdict.
 
 **Why.** Round 3 closed as not approved, and the maintainer chose to change the approach (the
@@ -970,7 +970,7 @@ its verdict, or a draft infeasibility.
 
 The phase stops at 80 % of any cap.
 
-**Lessons of v0.5.3** ([closing record](docs/validation/v0.5.3/closing-record.md)):
+**Lessons of v0.5.3** ([closing record](../validation/v0.5.3/closing-record.md)):
 - **Count blockers from what the verdict aggregates.** Two blocker lists of B1 counted diagnostic
   tests and warning FAILs as blockers. The corrected record changed which tests block (`systematics`
   and `sinusoid`, not `duration_excess`), though not T2a's answer.
@@ -985,20 +985,20 @@ The phase stops at 80 % of any cap.
 ## v0.5.5 Core resolution (change of approach after the pause)
 
 Tracking: #218. Plan (an agent's proposal, stored unchanged; it decides nothing):
-[docs/plans/v0.5.5-fable-core-plan.md](docs/plans/v0.5.5-fable-core-plan.md). Charter:
-[docs/plans/v0.5.5-charter.md](docs/plans/v0.5.5-charter.md). Designs of the checks:
-[docs/plans/v0.5.5-r1-designs.md](docs/plans/v0.5.5-r1-designs.md). Amendment 1 to the charter
-(from the independent review): [docs/plans/v0.5.5-charter-amendment-1.md](docs/plans/v0.5.5-charter-amendment-1.md).
-The report at the gate G1: [docs/plans/v0.5.5-g1-report.md](docs/plans/v0.5.5-g1-report.md).
-The second report at the gate G1: [docs/plans/v0.5.5-g1-report-2.md](docs/plans/v0.5.5-g1-report-2.md).
-The third report at the gate G1: [docs/plans/v0.5.5-g1-report-3.md](docs/plans/v0.5.5-g1-report-3.md).
-R2 on paper, the stop with the blind bundle ready: [docs/plans/v0.5.5-r2-paper-stop.md](docs/plans/v0.5.5-r2-paper-stop.md).
-R2 on paper, the second stop with the second blind bundle ready: [docs/plans/v0.5.5-r2-paper-stop-2.md](docs/plans/v0.5.5-r2-paper-stop-2.md).
-R2's closing record (closed without a freeze): [docs/plans/v0.5.5-r2-closing-record.md](docs/plans/v0.5.5-r2-closing-record.md).
+[docs/plans/v0.5.5-fable-core-plan.md](../plans/v0.5.5-fable-core-plan.md). Charter:
+[docs/plans/v0.5.5-charter.md](../plans/v0.5.5-charter.md). Designs of the checks:
+[docs/plans/v0.5.5-r1-designs.md](../plans/v0.5.5-r1-designs.md). Amendment 1 to the charter
+(from the independent review): [docs/plans/v0.5.5-charter-amendment-1.md](../plans/v0.5.5-charter-amendment-1.md).
+The report at the gate G1: [docs/plans/v0.5.5-g1-report.md](../plans/v0.5.5-g1-report.md).
+The second report at the gate G1: [docs/plans/v0.5.5-g1-report-2.md](../plans/v0.5.5-g1-report-2.md).
+The third report at the gate G1: [docs/plans/v0.5.5-g1-report-3.md](../plans/v0.5.5-g1-report-3.md).
+R2 on paper, the stop with the blind bundle ready: [docs/plans/v0.5.5-r2-paper-stop.md](../plans/v0.5.5-r2-paper-stop.md).
+R2 on paper, the second stop with the second blind bundle ready: [docs/plans/v0.5.5-r2-paper-stop-2.md](../plans/v0.5.5-r2-paper-stop-2.md).
+R2's closing record (closed without a freeze): [docs/plans/v0.5.5-r2-closing-record.md](../plans/v0.5.5-r2-closing-record.md).
 
 **Paused on 2026-11-21, not approved** (the maintainer's decision of 2026-11-21, 18:30, #218;
-[the v0.5 line's pause record](docs/plans/v0.5.5-v05-line-pause-record.md);
-[its corrections](docs/plans/v0.5.5-v05-line-pause-record-corrections.md)). No exit criterion is
+[the v0.5 line's pause record](../plans/v0.5.5-v05-line-pause-record.md);
+[its corrections](../plans/v0.5.5-v05-line-pause-record-corrections.md)). No exit criterion is
 ticked.
 
 **The v0.5 line closed with declared limits on 2026-11-21** (the maintainer's decision of 21:00,
@@ -1009,7 +1009,7 @@ does not meet D1, D2, D4, T2a'. The next phase is v0.5.6.
 (`docs/validation/v0.5.5/ledger_v055.py`, whose SHA-256 R1's records carry), in commit `edfd81e`.
 By the maintainer's decision of 2026-11-21 (22:30, #218) it is **restored** to its anchored bytes
 (SHA-256 `65e65400…0a17`, as in R1's records); the corrected count lives in a new module,
-[`docs/validation/v0.5.6/codex_tokens.py`](docs/validation/v0.5.6/codex_tokens.py), which v0.5.5's
+[`docs/validation/v0.5.6/codex_tokens.py`](../validation/v0.5.6/codex_tokens.py), which v0.5.5's
 and R2's readings use.
 
 **Opened on 2026-11-20** by the maintainer's decision of that day (15:40, #218), which resumed
@@ -1055,11 +1055,11 @@ The phase stops at 80 % of any cap.
 ## v0.5.6 Apply with declared limits
 
 **Closed on 2026-11-23, gate `SURVIVED`** (the maintainer's decision received at 09:50 local, #218,
-comment 7101712940; [gate review](docs/gates/v0.5.6-review.md)).
+comment 7101712940; [gate review](../gates/v0.5.6-review.md)).
 
 Tracking: #218. Opened on 2026-11-21 by the maintainer's decision of 21:00 (the relaunch). Plan:
-[docs/plans/v0.5.6-plan.md](docs/plans/v0.5.6-plan.md); open sources:
-[docs/plans/sources/v0.5.6-open-sources-2026-11-21.md](docs/plans/sources/v0.5.6-open-sources-2026-11-21.md).
+[docs/plans/v0.5.6-plan.md](../plans/v0.5.6-plan.md); open sources:
+[docs/plans/sources/v0.5.6-open-sources-2026-11-21.md](../plans/sources/v0.5.6-open-sources-2026-11-21.md).
 
 Apply the v0.5 battery, unchanged and with its limits label ('WEAKENED; does not meet D1, D2, D4,
 T2a'), to public TOIs. Explore first (part A, exploratory: outputs are never verdicts), then
@@ -1067,22 +1067,22 @@ confirm what exploration picks on targets it did not use, under a lock (part B, 
 Nothing depends on `tfopwg_disp` until NExScI answers. `method_status: not_validated`.
 
 - **T3b availability record** (adopted by the maintainer's decision of 2026-11-22, 09:00, #218):
-  [docs/plans/v0.5.6-t3b-availability-record.md](docs/plans/v0.5.6-t3b-availability-record.md).
+  [docs/plans/v0.5.6-t3b-availability-record.md](../plans/v0.5.6-t3b-availability-record.md).
   Both frames give 2 domain-eligible stars against the 11 needed. It is **not** an infeasibility
   record, and T3b stays deferred (`INCONCLUSIVE`).
 - **Part B, amendment 1** (the maintainer's decision of 2026-11-22, 13:00, #218):
-  [docs/plans/v0.5.6-plan-amendment-1.md](docs/plans/v0.5.6-plan-amendment-1.md). Door 3 is
+  [docs/plans/v0.5.6-plan-amendment-1.md](../plans/v0.5.6-plan-amendment-1.md). Door 3 is
   found and not pursued, a departure from "the first door proceeds" decided by the maintainer.
   Part B is instead a claim of **agreement** with TFOPWG dispositions (FP against the planet arm,
   in the confirmation half), suggested by part A's table and disclosed as such:
   `calibration/v0.5.6/claim.yaml`. Its lock and drand round waited for the maintainer; both are
   done (next item).
 - **Part B's verdict** (2026-11-23, #218): `SURVIVED` under the limits label (lock fdd87e7, draw
-  185fd91, verdict 57c4160): [calibration/v0.5.6/part-b-verdict.md](calibration/v0.5.6/part-b-verdict.md).
+  185fd91, verdict 57c4160): [calibration/v0.5.6/part-b-verdict.md](../../calibration/v0.5.6/part-b-verdict.md).
 - **The phase's public report** (approved by the maintainer on 2026-11-23, #218):
-  [docs/reports/v0.5.6-report.md](docs/reports/v0.5.6-report.md). Nothing on the site yet.
+  [docs/reports/v0.5.6-report.md](../reports/v0.5.6-report.md). Nothing on the site yet.
 - **Its dated addendum** (the maintainer's decision of 2026-11-23, #218; a new file, the report is
-  not edited): [docs/reports/v0.5.6-report-addendum-2026-11-23.md](docs/reports/v0.5.6-report-addendum-2026-11-23.md).
+  not edited): [docs/reports/v0.5.6-report-addendum-2026-11-23.md](../reports/v0.5.6-report-addendum-2026-11-23.md).
 
 **Exit criteria** (detail in the plan; ticked on 2026-11-23 by the maintainer's decision of 08:30,
 item 2, #218, where the evidence exists)
@@ -1094,14 +1094,14 @@ item 2, #218, where the evidence exists)
         precede the pilot (1d4bdcf) and the run (2e734b5, 240 records).
       - Cost: 5.95 CPU-h charged against the 50 CPU-h cap. The maximum sampled disk use after the
         maintainer's decision of 2026-11-22 (09:00) was 9.14 GB against 20 GB
-        ([part-a-ledger.json](docs/validation/v0.5.6/part-a-ledger.json)). That decision came after
+        ([part-a-ledger.json](../validation/v0.5.6/part-a-ledger.json)). That decision came after
         the pilot's stop on disk.
       - Labels and coverage: every record is `exploratory`, with the limits label and
         `not_validated`. Every test of the 239 OK records carries its coverage or the reason it
-        has none. The one ERROR is counted as a coverage loss ([part-a-records.json](docs/validation/v0.5.6/part-a-records.json),
-        [part-a-report.md](docs/validation/v0.5.6/part-a-report.md)).
+        has none. The one ERROR is counted as a coverage loss ([part-a-records.json](../validation/v0.5.6/part-a-records.json),
+        [part-a-report.md](../validation/v0.5.6/part-a-report.md)).
 - [x] An exploratory report is committed, with each pre-written "door" marked found or not found.
-      *Evidence:* [part-a-report.md](docs/validation/v0.5.6/part-a-report.md) (2e734b5). Door 1
+      *Evidence:* [part-a-report.md](../validation/v0.5.6/part-a-report.md) (2e734b5). Door 1
       and door 2 were not found; door 3 was found and, by the maintainer's decision of 2026-11-22
       (13:00), not pursued.
 - [x] Either a part B claim was locked before its targets were read, ran once and its verdict is
@@ -1115,26 +1115,26 @@ item 2, #218, where the evidence exists)
       - The round was published at 2026-11-23T00:26:00Z, after the lock.
       - The draw (185fd91) was committed and pushed before any light curve was read.
       - One execution: terminal state `complete`, with no rerun
-        ([part-b-ledger.json](calibration/v0.5.6/part-b-ledger.json)).
+        ([part-b-ledger.json](../../calibration/v0.5.6/part-b-ledger.json)).
       - The verdict, `SURVIVED`, is reported as it came
-        ([part-b-verdict.md](calibration/v0.5.6/part-b-verdict.md), 57c4160; #218).
+        ([part-b-verdict.md](../../calibration/v0.5.6/part-b-verdict.md), 57c4160; #218).
 - [x] A public report is drafted for the maintainer's approval, with the limits label and v0.5's
       failed targets in view.
       *Evidence:* the draft was approved with five changes by the maintainer's decision of
-      2026-11-23 (08:30, #218). The report is [docs/reports/v0.5.6-report.md](docs/reports/v0.5.6-report.md).
+      2026-11-23 (08:30, #218). The report is [docs/reports/v0.5.6-report.md](../reports/v0.5.6-report.md).
       Its facts, numbers and quotations were checked against the records in one Codex round, and
       its blocking items were applied
-      ([report-round-1-answer.md](docs/plans/v0.5.5-consensus/report-round-1-answer.md)).
+      ([report-round-1-answer.md](../plans/v0.5.5-consensus/report-round-1-answer.md)).
 - [x] Codex's review (up to three rounds, one conversation) and a gate review.
       *Evidence:*
       - Codex's review of the phase: round 1 returned `SURVIVED`, with no blocking item
-        ([phase-round-1-answer.md](docs/plans/v0.5.5-consensus/phase-round-1-answer.md)).
+        ([phase-round-1-answer.md](../plans/v0.5.5-consensus/phase-round-1-answer.md)).
       - The gate review was a fresh, read-only session that did not build the phase, launched by
         the maintainer's adviser with the maintainer's approval. It ran on dde966d and returned
         `SURVIVED`, with no critical or important finding
-        ([docs/gates/v0.5.6-review.md](docs/gates/v0.5.6-review.md), stored unchanged).
+        ([docs/gates/v0.5.6-review.md](../gates/v0.5.6-review.md), stored unchanged).
       - The two checks the gate asked for passed in the pinned environment
-        ([docs/gates/v0.5.6-verify-outputs.md](docs/gates/v0.5.6-verify-outputs.md)).
+        ([docs/gates/v0.5.6-verify-outputs.md](../gates/v0.5.6-verify-outputs.md)).
 
 **Recorded correction (2026-11-23, after the gate review).** In criterion 1's evidence, "carries its
 coverage" now reads "carries its coverage or the reason it has none": 273 of part A's tests have
@@ -1151,17 +1151,17 @@ any change in `src/`, public text and deploys, third-party code, dependencies.
 **Closed at the pilot gate, with declared limits, on 2026-11-23** (the maintainer's decision
 received at 11:55 local, #218, comment 7104767892).
 - **The pilot:** 8 of 10 reproduced, against 9 required
-  ([seeded-pilot.json](docs/validation/v0.5.7/seeded-pilot.json)). The rule was kept as written,
+  ([seeded-pilot.json](../validation/v0.5.7/seeded-pilot.json)). The rule was kept as written,
   and the 540 were not run.
 - **The diagnostic rerun** (procedure in comment 7104767892) found the seeding to be the cause for
-  both differing TOIs ([diagnostic-rerun.md](docs/validation/v0.5.7/diagnostic-rerun.md)).
-- **Report:** [docs/reports/v0.5.7-report.md](docs/reports/v0.5.7-report.md), approved by the
+  both differing TOIs ([diagnostic-rerun.md](../validation/v0.5.7/diagnostic-rerun.md)).
+- **Report:** [docs/reports/v0.5.7-report.md](../reports/v0.5.7-report.md), approved by the
   maintainer on 2026-11-23 (#218, comment 7106670379). Records:
-  [docs/validation/v0.5.7/](docs/validation/v0.5.7/README.md).
+  [docs/validation/v0.5.7/](../validation/v0.5.7/README.md).
 
 Tracking: #218. Opened on 2026-11-23 by the maintainer's decision received at 10:41 local (comment
-7102888515). Plan: [docs/plans/v0.5.7-plan.md](docs/plans/v0.5.7-plan.md). Basis: an independent
-recommendation, stored unchanged in [docs/plans/v0.5.7-consensus/](docs/plans/v0.5.7-consensus/README.md).
+7102888515). Plan: [docs/plans/v0.5.7-plan.md](../plans/v0.5.7-plan.md). Basis: an independent
+recommendation, stored unchanged in [docs/plans/v0.5.7-consensus/](../plans/v0.5.7-consensus/README.md).
 
 Run the v0.5 battery's tests, unchanged and with the limits label ('WEAKENED; does not meet D1, D2,
 D4, T2a'), on the TOI's ephemeris instead of the search's strongest signal, for the same 540 TOIs as
@@ -1182,7 +1182,7 @@ v0.5.6, and publish what each test says.
       The pilot's results came after it, in 4201b40.
 - [ ] The pilot of 10 TOIs that matched in search mode reproduces at least 9, test by test;
       otherwise STOP. **Not met:** 8 of 10
-      ([seeded-pilot.json](docs/validation/v0.5.7/seeded-pilot.json)). The run stopped there.
+      ([seeded-pilot.json](../validation/v0.5.7/seeded-pilot.json)). The run stopped there.
 - [ ] The 540 records exist, each with a machine `started_utc`, `mode: exploratory`, the limits
       label and coverage. **Not met:** they were not run, because the pilot stopped the phase.
 - [ ] An exploratory report holds the paired table (search against TOI-seeded) and marks each
@@ -1208,8 +1208,8 @@ This phase has no lock and no drand round.
 ## v0.5.8 Output stability
 
 Tracking: #218. Opened on 2026-11-23 by the maintainer's decision received at 13:27 local (comment
-7107165120). Plan: [docs/plans/v0.5.8-plan.md](docs/plans/v0.5.8-plan.md). Basis: an independent
-recommendation, stored unchanged in [docs/plans/v0.5.8-consensus/](docs/plans/v0.5.8-consensus/README.md).
+7107165120). Plan: [docs/plans/v0.5.8-plan.md](../plans/v0.5.8-plan.md). Basis: an independent
+recommendation, stored unchanged in [docs/plans/v0.5.8-consensus/](../plans/v0.5.8-consensus/README.md).
 
 **The goal:** measure how many outputs and test statuses of the v0.5 battery change when the same
 TOI signal is refitted from another seed, and publish that per test.
@@ -1226,28 +1226,28 @@ threshold ends the phase. Everything is exploratory, and `method_status: not_val
 
 **Status: closed on 2026-11-23, gate `WEAKENED` (one important finding, corrected)**, by the
 maintainer's decision received at 17:15 local (#218, comment 7112815055).
-- The gate review: [docs/gates/v0.5.8-review.md](docs/gates/v0.5.8-review.md).
+- The gate review: [docs/gates/v0.5.8-review.md](../gates/v0.5.8-review.md).
 - The important finding is tracked in #219 and answered by the dated correction (below).
 - The minor findings are on #59 (comment 7112886489).
 
 **The report and the note** (both approved by the maintainer on 2026-11-23, #218):
-- the exploratory report: [docs/reports/v0.5.8-report.md](docs/reports/v0.5.8-report.md);
+- the exploratory report: [docs/reports/v0.5.8-report.md](../reports/v0.5.8-report.md);
 - its dated correction (a new file; the approved report is not edited):
-  [docs/reports/v0.5.8-report-correction-2026-11-23.md](docs/reports/v0.5.8-report-correction-2026-11-23.md).
+  [docs/reports/v0.5.8-report-correction-2026-11-23.md](../reports/v0.5.8-report-correction-2026-11-23.md).
   It reads door 1 as the note does, records the 4 fits that left the TOI ephemeris, and corrects
   the header and stage 0's wording;
 - its second dated correction (a new file; neither the report nor the first correction is edited):
-  [docs/reports/v0.5.8-report-correction-2-2026-11-23.md](docs/reports/v0.5.8-report-correction-2-2026-11-23.md).
+  [docs/reports/v0.5.8-report-correction-2-2026-11-23.md](../reports/v0.5.8-report-correction-2-2026-11-23.md).
   Of the 15 SNRs that moved by more than 10 %, 13 were lower and 2 higher, not 12 lower. No door
   or verdict changes (#59; the maintainer's decision of 2026-11-23, comment 7115813315);
 - the note "How stable is a Refute output?":
-  [docs/reports/v0.5.8-stability-note.md](docs/reports/v0.5.8-stability-note.md). Its facts were
+  [docs/reports/v0.5.8-stability-note.md](../reports/v0.5.8-stability-note.md). Its facts were
   checked in one Codex round, whose corrections were applied
-  ([record](docs/plans/v0.5.8-consensus/README.md)). Nothing on the site;
-- the records: [docs/validation/v0.5.8/](docs/validation/v0.5.8/README.md);
+  ([record](../plans/v0.5.8-consensus/README.md)). Nothing on the site;
+- the records: [docs/validation/v0.5.8/](../validation/v0.5.8/README.md);
 - **on Zenodo:** DOI [10.5281/zenodo.24485272](https://doi.org/10.5281/zenodo.24485272) (all
   versions: 10.5281/zenodo.24485271), published by the maintainer on 2026-11-23; the record's
-  files are checked in [docs/validation/v0.5.8/zenodo/](docs/validation/v0.5.8/zenodo/README.md).
+  files are checked in [docs/validation/v0.5.8/zenodo/](../validation/v0.5.8/zenodo/README.md).
 
 **Exit criteria** (detail in the plan; ticked on 2026-11-23 by the maintainer's decision of 17:15,
 item 3, #218, with the evidence below; the gate review checked each one)
@@ -1258,15 +1258,15 @@ item 3, #218, with the evidence below; the gate review checked each one)
         clock).
       - The first record's `started_utc` is 16:48:38Z (the machine's clock).
       - The three files' SHA-256 equal the fingerprints of every batch in
-        [stability-ledger.json](docs/validation/v0.5.8/stability-ledger.json).
+        [stability-ledger.json](../validation/v0.5.8/stability-ledger.json).
       - The reviewer reproduced the draw.
 - [x] Stage 0 reproduces the table of section 1 of the recommendation, or records the difference.
-      *Evidence:* [stage0-records.md](docs/validation/v0.5.8/stage0-records.md) (0066087). It did
+      *Evidence:* [stage0-records.md](../validation/v0.5.8/stage0-records.md) (0066087). It did
       not reproduce exactly, and records two differences: 31 near refusals against 30, and
       TOI-2111.01, which cannot be checked.
 - [x] The stage-1 records exist, with a machine `started_utc`, `mode: exploratory`, the limits
       label, coverage and provenance.
-      *Evidence:* [stability-records.json](docs/validation/v0.5.8/stability-records.json) (bbfdecc):
+      *Evidence:* [stability-records.json](../validation/v0.5.8/stability-records.json) (bbfdecc):
       - 167 records, one per key of the set;
       - each with `started_utc`, `mode: exploratory`, the label and `not_validated`;
       - coverage: 162 `measured` and 5 `unavailable` (the failed runs);
@@ -1274,17 +1274,17 @@ item 3, #218, with the evidence below; the gate review checked each one)
 - [x] A report with flips per test and per output, Wilson intervals, and every door marked (in
       total and over provenance `same`).
       *Evidence:*
-      - [stability-report.md](docs/validation/v0.5.8/stability-report.md) (bbfdecc) and
-        [the report](docs/reports/v0.5.8-report.md), with
-        [its correction](docs/reports/v0.5.8-report-correction-2026-11-23.md).
+      - [stability-report.md](../validation/v0.5.8/stability-report.md) (bbfdecc) and
+        [the report](../reports/v0.5.8-report.md), with
+        [its correction](../reports/v0.5.8-report-correction-2026-11-23.md).
       - The marks, in total and over `same`: doors 1, 2 and 4 not found; door 3 found.
       - The reviewer's own recount gave the same marks.
 - [x] One Codex round on the design, and a short gate review.
       *Evidence:*
-      - The design round: [design-round-1-answer.md](docs/plans/v0.5.8-consensus/design-round-1-answer.md).
+      - The design round: [design-round-1-answer.md](../plans/v0.5.8-consensus/design-round-1-answer.md).
         It returned `REFUTED` with five blocking items, applied before the run (item 4 in part, as
         stated).
-      - The short gate review: [docs/gates/v0.5.8-review.md](docs/gates/v0.5.8-review.md),
+      - The short gate review: [docs/gates/v0.5.8-review.md](../gates/v0.5.8-review.md),
         `WEAKENED`.
 
 **Stops that stay the maintainer's:**
@@ -1303,10 +1303,10 @@ item 3, #218, with the evidence below; the gate review checked each one)
 ## v0.5.9 Ephemeris entry: exploratory prototype
 
 Tracking: #218. Opened on 2026-11-23 by the maintainer's decision received at 19:28 local (comment
-7115813315). Plan: [docs/plans/v0.5.9-plan.md](docs/plans/v0.5.9-plan.md). Origin: a proposal of a
+7115813315). Plan: [docs/plans/v0.5.9-plan.md](../plans/v0.5.9-plan.md). Origin: a proposal of a
 full battery version 5, which Codex's round returned `REFUTED`; by the most conservative option,
 the phase is its smaller alternative, an exploratory prototype. Both are stored unchanged in
-[docs/plans/v0.5.9-consensus/](docs/plans/v0.5.9-consensus/README.md).
+[docs/plans/v0.5.9-consensus/](../plans/v0.5.9-consensus/README.md).
 
 **The question:** when the v0.5 battery enters through the TOI's ephemeris, with a bounded and
 declared refit, and its output is checked on a declared set of local perturbations, do the cases
@@ -1328,22 +1328,22 @@ prototype level. If the prototype needed a change in `src/`, the work would STOP
 
 **Status: closed on 2026-11-24, gate `WEAKENED` (one important finding, corrected)**, by the
 maintainer's decision received at 09:03 local (#218, comment 7130900283).
-- The gate review: [docs/gates/v0.5.9-review.md](docs/gates/v0.5.9-review.md).
+- The gate review: [docs/gates/v0.5.9-review.md](../gates/v0.5.9-review.md).
 - The important finding is tracked in #220 and corrected by the cleanups' record (below).
 - The minor findings are on #59 (comment 7131152693).
 
 **The report and the records:**
-- the exploratory report: [docs/reports/v0.5.9-report.md](docs/reports/v0.5.9-report.md), approved
+- the exploratory report: [docs/reports/v0.5.9-report.md](../reports/v0.5.9-report.md), approved
   by the maintainer on 2026-11-24 (#218, comment 7130900283, item 3);
-- the records: [docs/validation/v0.5.9/](docs/validation/v0.5.9/README.md);
-- the version-5 specification draft: [docs/plans/battery-v5-spec.md](docs/plans/battery-v5-spec.md).
+- the records: [docs/validation/v0.5.9/](../validation/v0.5.9/README.md);
+- the version-5 specification draft: [docs/plans/battery-v5-spec.md](../plans/battery-v5-spec.md).
   It stays a draft, and nothing in it is adopted.
 
 **The `.cache` cleanups of 2026-11-24:** two ran during the phase, and a third, of `.cache/v059`,
 ran after the closing (the decision of 09:03, item 6). Their record is in
-[docs/maintenance/cache-archive-2026-11-24/](docs/maintenance/cache-archive-2026-11-24/README.md),
+[docs/maintenance/cache-archive-2026-11-24/](../maintenance/cache-archive-2026-11-24/README.md),
 added after the gate review's finding 1 (#220), with the third in its
-[c/](docs/maintenance/cache-archive-2026-11-24/c/README.md) part. It holds the scripts, the citation
+[c/](../maintenance/cache-archive-2026-11-24/c/README.md) part. It holds the scripts, the citation
 lists, the manifests with source and destination SHA-256, and the Drive destinations.
 
 **Exit criteria** (detail in the plan; ticked on 2026-11-24 by the maintainer's decision of 09:03,
@@ -1351,8 +1351,8 @@ item 4, #218, with the evidence below; the gate review checked each one)
 - [x] The consensus record and correction 2 of the v0.5.8 report are committed.
       *Evidence:*
       - Both have been in the repository since `d70adc3`:
-        [docs/plans/v0.5.9-consensus/](docs/plans/v0.5.9-consensus/README.md) and
-        [the correction](docs/reports/v0.5.8-report-correction-2-2026-11-23.md).
+        [docs/plans/v0.5.9-consensus/](../plans/v0.5.9-consensus/README.md) and
+        [the correction](../reports/v0.5.8-report-correction-2-2026-11-23.md).
       - The reviewer checked the 9 SHA-256 of the consensus record's table.
       - The correction was edited once in place, in `97be424` (the gate review, finding 10, on #59).
 - [x] The plan, the control rule, the seed, the script and the report script are committed, and the
@@ -1368,26 +1368,26 @@ item 4, #218, with the evidence below; the gate review checked each one)
         `331ca03` and `968a2bb`, the addendum says "pushed" without it (finding 7, on #59).
 - [x] The 48 records (24 TOIs × 2 modes) exist, each with a machine `started_utc`,
       `mode: exploratory`, the label, coverage and provenance.
-      *Evidence:* [prototype-records.json](docs/validation/v0.5.9/prototype-records.json) (`cc282b8`):
+      *Evidence:* [prototype-records.json](../validation/v0.5.9/prototype-records.json) (`cc282b8`):
       - 48 rows with 48 unique keys;
       - `started_utc` from 08:15:17Z to 08:28:40Z;
       - each with `mode: exploratory`, the label and `not_validated`;
       - coverage: 45 `measured` and 3 `unavailable` (the 3 unresolved E entries);
       - provenance on every row.
 - [x] A report with Q1 to Q5 marked and the costs measured.
-      *Evidence:* [docs/reports/v0.5.9-report.md](docs/reports/v0.5.9-report.md), approved on
+      *Evidence:* [docs/reports/v0.5.9-report.md](../reports/v0.5.9-report.md), approved on
       2026-11-24. The reviewer's own recount gave every number.
 - [x] A version-5 specification draft (`docs/plans/battery-v5-spec.md`) that answers Codex's 7
       blocking items.
       *Evidence:*
-      - Sections 4.1 to 4.7 of [the draft](docs/plans/battery-v5-spec.md), one per item.
+      - Sections 4.1 to 4.7 of [the draft](../plans/battery-v5-spec.md), one per item.
       - f*, q and the loss ceiling stay open and block any lock.
       - It stays a draft.
 - [x] One Codex round on the round's work, and a short gate review.
       *Evidence:*
-      - The round: [review-round-answer.md](docs/plans/v0.5.9-consensus/review-round-answer.md),
+      - The round: [review-round-answer.md](../plans/v0.5.9-consensus/review-round-answer.md),
         `REFUTED` with 8 blocks, all applied in `7af787a`, with no further round.
-      - The short gate review: [docs/gates/v0.5.9-review.md](docs/gates/v0.5.9-review.md),
+      - The short gate review: [docs/gates/v0.5.9-review.md](../gates/v0.5.9-review.md),
         `WEAKENED`.
 
 **Stops that stay the maintainer's:**
@@ -1409,7 +1409,7 @@ item 4, #218, with the evidence below; the gate review checked each one)
 Tracking: #218. Opened on 2026-11-24 at 15:52Z by the maintainer's decision received at 12:51
 local (comment 7136727624), which approved the charter in commit `b71fa48` under a deterministic
 condition checked by `docs/validation/v0.5.10/check_charter_diff.py` (comment 7136761163).
-Charter: [docs/plans/v0.5.10-charter.md](docs/plans/v0.5.10-charter.md); its exit criteria are
+Charter: [docs/plans/v0.5.10-charter.md](../plans/v0.5.10-charter.md); its exit criteria are
 in its section 5. Records: `docs/validation/v0.5.10/` (with the append-only log `log.jsonl`).
 
 **The question:** which route to an independent result, (e), (d1) or the Kepler field, has enough
@@ -1424,7 +1424,7 @@ outside `.cache`.
 
 **Closed on 2026-11-24 with declared limits (gate `REFUTED`)** (#218, comment 7144131066). The
 exit criteria of the charter's section 5, as the gate found them
-([docs/gates/v0.5.10-review.md](docs/gates/v0.5.10-review.md)). The limits are in the report's
+([docs/gates/v0.5.10-review.md](../gates/v0.5.10-review.md)). The limits are in the report's
 section 8.
 - [ ] 1. The diagnosis recounted: not met. Some explicit quantities of the research's section 2
   are not recounted.
@@ -1434,7 +1434,7 @@ section 8.
 - [ ] 4. Route (d1) counted: not met in the gate. The exposure check was widened afterwards.
 - [ ] 5. The Kepler field counted: not met. TGLC is not determined.
 - [x] 6. The routes ranked: met. The ranking is provisional:
-  [report, section 3](docs/reports/v0.5.10-report.md).
+  [report, section 3](../reports/v0.5.10-report.md).
 - [ ] 7. The records complete: not demonstrated. CPU and disk were measured in part.
 - [ ] 8. The gate reviewed: circular. The review is stored unchanged after it.
 - [ ] 9. The engine trial run and recorded: not met. G3 is partial, the G5 denominators differ,
@@ -1445,7 +1445,7 @@ section 8.
 
 Tracking: #218. Opened on 2026-11-24 at 22:58Z by the maintainer's decision (comment
 7146858167), which approved the charter at `eb70c13`. Charter:
-[docs/plans/v0.5.11-charter.md](docs/plans/v0.5.11-charter.md), with amendments 14 and 15; its
+[docs/plans/v0.5.11-charter.md](../plans/v0.5.11-charter.md), with amendments 14 and 15; its
 exit criteria are in its section 8. Records: `docs/validation/v0.5.11/`, with the append-only
 journal `log.jsonl`.
 
@@ -1455,7 +1455,7 @@ byte, and versions 1 to 4 and every lock stay as they were?
 
 **Closed on 2026-11-25 with declared limits (gate `REFUTED`: criterion 6 not demonstrated)**
 (#218, comment 7165994585). The exit criteria of the charter's section 8, as the gate found them
-([docs/gates/v0.5.11-review.md](docs/gates/v0.5.11-review.md)). The limits are in the report's
+([docs/gates/v0.5.11-review.md](../gates/v0.5.11-review.md)). The limits are in the report's
 section 7.
 - [x] 1. The specification is frozen: met (`ab828ce`; correction 1 at `7bf74b1`).
 - [x] 2. The tests came first: met (`84010d0` before `a896c49`; `58c308d` before `f18d6f8`).
@@ -1470,11 +1470,11 @@ section 7.
 
 Tracking: #218. Opened on 2026-11-25 at 20:24Z by the maintainer's decision (comment 7173638284),
 which approved the charter at `7df389c`:
-[docs/plans/v0.5.12-charter.md](docs/plans/v0.5.12-charter.md), written on the decision of comment
+[docs/plans/v0.5.12-charter.md](../plans/v0.5.12-charter.md), written on the decision of comment
 7172688755. Time box: to 2026-12-02 at 20:24Z. The gate protocol is not changed: the gate is the
 closure condition (the same decision, item 2). Records: `docs/validation/v0.5.12/`.
 **Amendment 1, approved** (#218 comment 7193450494, at `bb6292c`):
-[docs/plans/v0.5.12-charter-amendment-1.md](docs/plans/v0.5.12-charter-amendment-1.md) (units
+[docs/plans/v0.5.12-charter-amendment-1.md](../plans/v0.5.12-charter-amendment-1.md) (units
 without network outside the AppContainer; proposed in comment 7192354006). *(Corrected at the
 close; it read "pending approval", the gate's finding 10.)*
 
@@ -1482,11 +1482,11 @@ close; it read "pending approval", the gate's finding 10.)*
 to start the calibration? Three items: #222 (F1 with unequal weights), #223 (the step 1 cases and
 the report-only `computed` values) and F-1 (version 3's process-state dependence), with synthetic
 data and repository fixtures only. The calibration moved to
-[the v0.5.13 proposal](docs/plans/v0.5.13-proposal.md).
+[the v0.5.13 proposal](../plans/v0.5.13-proposal.md).
 
 **Closed on 2026-11-26 with declared limits (gate `REFUTED`: criteria 2 and 6 not met)** (#218,
 comment 7202383280). The exit criteria of the charter's section 8, as the gate found them
-([docs/gates/v0.5.12-review.md](docs/gates/v0.5.12-review.md)), sealed at `2aa20d8` (journal
+([docs/gates/v0.5.12-review.md](../gates/v0.5.12-review.md)), sealed at `2aa20d8` (journal
 cursor 669). The limits are in the report's section "Declared limits".
 - [x] 1. #222 is answered by the fixed rule: met (M1 failed as recorded; correction 2 r1 adopted;
   `98117ef` before `6f83a91`; M2 and the control passed).
