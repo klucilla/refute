@@ -10,7 +10,7 @@
   "disk_bytes": 2000000000
  },
  "charged": {
-  "cpu_s": 214.453,
+  "cpu_s": 226.859,
   "download_bytes": 0,
   "disk_peak_bytes": 330432609
  },
@@ -1040,6 +1040,81 @@
    "cpu_s": 1.734,
    "write_bytes": 205,
    "disk_bound_bytes": 278561492,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "3eaaf69197be4d119b35dcc8e94ccb57",
+   "start": "2026-11-26T11:26:08Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.719,
+   "write_bytes": 789133,
+   "disk_bound_bytes": 279369064,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "66564e3b97214ed29d0822aa062a7188",
+   "start": "2026-11-26T11:26:18Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000
+   },
+   "status": "ok",
+   "cpu_s": 4.531,
+   "write_bytes": 1016800,
+   "disk_bound_bytes": 279648349,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "sitecustomize-install",
+   "label": null,
+   "attempt": "4c6b4491f5db45fcb3a5ef5185462beb",
+   "start": "2026-11-26T11:26:27Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000
+   },
+   "status": "ok",
+   "cpu_s": 1.719,
+   "write_bytes": 6131,
+   "disk_bound_bytes": 278649469,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "tmpdir-fixture",
+   "label": null,
+   "attempt": "bac4c57b5d554fa28b731c148014f73e",
+   "start": "2026-11-26T11:26:33Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000
+   },
+   "status": "failed",
+   "cpu_s": 2.375,
+   "write_bytes": 3821,
+   "disk_bound_bytes": 278656145,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "inspect",
+   "label": "pytest-parent-diag",
+   "attempt": "f6b456bde9a54eeab9fdb9fb1490ab3b",
+   "start": "2026-11-26T11:27:14Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 2.062,
+   "write_bytes": 10994,
+   "disk_bound_bytes": 278668957,
    "telemetry_complete": true
   }
  ]
