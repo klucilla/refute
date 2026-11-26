@@ -26,6 +26,17 @@ identity and M1 have not run.
     current user, administrators and SYSTEM.
   - An AppContainer process needs its container's SID (or "all application packages") in the
     list as well. A folder made that way is closed to the container itself.
+- **The source, added on 2026-11-26** (errata entry 2), as the maintainer gave it in #218 comment
+  7190662570, item 1:
+  - since Python 3.12.4, `os.mkdir(mode=0o700)` on Windows applies a restricted permission, and
+    `tempfile.mkdtemp` uses it;
+  - this is the mitigation of CVE-2024-4030;
+  - https://mail-archive.com/python-checkins@python.org/msg03194.html, read on 2026-11-26.
+- **The exact list this interpreter applies,** read from the container's copy of `python313.dll`
+  (SHA-256 `147c7d4d…`) by the read-only `inspect` unit labelled `sddl-from-dll-2`:
+  `D:P(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;FA;;;OW)`. That is SYSTEM, the administrators and
+  the owner, in a protected list. An earlier attempt, labelled `sddl-from-dll`, failed on a
+  malformed regular expression in the diagnostic script and read nothing.
 - **It is not a defect of `golden_local.py`, nor of the data,** so the maintainer's advance
   approval for checker defects (comment 7190454518, item 2) does not apply. The same cause would
   affect every unit in the container that uses a temporary folder: the test suite's `tmp_path`,

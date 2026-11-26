@@ -1,0 +1,11 @@
+{
+ "name": "sitecustomize-install",
+ "question": "Install the cvenv's sitecustomize (#218 comment 7190662570, item 1): copy the committed tools/cvenv_sitecustomize.py to .cache/v0512/cvenv/Lib/site-packages/sitecustomize.py only, with the SHA-256 checked before and after; the project's .venv does not change.",
+ "choices": "docs/validation/v0.5.12/tools/sitecustomize_install.py, in the AppContainer; its record is copied to step0/sitecustomize-install.json. A data unit, run once.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/tools/sitecustomize_install.py"],
+ "identity": ["docs/validation/v0.5.12/tools/sitecustomize_install.py", "docs/validation/v0.5.12/tools/cvenv_sitecustomize.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 60, "disk_bytes": 10000000},
+ "network": false,
+ "outputs": {"sitecustomize-install.json": "docs/validation/v0.5.12/step0/sitecustomize-install.json"}
+}

@@ -1,0 +1,11 @@
+{
+ "name": "tmpdir-fixture",
+ "question": "The temporary-folder fixture (#218 comment 7190662570, item 2), inside the container: (i) mkdtemp with a write, a read, a child's write and removal; (ii) a minimal pytest test with tmp_path passing (JUnit 1/0/0/0); (iii) the folder's ACL exactly the interpreter's 0o700 entries plus the container's SID. If it fails, stop.",
+ "choices": "docs/validation/v0.5.12/step0/tmpdir_fixture.py and tmpdir_case.py, in the AppContainer with the cvenv (sitecustomize installed); its records are copied to step0/. A data unit, run once (approved).",
+ "argv": ["{python}", "-B", "docs/validation/v0.5.12/step0/tmpdir_fixture.py"],
+ "identity": ["docs/validation/v0.5.12/step0/tmpdir_fixture.py", "docs/validation/v0.5.12/step0/tmpdir_case.py", "docs/validation/v0.5.12/tools/cvenv_sitecustomize.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 120, "disk_bytes": 20000000},
+ "network": false,
+ "outputs": {"tmpdir-fixture.json": "docs/validation/v0.5.12/step0/tmpdir-fixture.json", "tmpdir-pytest.xml": "docs/validation/v0.5.12/step0/tmpdir-pytest.xml"}
+}
