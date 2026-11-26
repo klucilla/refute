@@ -1,0 +1,11 @@
+{
+ "name": "explore-candidate",
+ "question": "Exploratory and post hoc (#218 comment 7193864189, item 3): on NEW synthetic curves only (null seeds 500001-501000, sensitivity seeds 600001-600300, the seven M1 families and geometry), how often does the candidate noise estimator of the draft correction 2 (baseline reduced chi-square scale, unweighted red-noise bins, per-parity 1/sum(w)) give OE_box > 3? It decides nothing and is never in src/.",
+ "choices": "docs/validation/v0.5.12/step4/explore_candidate.py with step1/m1_common.py, through launch_v3; the candidate is the script's own code; its record is copied to step4/explore-candidate.json. A data unit, run once.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/step4/explore_candidate.py"],
+ "identity": ["docs/validation/v0.5.12/step4/explore_candidate.py", "docs/validation/v0.5.12/step1/m1_common.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 1200, "disk_bytes": 20000000},
+ "network": false,
+ "outputs": {"explore-candidate.json": "docs/validation/v0.5.12/step4/explore-candidate.json"}
+}
