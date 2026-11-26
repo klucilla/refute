@@ -10,12 +10,12 @@
   "disk_bytes": 2000000000
  },
  "charged": {
-  "cpu_s": 3884.607,
+  "cpu_s": 3954.059,
   "download_bytes": 0,
   "disk_peak_bytes": 417702701
  },
  "within_caps": "not demonstrated",
- "telemetry_complete": true,
+ "telemetry_complete": false,
  "gaps": 11,
  "gaps_file": "docs/validation/v0.5.12/meter-gaps.json",
  "charging_rule": "measured use for settled attempts with complete telemetry; otherwise the larger of the reservation and the measured use; the bootstrap charged once by cross-reference to v0.5.11's journal",
@@ -2705,6 +2705,92 @@
    "cpu_s": 3.875,
    "write_bytes": 3985815,
    "disk_bound_bytes": 293067416,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "ruff-format",
+   "label": null,
+   "attempt": "0e073832132b4d43b9338bd99f6d64ce",
+   "start": "2026-11-26T16:36:24Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 5000000
+   },
+   "status": "abandoned (reservation charged)"
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "04898b6ed8b54e6da08b5925830441d9",
+   "start": "2026-11-26T16:36:35Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.734,
+   "write_bytes": 857068,
+   "disk_bound_bytes": 285120253,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "550e4fad864b458db26a574169cdd0b1",
+   "start": "2026-11-26T16:36:37Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000
+   },
+   "status": "ok",
+   "cpu_s": 2.609,
+   "write_bytes": 10480977,
+   "disk_bound_bytes": 294852325,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "ruff-format2",
+   "label": null,
+   "attempt": "460fbd8ed3b947b5b813d506a02eb1a3",
+   "start": "2026-11-26T16:36:40Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 5000000
+   },
+   "status": "failed",
+   "cpu_s": 1.625,
+   "write_bytes": 25505,
+   "disk_bound_bytes": 284239423,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "ruff-format2",
+   "label": null,
+   "attempt": "60488f04e11340a1afbd5ac85dc916c4",
+   "start": "2026-11-26T16:37:05Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 5000000
+   },
+   "status": "ok",
+   "cpu_s": 1.781,
+   "write_bytes": 27877,
+   "disk_bound_bytes": 284245511,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "inspect",
+   "label": "ruff-step2",
+   "attempt": "2b6f9621a50d49318fd24d9841f1f799",
+   "start": "2026-11-26T16:37:18Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 1.703,
+   "write_bytes": 13058,
+   "disk_bound_bytes": 284240212,
    "telemetry_complete": true
   }
  ]

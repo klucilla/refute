@@ -1,0 +1,11 @@
+{
+ "name": "step2-cases",
+ "question": "The charter, step 2 (#223): build the case record (recipes, natural witness or fault injection, branches, expected states and reasons, values with their source, atol and rtol, and the documented failures) from the independent oracles only, before any probe.",
+ "choices": "docs/validation/v0.5.12/step2/cases_build.py with tests/v0512_fixtures.py, tests/v0512_oracles.py and tests/screen_reference.py, through launch_v3; no import of src/; it stops if an oracle does not reach its case's intended branch. Its record is copied to step2/cases.json. A tree unit: a change of the builder or the fixtures is a new unit, until the record is committed.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/step2/cases_build.py"],
+ "identity": ["docs/validation/v0.5.12/step2/cases_build.py", "tests/v0512_fixtures.py", "tests/v0512_oracles.py", "tests/screen_reference.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 300, "disk_bytes": 10000000},
+ "network": false,
+ "outputs": {"cases.json": "docs/validation/v0.5.12/step2/cases.json"}
+}
