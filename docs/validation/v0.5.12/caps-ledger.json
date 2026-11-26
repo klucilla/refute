@@ -10,9 +10,9 @@
   "disk_bytes": 2000000000
  },
  "charged": {
-  "cpu_s": 2386.061,
+  "cpu_s": 2409.655,
   "download_bytes": 0,
-  "disk_peak_bytes": 330432609
+  "disk_peak_bytes": 415441282
  },
  "within_caps": "not demonstrated",
  "telemetry_complete": true,
@@ -1745,6 +1745,81 @@
    "cpu_s": 332.828,
    "write_bytes": 2291,
    "disk_bound_bytes": 286496677,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "ad55d1dc48354f00b47ff3ccc8677bc7",
+   "start": "2026-11-26T13:57:40Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.828,
+   "write_bytes": 817910,
+   "disk_bound_bytes": 287332335,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "39b64ee0d44941ebb2a4438b863c32db",
+   "start": "2026-11-26T13:57:53Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000
+   },
+   "status": "ok",
+   "cpu_s": 2.578,
+   "write_bytes": 1119390,
+   "disk_bound_bytes": 287710177,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "codex",
+   "label": "corr2-r1",
+   "attempt": "ff82dfc788054b82831aefd1e036bd08",
+   "start": "2026-11-26T13:58:02Z",
+   "reserve": {
+    "cpu_s": 900,
+    "disk_bytes": 50000000
+   },
+   "status": "failed",
+   "cpu_s": 2.406,
+   "write_bytes": 739,
+   "disk_bound_bytes": 286606094,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "codex",
+   "label": "corr2-r1",
+   "attempt": "8a49bb550c004350841a892174ecbf84",
+   "start": "2026-11-26T13:58:18Z",
+   "reserve": {
+    "cpu_s": 900,
+    "disk_bytes": 50000000
+   },
+   "status": "interrupted",
+   "cpu_s": 14.938,
+   "write_bytes": 128834173,
+   "disk_bound_bytes": 415441282,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "inspect",
+   "label": "codex-r1-events",
+   "attempt": "48b3ae05c1154872b2ec4aed212fb09e",
+   "start": "2026-11-26T13:59:35Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 1.844,
+   "write_bytes": 158,
+   "disk_bound_bytes": 286758465,
    "telemetry_complete": true
   }
  ]
