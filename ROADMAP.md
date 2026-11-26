@@ -96,7 +96,9 @@ comment 7202383280. It had opened on 2026-11-25 at 20:24Z (charter `7df389c`, am
 - **The limits label:** 'closed with declared limits (gate REFUTED: criteria 2 and 6 not met)'.
   Every later use of this phase's correction, cases or tests carries it.
 - **The report:** [docs/reports/v0.5.12-report.md](docs/reports/v0.5.12-report.md), approved by the
-  maintainer (#218, comment 7202383280, item 4).
+  maintainer (#218, comment 7202383280, item 4), with
+  [a dated correction](docs/reports/v0.5.12-report-correction-2026-11-26.md) for what happened
+  after its approval (gaps G11 to G13; deviations 15 to 17).
 - **The gate review:**
   - [docs/gates/v0.5.12-review.md](docs/gates/v0.5.12-review.md): a fresh Claude Fable 5.2
     session on `5a018544`, `REFUTED`, the binding verdict;
