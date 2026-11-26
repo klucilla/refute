@@ -25,3 +25,16 @@ its impact. Working records only; approved records get separate dated correction
   - The earlier text is kept.
 - **Impact:** none on any outcome; it supports the reading with a source and the binary's own
   bytes.
+
+## 3. 2026-11-26: correction 2's revision 1 gets Codex's round 3 wording
+
+- **Source commit:** `e7f652e`, `docs/plans/v0.5.12-spec-correction-2-r1.md` (SHA-256
+  `a122c88c22e95c82c87879008b6c0546bb78624404c6b59d5971364347cf592d`, the bytes check 3 tested).
+- **Correction:** Codex's round 3 (`WEAKENED`;
+  `docs/plans/v0.5.12-correction-2-consensus/r3-codex-answer.md`) asked for a declared limit
+  after check 3, a prefix and a sentence on the check's history, and a new T2/T6 bullet; its
+  recorded item on N7 is quoted beside N7. Applied as written, by the standing rule that a
+  divergence goes to the more conservative option. A header bullet says so.
+- **Impact:** the estimator, the thresholds and every number are unchanged; check 3's result
+  stands for the estimator. The file's SHA-256 changes; the maintainer's adoption is against the
+  new one. Revision 1 was not approved, published or locked.
