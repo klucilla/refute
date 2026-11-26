@@ -1,0 +1,7 @@
+{
+ "kind": "deviation",
+ "number": 1,
+ "decision": "#218 comment 7196269069, item 1",
+ "text": "Attempt 2 of the unit codex (label corr2-r1, thread 01a21826-635e-7ac3-9a15-aad43b8235f2) was a second execution of a started unit without prior approval in #218 (charter, section 4: 'a bug included'). Its logical key differed from attempt 1's because the output paths differed, so the launcher let it run. The meter interrupted it at its 50 MB disk reservation; it left no answer. Its tokens are unknown, with no estimate. No result changes.",
+ "tokens": "unknown"
+}

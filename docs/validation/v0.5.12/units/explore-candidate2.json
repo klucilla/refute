@@ -1,0 +1,11 @@
+{
+ "name": "explore-candidate2",
+ "question": "Exploratory and post hoc (#218 comment 7196269069, item 2): on NEW curves only (null seeds 700001-701000, sensitivity seeds 800001-800300; the seven M1 families and geometry), how does correction 2's estimator with the inverse-variance weighted red term (section 4 at be14460) behave? Flags, reported and never acted on before the Codex round: sensitivity below 281/300; null Wilson lower bound above the nominal 0.0027.",
+ "choices": "docs/validation/v0.5.12/step4/explore_candidate2.py with step1/m1_common.py, through launch_v3; its own code; its record is copied to step4/explore-candidate2.json. A data unit, run once.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/step4/explore_candidate2.py"],
+ "identity": ["docs/validation/v0.5.12/step4/explore_candidate2.py", "docs/validation/v0.5.12/step1/m1_common.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 1200, "disk_bytes": 20000000},
+ "network": false,
+ "outputs": {"explore-candidate2.json": "docs/validation/v0.5.12/step4/explore-candidate2.json"}
+}

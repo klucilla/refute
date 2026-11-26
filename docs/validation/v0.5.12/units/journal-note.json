@@ -1,0 +1,10 @@
+{
+ "name": "journal-note",
+ "question": "Append one committed note (the extra argument, a JSON file) to the journal, as a decision asks: a deviation or a record. It edits no existing line.",
+ "choices": "docs/validation/v0.5.12/tools/journal_note.py, through launch_v3. A data unit: the note file makes the unit.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/tools/journal_note.py"],
+ "identity": ["docs/validation/v0.5.12/tools/journal_note.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 30, "disk_bytes": 1000000},
+ "network": false
+}
