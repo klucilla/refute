@@ -1,6 +1,6 @@
 {
  "name": "inspect",
- "question": "Run one read-only inspection script (its path and arguments are the extra arguments) in the offline AppContainer, so that local reads are metered.",
+ "question": "Run one read-only inspection script (its path and arguments are the extra arguments) through the launcher, so that local reads are metered. Until charter amendment 1 it ran in the offline AppContainer; from amendment 1 (bb6292c, approved in #218 comment 7193450494) it runs outside the AppContainer, in the launcher's job object, with no network block (text corrected by #218 comment 7202383280, item 2).",
  "choices": "The script must read only; its output is its stdout under .cache/v0512/runs. A tree unit: the same script, arguments and code state is the same unit.",
  "argv": ["{python}", "-I", "-B"],
  "identity": [],

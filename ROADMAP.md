@@ -73,9 +73,39 @@ how later work is done.
 
 ## Current phase
 
-**v0.5.12 Battery version 5: corrections before calibration**, opened on 2026-11-25 at 20:24Z by
-the maintainer's approval of its charter at `7df389c` (#218, comment 7173638284). Its time box ends
-on 2026-12-02 at 20:24Z. See [the section below](#v0512-battery-version-5-corrections-before-calibration).
+**No phase is open.** The next phase is the maintainer's to open: v0.5.13 is proposed only
+([docs/plans/v0.5.13-proposal.md](docs/plans/v0.5.13-proposal.md)).
+
+### Previous phase record: v0.5.12 Battery version 5: corrections before calibration
+
+**v0.5.12 Battery version 5: corrections before calibration: closed on 2026-11-26 with declared
+limits (gate `REFUTED`: criteria 2 and 6 not met)**, by the maintainer's decision recorded in #218,
+comment 7202383280. It had opened on 2026-11-25 at 20:24Z (charter `7df389c`, amendment 1
+`bb6292c`); see [the section below](#v0512-battery-version-5-corrections-before-calibration).
+- **The phase's answer:**
+  - #222 is answered: correction 2, revision 1 changed F1's noise, its tests came first
+    (`98117ef`), and its code followed (`6f83a91`).
+  - M2 and the sensitivity control passed on synthetic data.
+  - F-1's cause was found (the BLAS thread count).
+  - Versions 1 to 4 did not move, and full CI holds on `6f83a91`.
+- **The limits are declared** in the report's section "Declared limits":
+  - criteria 2 and 6;
+  - the gate's important findings, #226, #227 and #228;
+  - correction 2's limits: correlated noise (#224), and F2 and U1 keeping the old noise;
+  - the BLAS dependence.
+- **The limits label:** 'closed with declared limits (gate REFUTED: criteria 2 and 6 not met)'.
+  Every later use of this phase's correction, cases or tests carries it.
+- **The report:** [docs/reports/v0.5.12-report.md](docs/reports/v0.5.12-report.md), approved by the
+  maintainer (#218, comment 7202383280, item 4).
+- **The gate review:**
+  - [docs/gates/v0.5.12-review.md](docs/gates/v0.5.12-review.md): a fresh Claude Fable 5.2
+    session on `5a018544`, `REFUTED`, the binding verdict;
+  - Codex's second opinion, also `REFUTED`;
+  - [the record](docs/gates/v0.5.12-gate-record.md).
+
+  Its minor findings were posted to #59 (finding 8 to #224).
+- **Preconditions of v0.5.13:** #224, #226 (before any lock) and #227 (before calibrating U1);
+  #228 is an input to its charter.
 
 ### Previous phase record: v0.5.11 Battery version 5: specification and software
 
@@ -1502,13 +1532,15 @@ section 7.
 
 ## v0.5.12 Battery version 5: corrections before calibration
 
-Tracking: #218. **Open** since 2026-11-25 at 20:24Z, by the maintainer's decision (comment
-7173638284), which approved the charter at `7df389c`:
+Tracking: #218. Opened on 2026-11-25 at 20:24Z by the maintainer's decision (comment 7173638284),
+which approved the charter at `7df389c`:
 [docs/plans/v0.5.12-charter.md](docs/plans/v0.5.12-charter.md), written on the decision of comment
 7172688755. Time box: to 2026-12-02 at 20:24Z. The gate protocol is not changed: the gate is the
 closure condition (the same decision, item 2). Records: `docs/validation/v0.5.12/`.
-**Amendment 1, pending approval:** [docs/plans/v0.5.12-charter-amendment-1.md](docs/plans/v0.5.12-charter-amendment-1.md)
-(units without network outside the AppContainer; comment 7192354006).
+**Amendment 1, approved** (#218 comment 7193450494, at `bb6292c`):
+[docs/plans/v0.5.12-charter-amendment-1.md](docs/plans/v0.5.12-charter-amendment-1.md) (units
+without network outside the AppContainer; proposed in comment 7192354006). *(Corrected at the
+close; it read "pending approval", the gate's finding 10.)*
 
 **The question:** are version 5's core (F1, OE_box) and its report-only quantities correct enough
 to start the calibration? Three items: #222 (F1 with unequal weights), #223 (the step 1 cases and
@@ -1516,15 +1548,23 @@ the report-only `computed` values) and F-1 (version 3's process-state dependence
 data and repository fixtures only. The calibration moved to
 [the v0.5.13 proposal](docs/plans/v0.5.13-proposal.md).
 
-The exit criteria are in the charter's section 8:
-- [ ] 1. #222 is answered by the fixed rule.
-- [ ] 2. #223 is covered.
-- [ ] 3. F-1's cause is found and recorded.
-- [ ] 4. Versions 1 to 4 did not move.
-- [ ] 5. Full CI.
-- [ ] 6. The records are complete and the caps were measured and met.
+**Closed on 2026-11-26 with declared limits (gate `REFUTED`: criteria 2 and 6 not met)** (#218,
+comment 7202383280). The exit criteria of the charter's section 8, as the gate found them
+([docs/gates/v0.5.12-review.md](docs/gates/v0.5.12-review.md)), sealed at `2aa20d8` (journal
+cursor 669). The limits are in the report's section "Declared limits".
+- [x] 1. #222 is answered by the fixed rule: met (M1 failed as recorded; correction 2 r1 adopted;
+  `98117ef` before `6f83a91`; M2 and the control passed).
+- [ ] 2. #223 is covered: not met. The coverage holds, but `step2/inventory.json` entered git
+  (`e1834c1`) after the first probe (`6f9925e`).
+- [x] 3. F-1's cause is found and recorded: met by the charter's letter (the BLAS thread count; its
+  limit is #226).
+- [x] 4. Versions 1 to 4 did not move: met (golden and claim payloads equal; tags 10 of 10).
+- [x] 5. Full CI: met (`ci_evidence.py 6f83a91 --level full`, run 45868952282).
+- [ ] 6. The records are complete and the caps were measured and met: not met (gaps G0 to G10;
+  "not demonstrated"; unapproved repetitions, deviations 10, 11, 13 and 14).
 
-At closure, not an exit criterion: the gate passed and is stored.
+At closure, not an exit criterion: the gate passed and is stored. It returned `REFUTED` and is
+stored unchanged.
 
 ---
 
