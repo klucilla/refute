@@ -10,7 +10,7 @@
   "disk_bytes": 2000000000
  },
  "charged": {
-  "cpu_s": 4044.765,
+  "cpu_s": 4056.766,
   "download_bytes": 0,
   "disk_peak_bytes": 417702701
  },
@@ -3286,6 +3286,81 @@
    "cpu_s": 1.75,
    "write_bytes": 754,
    "disk_bound_bytes": 286750874,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "ef44a7cb45f24b27bb93917b10e8480b",
+   "start": "2026-11-26T16:48:49Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.719,
+   "write_bytes": 890441,
+   "disk_bound_bytes": 287643853,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "da572422a68c412c864754436f9b85b1",
+   "start": "2026-11-26T16:48:51Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000
+   },
+   "status": "ok",
+   "cpu_s": 3.797,
+   "write_bytes": 1585980,
+   "disk_bound_bytes": 288479955,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "step2-cases",
+   "label": null,
+   "attempt": "25767d9960b34c0ba53f27ce74f44b9f",
+   "start": "2026-11-26T16:48:56Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 10000000
+   },
+   "status": "ok",
+   "cpu_s": 3.141,
+   "write_bytes": 50728,
+   "disk_bound_bytes": 286955984,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "step2-cases-diff",
+   "label": null,
+   "attempt": "13fe94c26d8d454f9026c05d41081f49",
+   "start": "2026-11-26T16:48:59Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 5000000
+   },
+   "status": "failed",
+   "cpu_s": 1.656,
+   "write_bytes": 50600,
+   "disk_bound_bytes": 287007640,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "inspect",
+   "label": "ruff-diff2",
+   "attempt": "92eb28f15a6142379b241f21f6324608",
+   "start": "2026-11-26T16:49:20Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 1.688,
+   "write_bytes": 752,
+   "disk_bound_bytes": 286963440,
    "telemetry_complete": true
   }
  ]

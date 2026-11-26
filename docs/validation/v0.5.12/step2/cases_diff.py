@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import subprocess
 from pathlib import Path
 
@@ -35,8 +36,13 @@ def walk(a, b, path, out):
         for i, (x, y) in enumerate(zip(a, b, strict=True)):
             key = x.get("id", i) if isinstance(x, dict) else i
             walk(x, y, path + [key], out)
-    elif a != b:
+    elif a != b and not (_nan(a) and _nan(b)):
         out.append(("changed", path, [a, b]))
+
+
+def _nan(x) -> bool:
+    """NaN is read back as NaN (N02's and R42's period); NaN != NaN must not count as a change."""
+    return isinstance(x, float) and math.isnan(x)
 
 
 def main() -> int:
