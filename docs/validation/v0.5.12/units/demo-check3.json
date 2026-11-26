@@ -1,0 +1,11 @@
+{
+ "name": "demo-check3",
+ "question": "Check the meter's demonstration over its five fixtures with the corrected checker (#218 comment 7190454518, item 1): if it passes, step 0's demonstration is established; if it fails with a verdict, stop.",
+ "choices": "docs/validation/v0.5.12/step0/demo_check3.py reads log.jsonl, and JSON stdout only for demo and demo-net2; its record is copied to step0/demo-check3.json. A data unit, run once.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/step0/demo_check3.py"],
+ "identity": ["docs/validation/v0.5.12/step0/demo_check3.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 60, "disk_bytes": 10000000},
+ "network": false,
+ "outputs": {"demo-check3.json": "docs/validation/v0.5.12/step0/demo-check3.json"}
+}

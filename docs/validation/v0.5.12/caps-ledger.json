@@ -10,7 +10,7 @@
   "disk_bytes": 2000000000
  },
  "charged": {
-  "cpu_s": 151.577,
+  "cpu_s": 163.421,
   "download_bytes": 0,
   "disk_peak_bytes": 330432609
  },
@@ -620,6 +620,96 @@
    "cpu_s": 1.75,
    "write_bytes": 1140,
    "disk_bound_bytes": 278138138,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "fc2a914179264edb85cdc03a1d5fb723",
+   "start": "2026-11-25T22:23:23Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.625,
+   "write_bytes": 763228,
+   "disk_bound_bytes": 278904962,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "e0b891b680df4bae9c0f8b981d16c2b4",
+   "start": "2026-11-25T22:23:26Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000
+   },
+   "status": "ok",
+   "cpu_s": 2.484,
+   "write_bytes": 852077,
+   "disk_bound_bytes": 279019566,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "push",
+   "label": null,
+   "attempt": "0c5e53802baa438493e956bc5748dd33",
+   "start": "2026-11-25T22:23:32Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000
+   },
+   "status": "ok",
+   "cpu_s": 2.438,
+   "write_bytes": 43429,
+   "disk_bound_bytes": 278218054,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh",
+   "label": null,
+   "attempt": "e1ac5f92bdc145a1804bf65618966391",
+   "start": "2026-11-25T22:23:47Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000
+   },
+   "status": "ok",
+   "cpu_s": 1.703,
+   "write_bytes": 815,
+   "disk_bound_bytes": 278180872,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh",
+   "label": null,
+   "attempt": "59847becdc874677805e6c74b48cb643",
+   "start": "2026-11-25T22:24:06Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000
+   },
+   "status": "ok",
+   "cpu_s": 1.641,
+   "write_bytes": 160,
+   "disk_bound_bytes": 278186639,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh",
+   "label": null,
+   "attempt": "9264f80d2d624a37aab52aace365bd52",
+   "start": "2026-11-26T11:13:51Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000
+   },
+   "status": "ok",
+   "cpu_s": 1.953,
+   "write_bytes": 160,
+   "disk_bound_bytes": 278192157,
    "telemetry_complete": true
   }
  ]
