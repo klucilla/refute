@@ -1,0 +1,11 @@
+{
+ "name": "step2-inventory",
+ "question": "The charter, step 2 (#223; #218 comment 7197519001, item 3): which branches of version 5's screen end in a not_assessed core test or an unavailable report-only record, by entry point and by record, read statically from screen_d5.py at the approval commit f18d6f8?",
+ "choices": "docs/validation/v0.5.12/step2/inventory.py, through launch_v3; an AST reading of the committed blob, no screen code run; its record is copied to step2/inventory.json. A data unit, run once, before any case record or probe.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/step2/inventory.py"],
+ "identity": ["docs/validation/v0.5.12/step2/inventory.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 60, "disk_bytes": 5000000},
+ "network": false,
+ "outputs": {"inventory.json": "docs/validation/v0.5.12/step2/inventory.json"}
+}

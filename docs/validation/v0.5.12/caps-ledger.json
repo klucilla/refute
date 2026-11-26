@@ -10,7 +10,7 @@
   "disk_bytes": 2000000000
  },
  "charged": {
-  "cpu_s": 3856.154,
+  "cpu_s": 3871.076,
   "download_bytes": 0,
   "disk_peak_bytes": 417702701
  },
@@ -2525,6 +2525,111 @@
    "cpu_s": 1.938,
    "write_bytes": 160,
    "disk_bound_bytes": 288506334,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "149f0ee460f54de5ab65ee22f3cb71bd",
+   "start": "2026-11-26T16:21:28Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.812,
+   "write_bytes": 849588,
+   "disk_bound_bytes": 289360341,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "36492e0de2d54743a64ea372d6e017f3",
+   "start": "2026-11-26T16:21:30Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000
+   },
+   "status": "ok",
+   "cpu_s": 2.281,
+   "write_bytes": 1282788,
+   "disk_bound_bytes": 289895077,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "journal-note",
+   "label": null,
+   "attempt": "57937cd889854c81bd51443367ad9c80",
+   "start": "2026-11-26T16:21:33Z",
+   "reserve": {
+    "cpu_s": 30,
+    "disk_bytes": 1000000
+   },
+   "status": "ok",
+   "cpu_s": 1.938,
+   "write_bytes": 1055,
+   "disk_bound_bytes": 288624169,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh-issue",
+   "label": null,
+   "attempt": "e138bd486c3546889244f142748ce010",
+   "start": "2026-11-26T16:21:35Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000
+   },
+   "status": "ok",
+   "cpu_s": 1.875,
+   "write_bytes": 106,
+   "disk_bound_bytes": 288627577,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "9fa37c9a8bd1432e98bf471e3187d5bd",
+   "start": "2026-11-26T16:24:36Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.75,
+   "write_bytes": 859791,
+   "disk_bound_bytes": 289498039,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "f0a62729a7d54f7b80926d1481a33bfb",
+   "start": "2026-11-26T16:24:39Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000
+   },
+   "status": "failed",
+   "cpu_s": 3.438,
+   "write_bytes": 1340875,
+   "disk_bound_bytes": 290090431,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "inspect",
+   "label": "ruff-inv",
+   "attempt": "b14c67e9be58447bbd7d28e7749c81a8",
+   "start": "2026-11-26T16:25:11Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 1.828,
+   "write_bytes": 512,
+   "disk_bound_bytes": 288762543,
    "telemetry_complete": true
   }
  ]
