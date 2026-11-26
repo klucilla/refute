@@ -1,0 +1,11 @@
+{
+ "name": "codex",
+ "question": "One Codex round on one closed question (charter, section 7), read-only, through .cache/v04/tools/codex_affinity.ps1 (processors 8 to 31); the extra arguments are the wrapper's path and its -Prompt, -Answer, -Events and optional -Thread arguments.",
+ "choices": "Reviewer traffic only (charter, step 0). The local process tree is metered in the job; the tokens are reported apart, by the real sum of the events. A data unit: the prompt file makes the unit.",
+ "argv": ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File"],
+ "identity": [],
+ "key": "data",
+ "reserve": {"cpu_s": 900, "disk_bytes": 50000000},
+ "timeout_s": 3000,
+ "network": {"kind": "review", "endpoints": ["the Codex CLI's service endpoints"], "operations": ["codex exec (read-only sandbox), one round"]}
+}

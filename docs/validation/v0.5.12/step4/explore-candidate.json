@@ -1,0 +1,126 @@
+{
+ "schema": "refute-v0512-explore-candidate-1",
+ "labels": [
+  "exploratory",
+  "post hoc",
+  "method_status: not_validated"
+ ],
+ "decision": "#218 comment 7193864189, item 3",
+ "seeds": {
+  "null": [
+   500001,
+   501000
+  ],
+  "sensitivity": [
+   600001,
+   600300
+  ]
+ },
+ "families": {
+  "U": {
+   "null": {
+    "n": 1000,
+    "not_computed": 0,
+    "fail": 0,
+    "oe_box_over_2": 52
+   },
+   "sensitivity": {
+    "n": 300,
+    "not_computed": 0,
+    "fail": 297,
+    "oe_box_over_2": 300
+   },
+   "odd_depth_extra": 0.00018516401995451027
+  },
+  "S9.5": {
+   "null": {
+    "n": 1000,
+    "not_computed": 0,
+    "fail": 1,
+    "oe_box_over_2": 28
+   },
+   "sensitivity": {
+    "n": 300,
+    "not_computed": 0,
+    "fail": 212,
+    "oe_box_over_2": 260
+   },
+   "odd_depth_extra": 0.0002630026609447711
+  },
+  "P2.4": {
+   "null": {
+    "n": 1000,
+    "not_computed": 0,
+    "fail": 2,
+    "oe_box_over_2": 45
+   },
+   "sensitivity": {
+    "n": 300,
+    "not_computed": 0,
+    "fail": 296,
+    "oe_box_over_2": 300
+   },
+   "odd_depth_extra": 0.00034041990876814804
+  },
+  "P9.5": {
+   "null": {
+    "n": 1000,
+    "not_computed": 0,
+    "fail": 3,
+    "oe_box_over_2": 40
+   },
+   "sensitivity": {
+    "n": 300,
+    "not_computed": 0,
+    "fail": 291,
+    "oe_box_over_2": 300
+   },
+   "odd_depth_extra": 0.001250714081749188
+  },
+  "T2": {
+   "null": {
+    "n": 1000,
+    "not_computed": 0,
+    "fail": 2,
+    "oe_box_over_2": 50
+   },
+   "sensitivity": {
+    "n": 300,
+    "not_computed": 0,
+    "fail": 294,
+    "oe_box_over_2": 298
+   },
+   "odd_depth_extra": 0.00013415679365670694
+  },
+  "T6": {
+   "null": {
+    "n": 1000,
+    "not_computed": 0,
+    "fail": 1,
+    "oe_box_over_2": 50
+   },
+   "sensitivity": {
+    "n": 300,
+    "not_computed": 0,
+    "fail": 292,
+    "oe_box_over_2": 299
+   },
+   "odd_depth_extra": 0.00013093073417596473
+  },
+  "B6": {
+   "null": {
+    "n": 1000,
+    "not_computed": 0,
+    "fail": 0,
+    "oe_box_over_2": 52
+   },
+   "sensitivity": {
+    "n": 300,
+    "not_computed": 0,
+    "fail": 297,
+    "oe_box_over_2": 300
+   },
+   "odd_depth_extra": 0.00018516401995451027
+  }
+ }
+}
