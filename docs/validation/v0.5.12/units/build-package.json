@@ -1,0 +1,10 @@
+{
+ "name": "build-package",
+ "question": "Build the hashed package for correction 2's blind review (#218 comment 7196269069, item 4): the final correction, the cited paper excerpts, the specification and correction 1, as git blobs at the given commit, with a manifest whose SHA-256 is the package's.",
+ "choices": "docs/validation/v0.5.12/tools/build_package.py <commit>, through launch_v3; the folder docs/plans/v0.5.12-correction-2-blind-review/ must not exist before. A data unit, run once.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/tools/build_package.py"],
+ "identity": ["docs/validation/v0.5.12/tools/build_package.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 30, "disk_bytes": 5000000},
+ "network": false
+}
