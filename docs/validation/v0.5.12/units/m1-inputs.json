@@ -1,0 +1,11 @@
+{
+ "name": "m1-inputs",
+ "question": "#222, M1's input identity before any F1 call (charter, section 4): freeze the 21,000 cases' realized-input hashes and recipe, and check them against v0.5.11's recorded f1-calibration inputs (regenerated, inputs only) and against each other; any match or unresolved identity stops the work.",
+ "choices": "docs/validation/v0.5.12/step1/m1_inputs.py with m1_common.py, in the AppContainer; no F1 call; its record is copied to step1/m1-inputs.json. A data unit, run once.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/step1/m1_inputs.py"],
+ "identity": ["docs/validation/v0.5.12/step1/m1_inputs.py", "docs/validation/v0.5.12/step1/m1_common.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 600, "disk_bytes": 50000000},
+ "network": false,
+ "outputs": {"m1-inputs.json": "docs/validation/v0.5.12/step1/m1-inputs.json"}
+}

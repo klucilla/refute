@@ -1,0 +1,21 @@
+{
+ "name": "m1",
+ "question": "#222, the measurement M1 (charter, step 1, pre-registered at 7df389c): with the project's code, F1's fail and not_assessed counts per family on equal-depth curves with correct but unequal sigma; a family passes with 0 not_assessed and at most 19 fail of 3000 (95% Wilson upper bound <= 1%).",
+ "choices": "docs/validation/v0.5.12/step1/m1.py with m1_common.py, in the AppContainer, at most 10 workers; every input is checked against the frozen step1/m1-inputs.json before F1; its records are copied to step1/. A data unit, run once.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/step1/m1.py"],
+ "identity": ["docs/validation/v0.5.12/step1/m1.py", "docs/validation/v0.5.12/step1/m1_common.py", "docs/validation/v0.5.12/step1/m1-inputs.json", "src/refute/packs/tess/screen_d5.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 2700, "disk_bytes": 100000000},
+ "network": false,
+ "timeout_s": 1800,
+ "outputs": {
+  "m1-summary.json": "docs/validation/v0.5.12/step1/m1-summary.json",
+  "m1-U.json": "docs/validation/v0.5.12/step1/m1-U.json",
+  "m1-S9.5.json": "docs/validation/v0.5.12/step1/m1-S9.5.json",
+  "m1-P2.4.json": "docs/validation/v0.5.12/step1/m1-P2.4.json",
+  "m1-P9.5.json": "docs/validation/v0.5.12/step1/m1-P9.5.json",
+  "m1-T2.json": "docs/validation/v0.5.12/step1/m1-T2.json",
+  "m1-T6.json": "docs/validation/v0.5.12/step1/m1-T6.json",
+  "m1-B6.json": "docs/validation/v0.5.12/step1/m1-B6.json"
+ }
+}

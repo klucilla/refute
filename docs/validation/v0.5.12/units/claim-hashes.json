@@ -1,0 +1,11 @@
+{
+ "name": "claim-hashes",
+ "question": "The resolved hash of every committed claim (charter, step 0 'before' and step 5 'after'; criterion 4): identity verification, not a rerun (charter, section 4).",
+ "choices": "docs/validation/v0.5.12/tools/claim_hashes.py <label>, in the AppContainer; its record is copied to step0/claim-hashes-<label>.json. A data unit: one run per label.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/tools/claim_hashes.py"],
+ "identity": ["docs/validation/v0.5.12/tools/claim_hashes.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 300, "disk_bytes": 20000000},
+ "network": false,
+ "outputs": {"claim-hashes-before.json": "docs/validation/v0.5.12/step0/claim-hashes-before.json", "claim-hashes-after.json": "docs/validation/v0.5.12/step0/claim-hashes-after.json"}
+}

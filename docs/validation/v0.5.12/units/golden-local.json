@@ -1,0 +1,11 @@
+{
+ "name": "golden-local",
+ "question": "The golden record of versions 1 to 4 on the synthetic fixtures (charter, step 0 'before' and step 5 'after'; criterion 4): identity verification, not a rerun (charter, section 4).",
+ "choices": "docs/validation/v0.5.12/tools/golden_local.py <label>, in the AppContainer; outputs under .cache/v0512/golden/<label>/; its record is copied to step0/golden-<label>.json. A data unit: one run per label.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/tools/golden_local.py"],
+ "identity": ["docs/validation/v0.5.12/tools/golden_local.py", "tests/baseline_code_v0511.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 900, "disk_bytes": 100000000},
+ "network": false,
+ "outputs": {"golden-before.json": "docs/validation/v0.5.12/step0/golden-before.json", "golden-after.json": "docs/validation/v0.5.12/step0/golden-after.json"}
+}

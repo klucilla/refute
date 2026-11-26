@@ -1,0 +1,71 @@
+{
+ "schema": "refute-v0512-meter-demo-3",
+ "checks": [
+  {
+   "check": "cpu",
+   "holds": true,
+   "evidence": {
+    "attempt": "7cff4b26487b47c8962cd45755a695e5",
+    "job_cpu_s": 5.172,
+    "own_plus_child_cpu_s": 5.0,
+    "processes": 3
+   }
+  },
+  {
+   "check": "transient",
+   "holds": true,
+   "evidence": {
+    "attempt": "30fbeaabeb3648ae9fcb4aecb3174d2b",
+    "written_then_deleted": 52428800,
+    "job_write_bytes": 52428857,
+    "o_start": 278003752,
+    "o_end": 278005961,
+    "bound": 330432609
+   }
+  },
+  {
+   "check": "retained",
+   "holds": true,
+   "evidence": {
+    "retain_a_o_start": 187704078,
+    "retain_a_o_end": 219163320,
+    "retain_b_o_start": 219164334
+   }
+  },
+  {
+   "check": "network",
+   "holds": true,
+   "evidence": {
+    "attempt": "c9a050281f724202a188c2571502f1e6",
+    "status": "ok",
+    "counted": {
+     "tcp_1.1.1.1_443": "fail: PermissionError 10013",
+     "dns_pypi.org": "fail: gaierror",
+     "tcp_github.com_443": "fail: gaierror",
+     "tcp_launcher_listener": "fail: TimeoutError",
+     "child_tcp_1.1.1.1_443": "fail: PermissionError 10013",
+     "child_dns_pypi.org": "fail: gaierror",
+     "child_tcp_github.com_443": "fail: gaierror",
+     "child_tcp_launcher_listener": "fail: TimeoutError"
+    },
+    "information": {
+     "same_container_loopback": "ok",
+     "child_same_container_loopback": "ok"
+    },
+    "listener_accepted": 0
+   }
+  },
+  {
+   "check": "commit",
+   "holds": true,
+   "evidence": {
+    "approved_commit_check_runs": 1,
+    "attempt": "44a20d1f42ae4230a11bfb72114f1e70",
+    "launcher": "launch_v2.py",
+    "sandbox": "appcontainer refute.v0512.offline",
+    "status": "ok"
+   }
+  }
+ ],
+ "passed": true
+}
