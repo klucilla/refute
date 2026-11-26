@@ -1,0 +1,11 @@
+{
+ "name": "junit-check",
+ "question": "Criterion 2 and section 5 (e): does the decisive JUnit file of the src/ change (step4/junit-after-src.xml) show 0 failures, errors and skips, with every test ID of the before-src file present and passed?",
+ "choices": "docs/validation/v0.5.12/step4/junit_check.py through launch_v3; a read of two committed JUnit files; its summary is copied to step4/junit-after-src-summary.json. A tree unit.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/step4/junit_check.py"],
+ "identity": ["docs/validation/v0.5.12/step4/junit_check.py", "docs/validation/v0.5.12/step4/junit-after-src.xml", "docs/validation/v0.5.12/step2/junit-suites-before-src.xml"],
+ "key": "tree",
+ "reserve": {"cpu_s": 60, "disk_bytes": 5000000},
+ "network": false,
+ "outputs": {"junit-after-src-summary.json": "docs/validation/v0.5.12/step4/junit-after-src-summary.json"}
+}
