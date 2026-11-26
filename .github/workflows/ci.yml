@@ -136,9 +136,9 @@ jobs:
       # they are never linted or reformatted (see CLAUDE.md). docs/validation/v0.5.8/zenodo/
       # likewise: the published Zenodo record's scripts, stored byte for byte (2026-11-24).
       - name: Lint
-        run: uv run ruff check . --extend-exclude "calibration/*/audit" --extend-exclude "docs/validation/v0.2.1/pre-document-runs" --extend-exclude "docs/validation/v0.2.1/population" --extend-exclude "docs/validation/v0.5.8/zenodo" --extend-exclude "docs/maintenance/cache-archive-2026-11-24/a" --extend-exclude "docs/maintenance/cache-archive-2026-11-24/b"
+        run: uv run ruff check . --extend-exclude "calibration/*/audit" --extend-exclude "docs/validation/v0.2.1/pre-document-runs" --extend-exclude "docs/validation/v0.2.1/population" --extend-exclude "docs/validation/v0.5.8/zenodo" --extend-exclude "docs/maintenance/cache-archive-2026-11-24/a" --extend-exclude "docs/maintenance/cache-archive-2026-11-24/b" --extend-exclude "docs/plans/v0.5.12-correction-2-blind-review" --extend-exclude "docs/plans/v0.5.12-correction-2-blind-review-result"
       - name: Format
-        run: uv run ruff format --check . --extend-exclude "calibration/*/audit" --extend-exclude "docs/validation/v0.2.1/pre-document-runs" --extend-exclude "docs/validation/v0.2.1/population" --extend-exclude "docs/validation/v0.5.8/zenodo" --extend-exclude "docs/maintenance/cache-archive-2026-11-24/a" --extend-exclude "docs/maintenance/cache-archive-2026-11-24/b"
+        run: uv run ruff format --check . --extend-exclude "calibration/*/audit" --extend-exclude "docs/validation/v0.2.1/pre-document-runs" --extend-exclude "docs/validation/v0.2.1/population" --extend-exclude "docs/validation/v0.5.8/zenodo" --extend-exclude "docs/maintenance/cache-archive-2026-11-24/a" --extend-exclude "docs/maintenance/cache-archive-2026-11-24/b" --extend-exclude "docs/plans/v0.5.12-correction-2-blind-review" --extend-exclude "docs/plans/v0.5.12-correction-2-blind-review-result"
       # The tests that spread work over processes use REFUTE_WORKERS when it is set
       # (src/refute/core/runner.py). In CI it is every core of the runner; locally the
       # default stays os.cpu_count() - 2. The number of workers should change only the
@@ -233,9 +233,9 @@ jobs:
       # they are never linted or reformatted (see CLAUDE.md). docs/validation/v0.5.8/zenodo/
       # likewise: the published Zenodo record's scripts, stored byte for byte (2026-11-24).
       - name: Lint
-        run: uv run ruff check . --extend-exclude "calibration/*/audit" --extend-exclude "docs/validation/v0.2.1/pre-document-runs" --extend-exclude "docs/validation/v0.2.1/population" --extend-exclude "docs/validation/v0.5.8/zenodo" --extend-exclude "docs/maintenance/cache-archive-2026-11-24/a" --extend-exclude "docs/maintenance/cache-archive-2026-11-24/b"
+        run: uv run ruff check . --extend-exclude "calibration/*/audit" --extend-exclude "docs/validation/v0.2.1/pre-document-runs" --extend-exclude "docs/validation/v0.2.1/population" --extend-exclude "docs/validation/v0.5.8/zenodo" --extend-exclude "docs/maintenance/cache-archive-2026-11-24/a" --extend-exclude "docs/maintenance/cache-archive-2026-11-24/b" --extend-exclude "docs/plans/v0.5.12-correction-2-blind-review" --extend-exclude "docs/plans/v0.5.12-correction-2-blind-review-result"
       - name: Format
-        run: uv run ruff format --check . --extend-exclude "calibration/*/audit" --extend-exclude "docs/validation/v0.2.1/pre-document-runs" --extend-exclude "docs/validation/v0.2.1/population" --extend-exclude "docs/validation/v0.5.8/zenodo" --extend-exclude "docs/maintenance/cache-archive-2026-11-24/a" --extend-exclude "docs/maintenance/cache-archive-2026-11-24/b"
+        run: uv run ruff format --check . --extend-exclude "calibration/*/audit" --extend-exclude "docs/validation/v0.2.1/pre-document-runs" --extend-exclude "docs/validation/v0.2.1/population" --extend-exclude "docs/validation/v0.5.8/zenodo" --extend-exclude "docs/maintenance/cache-archive-2026-11-24/a" --extend-exclude "docs/maintenance/cache-archive-2026-11-24/b" --extend-exclude "docs/plans/v0.5.12-correction-2-blind-review" --extend-exclude "docs/plans/v0.5.12-correction-2-blind-review-result"
       # The tests that spread work over processes use REFUTE_WORKERS when it is set
       # (src/refute/core/runner.py). In CI it is every core of the runner; locally the
       # default stays os.cpu_count() - 2. The number of workers should change only the
