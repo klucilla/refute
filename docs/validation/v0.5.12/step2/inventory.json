@@ -1,0 +1,1082 @@
+{
+ "schema": "refute-v0512-step2-inventory",
+ "labels": [
+  "exploratory",
+  "method_status: not_validated"
+ ],
+ "decision": "#218 comment 7197519001, item 3; the charter, step 2",
+ "source": {
+  "commit": "f18d6f84d9ed122b9d13daf4cbf14971686e4801",
+  "path": "src/refute/packs/tess/screen_d5.py",
+  "sha256": "7cc82e6567b983cb60115f552bfa235f58fb47446e1da662f005205152974602"
+ },
+ "entry_points": [
+  "f1_box",
+  "report_only",
+  "compute_screen"
+ ],
+ "branch_count": 69,
+ "by_record": {
+  "F1": 12,
+  "F1_trap": 11,
+  "F2": 12,
+  "F3": 10,
+  "F4": 13,
+  "U1": 11
+ },
+ "branches": [
+  {
+   "id": "B01",
+   "function": "f1_box",
+   "line": 206,
+   "record": "F1",
+   "state": "not_assessed",
+   "reason_kind": "template",
+   "reason": "f'numerical failure: {type(exc).__name__}'",
+   "entry_points": [
+    "f1_box",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B02",
+   "function": "f1_box",
+   "line": 205,
+   "record": "F1",
+   "state": "not_assessed",
+   "reason_kind": "template",
+   "reason": "numerical failure: {type(exc).__name__}",
+   "entry_points": [
+    "f1_box",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B03",
+   "function": "_f1_box",
+   "line": 211,
+   "record": "F1",
+   "state": "not_assessed",
+   "reason_kind": "literal",
+   "reason": "candidate not finite or not positive",
+   "entry_points": [
+    "f1_box",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B04",
+   "function": "_f1_box",
+   "line": 215,
+   "record": "F1",
+   "state": "not_assessed",
+   "reason_kind": "expression",
+   "reason": "INVALID_UNCERTAINTY",
+   "entry_points": [
+    "f1_box",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B05",
+   "function": "_f1_box",
+   "line": 217,
+   "record": "F1",
+   "state": "not_assessed",
+   "reason_kind": "literal",
+   "reason": "fewer than 20 valid points",
+   "entry_points": [
+    "f1_box",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B06",
+   "function": "_f1_box",
+   "line": 230,
+   "record": "F1",
+   "state": "not_assessed",
+   "reason_kind": "literal",
+   "reason": "noise unavailable (baseline or bins)",
+   "entry_points": [
+    "f1_box",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B07",
+   "function": "_f1_box",
+   "line": 233,
+   "record": "F1",
+   "state": "not_assessed",
+   "reason_kind": "literal",
+   "reason": "baseline mean unavailable",
+   "entry_points": [
+    "f1_box",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B08",
+   "function": "_f1_box",
+   "line": 251,
+   "record": "F1",
+   "state": "not_assessed",
+   "reason_kind": "literal",
+   "reason": "denominator not positive",
+   "entry_points": [
+    "f1_box",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B09",
+   "function": "_f1_box",
+   "line": 254,
+   "record": "F1",
+   "state": "not_assessed",
+   "reason_kind": "literal",
+   "reason": "OE_box not finite",
+   "entry_points": [
+    "f1_box",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B10",
+   "function": "_f1_box",
+   "line": 240,
+   "record": "F1",
+   "state": "not_assessed",
+   "reason_kind": "expression",
+   "reason": "reason",
+   "entry_points": [
+    "f1_box",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B11",
+   "function": "_f1_box",
+   "line": 245,
+   "record": "F1",
+   "state": "not_assessed",
+   "reason_kind": "expression",
+   "reason": "reason",
+   "entry_points": [
+    "f1_box",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B12",
+   "function": "_f2_u1",
+   "line": 371,
+   "record": "F2",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "noise unavailable",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B13",
+   "function": "_f2_u1",
+   "line": 371,
+   "record": "U1",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "noise unavailable",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B14",
+   "function": "_f2_u1",
+   "line": 374,
+   "record": "F2",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "the MES grid exceeds the number of valid cadences",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B15",
+   "function": "_f2_u1",
+   "line": 374,
+   "record": "U1",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "the MES grid exceeds the number of valid cadences",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B16",
+   "function": "_f2_u1",
+   "line": 378,
+   "record": "F2",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "an event (pri, sec, ter or pos) has no candidate cell",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B17",
+   "function": "_f2_u1",
+   "line": 378,
+   "record": "U1",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "an event (pri, sec, ter or pos) has no candidate cell",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B18",
+   "function": "_f2_u1",
+   "line": 383,
+   "record": "F2",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "FA1 or FA2 not finite",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B19",
+   "function": "_f2_u1",
+   "line": 383,
+   "record": "U1",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "FA1 or FA2 not finite",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B20",
+   "function": "_f2_u1",
+   "line": 408,
+   "record": "F2",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "T/P above 0.1",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B21",
+   "function": "_f1_trap",
+   "line": 564,
+   "record": "F1_trap",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "the overall trapezoid did not converge",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B22",
+   "function": "_f1_trap",
+   "line": 570,
+   "record": "F1_trap",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "a parity fit or its uncertainties were refused",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B23",
+   "function": "_f1_trap",
+   "line": 575,
+   "record": "F1_trap",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "a denominator is not positive",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B24",
+   "function": "_f1_trap",
+   "line": 578,
+   "record": "F1_trap",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "a statistic is not finite",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B25",
+   "function": "_f3",
+   "line": 610,
+   "record": "F3",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "no converged trapezoid with 0 < dF < 1",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B26",
+   "function": "_f3",
+   "line": 613,
+   "record": "F3",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "no reliable stellar radius (legacy rule)",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B27",
+   "function": "_f3",
+   "line": 616,
+   "record": "F3",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "Rp not finite",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B28",
+   "function": "_f4",
+   "line": 624,
+   "record": "F4",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "no converged trapezoid with 0 < dF < 1",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B29",
+   "function": "_f4",
+   "line": 627,
+   "record": "F4",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "no flat bottom (q_in = 0.5)",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B30",
+   "function": "_f4",
+   "line": 631,
+   "record": "F4",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "no cadence inside the flat interval",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B31",
+   "function": "_f4",
+   "line": 634,
+   "record": "F4",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "Eq. 7 ratio undefined",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B32",
+   "function": "_f4",
+   "line": 638,
+   "record": "F4",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "Eq. 7 denominator not positive",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B33",
+   "function": "_f4",
+   "line": 641,
+   "record": "F4",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "Eq. 7 bracket negative",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B34",
+   "function": "report_only",
+   "line": 677,
+   "record": "F2",
+   "state": "unavailable",
+   "reason_kind": "template",
+   "reason": "numerical failure: {type(exc).__name__}",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B35",
+   "function": "report_only",
+   "line": 677,
+   "record": "U1",
+   "state": "unavailable",
+   "reason_kind": "template",
+   "reason": "numerical failure: {type(exc).__name__}",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B36",
+   "function": "report_only",
+   "line": 696,
+   "record": "F1_trap",
+   "state": "unavailable",
+   "reason_kind": "template",
+   "reason": "numerical failure: {type(exc).__name__}",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B37",
+   "function": "report_only",
+   "line": 684,
+   "record": "F2",
+   "state": "unavailable",
+   "reason_kind": "template",
+   "reason": "numerical failure: {type(exc).__name__}",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B38",
+   "function": "report_only",
+   "line": 684,
+   "record": "U1",
+   "state": "unavailable",
+   "reason_kind": "template",
+   "reason": "numerical failure: {type(exc).__name__}",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B39",
+   "function": "report_only",
+   "line": 708,
+   "record": "F1_trap",
+   "state": "unavailable",
+   "reason_kind": "template",
+   "reason": "numerical failure: {type(exc).__name__}",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B40",
+   "function": "report_only",
+   "line": 710,
+   "record": "F3",
+   "state": "unavailable",
+   "reason_kind": "template",
+   "reason": "numerical failure: {type(exc).__name__}",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B41",
+   "function": "report_only",
+   "line": 711,
+   "record": "F4",
+   "state": "unavailable",
+   "reason_kind": "template",
+   "reason": "numerical failure: {type(exc).__name__}",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B42",
+   "function": "report_only",
+   "line": 667,
+   "record": "F1_trap",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "candidate or curve not usable",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B43",
+   "function": "report_only",
+   "line": 667,
+   "record": "F2",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "candidate or curve not usable",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B44",
+   "function": "report_only",
+   "line": 667,
+   "record": "F3",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "candidate or curve not usable",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B45",
+   "function": "report_only",
+   "line": 667,
+   "record": "F4",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "candidate or curve not usable",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B46",
+   "function": "report_only",
+   "line": 667,
+   "record": "U1",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "candidate or curve not usable",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B47",
+   "function": "report_only",
+   "line": 669,
+   "record": "F1_trap",
+   "state": "unavailable",
+   "reason_kind": "expression",
+   "reason": "INVALID_UNCERTAINTY",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B48",
+   "function": "report_only",
+   "line": 669,
+   "record": "F2",
+   "state": "unavailable",
+   "reason_kind": "expression",
+   "reason": "INVALID_UNCERTAINTY",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B49",
+   "function": "report_only",
+   "line": 669,
+   "record": "F3",
+   "state": "unavailable",
+   "reason_kind": "expression",
+   "reason": "INVALID_UNCERTAINTY",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B50",
+   "function": "report_only",
+   "line": 669,
+   "record": "F4",
+   "state": "unavailable",
+   "reason_kind": "expression",
+   "reason": "INVALID_UNCERTAINTY",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B51",
+   "function": "report_only",
+   "line": 669,
+   "record": "U1",
+   "state": "unavailable",
+   "reason_kind": "expression",
+   "reason": "INVALID_UNCERTAINTY",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B52",
+   "function": "report_only",
+   "line": 671,
+   "record": "F1_trap",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "candidate or curve not usable",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B53",
+   "function": "report_only",
+   "line": 671,
+   "record": "F2",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "candidate or curve not usable",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B54",
+   "function": "report_only",
+   "line": 671,
+   "record": "F3",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "candidate or curve not usable",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B55",
+   "function": "report_only",
+   "line": 671,
+   "record": "F4",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "candidate or curve not usable",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B56",
+   "function": "report_only",
+   "line": 671,
+   "record": "U1",
+   "state": "unavailable",
+   "reason_kind": "literal",
+   "reason": "candidate or curve not usable",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B57",
+   "function": "report_only",
+   "line": 702,
+   "record": "F3",
+   "state": "unavailable",
+   "reason_kind": "expression",
+   "reason": "why",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B58",
+   "function": "report_only",
+   "line": 703,
+   "record": "F4",
+   "state": "unavailable",
+   "reason_kind": "expression",
+   "reason": "why",
+   "entry_points": [
+    "report_only",
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B59",
+   "function": "compute_screen",
+   "line": 750,
+   "record": "F1",
+   "state": "not_assessed",
+   "reason_kind": "expression",
+   "reason": "why",
+   "entry_points": [
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B60",
+   "function": "compute_screen",
+   "line": 751,
+   "record": "F1_trap",
+   "state": "unavailable",
+   "reason_kind": "expression",
+   "reason": "why",
+   "entry_points": [
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B61",
+   "function": "compute_screen",
+   "line": 751,
+   "record": "F2",
+   "state": "unavailable",
+   "reason_kind": "expression",
+   "reason": "why",
+   "entry_points": [
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B62",
+   "function": "compute_screen",
+   "line": 751,
+   "record": "F3",
+   "state": "unavailable",
+   "reason_kind": "expression",
+   "reason": "why",
+   "entry_points": [
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B63",
+   "function": "compute_screen",
+   "line": 751,
+   "record": "F4",
+   "state": "unavailable",
+   "reason_kind": "expression",
+   "reason": "why",
+   "entry_points": [
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B64",
+   "function": "compute_screen",
+   "line": 751,
+   "record": "U1",
+   "state": "unavailable",
+   "reason_kind": "expression",
+   "reason": "why",
+   "entry_points": [
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B65",
+   "function": "compute_screen",
+   "line": 767,
+   "record": "F1_trap",
+   "state": "unavailable",
+   "reason_kind": "expression",
+   "reason": "why",
+   "entry_points": [
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B66",
+   "function": "compute_screen",
+   "line": 767,
+   "record": "F2",
+   "state": "unavailable",
+   "reason_kind": "expression",
+   "reason": "why",
+   "entry_points": [
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B67",
+   "function": "compute_screen",
+   "line": 767,
+   "record": "F3",
+   "state": "unavailable",
+   "reason_kind": "expression",
+   "reason": "why",
+   "entry_points": [
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B68",
+   "function": "compute_screen",
+   "line": 767,
+   "record": "F4",
+   "state": "unavailable",
+   "reason_kind": "expression",
+   "reason": "why",
+   "entry_points": [
+    "compute_screen"
+   ]
+  },
+  {
+   "id": "B69",
+   "function": "compute_screen",
+   "line": 767,
+   "record": "U1",
+   "state": "unavailable",
+   "reason_kind": "expression",
+   "reason": "why",
+   "entry_points": [
+    "compute_screen"
+   ]
+  }
+ ],
+ "causes": [
+  {
+   "function": "_wmean",
+   "line": 80,
+   "returns": "None"
+  },
+  {
+   "function": "_wmean",
+   "line": 83,
+   "returns": "None"
+  },
+  {
+   "function": "_wstd",
+   "line": 91,
+   "returns": "None"
+  },
+  {
+   "function": "_noise",
+   "line": 148,
+   "returns": "None,..."
+  },
+  {
+   "function": "_noise",
+   "line": 151,
+   "returns": "None,..."
+  },
+  {
+   "function": "_noise",
+   "line": 166,
+   "returns": "None,..."
+  },
+  {
+   "function": "_noise",
+   "line": 170,
+   "returns": "None,..."
+  },
+  {
+   "function": "_noise",
+   "line": 174,
+   "returns": "None,..."
+  },
+  {
+   "function": "_noise",
+   "line": 161,
+   "returns": "None,..."
+  },
+  {
+   "function": "_pink",
+   "line": 180,
+   "returns": "None"
+  },
+  {
+   "function": "_mes",
+   "line": 298,
+   "returns": "None"
+  },
+  {
+   "function": "_events",
+   "line": 342,
+   "returns": "None"
+  },
+  {
+   "function": "_fit",
+   "line": 458,
+   "returns": "None"
+  },
+  {
+   "function": "_fit",
+   "line": 460,
+   "returns": "None"
+  },
+  {
+   "function": "_fit",
+   "line": 476,
+   "returns": "None"
+  },
+  {
+   "function": "_fit",
+   "line": 474,
+   "returns": "None"
+  },
+  {
+   "function": "_uncertainties",
+   "line": 483,
+   "returns": "None"
+  },
+  {
+   "function": "_uncertainties",
+   "line": 486,
+   "returns": "None"
+  },
+  {
+   "function": "_uncertainties",
+   "line": 495,
+   "returns": "None"
+  },
+  {
+   "function": "_uncertainties",
+   "line": 489,
+   "returns": "None"
+  },
+  {
+   "function": "_uncertainties",
+   "line": 492,
+   "returns": "None"
+  },
+  {
+   "function": "_trapezoid",
+   "line": 506,
+   "returns": "None,..."
+  },
+  {
+   "function": "_trapezoid",
+   "line": 525,
+   "returns": "None,..."
+  },
+  {
+   "function": "_trapezoid",
+   "line": 534,
+   "returns": "None,..."
+  },
+  {
+   "function": "_parity_fit",
+   "line": 545,
+   "returns": "None,..."
+  },
+  {
+   "function": "_parity_fit",
+   "line": 555,
+   "returns": "None,..."
+  },
+  {
+   "function": "_parity_fit",
+   "line": 558,
+   "returns": "None,..."
+  },
+  {
+   "function": "_reliable_radius",
+   "line": 586,
+   "returns": "None"
+  },
+  {
+   "function": "_reliable_radius",
+   "line": 589,
+   "returns": "None"
+  },
+  {
+   "function": "_reliable_radius",
+   "line": 592,
+   "returns": "None"
+  },
+  {
+   "function": "_reliable_radius",
+   "line": 594,
+   "returns": "None"
+  },
+  {
+   "function": "_delta_f",
+   "line": 600,
+   "returns": "None"
+  },
+  {
+   "function": "report_only",
+   "line": 693,
+   "returns": "None,..."
+  }
+ ]
+}

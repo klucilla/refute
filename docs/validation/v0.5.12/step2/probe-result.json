@@ -1,0 +1,2640 @@
+{
+ "schema": "refute-v0512-step2-probe",
+ "labels": [
+  "exploratory",
+  "method_status: not_validated"
+ ],
+ "head": "6f9925e205cc58668e753cb567ac41deac111c12",
+ "screen_d5_sha256": "7cc82e6567b983cb60115f552bfa235f58fb47446e1da662f005205152974602",
+ "cases_sha256": "0bb30fac75e45a64628cb3b3f831020d500daa87de7326e74ea7617943a3b5b5",
+ "assertions": 325,
+ "passed": 321,
+ "documented_failures": 2,
+ "documented_but_passed": [],
+ "undocumented_failures": 2,
+ "rows": [
+  {
+   "case": "C01",
+   "assertion": "F1.state",
+   "ok": true,
+   "got": "pass",
+   "expected": "pass",
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F1.reason_prefix",
+   "ok": true,
+   "got": "OE_box 0.301 vs 3.0",
+   "expected": "OE_box ",
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F2.state",
+   "ok": true,
+   "got": "computed",
+   "expected": "computed",
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F2.reason",
+   "ok": true,
+   "got": "model shift MS4 to MS6",
+   "expected": "model shift MS4 to MS6",
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F2.coverage",
+   "ok": true,
+   "got": 143,
+   "expected": 143,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F2.would_be_significant",
+   "ok": true,
+   "got": false,
+   "expected": false,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F2.exception_first_condition",
+   "ok": true,
+   "got": true,
+   "expected": true,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F2.values.MES_pri",
+   "ok": true,
+   "got": 204.9591249213452,
+   "expected": 204.9591249213452,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F2.values.phase_pri",
+   "ok": true,
+   "got": 0.0,
+   "expected": 0.0,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F2.values.MES_sec",
+   "ok": true,
+   "got": 2.7931773816804486,
+   "expected": 2.7931773816804486,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F2.values.phase_sec",
+   "ok": true,
+   "got": 0.32376126126126126,
+   "expected": 0.32376126126126126,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F2.values.MES_ter",
+   "ok": true,
+   "got": 2.715038228717275,
+   "expected": 2.715038228717275,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F2.values.phase_ter",
+   "ok": true,
+   "got": 0.4434121621621621,
+   "expected": 0.4434121621621621,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F2.values.MES_pos",
+   "ok": true,
+   "got": 2.382034546684882,
+   "expected": 2.382034546684882,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F2.values.phase_pos",
+   "ok": true,
+   "got": 0.6756756756756757,
+   "expected": 0.6756756756756757,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F2.values.F_red",
+   "ok": true,
+   "got": 1.0982258280753991,
+   "expected": 1.0982258280753991,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F2.values.FA1",
+   "ok": true,
+   "got": 2.195145626868884,
+   "expected": 2.195145626868884,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F2.values.FA2",
+   "ok": true,
+   "got": 2.195145626868884,
+   "expected": 2.195145626868884,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F2.values.delta_pri",
+   "ok": true,
+   "got": 0.0019956521083596135,
+   "expected": 0.0019956521083596135,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F2.values.delta_sec",
+   "ok": true,
+   "got": 2.7459468752599747e-05,
+   "expected": 2.7459468752599747e-05,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F2.values.MS4",
+   "ok": true,
+   "got": 0.34820867265199906,
+   "expected": 0.34820867265199906,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F2.values.MS5",
+   "ok": true,
+   "got": -2.1170064739057106,
+   "expected": -2.1170064739057106,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F2.values.MS6",
+   "ok": true,
+   "got": -1.7840027918733172,
+   "expected": -1.7840027918733172,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "U1.state",
+   "ok": true,
+   "got": "computed",
+   "expected": "computed",
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "U1.reason",
+   "ok": true,
+   "got": "model shift MS1 to MS3",
+   "expected": "model shift MS1 to MS3",
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "U1.coverage",
+   "ok": true,
+   "got": 143,
+   "expected": 143,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "U1.values.MES_pri",
+   "ok": true,
+   "got": 204.9591249213452,
+   "expected": 204.9591249213452,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "U1.values.phase_pri",
+   "ok": true,
+   "got": 0.0,
+   "expected": 0.0,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "U1.values.MES_sec",
+   "ok": true,
+   "got": 2.7931773816804486,
+   "expected": 2.7931773816804486,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "U1.values.phase_sec",
+   "ok": true,
+   "got": 0.32376126126126126,
+   "expected": 0.32376126126126126,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "U1.values.MES_ter",
+   "ok": true,
+   "got": 2.715038228717275,
+   "expected": 2.715038228717275,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "U1.values.phase_ter",
+   "ok": true,
+   "got": 0.4434121621621621,
+   "expected": 0.4434121621621621,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "U1.values.MES_pos",
+   "ok": true,
+   "got": 2.382034546684882,
+   "expected": 2.382034546684882,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "U1.values.phase_pos",
+   "ok": true,
+   "got": 0.6756756756756757,
+   "expected": 0.6756756756756757,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "U1.values.F_red",
+   "ok": true,
+   "got": 1.0982258280753991,
+   "expected": 1.0982258280753991,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "U1.values.FA1",
+   "ok": true,
+   "got": 2.195145626868884,
+   "expected": 2.195145626868884,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "U1.values.FA2",
+   "ok": true,
+   "got": 2.195145626868884,
+   "expected": 2.195145626868884,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "U1.values.MS1",
+   "ok": true,
+   "got": 184.4323399791914,
+   "expected": 184.4323399791914,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "U1.values.MS2",
+   "ok": true,
+   "got": 200.04894106575904,
+   "expected": 200.04894106575904,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "U1.values.MS3",
+   "ok": true,
+   "got": 200.38194474779144,
+   "expected": 200.38194474779144,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F1_trap.state",
+   "ok": true,
+   "got": "computed",
+   "expected": "computed",
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F1_trap.values.fit_cadences_odd",
+   "ok": true,
+   "got": 182,
+   "expected": 182,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F1_trap.values.fit_cadences_even",
+   "ok": true,
+   "got": 241,
+   "expected": 241,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F1_trap.values.OE_trap",
+   "ok": true,
+   "got": 0.4262192236283287,
+   "expected": 0.4262192236283287,
+   "outcome": "pass"
+  },
+  {
+   "case": "C01",
+   "assertion": "F1_trap.values.OE_trap_T",
+   "ok": true,
+   "got": 0.044706908015055676,
+   "expected": 0.044706908015055676,
+   "outcome": "pass"
+  },
+  {
+   "case": "C02",
+   "assertion": "F1.state",
+   "ok": true,
+   "got": "fail",
+   "expected": "fail",
+   "outcome": "pass"
+  },
+  {
+   "case": "C02",
+   "assertion": "F1.reason_prefix",
+   "ok": true,
+   "got": "OE_box 253.859 vs 3.0",
+   "expected": "OE_box ",
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "F2.state",
+   "ok": true,
+   "got": "computed",
+   "expected": "computed",
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "F2.reason",
+   "ok": true,
+   "got": "model shift MS4 to MS6",
+   "expected": "model shift MS4 to MS6",
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "F2.coverage",
+   "ok": true,
+   "got": 143,
+   "expected": 143,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "F2.would_be_significant",
+   "ok": true,
+   "got": true,
+   "expected": true,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "F2.exception_first_condition",
+   "ok": true,
+   "got": false,
+   "expected": false,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "F2.values.MES_pri",
+   "ok": true,
+   "got": 49.1252910595903,
+   "expected": 49.1252910595903,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "F2.values.phase_pri",
+   "ok": true,
+   "got": 0.0,
+   "expected": 0.0,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "F2.values.MES_sec",
+   "ok": true,
+   "got": 17.815581123885675,
+   "expected": 17.815581123885675,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "F2.values.phase_sec",
+   "ok": true,
+   "got": 0.4293355855855856,
+   "expected": 0.4293355855855856,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "F2.values.MES_ter",
+   "ok": true,
+   "got": -0.5216991112828806,
+   "expected": -0.5216991112828806,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "F2.values.phase_ter",
+   "ok": true,
+   "got": 0.32376126126126126,
+   "expected": 0.32376126126126126,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "F2.values.MES_pos",
+   "ok": true,
+   "got": 0.7123299860317267,
+   "expected": 0.7123299860317267,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "F2.values.phase_pos",
+   "ok": true,
+   "got": 0.5982545045045046,
+   "expected": 0.5982545045045046,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "F2.values.F_red",
+   "ok": true,
+   "got": 0.04322523705422929,
+   "expected": 0.04322523705422929,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "F2.values.FA1",
+   "ok": true,
+   "got": 2.195145626868884,
+   "expected": 2.195145626868884,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "F2.values.FA2",
+   "ok": true,
+   "got": 2.195145626868884,
+   "expected": 2.195145626868884,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "F2.values.delta_pri",
+   "ok": true,
+   "got": 0.009896169147435852,
+   "expected": 0.009896169147435852,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "F2.values.delta_sec",
+   "ok": true,
+   "got": 0.0035889050315849325,
+   "expected": 0.0035889050315849325,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "F2.values.MS4",
+   "ok": true,
+   "got": 409.9617871745568,
+   "expected": 409.9617871745568,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "F2.values.MS5",
+   "ok": true,
+   "got": 16.14213460829967,
+   "expected": 16.14213460829967,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "F2.values.MS6",
+   "ok": true,
+   "got": 14.908105510985065,
+   "expected": 14.908105510985065,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "U1.state",
+   "ok": true,
+   "got": "computed",
+   "expected": "computed",
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "U1.reason",
+   "ok": true,
+   "got": "model shift MS1 to MS3",
+   "expected": "model shift MS1 to MS3",
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "U1.coverage",
+   "ok": true,
+   "got": 143,
+   "expected": 143,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "U1.values.MES_pri",
+   "ok": true,
+   "got": 49.1252910595903,
+   "expected": 49.1252910595903,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "U1.values.phase_pri",
+   "ok": true,
+   "got": 0.0,
+   "expected": 0.0,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "U1.values.MES_sec",
+   "ok": true,
+   "got": 17.815581123885675,
+   "expected": 17.815581123885675,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "U1.values.phase_sec",
+   "ok": true,
+   "got": 0.4293355855855856,
+   "expected": 0.4293355855855856,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "U1.values.MES_ter",
+   "ok": true,
+   "got": -0.5216991112828806,
+   "expected": -0.5216991112828806,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "U1.values.phase_ter",
+   "ok": true,
+   "got": 0.32376126126126126,
+   "expected": 0.32376126126126126,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "U1.values.MES_pos",
+   "ok": true,
+   "got": 0.7123299860317267,
+   "expected": 0.7123299860317267,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "U1.values.phase_pos",
+   "ok": true,
+   "got": 0.5982545045045046,
+   "expected": 0.5982545045045046,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "U1.values.F_red",
+   "ok": true,
+   "got": 0.04322523705422929,
+   "expected": 0.04322523705422929,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "U1.values.FA1",
+   "ok": true,
+   "got": 2.195145626868884,
+   "expected": 2.195145626868884,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "U1.values.FA2",
+   "ok": true,
+   "got": 2.195145626868884,
+   "expected": 2.195145626868884,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "U1.values.MS1",
+   "ok": true,
+   "got": 1134.300439069612,
+   "expected": 1134.300439069612,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "U1.values.MS2",
+   "ok": true,
+   "got": 47.451844544004295,
+   "expected": 47.451844544004295,
+   "outcome": "pass"
+  },
+  {
+   "case": "C03",
+   "assertion": "U1.values.MS3",
+   "ok": true,
+   "got": 46.21781544668969,
+   "expected": 46.21781544668969,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "F2.state",
+   "ok": true,
+   "got": "computed",
+   "expected": "computed",
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "F2.reason",
+   "ok": true,
+   "got": "model shift MS4 to MS6",
+   "expected": "model shift MS4 to MS6",
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "F2.coverage",
+   "ok": true,
+   "got": 143,
+   "expected": 143,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "F2.would_be_significant",
+   "ok": true,
+   "got": true,
+   "expected": true,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "F2.exception_first_condition",
+   "ok": true,
+   "got": true,
+   "expected": true,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "F2.values.MES_pri",
+   "ok": true,
+   "got": 376.57780638986213,
+   "expected": 376.57780638986213,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "F2.values.phase_pri",
+   "ok": true,
+   "got": 0.0,
+   "expected": 0.0,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "F2.values.MES_sec",
+   "ok": true,
+   "got": 18.586997927711206,
+   "expected": 18.586997927711206,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "F2.values.phase_sec",
+   "ok": true,
+   "got": 0.49971846846846846,
+   "expected": 0.49971846846846846,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "F2.values.MES_ter",
+   "ok": true,
+   "got": 0.12530295188531523,
+   "expected": 0.12530295188531523,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "F2.values.phase_ter",
+   "ok": true,
+   "got": 0.40822072072072074,
+   "expected": 0.40822072072072074,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "F2.values.MES_pos",
+   "ok": true,
+   "got": 1.4803155430834685,
+   "expected": 1.4803155430834685,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "F2.values.phase_pos",
+   "ok": true,
+   "got": 0.8375563063063063,
+   "expected": 0.8375563063063063,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "F2.values.F_red",
+   "ok": true,
+   "got": 0.3371235032748823,
+   "expected": 0.3371235032748823,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "F2.values.FA1",
+   "ok": true,
+   "got": 2.195145626868884,
+   "expected": 2.195145626868884,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "F2.values.FA2",
+   "ok": true,
+   "got": 2.195145626868884,
+   "expected": 2.195145626868884,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "F2.values.delta_pri",
+   "ok": true,
+   "got": 0.009987118695483077,
+   "expected": 0.009987118695483077,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "F2.values.delta_sec",
+   "ok": true,
+   "got": 0.0004929407717261247,
+   "expected": 0.0004929407717261247,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "F2.values.MS4",
+   "ok": true,
+   "got": 52.93894543220456,
+   "expected": 52.93894543220456,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "F2.values.MS5",
+   "ok": true,
+   "got": 16.266549348957007,
+   "expected": 16.266549348957007,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "F2.values.MS6",
+   "ok": true,
+   "got": 14.911536757758855,
+   "expected": 14.911536757758855,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "U1.state",
+   "ok": true,
+   "got": "computed",
+   "expected": "computed",
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "U1.reason",
+   "ok": true,
+   "got": "model shift MS1 to MS3",
+   "expected": "model shift MS1 to MS3",
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "U1.coverage",
+   "ok": true,
+   "got": 143,
+   "expected": 143,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "U1.values.MES_pri",
+   "ok": true,
+   "got": 376.57780638986213,
+   "expected": 376.57780638986213,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "U1.values.phase_pri",
+   "ok": true,
+   "got": 0.0,
+   "expected": 0.0,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "U1.values.MES_sec",
+   "ok": true,
+   "got": 18.586997927711206,
+   "expected": 18.586997927711206,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "U1.values.phase_sec",
+   "ok": true,
+   "got": 0.49971846846846846,
+   "expected": 0.49971846846846846,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "U1.values.MES_ter",
+   "ok": true,
+   "got": 0.12530295188531523,
+   "expected": 0.12530295188531523,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "U1.values.phase_ter",
+   "ok": true,
+   "got": 0.40822072072072074,
+   "expected": 0.40822072072072074,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "U1.values.MES_pos",
+   "ok": true,
+   "got": 1.4803155430834685,
+   "expected": 1.4803155430834685,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "U1.values.phase_pos",
+   "ok": true,
+   "got": 0.8375563063063063,
+   "expected": 0.8375563063063063,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "U1.values.F_red",
+   "ok": true,
+   "got": 0.3371235032748823,
+   "expected": 0.3371235032748823,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "U1.values.FA1",
+   "ok": true,
+   "got": 2.195145626868884,
+   "expected": 2.195145626868884,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "U1.values.FA2",
+   "ok": true,
+   "got": 2.195145626868884,
+   "expected": 2.195145626868884,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "U1.values.MS1",
+   "ok": true,
+   "got": 1114.8370480105168,
+   "expected": 1114.8370480105168,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "U1.values.MS2",
+   "ok": true,
+   "got": 374.2573578111079,
+   "expected": 374.2573578111079,
+   "outcome": "pass"
+  },
+  {
+   "case": "C04",
+   "assertion": "U1.values.MS3",
+   "ok": true,
+   "got": 372.90234521990976,
+   "expected": 372.90234521990976,
+   "outcome": "pass"
+  },
+  {
+   "case": "C05",
+   "assertion": "F1.state",
+   "ok": false,
+   "got": null,
+   "expected": "fail",
+   "outcome": "UNDOCUMENTED FAILURE"
+  },
+  {
+   "case": "C05",
+   "assertion": "F1.reason_prefix",
+   "ok": false,
+   "got": "",
+   "expected": "OE_box ",
+   "outcome": "UNDOCUMENTED FAILURE"
+  },
+  {
+   "case": "C05",
+   "assertion": "F4.state",
+   "ok": true,
+   "got": "computed",
+   "expected": "computed",
+   "outcome": "pass"
+  },
+  {
+   "case": "C05",
+   "assertion": "F4.values.dF",
+   "ok": true,
+   "got": 0.0499999641016295,
+   "expected": 0.05,
+   "outcome": "pass"
+  },
+  {
+   "case": "C05",
+   "assertion": "F4.values.b",
+   "ok": true,
+   "got": 0.7705354581553109,
+   "expected": 0.7705355202129706,
+   "outcome": "pass"
+  },
+  {
+   "case": "C05",
+   "assertion": "F4.values.V",
+   "ok": true,
+   "got": 0.9941421756340787,
+   "expected": 0.9941423179629495,
+   "outcome": "pass"
+  },
+  {
+   "case": "C06",
+   "assertion": "F1.state",
+   "ok": true,
+   "got": "pass",
+   "expected": "pass",
+   "outcome": "pass"
+  },
+  {
+   "case": "C06",
+   "assertion": "F1.reason_prefix",
+   "ok": true,
+   "got": "OE_box 0.371 vs 3.0",
+   "expected": "OE_box ",
+   "outcome": "pass"
+  },
+  {
+   "case": "C06",
+   "assertion": "F3.state",
+   "ok": true,
+   "got": "computed",
+   "expected": "computed",
+   "outcome": "pass"
+  },
+  {
+   "case": "C06",
+   "assertion": "F3.paper_threshold_crossed",
+   "ok": true,
+   "got": true,
+   "expected": true,
+   "outcome": "pass"
+  },
+  {
+   "case": "C06",
+   "assertion": "F3.values.dF",
+   "ok": true,
+   "got": 0.0400035140101085,
+   "expected": 0.04,
+   "outcome": "pass"
+  },
+  {
+   "case": "C06",
+   "assertion": "F3.values.R_star_rsun",
+   "ok": true,
+   "got": 2.0,
+   "expected": 2.0,
+   "outcome": "pass"
+  },
+  {
+   "case": "C06",
+   "assertion": "F3.values.Rp_earth",
+   "ok": true,
+   "got": 43.63246471766124,
+   "expected": 43.63054828240385,
+   "outcome": "pass"
+  },
+  {
+   "case": "C07",
+   "assertion": "F1.state",
+   "ok": true,
+   "got": "pass",
+   "expected": "pass",
+   "outcome": "pass"
+  },
+  {
+   "case": "C07",
+   "assertion": "F1.reason_prefix",
+   "ok": true,
+   "got": "OE_box 0.371 vs 3.0",
+   "expected": "OE_box ",
+   "outcome": "pass"
+  },
+  {
+   "case": "C07",
+   "assertion": "F3.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "C07",
+   "assertion": "F3.reason",
+   "ok": true,
+   "got": "no reliable stellar radius (legacy rule)",
+   "expected": "no reliable stellar radius (legacy rule)",
+   "outcome": "pass"
+  },
+  {
+   "case": "C07",
+   "assertion": "isolation.core",
+   "ok": true,
+   "got": {
+    "F1": {
+     "state": "pass",
+     "reason": "OE_box 0.371 vs 3.0",
+     "coverage": 7,
+     "coverage_unit": "parity epochs with data",
+     "metrics": {
+      "dropped": 0,
+      "valid": 3888,
+      "oe_box": 0.3711897518162162,
+      "delta_odd": 0.03798050810555109,
+      "delta_even": 0.03797687589191101,
+      "sigma_odd": 7.397013024271028e-06,
+      "sigma_even": 6.406001191143069e-06,
+      "n_odd": 45,
+      "n_even": 60,
+      "epochs_odd": 3,
+      "epochs_even": 4,
+      "sigma_w": 4.962067185816396e-05,
+      "sigma_r": 0.0
+     },
+     "threshold": 3.0
+    }
+   },
+   "expected": "C06",
+   "outcome": "pass"
+  },
+  {
+   "case": "C07",
+   "assertion": "isolation.outcome",
+   "ok": true,
+   "got": "retained",
+   "expected": "retained",
+   "outcome": "pass"
+  },
+  {
+   "case": "C07",
+   "assertion": "isolation.gate_unchanged",
+   "ok": true,
+   "got": true,
+   "expected": true,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F1.state",
+   "ok": true,
+   "got": "pass",
+   "expected": "pass",
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F1.reason_prefix",
+   "ok": true,
+   "got": "OE_box 1.379 vs 3.0",
+   "expected": "OE_box ",
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F2.state",
+   "ok": true,
+   "got": "computed",
+   "expected": "computed",
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F2.reason",
+   "ok": true,
+   "got": "model shift MS4 to MS6",
+   "expected": "model shift MS4 to MS6",
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F2.coverage",
+   "ok": true,
+   "got": 143,
+   "expected": 143,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F2.would_be_significant",
+   "ok": true,
+   "got": false,
+   "expected": false,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F2.exception_first_condition",
+   "ok": true,
+   "got": false,
+   "expected": false,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F2.values.MES_pri",
+   "ok": true,
+   "got": 1.9529013113893627,
+   "expected": 1.9529013113893627,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F2.values.phase_pri",
+   "ok": true,
+   "got": 0.41525900900900903,
+   "expected": 0.41525900900900903,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F2.values.MES_sec",
+   "ok": true,
+   "got": 1.7900748460863831,
+   "expected": 1.7900748460863831,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F2.values.phase_sec",
+   "ok": true,
+   "got": 0.5701013513513513,
+   "expected": 0.5701013513513513,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F2.values.MES_ter",
+   "ok": true,
+   "got": 1.7514081407439006,
+   "expected": 1.7514081407439006,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F2.values.phase_ter",
+   "ok": true,
+   "got": 0.23226351351351351,
+   "expected": 0.23226351351351351,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F2.values.MES_pos",
+   "ok": true,
+   "got": 2.1172075292955648,
+   "expected": 2.1172075292955648,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F2.values.phase_pos",
+   "ok": true,
+   "got": 0.07038288288288289,
+   "expected": 0.07038288288288289,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F2.values.F_red",
+   "ok": true,
+   "got": 0.8095734065476583,
+   "expected": 0.8095734065476583,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F2.values.FA1",
+   "ok": true,
+   "got": 2.195145626868884,
+   "expected": 2.195145626868884,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F2.values.FA2",
+   "ok": true,
+   "got": 2.195145626868884,
+   "expected": 2.195145626868884,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F2.values.delta_pri",
+   "ok": true,
+   "got": 2.0528025429511487e-05,
+   "expected": 2.0528025429511487e-05,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F2.values.delta_sec",
+   "ok": true,
+   "got": 1.8816466427096223e-05,
+   "expected": 1.8816466427096223e-05,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F2.values.MS4",
+   "ok": true,
+   "got": 0.01598783133099868,
+   "expected": 0.01598783133099868,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F2.values.MS5",
+   "ok": true,
+   "got": -2.1564789215264017,
+   "expected": -2.1564789215264017,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "F2.values.MS6",
+   "ok": true,
+   "got": -2.5222783100780655,
+   "expected": -2.5222783100780655,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "U1.state",
+   "ok": true,
+   "got": "computed",
+   "expected": "computed",
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "U1.reason",
+   "ok": true,
+   "got": "model shift MS1 to MS3",
+   "expected": "model shift MS1 to MS3",
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "U1.coverage",
+   "ok": true,
+   "got": 143,
+   "expected": 143,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "U1.values.MES_pri",
+   "ok": true,
+   "got": 1.9529013113893627,
+   "expected": 1.9529013113893627,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "U1.values.phase_pri",
+   "ok": true,
+   "got": 0.41525900900900903,
+   "expected": 0.41525900900900903,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "U1.values.MES_sec",
+   "ok": true,
+   "got": 1.7900748460863831,
+   "expected": 1.7900748460863831,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "U1.values.phase_sec",
+   "ok": true,
+   "got": 0.5701013513513513,
+   "expected": 0.5701013513513513,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "U1.values.MES_ter",
+   "ok": true,
+   "got": 1.7514081407439006,
+   "expected": 1.7514081407439006,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "U1.values.phase_ter",
+   "ok": true,
+   "got": 0.23226351351351351,
+   "expected": 0.23226351351351351,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "U1.values.MES_pos",
+   "ok": true,
+   "got": 2.1172075292955648,
+   "expected": 2.1172075292955648,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "U1.values.phase_pos",
+   "ok": true,
+   "got": 0.07038288288288289,
+   "expected": 0.07038288288288289,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "U1.values.F_red",
+   "ok": true,
+   "got": 0.8095734065476583,
+   "expected": 0.8095734065476583,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "U1.values.FA1",
+   "ok": true,
+   "got": 2.195145626868884,
+   "expected": 2.195145626868884,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "U1.values.FA2",
+   "ok": true,
+   "got": 2.195145626868884,
+   "expected": 2.195145626868884,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "U1.values.MS1",
+   "ok": true,
+   "got": 0.21711408373266305,
+   "expected": 0.21711408373266305,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "U1.values.MS2",
+   "ok": true,
+   "got": -1.993652456223422,
+   "expected": -1.993652456223422,
+   "outcome": "pass"
+  },
+  {
+   "case": "C08",
+   "assertion": "U1.values.MS3",
+   "ok": true,
+   "got": -2.3594518447750863,
+   "expected": -2.3594518447750863,
+   "outcome": "pass"
+  },
+  {
+   "case": "N01",
+   "assertion": "F1.state",
+   "ok": true,
+   "got": "not_assessed",
+   "expected": "not_assessed",
+   "outcome": "pass"
+  },
+  {
+   "case": "N01",
+   "assertion": "F1.reason",
+   "ok": true,
+   "got": "numerical failure: ValueError",
+   "expected": "numerical failure: ValueError",
+   "outcome": "pass"
+  },
+  {
+   "case": "N02",
+   "assertion": "F1.state",
+   "ok": true,
+   "got": "not_assessed",
+   "expected": "not_assessed",
+   "outcome": "pass"
+  },
+  {
+   "case": "N02",
+   "assertion": "F1.reason",
+   "ok": true,
+   "got": "candidate not finite or not positive",
+   "expected": "candidate not finite or not positive",
+   "outcome": "pass"
+  },
+  {
+   "case": "N03",
+   "assertion": "F1.state",
+   "ok": true,
+   "got": "not_assessed",
+   "expected": "not_assessed",
+   "outcome": "pass"
+  },
+  {
+   "case": "N03",
+   "assertion": "F1.reason",
+   "ok": true,
+   "got": "invalid_uncertainty",
+   "expected": "invalid_uncertainty",
+   "outcome": "pass"
+  },
+  {
+   "case": "N04",
+   "assertion": "F1.state",
+   "ok": true,
+   "got": "not_assessed",
+   "expected": "not_assessed",
+   "outcome": "pass"
+  },
+  {
+   "case": "N04",
+   "assertion": "F1.reason",
+   "ok": true,
+   "got": "fewer than 20 valid points",
+   "expected": "fewer than 20 valid points",
+   "outcome": "pass"
+  },
+  {
+   "case": "N05",
+   "assertion": "F1.state",
+   "ok": true,
+   "got": "not_assessed",
+   "expected": "not_assessed",
+   "outcome": "pass"
+  },
+  {
+   "case": "N05",
+   "assertion": "F1.reason",
+   "ok": true,
+   "got": "noise unavailable (baseline or bins)",
+   "expected": "noise unavailable (baseline or bins)",
+   "outcome": "pass"
+  },
+  {
+   "case": "N05",
+   "assertion": "F2.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "N05",
+   "assertion": "F2.reason",
+   "ok": true,
+   "got": "noise unavailable",
+   "expected": "noise unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "N05",
+   "assertion": "U1.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "N05",
+   "assertion": "U1.reason",
+   "ok": true,
+   "got": "noise unavailable",
+   "expected": "noise unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "N06",
+   "assertion": "F1.state",
+   "ok": true,
+   "got": "not_assessed",
+   "expected": "not_assessed",
+   "outcome": "pass"
+  },
+  {
+   "case": "N06",
+   "assertion": "F1.reason",
+   "ok": true,
+   "got": "noise unavailable (baseline or bins)",
+   "expected": "noise unavailable (baseline or bins)",
+   "outcome": "pass"
+  },
+  {
+   "case": "N07",
+   "assertion": "F1.state",
+   "ok": true,
+   "got": "not_assessed",
+   "expected": "not_assessed",
+   "outcome": "pass"
+  },
+  {
+   "case": "N07",
+   "assertion": "F1.reason",
+   "ok": false,
+   "got": "depth or pink noise unavailable for the odd parity",
+   "expected": "noise unavailable (baseline or bins)",
+   "outcome": "documented failure"
+  },
+  {
+   "case": "N08",
+   "assertion": "F1.state",
+   "ok": true,
+   "got": "not_assessed",
+   "expected": "not_assessed",
+   "outcome": "pass"
+  },
+  {
+   "case": "N08",
+   "assertion": "F1.reason",
+   "ok": true,
+   "got": "noise unavailable (baseline or bins)",
+   "expected": "noise unavailable (baseline or bins)",
+   "outcome": "pass"
+  },
+  {
+   "case": "N10",
+   "assertion": "F1.state",
+   "ok": true,
+   "got": "not_assessed",
+   "expected": "not_assessed",
+   "outcome": "pass"
+  },
+  {
+   "case": "N10",
+   "assertion": "F1.reason",
+   "ok": true,
+   "got": "too few in-transit points for the odd parity",
+   "expected": "too few in-transit points for the odd parity",
+   "outcome": "pass"
+  },
+  {
+   "case": "N11",
+   "assertion": "F1.state",
+   "ok": true,
+   "got": "not_assessed",
+   "expected": "not_assessed",
+   "outcome": "pass"
+  },
+  {
+   "case": "N11",
+   "assertion": "F1.reason",
+   "ok": true,
+   "got": "too few in-transit points for the even parity",
+   "expected": "too few in-transit points for the even parity",
+   "outcome": "pass"
+  },
+  {
+   "case": "N12",
+   "assertion": "F1.state",
+   "ok": true,
+   "got": "not_assessed",
+   "expected": "not_assessed",
+   "outcome": "pass"
+  },
+  {
+   "case": "N12",
+   "assertion": "F1.reason",
+   "ok": true,
+   "got": "depth or pink noise unavailable for the odd parity",
+   "expected": "depth or pink noise unavailable for the odd parity",
+   "outcome": "pass"
+  },
+  {
+   "case": "N13",
+   "assertion": "F1.state",
+   "ok": true,
+   "got": "not_assessed",
+   "expected": "not_assessed",
+   "outcome": "pass"
+  },
+  {
+   "case": "N13",
+   "assertion": "F1.reason",
+   "ok": true,
+   "got": "depth or pink noise unavailable for the even parity",
+   "expected": "depth or pink noise unavailable for the even parity",
+   "outcome": "pass"
+  },
+  {
+   "case": "N14",
+   "assertion": "F1.state",
+   "ok": true,
+   "got": "not_assessed",
+   "expected": "not_assessed",
+   "outcome": "pass"
+  },
+  {
+   "case": "N14",
+   "assertion": "F1.reason",
+   "ok": false,
+   "got": "depth or pink noise unavailable for the odd parity",
+   "expected": "denominator not positive",
+   "outcome": "documented failure"
+  },
+  {
+   "case": "N15",
+   "assertion": "F1.state",
+   "ok": true,
+   "got": "not_assessed",
+   "expected": "not_assessed",
+   "outcome": "pass"
+  },
+  {
+   "case": "N15",
+   "assertion": "F1.reason",
+   "ok": true,
+   "got": "OE_box not finite",
+   "expected": "OE_box not finite",
+   "outcome": "pass"
+  },
+  {
+   "case": "R14",
+   "assertion": "F2.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R14",
+   "assertion": "F2.reason",
+   "ok": true,
+   "got": "the MES grid exceeds the number of valid cadences",
+   "expected": "the MES grid exceeds the number of valid cadences",
+   "outcome": "pass"
+  },
+  {
+   "case": "R14",
+   "assertion": "U1.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R14",
+   "assertion": "U1.reason",
+   "ok": true,
+   "got": "the MES grid exceeds the number of valid cadences",
+   "expected": "the MES grid exceeds the number of valid cadences",
+   "outcome": "pass"
+  },
+  {
+   "case": "R16",
+   "assertion": "F2.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R16",
+   "assertion": "F2.reason",
+   "ok": true,
+   "got": "an event (pri, sec, ter or pos) has no candidate cell",
+   "expected": "an event (pri, sec, ter or pos) has no candidate cell",
+   "outcome": "pass"
+  },
+  {
+   "case": "R16",
+   "assertion": "U1.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R16",
+   "assertion": "U1.reason",
+   "ok": true,
+   "got": "an event (pri, sec, ter or pos) has no candidate cell",
+   "expected": "an event (pri, sec, ter or pos) has no candidate cell",
+   "outcome": "pass"
+  },
+  {
+   "case": "R20",
+   "assertion": "F2.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R20",
+   "assertion": "F2.reason",
+   "ok": true,
+   "got": "T/P above 0.1",
+   "expected": "T/P above 0.1",
+   "outcome": "pass"
+  },
+  {
+   "case": "R21",
+   "assertion": "F1_trap.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R21",
+   "assertion": "F1_trap.reason",
+   "ok": true,
+   "got": "the overall trapezoid did not converge",
+   "expected": "the overall trapezoid did not converge",
+   "outcome": "pass"
+  },
+  {
+   "case": "R21",
+   "assertion": "F3.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R21",
+   "assertion": "F3.reason",
+   "ok": true,
+   "got": "no converged trapezoid with 0 < dF < 1",
+   "expected": "no converged trapezoid with 0 < dF < 1",
+   "outcome": "pass"
+  },
+  {
+   "case": "R21",
+   "assertion": "F4.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R21",
+   "assertion": "F4.reason",
+   "ok": true,
+   "got": "no converged trapezoid with 0 < dF < 1",
+   "expected": "no converged trapezoid with 0 < dF < 1",
+   "outcome": "pass"
+  },
+  {
+   "case": "R22",
+   "assertion": "F1_trap.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R22",
+   "assertion": "F1_trap.reason",
+   "ok": true,
+   "got": "a parity fit or its uncertainties were refused",
+   "expected": "a parity fit or its uncertainties were refused",
+   "outcome": "pass"
+  },
+  {
+   "case": "R23",
+   "assertion": "F1_trap.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R23",
+   "assertion": "F1_trap.reason",
+   "ok": true,
+   "got": "a denominator is not positive",
+   "expected": "a denominator is not positive",
+   "outcome": "pass"
+  },
+  {
+   "case": "R24",
+   "assertion": "F1_trap.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R24",
+   "assertion": "F1_trap.reason",
+   "ok": true,
+   "got": "a statistic is not finite",
+   "expected": "a statistic is not finite",
+   "outcome": "pass"
+  },
+  {
+   "case": "R26",
+   "assertion": "F3.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R26",
+   "assertion": "F3.reason",
+   "ok": true,
+   "got": "no reliable stellar radius (legacy rule)",
+   "expected": "no reliable stellar radius (legacy rule)",
+   "outcome": "pass"
+  },
+  {
+   "case": "R27",
+   "assertion": "F3.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R27",
+   "assertion": "F3.reason",
+   "ok": true,
+   "got": "Rp not finite",
+   "expected": "Rp not finite",
+   "outcome": "pass"
+  },
+  {
+   "case": "R29",
+   "assertion": "F4.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R29",
+   "assertion": "F4.reason",
+   "ok": true,
+   "got": "no flat bottom (q_in = 0.5)",
+   "expected": "no flat bottom (q_in = 0.5)",
+   "outcome": "pass"
+  },
+  {
+   "case": "R30",
+   "assertion": "F4.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R30",
+   "assertion": "F4.reason",
+   "ok": true,
+   "got": "no cadence inside the flat interval",
+   "expected": "no cadence inside the flat interval",
+   "outcome": "pass"
+  },
+  {
+   "case": "R31",
+   "assertion": "F4.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R31",
+   "assertion": "F4.reason",
+   "ok": true,
+   "got": "Eq. 7 ratio undefined",
+   "expected": "Eq. 7 ratio undefined",
+   "outcome": "pass"
+  },
+  {
+   "case": "R32",
+   "assertion": "F4.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R32",
+   "assertion": "F4.reason",
+   "ok": true,
+   "got": "Eq. 7 denominator not positive",
+   "expected": "Eq. 7 denominator not positive",
+   "outcome": "pass"
+  },
+  {
+   "case": "R33",
+   "assertion": "F4.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R33",
+   "assertion": "F4.reason",
+   "ok": true,
+   "got": "Eq. 7 bracket negative",
+   "expected": "Eq. 7 bracket negative",
+   "outcome": "pass"
+  },
+  {
+   "case": "R34",
+   "assertion": "F2.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R34",
+   "assertion": "F2.reason",
+   "ok": true,
+   "got": "numerical failure: ValueError",
+   "expected": "numerical failure: ValueError",
+   "outcome": "pass"
+  },
+  {
+   "case": "R34",
+   "assertion": "U1.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R34",
+   "assertion": "U1.reason",
+   "ok": true,
+   "got": "numerical failure: ValueError",
+   "expected": "numerical failure: ValueError",
+   "outcome": "pass"
+  },
+  {
+   "case": "R36",
+   "assertion": "F1_trap.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R36",
+   "assertion": "F1_trap.reason",
+   "ok": true,
+   "got": "numerical failure: ValueError",
+   "expected": "numerical failure: ValueError",
+   "outcome": "pass"
+  },
+  {
+   "case": "R36",
+   "assertion": "F3.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R36",
+   "assertion": "F3.reason",
+   "ok": true,
+   "got": "numerical failure: ValueError",
+   "expected": "numerical failure: ValueError",
+   "outcome": "pass"
+  },
+  {
+   "case": "R36",
+   "assertion": "F4.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R36",
+   "assertion": "F4.reason",
+   "ok": true,
+   "got": "numerical failure: ValueError",
+   "expected": "numerical failure: ValueError",
+   "outcome": "pass"
+  },
+  {
+   "case": "R37",
+   "assertion": "F2.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R37",
+   "assertion": "F2.reason",
+   "ok": true,
+   "got": "numerical failure: ValueError",
+   "expected": "numerical failure: ValueError",
+   "outcome": "pass"
+  },
+  {
+   "case": "R37",
+   "assertion": "U1.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R37",
+   "assertion": "U1.reason",
+   "ok": true,
+   "got": "numerical failure: ValueError",
+   "expected": "numerical failure: ValueError",
+   "outcome": "pass"
+  },
+  {
+   "case": "R39",
+   "assertion": "F1_trap.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R39",
+   "assertion": "F1_trap.reason",
+   "ok": true,
+   "got": "numerical failure: ValueError",
+   "expected": "numerical failure: ValueError",
+   "outcome": "pass"
+  },
+  {
+   "case": "R40",
+   "assertion": "F3.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R40",
+   "assertion": "F3.reason",
+   "ok": true,
+   "got": "numerical failure: ValueError",
+   "expected": "numerical failure: ValueError",
+   "outcome": "pass"
+  },
+  {
+   "case": "R41",
+   "assertion": "F4.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R41",
+   "assertion": "F4.reason",
+   "ok": true,
+   "got": "numerical failure: TypeError",
+   "expected": "numerical failure: TypeError",
+   "outcome": "pass"
+  },
+  {
+   "case": "R42",
+   "assertion": "F1_trap.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R42",
+   "assertion": "F1_trap.reason",
+   "ok": true,
+   "got": "candidate or curve not usable",
+   "expected": "candidate or curve not usable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R42",
+   "assertion": "F2.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R42",
+   "assertion": "F2.reason",
+   "ok": true,
+   "got": "candidate or curve not usable",
+   "expected": "candidate or curve not usable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R42",
+   "assertion": "F3.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R42",
+   "assertion": "F3.reason",
+   "ok": true,
+   "got": "candidate or curve not usable",
+   "expected": "candidate or curve not usable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R42",
+   "assertion": "F4.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R42",
+   "assertion": "F4.reason",
+   "ok": true,
+   "got": "candidate or curve not usable",
+   "expected": "candidate or curve not usable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R42",
+   "assertion": "U1.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R42",
+   "assertion": "U1.reason",
+   "ok": true,
+   "got": "candidate or curve not usable",
+   "expected": "candidate or curve not usable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R47",
+   "assertion": "F1_trap.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R47",
+   "assertion": "F1_trap.reason",
+   "ok": true,
+   "got": "invalid_uncertainty",
+   "expected": "invalid_uncertainty",
+   "outcome": "pass"
+  },
+  {
+   "case": "R47",
+   "assertion": "F2.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R47",
+   "assertion": "F2.reason",
+   "ok": true,
+   "got": "invalid_uncertainty",
+   "expected": "invalid_uncertainty",
+   "outcome": "pass"
+  },
+  {
+   "case": "R47",
+   "assertion": "F3.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R47",
+   "assertion": "F3.reason",
+   "ok": true,
+   "got": "invalid_uncertainty",
+   "expected": "invalid_uncertainty",
+   "outcome": "pass"
+  },
+  {
+   "case": "R47",
+   "assertion": "F4.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R47",
+   "assertion": "F4.reason",
+   "ok": true,
+   "got": "invalid_uncertainty",
+   "expected": "invalid_uncertainty",
+   "outcome": "pass"
+  },
+  {
+   "case": "R47",
+   "assertion": "U1.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R47",
+   "assertion": "U1.reason",
+   "ok": true,
+   "got": "invalid_uncertainty",
+   "expected": "invalid_uncertainty",
+   "outcome": "pass"
+  },
+  {
+   "case": "R52",
+   "assertion": "F1_trap.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R52",
+   "assertion": "F1_trap.reason",
+   "ok": true,
+   "got": "candidate or curve not usable",
+   "expected": "candidate or curve not usable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R52",
+   "assertion": "F2.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R52",
+   "assertion": "F2.reason",
+   "ok": true,
+   "got": "candidate or curve not usable",
+   "expected": "candidate or curve not usable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R52",
+   "assertion": "F3.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R52",
+   "assertion": "F3.reason",
+   "ok": true,
+   "got": "candidate or curve not usable",
+   "expected": "candidate or curve not usable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R52",
+   "assertion": "F4.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R52",
+   "assertion": "F4.reason",
+   "ok": true,
+   "got": "candidate or curve not usable",
+   "expected": "candidate or curve not usable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R52",
+   "assertion": "U1.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R52",
+   "assertion": "U1.reason",
+   "ok": true,
+   "got": "candidate or curve not usable",
+   "expected": "candidate or curve not usable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R59",
+   "assertion": "F1.state",
+   "ok": true,
+   "got": "not_assessed",
+   "expected": "not_assessed",
+   "outcome": "pass"
+  },
+  {
+   "case": "R59",
+   "assertion": "F1.reason",
+   "ok": true,
+   "got": "no flattened curve",
+   "expected": "no flattened curve",
+   "outcome": "pass"
+  },
+  {
+   "case": "R59",
+   "assertion": "F1_trap.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R59",
+   "assertion": "F1_trap.reason",
+   "ok": true,
+   "got": "no flattened curve",
+   "expected": "no flattened curve",
+   "outcome": "pass"
+  },
+  {
+   "case": "R59",
+   "assertion": "F2.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R59",
+   "assertion": "F2.reason",
+   "ok": true,
+   "got": "no flattened curve",
+   "expected": "no flattened curve",
+   "outcome": "pass"
+  },
+  {
+   "case": "R59",
+   "assertion": "F3.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R59",
+   "assertion": "F3.reason",
+   "ok": true,
+   "got": "no flattened curve",
+   "expected": "no flattened curve",
+   "outcome": "pass"
+  },
+  {
+   "case": "R59",
+   "assertion": "F4.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R59",
+   "assertion": "F4.reason",
+   "ok": true,
+   "got": "no flattened curve",
+   "expected": "no flattened curve",
+   "outcome": "pass"
+  },
+  {
+   "case": "R59",
+   "assertion": "U1.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R59",
+   "assertion": "U1.reason",
+   "ok": true,
+   "got": "no flattened curve",
+   "expected": "no flattened curve",
+   "outcome": "pass"
+  },
+  {
+   "case": "R65",
+   "assertion": "F1.state",
+   "ok": true,
+   "got": "not_assessed",
+   "expected": "not_assessed",
+   "outcome": "pass"
+  },
+  {
+   "case": "R65",
+   "assertion": "F1.reason",
+   "ok": true,
+   "got": "numerical failure: ValueError",
+   "expected": "numerical failure: ValueError",
+   "outcome": "pass"
+  },
+  {
+   "case": "R65",
+   "assertion": "F1_trap.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R65",
+   "assertion": "F1_trap.reason",
+   "ok": true,
+   "got": "numerical failure: ValueError",
+   "expected": "numerical failure: ValueError",
+   "outcome": "pass"
+  },
+  {
+   "case": "R65",
+   "assertion": "F2.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R65",
+   "assertion": "F2.reason",
+   "ok": true,
+   "got": "numerical failure: ValueError",
+   "expected": "numerical failure: ValueError",
+   "outcome": "pass"
+  },
+  {
+   "case": "R65",
+   "assertion": "F3.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R65",
+   "assertion": "F3.reason",
+   "ok": true,
+   "got": "numerical failure: ValueError",
+   "expected": "numerical failure: ValueError",
+   "outcome": "pass"
+  },
+  {
+   "case": "R65",
+   "assertion": "F4.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R65",
+   "assertion": "F4.reason",
+   "ok": true,
+   "got": "numerical failure: ValueError",
+   "expected": "numerical failure: ValueError",
+   "outcome": "pass"
+  },
+  {
+   "case": "R65",
+   "assertion": "U1.state",
+   "ok": true,
+   "got": "unavailable",
+   "expected": "unavailable",
+   "outcome": "pass"
+  },
+  {
+   "case": "R65",
+   "assertion": "U1.reason",
+   "ok": true,
+   "got": "numerical failure: ValueError",
+   "expected": "numerical failure: ValueError",
+   "outcome": "pass"
+  }
+ ]
+}
