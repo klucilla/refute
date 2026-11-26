@@ -51,3 +51,22 @@ was the application of the blind review's B1 (alternative A) and B2 in revision 
 result. The events also report 5,251 reasoning output tokens, shown here apart, as the events
 give them. Its wording is applied in `docs/plans/v0.5.12-spec-correction-2-r1.md`
 (errata entry 3).
+
+## The review of the exact `src/` diff (a new closed question, #218 comment 7198110621, item 6)
+
+The same thread, unit `codex3`. The diff is not committed: the stop before the first commit in
+`src/`.
+
+| Round | Prompt | Answer (stored unchanged) | Diff reviewed | Verdict |
+|---|---|---|---|---|
+| 1 | [diff-r1-codex-prompt.md](diff-r1-codex-prompt.md) | [diff-r1-codex-answer.md](diff-r1-codex-answer.md) (3,342 bytes, SHA-256 `72aada1d…`) | `step4/src-diff-proposed.patch` (`0d15040e…`) | `REFUTED`, 3 blocking items, applied with their exact wording |
+| 2 | [diff-r2-codex-prompt.md](diff-r2-codex-prompt.md) | [diff-r2-codex-answer.md](diff-r2-codex-answer.md) (1,134 bytes, SHA-256 `ed5d05bd…`) | `step4/src-diff-proposed-2.patch` (`056d0814…`) | **`SURVIVED`** |
+
+| Round | Input | of which cached | Output (of which reasoning) | Review (input not cached + output) |
+|---|---|---|---|---|
+| diff 1 | 3,373,247 | 3,169,152 | 23,414 (9,301) | 227,509 |
+| diff 2 | 4,277,744 | 4,061,952 | 26,446 (9,462) | 242,238 |
+| **Sum** | **7,650,991** | **7,231,104** | **49,860** | **469,747** |
+
+Codex's own state written: 125.9 MB (diff 1) and 119.5 MB (diff 2), within the 196 MB
+reservation.
