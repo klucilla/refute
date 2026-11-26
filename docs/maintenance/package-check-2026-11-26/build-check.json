@@ -1,0 +1,1257 @@
+{
+  "command": "uv build --offline --out-dir .cache/v0513prep/dist",
+  "exit_code": 0,
+  "stderr_tail": [
+    "Building source distribution...",
+    "Building wheel from source distribution...",
+    "Successfully built .cache\\v0513prep\\dist\\refute-0.5.0.tar.gz",
+    "Successfully built .cache\\v0513prep\\dist\\refute-0.5.0-py3-none-any.whl"
+  ],
+  "dependency_files_unchanged": true,
+  "sha256_before": {
+    "pyproject.toml": "463546f81a19ef4900c2531b03204995de0f29efc475145f856c9a488ca1908a",
+    "uv.lock": "767bbb387b0f6c58e9c66048ad80f33651a52954bb444a525235ec5425e0865d"
+  },
+  "sha256_after": {
+    "pyproject.toml": "463546f81a19ef4900c2531b03204995de0f29efc475145f856c9a488ca1908a",
+    "uv.lock": "767bbb387b0f6c58e9c66048ad80f33651a52954bb444a525235ec5425e0865d"
+  },
+  "artifacts": [
+    {
+      "name": ".gitignore",
+      "bytes": 1,
+      "sha256": "684888c0ebb17f374298b65ee2807526c066094c701bcc7ebbe1c1095f494fc1"
+    },
+    {
+      "name": "refute-0.5.0-py3-none-any.whl",
+      "bytes": 632042,
+      "sha256": "c739720614f966af22b8e2374fa8fefe73037a659f478b3ed4530c3d30f38588",
+      "members": 131,
+      "uncompressed_bytes": 1970600,
+      "by_folder": {
+        "refute-0.5.0.dist-info": {
+          "files": 5,
+          "bytes": 71988
+        },
+        "refute/__init__.py": {
+          "files": 1,
+          "bytes": 143
+        },
+        "refute/cli.py": {
+          "files": 1,
+          "bytes": 17634
+        },
+        "refute/core": {
+          "files": 24,
+          "bytes": 241436
+        },
+        "refute/drand.py": {
+          "files": 1,
+          "bytes": 6447
+        },
+        "refute/packs": {
+          "files": 93,
+          "bytes": 1583407
+        },
+        "refute/selection": {
+          "files": 6,
+          "bytes": 49545
+        }
+      },
+      "non_python": [],
+      "largest": [
+        [
+          104878,
+          "refute/packs/ml/schema.py"
+        ],
+        [
+          84641,
+          "refute/packs/ml/integration.py"
+        ],
+        [
+          81843,
+          "refute/packs/tess/holdout.py"
+        ],
+        [
+          73927,
+          "refute/packs/ml/production.py"
+        ],
+        [
+          50996,
+          "refute/packs/tess/pipeline.py"
+        ],
+        [
+          49786,
+          "refute-0.5.0.dist-info/METADATA"
+        ],
+        [
+          44164,
+          "refute/packs/tess/discover/pilot.py"
+        ],
+        [
+          41690,
+          "refute/packs/tess/battery.py"
+        ],
+        [
+          37585,
+          "refute/packs/tess/synthetic.py"
+        ],
+        [
+          34119,
+          "refute/packs/tess/adapter.py"
+        ]
+      ]
+    },
+    {
+      "name": "refute-0.5.0.tar.gz",
+      "bytes": 69280535,
+      "sha256": "88f4d11f45f9f5efb6246c71ead517ada2e0ccd1d3e98a71e356015a86857bb6",
+      "members": 5109,
+      "uncompressed_bytes": 383835301,
+      "by_folder": {
+        ".claude/commands": {
+          "files": 2,
+          "bytes": 7216
+        },
+        ".claude/hooks": {
+          "files": 1,
+          "bytes": 43963
+        },
+        ".claude/scheduled_tasks.lock": {
+          "files": 1,
+          "bytes": 124
+        },
+        ".claude/settings.json": {
+          "files": 1,
+          "bytes": 839
+        },
+        ".gitattributes": {
+          "files": 1,
+          "bytes": 1142
+        },
+        ".github/workflows": {
+          "files": 1,
+          "bytes": 17246
+        },
+        ".gitignore": {
+          "files": 1,
+          "bytes": 739
+        },
+        ".pre-commit-config.yaml": {
+          "files": 1,
+          "bytes": 1155
+        },
+        ".python-version": {
+          "files": 1,
+          "bytes": 8
+        },
+        ".zenodo.json": {
+          "files": 1,
+          "bytes": 3544
+        },
+        "CITATION.cff": {
+          "files": 1,
+          "bytes": 1798
+        },
+        "CLAUDE.md": {
+          "files": 1,
+          "bytes": 23081
+        },
+        "CODE_OF_CONDUCT.md": {
+          "files": 1,
+          "bytes": 5484
+        },
+        "CONTRIBUTING.md": {
+          "files": 1,
+          "bytes": 3776
+        },
+        "LICENSE": {
+          "files": 1,
+          "bytes": 10764
+        },
+        "PKG-INFO": {
+          "files": 1,
+          "bytes": 49786
+        },
+        "PROMPT-v0.1.md": {
+          "files": 1,
+          "bytes": 3724
+        },
+        "README.md": {
+          "files": 1,
+          "bytes": 48926
+        },
+        "ROADMAP.md": {
+          "files": 1,
+          "bytes": 12874
+        },
+        "SECURITY.md": {
+          "files": 1,
+          "bytes": 1146
+        },
+        "calibration/DATA_LICENSE.md": {
+          "files": 1,
+          "bytes": 4832
+        },
+        "calibration/LOCK_HISTORY.md": {
+          "files": 1,
+          "bytes": 1106
+        },
+        "calibration/POSTMORTEM.md": {
+          "files": 1,
+          "bytes": 9644
+        },
+        "calibration/PROTOCOL.md": {
+          "files": 1,
+          "bytes": 4357
+        },
+        "calibration/pool_snapshot": {
+          "files": 4,
+          "bytes": 4220869
+        },
+        "calibration/results": {
+          "files": 4,
+          "bytes": 25884
+        },
+        "calibration/select_targets.py": {
+          "files": 1,
+          "bytes": 13078
+        },
+        "calibration/selection_log.md": {
+          "files": 1,
+          "bytes": 2102
+        },
+        "calibration/self_claim.lock.json": {
+          "files": 1,
+          "bytes": 6565
+        },
+        "calibration/self_claim.yaml": {
+          "files": 1,
+          "bytes": 4609
+        },
+        "calibration/targets.yaml": {
+          "files": 1,
+          "bytes": 38549
+        },
+        "calibration/update_readme.py": {
+          "files": 1,
+          "bytes": 13936
+        },
+        "calibration/v0.2": {
+          "files": 95,
+          "bytes": 4798201
+        },
+        "calibration/v0.3": {
+          "files": 290,
+          "bytes": 4993353
+        },
+        "calibration/v0.4": {
+          "files": 52,
+          "bytes": 9050754
+        },
+        "calibration/v0.5": {
+          "files": 109,
+          "bytes": 12077049
+        },
+        "calibration/v0.5.6": {
+          "files": 13,
+          "bytes": 2854841
+        },
+        "docs/agents": {
+          "files": 3,
+          "bytes": 6280
+        },
+        "docs/assets": {
+          "files": 7,
+          "bytes": 600245
+        },
+        "docs/claim-spec.md": {
+          "files": 1,
+          "bytes": 20006
+        },
+        "docs/cli.md": {
+          "files": 1,
+          "bytes": 5335
+        },
+        "docs/data-publication.md": {
+          "files": 1,
+          "bytes": 6580
+        },
+        "docs/dossier.md": {
+          "files": 1,
+          "bytes": 7088
+        },
+        "docs/gates": {
+          "files": 23,
+          "bytes": 252369
+        },
+        "docs/gauntlet-tess-v0.1.md": {
+          "files": 1,
+          "bytes": 9137
+        },
+        "docs/gauntlet-tess-v0.2.1.md": {
+          "files": 1,
+          "bytes": 9303
+        },
+        "docs/gauntlet-tess-v0.2.md": {
+          "files": 1,
+          "bytes": 18301
+        },
+        "docs/history": {
+          "files": 1,
+          "bytes": 97823
+        },
+        "docs/lock-format.md": {
+          "files": 1,
+          "bytes": 17871
+        },
+        "docs/maintenance": {
+          "files": 44,
+          "bytes": 20126358
+        },
+        "docs/plans": {
+          "files": 457,
+          "bytes": 3467827
+        },
+        "docs/release-v0.2.0-drafts": {
+          "files": 2,
+          "bytes": 13924
+        },
+        "docs/reports": {
+          "files": 12,
+          "bytes": 137387
+        },
+        "docs/reviewer-protocol.md": {
+          "files": 1,
+          "bytes": 8123
+        },
+        "docs/right-of-reply.md": {
+          "files": 1,
+          "bytes": 5460
+        },
+        "docs/sandbox.md": {
+          "files": 1,
+          "bytes": 11785
+        },
+        "docs/sources": {
+          "files": 7,
+          "bytes": 20133
+        },
+        "docs/testing": {
+          "files": 1,
+          "bytes": 3850
+        },
+        "docs/third-party-data.md": {
+          "files": 1,
+          "bytes": 8247
+        },
+        "docs/validation": {
+          "files": 3519,
+          "bytes": 314191953
+        },
+        "docs/verdicts.md": {
+          "files": 1,
+          "bytes": 13762
+        },
+        "pyproject.toml": {
+          "files": 1,
+          "bytes": 3465
+        },
+        "scripts/check_interpreter.py": {
+          "files": 1,
+          "bytes": 2983
+        },
+        "scripts/check_moved_text.py": {
+          "files": 1,
+          "bytes": 6060
+        },
+        "scripts/check_test_baseline.py": {
+          "files": 1,
+          "bytes": 6152
+        },
+        "scripts/ci_evidence.py": {
+          "files": 1,
+          "bytes": 4522
+        },
+        "scripts/ci_ids_check.py": {
+          "files": 1,
+          "bytes": 3951
+        },
+        "scripts/ci_plan.py": {
+          "files": 1,
+          "bytes": 9005
+        },
+        "scripts/ci_shard.py": {
+          "files": 1,
+          "bytes": 5619
+        },
+        "scripts/commit_checked.py": {
+          "files": 1,
+          "bytes": 17797
+        },
+        "scripts/junit_counts.py": {
+          "files": 1,
+          "bytes": 4467
+        },
+        "scripts/launch_affinity.ps1": {
+          "files": 1,
+          "bytes": 3540
+        },
+        "scripts/lock_compat_snapshot.py": {
+          "files": 1,
+          "bytes": 4367
+        },
+        "scripts/run_tests_affinity.ps1": {
+          "files": 1,
+          "bytes": 3580
+        },
+        "scripts/synthetic_battery_study.py": {
+          "files": 1,
+          "bytes": 6038
+        },
+        "scripts/verify_locked_tags.py": {
+          "files": 1,
+          "bytes": 24304
+        },
+        "scripts/vm": {
+          "files": 34,
+          "bytes": 385791
+        },
+        "src/refute": {
+          "files": 126,
+          "bytes": 1898612
+        },
+        "tests/baseline_code.py": {
+          "files": 1,
+          "bytes": 6007
+        },
+        "tests/baseline_code_v0511.py": {
+          "files": 1,
+          "bytes": 6271
+        },
+        "tests/conftest.py": {
+          "files": 1,
+          "bytes": 9517
+        },
+        "tests/fake_docker.py": {
+          "files": 1,
+          "bytes": 5136
+        },
+        "tests/fixtures": {
+          "files": 32,
+          "bytes": 864878
+        },
+        "tests/instrumentation_cases.py": {
+          "files": 1,
+          "bytes": 7528
+        },
+        "tests/make_instrumentation_snapshot.py": {
+          "files": 1,
+          "bytes": 2952
+        },
+        "tests/ml_papers.py": {
+          "files": 1,
+          "bytes": 4196
+        },
+        "tests/population_v3_probe.py": {
+          "files": 1,
+          "bytes": 22754
+        },
+        "tests/screen_reference.py": {
+          "files": 1,
+          "bytes": 5599
+        },
+        "tests/spec_b_cases.py": {
+          "files": 1,
+          "bytes": 8312
+        },
+        "tests/synthetic_harness.py": {
+          "files": 1,
+          "bytes": 1274
+        },
+        "tests/test_adapter_v02.py": {
+          "files": 1,
+          "bytes": 5702
+        },
+        "tests/test_archive.py": {
+          "files": 1,
+          "bytes": 1219
+        },
+        "tests/test_audit2_fixes.py": {
+          "files": 1,
+          "bytes": 6456
+        },
+        "tests/test_audit_fixes.py": {
+          "files": 1,
+          "bytes": 15707
+        },
+        "tests/test_battery.py": {
+          "files": 1,
+          "bytes": 8892
+        },
+        "tests/test_budget.py": {
+          "files": 1,
+          "bytes": 19763
+        },
+        "tests/test_cache_hygiene.py": {
+          "files": 1,
+          "bytes": 5555
+        },
+        "tests/test_calibration_eval.py": {
+          "files": 1,
+          "bytes": 3072
+        },
+        "tests/test_calibration_signal_identity.py": {
+          "files": 1,
+          "bytes": 15377
+        },
+        "tests/test_calibration_signal_identity_e2e.py": {
+          "files": 1,
+          "bytes": 11892
+        },
+        "tests/test_calibration_v02.py": {
+          "files": 1,
+          "bytes": 3024
+        },
+        "tests/test_canonical_lock.py": {
+          "files": 1,
+          "bytes": 7899
+        },
+        "tests/test_capacity_plan.py": {
+          "files": 1,
+          "bytes": 9528
+        },
+        "tests/test_check_interpreter.py": {
+          "files": 1,
+          "bytes": 5873
+        },
+        "tests/test_check_moved_text.py": {
+          "files": 1,
+          "bytes": 2882
+        },
+        "tests/test_check_test_baseline.py": {
+          "files": 1,
+          "bytes": 3766
+        },
+        "tests/test_ci_plan.py": {
+          "files": 1,
+          "bytes": 11124
+        },
+        "tests/test_ci_shard.py": {
+          "files": 1,
+          "bytes": 2505
+        },
+        "tests/test_claim_schema.py": {
+          "files": 1,
+          "bytes": 3800
+        },
+        "tests/test_cli.py": {
+          "files": 1,
+          "bytes": 2726
+        },
+        "tests/test_codehash.py": {
+          "files": 1,
+          "bytes": 3005
+        },
+        "tests/test_command_guard.py": {
+          "files": 1,
+          "bytes": 22565
+        },
+        "tests/test_commit_checked.py": {
+          "files": 1,
+          "bytes": 14719
+        },
+        "tests/test_corrections_activation.py": {
+          "files": 1,
+          "bytes": 4042
+        },
+        "tests/test_coverage.py": {
+          "files": 1,
+          "bytes": 2911
+        },
+        "tests/test_detrend.py": {
+          "files": 1,
+          "bytes": 1446
+        },
+        "tests/test_docker_backend.py": {
+          "files": 1,
+          "bytes": 14730
+        },
+        "tests/test_domain.py": {
+          "files": 1,
+          "bytes": 11141
+        },
+        "tests/test_dossier.py": {
+          "files": 1,
+          "bytes": 8079
+        },
+        "tests/test_drand.py": {
+          "files": 1,
+          "bytes": 2419
+        },
+        "tests/test_drand_shared.py": {
+          "files": 1,
+          "bytes": 11064
+        },
+        "tests/test_ebcatalog.py": {
+          "files": 1,
+          "bytes": 4100
+        },
+        "tests/test_ebcatalog_own_tic.py": {
+          "files": 1,
+          "bytes": 5980
+        },
+        "tests/test_ebcatalog_own_tic_e2e.py": {
+          "files": 1,
+          "bytes": 18155
+        },
+        "tests/test_ephemeris.py": {
+          "files": 1,
+          "bytes": 1600
+        },
+        "tests/test_exporter.py": {
+          "files": 1,
+          "bytes": 2708
+        },
+        "tests/test_external_snapshots.py": {
+          "files": 1,
+          "bytes": 5445
+        },
+        "tests/test_gauntlet_odd_even.py": {
+          "files": 1,
+          "bytes": 1839
+        },
+        "tests/test_gauntlet_plausibility.py": {
+          "files": 1,
+          "bytes": 2745
+        },
+        "tests/test_gauntlet_secondary.py": {
+          "files": 1,
+          "bytes": 1527
+        },
+        "tests/test_gauntlet_snr.py": {
+          "files": 1,
+          "bytes": 1256
+        },
+        "tests/test_holdout.py": {
+          "files": 1,
+          "bytes": 2674
+        },
+        "tests/test_holdout_blindness.py": {
+          "files": 1,
+          "bytes": 6422
+        },
+        "tests/test_holdout_capacity.py": {
+          "files": 1,
+          "bytes": 24625
+        },
+        "tests/test_holdout_isolation.py": {
+          "files": 1,
+          "bytes": 5210
+        },
+        "tests/test_holdout_replicas.py": {
+          "files": 1,
+          "bytes": 20393
+        },
+        "tests/test_holdout_report_wording.py": {
+          "files": 1,
+          "bytes": 5585
+        },
+        "tests/test_holdout_train_validity.py": {
+          "files": 1,
+          "bytes": 9910
+        },
+        "tests/test_holdout_train_validity_e2e.py": {
+          "files": 1,
+          "bytes": 13254
+        },
+        "tests/test_hook_settings.py": {
+          "files": 1,
+          "bytes": 3218
+        },
+        "tests/test_instrumentation.py": {
+          "files": 1,
+          "bytes": 31214
+        },
+        "tests/test_junit_counts.py": {
+          "files": 1,
+          "bytes": 6834
+        },
+        "tests/test_launch_affinity.py": {
+          "files": 1,
+          "bytes": 3888
+        },
+        "tests/test_lock_compat.py": {
+          "files": 1,
+          "bytes": 17029
+        },
+        "tests/test_lock_history_fields.py": {
+          "files": 1,
+          "bytes": 16003
+        },
+        "tests/test_main_select.py": {
+          "files": 1,
+          "bytes": 4941
+        },
+        "tests/test_ml_attacks.py": {
+          "files": 1,
+          "bytes": 14620
+        },
+        "tests/test_ml_coverage_hook.py": {
+          "files": 1,
+          "bytes": 18640
+        },
+        "tests/test_ml_data_sources.py": {
+          "files": 1,
+          "bytes": 36096
+        },
+        "tests/test_ml_extract_pattern.py": {
+          "files": 1,
+          "bytes": 8391
+        },
+        "tests/test_ml_fetch.py": {
+          "files": 1,
+          "bytes": 9149
+        },
+        "tests/test_ml_integration.py": {
+          "files": 1,
+          "bytes": 55789
+        },
+        "tests/test_ml_ladder.py": {
+          "files": 1,
+          "bytes": 8923
+        },
+        "tests/test_ml_orchestrate.py": {
+          "files": 1,
+          "bytes": 20967
+        },
+        "tests/test_ml_orchestrate_fallback.py": {
+          "files": 1,
+          "bytes": 5589
+        },
+        "tests/test_ml_papers.py": {
+          "files": 1,
+          "bytes": 7196
+        },
+        "tests/test_ml_patches.py": {
+          "files": 1,
+          "bytes": 6501
+        },
+        "tests/test_ml_patches_tree.py": {
+          "files": 1,
+          "bytes": 6484
+        },
+        "tests/test_ml_predicates.py": {
+          "files": 1,
+          "bytes": 15644
+        },
+        "tests/test_ml_production.py": {
+          "files": 1,
+          "bytes": 14372
+        },
+        "tests/test_ml_provenance.py": {
+          "files": 1,
+          "bytes": 17148
+        },
+        "tests/test_ml_readers.py": {
+          "files": 1,
+          "bytes": 2401
+        },
+        "tests/test_ml_recompute.py": {
+          "files": 1,
+          "bytes": 20719
+        },
+        "tests/test_ml_repository.py": {
+          "files": 1,
+          "bytes": 5947
+        },
+        "tests/test_ml_repository_weights.py": {
+          "files": 1,
+          "bytes": 23091
+        },
+        "tests/test_ml_reproduction.py": {
+          "files": 1,
+          "bytes": 6763
+        },
+        "tests/test_ml_runner.py": {
+          "files": 1,
+          "bytes": 10975
+        },
+        "tests/test_ml_schema.py": {
+          "files": 1,
+          "bytes": 97667
+        },
+        "tests/test_ml_synthetic.py": {
+          "files": 1,
+          "bytes": 16120
+        },
+        "tests/test_ml_tbevents.py": {
+          "files": 1,
+          "bytes": 21691
+        },
+        "tests/test_ml_timing.py": {
+          "files": 1,
+          "bytes": 20415
+        },
+        "tests/test_pack_discovery.py": {
+          "files": 1,
+          "bytes": 3080
+        },
+        "tests/test_paper.py": {
+          "files": 1,
+          "bytes": 23990
+        },
+        "tests/test_period_alias_rev4.py": {
+          "files": 1,
+          "bytes": 11764
+        },
+        "tests/test_pilot_select.py": {
+          "files": 1,
+          "bytes": 5348
+        },
+        "tests/test_population_v3.py": {
+          "files": 1,
+          "bytes": 4621
+        },
+        "tests/test_population_v3_identity.py": {
+          "files": 1,
+          "bytes": 10968
+        },
+        "tests/test_population_v4.py": {
+          "files": 1,
+          "bytes": 25253
+        },
+        "tests/test_prewhiten.py": {
+          "files": 1,
+          "bytes": 29344
+        },
+        "tests/test_proven_absence.py": {
+          "files": 1,
+          "bytes": 4951
+        },
+        "tests/test_rednoise.py": {
+          "files": 1,
+          "bytes": 5033
+        },
+        "tests/test_rednoise_propagation.py": {
+          "files": 1,
+          "bytes": 14894
+        },
+        "tests/test_reply.py": {
+          "files": 1,
+          "bytes": 10108
+        },
+        "tests/test_review.py": {
+          "files": 1,
+          "bytes": 3437
+        },
+        "tests/test_rmin_alteration.py": {
+          "files": 1,
+          "bytes": 4131
+        },
+        "tests/test_rmin_derivation.py": {
+          "files": 1,
+          "bytes": 13446
+        },
+        "tests/test_rmin_evaluate.py": {
+          "files": 1,
+          "bytes": 12910
+        },
+        "tests/test_rmin_lots.py": {
+          "files": 1,
+          "bytes": 14970
+        },
+        "tests/test_rmin_timing.py": {
+          "files": 1,
+          "bytes": 7221
+        },
+        "tests/test_rmin_twin.py": {
+          "files": 1,
+          "bytes": 9570
+        },
+        "tests/test_run_tests_affinity.py": {
+          "files": 1,
+          "bytes": 4585
+        },
+        "tests/test_runner.py": {
+          "files": 1,
+          "bytes": 9000
+        },
+        "tests/test_seal.py": {
+          "files": 1,
+          "bytes": 20979
+        },
+        "tests/test_search.py": {
+          "files": 1,
+          "bytes": 2246
+        },
+        "tests/test_selection_frame.py": {
+          "files": 1,
+          "bytes": 10991
+        },
+        "tests/test_selection_walk_draw.py": {
+          "files": 1,
+          "bytes": 24368
+        },
+        "tests/test_sensitivity.py": {
+          "files": 1,
+          "bytes": 15230
+        },
+        "tests/test_spec_b.py": {
+          "files": 1,
+          "bytes": 16032
+        },
+        "tests/test_synthetic_correlated_noise.py": {
+          "files": 1,
+          "bytes": 6141
+        },
+        "tests/test_timing_trapezoid.py": {
+          "files": 1,
+          "bytes": 17681
+        },
+        "tests/test_update_readme.py": {
+          "files": 1,
+          "bytes": 5642
+        },
+        "tests/test_v02_fixes.py": {
+          "files": 1,
+          "bytes": 4810
+        },
+        "tests/test_v04_assemble.py": {
+          "files": 1,
+          "bytes": 14210
+        },
+        "tests/test_v04_claim.py": {
+          "files": 1,
+          "bytes": 9720
+        },
+        "tests/test_v04_claim_committed.py": {
+          "files": 1,
+          "bytes": 5454
+        },
+        "tests/test_v04_discover_run.py": {
+          "files": 1,
+          "bytes": 16765
+        },
+        "tests/test_v04_duration.py": {
+          "files": 1,
+          "bytes": 5201
+        },
+        "tests/test_v04_ledger.py": {
+          "files": 1,
+          "bytes": 10812
+        },
+        "tests/test_v04_measure.py": {
+          "files": 1,
+          "bytes": 18118
+        },
+        "tests/test_v04_protocol.py": {
+          "files": 1,
+          "bytes": 1929
+        },
+        "tests/test_v04_reproduce_inputs.py": {
+          "files": 1,
+          "bytes": 14128
+        },
+        "tests/test_v04_roles.py": {
+          "files": 1,
+          "bytes": 10967
+        },
+        "tests/test_v04_selection.py": {
+          "files": 1,
+          "bytes": 34580
+        },
+        "tests/test_v0511_claim_hashes.py": {
+          "files": 1,
+          "bytes": 1339
+        },
+        "tests/test_v0511_f1_calibration.py": {
+          "files": 1,
+          "bytes": 1655
+        },
+        "tests/test_v0511_identity.py": {
+          "files": 1,
+          "bytes": 8820
+        },
+        "tests/test_v0511_screen.py": {
+          "files": 1,
+          "bytes": 18696
+        },
+        "tests/test_v0512_223_cases.py": {
+          "files": 1,
+          "bytes": 2909
+        },
+        "tests/test_v0512_correction2.py": {
+          "files": 1,
+          "bytes": 9206
+        },
+        "tests/test_v051_a0.py": {
+          "files": 1,
+          "bytes": 7238
+        },
+        "tests/test_v051_accept_a0_series.py": {
+          "files": 1,
+          "bytes": 7649
+        },
+        "tests/test_v051_accept_wp3b_series.py": {
+          "files": 1,
+          "bytes": 7410
+        },
+        "tests/test_v051_alias.py": {
+          "files": 1,
+          "bytes": 3300
+        },
+        "tests/test_v051_duration.py": {
+          "files": 1,
+          "bytes": 5676
+        },
+        "tests/test_v051_odd_even.py": {
+          "files": 1,
+          "bytes": 4549
+        },
+        "tests/test_v051_rehearsal.py": {
+          "files": 1,
+          "bytes": 11551
+        },
+        "tests/test_v051_sinusoid.py": {
+          "files": 1,
+          "bytes": 9227
+        },
+        "tests/test_v051_wp2.py": {
+          "files": 1,
+          "bytes": 4781
+        },
+        "tests/test_v051_wp3a.py": {
+          "files": 1,
+          "bytes": 12699
+        },
+        "tests/test_v051_wp4.py": {
+          "files": 1,
+          "bytes": 17183
+        },
+        "tests/test_v051_wp5.py": {
+          "files": 1,
+          "bytes": 6963
+        },
+        "tests/test_v052_battery.py": {
+          "files": 1,
+          "bytes": 12906
+        },
+        "tests/test_v052_driver.py": {
+          "files": 1,
+          "bytes": 24855
+        },
+        "tests/test_v052_fast.py": {
+          "files": 1,
+          "bytes": 13079
+        },
+        "tests/test_v054_budgeted_v3.py": {
+          "files": 1,
+          "bytes": 16619
+        },
+        "tests/test_v054_launch_detached.py": {
+          "files": 1,
+          "bytes": 5078
+        },
+        "tests/test_v05_acceptance_harness.py": {
+          "files": 1,
+          "bytes": 4126
+        },
+        "tests/test_v05_archive_run.py": {
+          "files": 1,
+          "bytes": 4237
+        },
+        "tests/test_v05_battery.py": {
+          "files": 1,
+          "bytes": 12506
+        },
+        "tests/test_v05_calibration.py": {
+          "files": 1,
+          "bytes": 23255
+        },
+        "tests/test_v05_centroid.py": {
+          "files": 1,
+          "bytes": 6689
+        },
+        "tests/test_v05_claim_committed.py": {
+          "files": 1,
+          "bytes": 7227
+        },
+        "tests/test_v05_deviation.py": {
+          "files": 1,
+          "bytes": 9522
+        },
+        "tests/test_v05_deviation_c6.py": {
+          "files": 1,
+          "bytes": 9657
+        },
+        "tests/test_v05_paired.py": {
+          "files": 1,
+          "bytes": 6149
+        },
+        "tests/test_v05_reporting.py": {
+          "files": 1,
+          "bytes": 4933
+        },
+        "tests/test_v05_reproduce.py": {
+          "files": 1,
+          "bytes": 8225
+        },
+        "tests/test_v05_review_draw.py": {
+          "files": 1,
+          "bytes": 5666
+        },
+        "tests/test_v05_wp8.py": {
+          "files": 1,
+          "bytes": 7389
+        },
+        "tests/test_vacuous_checks.py": {
+          "files": 1,
+          "bytes": 7466
+        },
+        "tests/test_verdict.py": {
+          "files": 1,
+          "bytes": 1865
+        },
+        "tests/test_verify_code_only_note.py": {
+          "files": 1,
+          "bytes": 5519
+        },
+        "tests/test_verify_dossiers.py": {
+          "files": 1,
+          "bytes": 19791
+        },
+        "tests/test_verify_exception_paths.py": {
+          "files": 1,
+          "bytes": 11432
+        },
+        "tests/test_verify_locked_tags.py": {
+          "files": 1,
+          "bytes": 17020
+        },
+        "tests/test_viability_cd.py": {
+          "files": 1,
+          "bytes": 47983
+        },
+        "tests/test_vm_count_population.py": {
+          "files": 1,
+          "bytes": 6396
+        },
+        "tests/test_vm_jea_integration.py": {
+          "files": 1,
+          "bytes": 23562
+        },
+        "tests/test_vm_log_publish.py": {
+          "files": 1,
+          "bytes": 18537
+        },
+        "tests/test_vm_scripts.py": {
+          "files": 1,
+          "bytes": 56479
+        },
+        "tests/test_workers_equivalence.py": {
+          "files": 1,
+          "bytes": 15428
+        },
+        "tests/test_wp4_papers.py": {
+          "files": 1,
+          "bytes": 13559
+        },
+        "tests/test_x2.py": {
+          "files": 1,
+          "bytes": 53474
+        },
+        "tests/v0512_case_eval.py": {
+          "files": 1,
+          "bytes": 6196
+        },
+        "tests/v0512_fixtures.py": {
+          "files": 1,
+          "bytes": 5059
+        },
+        "tests/v0512_oracles.py": {
+          "files": 1,
+          "bytes": 14651
+        },
+        "tests/v053": {
+          "files": 2,
+          "bytes": 13470
+        },
+        "tests/v055": {
+          "files": 12,
+          "bytes": 107318
+        },
+        "tests/v056": {
+          "files": 2,
+          "bytes": 31876
+        },
+        "tests/v057": {
+          "files": 1,
+          "bytes": 9252
+        },
+        "tests/v058": {
+          "files": 1,
+          "bytes": 5538
+        },
+        "tests/v059": {
+          "files": 2,
+          "bytes": 35324
+        },
+        "tests/vm": {
+          "files": 6,
+          "bytes": 163121
+        },
+        "tests/wp4_papers.py": {
+          "files": 1,
+          "bytes": 17582
+        },
+        "uv.lock": {
+          "files": 1,
+          "bytes": 628182
+        }
+      },
+      "largest": [
+        [
+          47782964,
+          "refute-0.5.0/docs/validation/v0.2.1/reopen/rmin-study/study/study-evaluation.json"
+        ],
+        [
+          37378142,
+          "refute-0.5.0/docs/validation/v0.2.1/population/campaigns/dev-campaign-1/generation/blocks-set1.json"
+        ],
+        [
+          29397215,
+          "refute-0.5.0/docs/validation/v0.2.1/reopen/stage-1/x2/x2-evaluation.json"
+        ],
+        [
+          27359566,
+          "refute-0.5.0/docs/validation/v0.2.1/population/manifest-dev.json"
+        ],
+        [
+          24896492,
+          "refute-0.5.0/docs/validation/v0.2.1/reopen/stage-1/x2/x2e/x2e-pooled-evaluation.json"
+        ],
+        [
+          12325733,
+          "refute-0.5.0/docs/validation/v0.2.1/reopen/rmin-study/study/archive-MANIFEST.sha256"
+        ],
+        [
+          12298567,
+          "refute-0.5.0/docs/validation/v0.2.1/reopen/stage-1/x2/x2e/x2e-evaluation.json"
+        ],
+        [
+          11557003,
+          "refute-0.5.0/docs/validation/v0.2.1/reopen/rmin-study/study/record-digests.json"
+        ],
+        [
+          10956520,
+          "refute-0.5.0/docs/validation/v0.2.1/population/campaigns/dev-campaign-1/journal.jsonl"
+        ],
+        [
+          6642215,
+          "refute-0.5.0/docs/validation/v0.2.1/reopen/rmin-study/study/manifest.json"
+        ]
+      ]
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "old": "02b6ddf:CLAUDE.md",
+  "new": [
+    "CLAUDE.md",
+    "docs/agents/data-publication.md",
+    "docs/agents/ci-two-level.md",
+    "docs/agents/vm-jea.md"
+  ],
+  "unit": "lines",
+  "old_units": 372,
+  "new_units": 399,
+  "missing_count": 0,
+  "added_count": 27,
+  "missing": [],
+  "added_by_file": {
+    "CLAUDE.md": [
+      "   Before a push, a pull request, a wait on CI, or any step gated on CI (a lock, a tag, a release, an acceptance or a dependency change), read [docs/agents/ci-two-level.md](docs/agents/ci-two-level.md): CI in two levels.",
+      "   Before any step on a VM, through the JEA endpoint or by SSH to a VM, read [docs/agents/vm-jea.md](docs/agents/vm-jea.md): which of those steps the agent runs itself.",
+      "- **Raw outputs and data publication.** Before committing, archiving or publishing any raw output larger than 5 MB, or preparing a Zenodo record, read [docs/agents/data-publication.md](docs/agents/data-publication.md)."
+    ],
+    "docs/agents/data-publication.md": [
+      "# Raw outputs and data publication",
+      "**Trigger in `CLAUDE.md`** (Operating rules for agents): Before committing, archiving or publishing any raw output larger than 5 MB, or preparing a Zenodo record, read [docs/agents/data-publication.md](docs/agents/data-publication.md).",
+      "---",
+      "7203695669, item A2), from commit `02b6ddf`, with no line changed (indentation included).",
+      "Moved literally from `CLAUDE.md` on 2026-11-26 by the maintainer's decision (#218, comment",
+      "No rule changed: the text below binds exactly as it did in `CLAUDE.md`, which cites this file",
+      "were in `CLAUDE.md`.",
+      "with the trigger quoted here. Relative links are written for the repository root, as they"
+    ],
+    "docs/agents/ci-two-level.md": [
+      "# CI in two levels",
+      "**Trigger in `CLAUDE.md`** (GitHub operations, Working mode (v0.3), item 1): Before a push, a pull request, a wait on CI, or any step gated on CI (a lock, a tag, a release, an acceptance or a dependency change), read [docs/agents/ci-two-level.md](docs/agents/ci-two-level.md): CI in two levels.",
+      "---",
+      "7203695669, item A2), from commit `02b6ddf`, with no line changed (indentation included).",
+      "Moved literally from `CLAUDE.md` on 2026-11-26 by the maintainer's decision (#218, comment",
+      "No rule changed: the text below binds exactly as it did in `CLAUDE.md`, which cites this file",
+      "were in `CLAUDE.md`.",
+      "with the trigger quoted here. Relative links are written for the repository root, as they"
+    ],
+    "docs/agents/vm-jea.md": [
+      "# VMs and the JEA endpoint",
+      "**Trigger in `CLAUDE.md`** (GitHub operations, Working mode (v0.3), item 3): Before any step on a VM, through the JEA endpoint or by SSH to a VM, read [docs/agents/vm-jea.md](docs/agents/vm-jea.md): which of those steps the agent runs itself.",
+      "---",
+      "7203695669, item A2), from commit `02b6ddf`, with no line changed (indentation included).",
+      "Moved literally from `CLAUDE.md` on 2026-11-26 by the maintainer's decision (#218, comment",
+      "No rule changed: the text below binds exactly as it did in `CLAUDE.md`, which cites this file",
+      "were in `CLAUDE.md`.",
+      "with the trigger quoted here. Relative links are written for the repository root, as they"
+    ]
+  },
+  "passed": true
+}
