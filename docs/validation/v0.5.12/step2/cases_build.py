@@ -130,7 +130,7 @@ def cases() -> list[dict]:
             {
                 "model": "trapezoid",
                 "trapezoid": TRAP_GIANT,
-                "sigma": 1e-7,
+                "sigma": 5e-5,
                 "seed": 16,
                 "star": STAR,
             },
@@ -142,7 +142,7 @@ def cases() -> list[dict]:
             nat,
             [],
             "compute_screen",
-            {"model": "trapezoid", "trapezoid": TRAP_GIANT, "sigma": 1e-7, "seed": 16},
+            {"model": "trapezoid", "trapezoid": TRAP_GIANT, "sigma": 5e-5, "seed": 16},
             {},
         ),
         case("C08", "a null (noise only)", nat, [], "compute_screen", {"seed": 18}, {}),
@@ -673,6 +673,9 @@ def fill(c) -> dict:
         got = oc.f1_corrected(t, f, s, p, t0, d)
         frozen = f1_reference(t, f, s, p, t0, d)
         exp["F1"] = {"state": got["state"], "reason_prefix": "OE_box "}
+        intended = {"C01": "pass", "C02": "fail", "C06": "pass", "C07": "pass"}
+        if c["id"] in intended:
+            check(c["id"], got["state"], intended[c["id"]])
         values["F1"] = {
             "corrected_oe_box": got["metrics"]["oe_box"],
             "frozen_oe_box": frozen.metrics.get("oe_box"),
@@ -772,9 +775,10 @@ def main() -> int:
         "tolerances": {
             "oracle arithmetic on the realized fixture": {"rtol": 1e-9},
             "oracle fit values (OE_trap, OE_trap_T)": {"rtol": 1e-6},
-            "noiseless-model fit values (sigma 1e-7 against depths of 0.04 and 0.05)": {
-                "rtol": 1e-3
-            },
+            "model fit values: C05 at sigma 1e-7 (depth 0.05, noiseless in effect); C06 at "
+            "sigma 5e-5 (depth 0.04: about 84 flat cadences give SE(dF) near 5.5e-6, so 1e-3 "
+            "is about seven standard errors; a sigma of 1e-7 made F1 fail on the cadence "
+            "sampling alone, OE_box 44, and the isolation case needs F1 to pass)": {"rtol": 1e-3},
         },
         "unreachable": {
             "B07": "line 231 repeats _wmean(f[base], w[base]); _noise returned sigma_w only "
