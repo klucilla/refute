@@ -1,0 +1,11 @@
+{
+ "name": "tmpdir-pytest-d",
+ "question": "The temporary-folder fixture's part (ii) again, once, through the subst drive (#218 comment 7191720023, item 3): the minimal pytest case with tmp_path, called by the drive's path, must pass (JUnit 1/0/0/0). If it fails, write the charter amendment for option (b) and stop.",
+ "choices": "docs/validation/v0.5.12/step0/tmpdir_pytest_d.py, in the AppContainer with the cvenv; the letter comes from step0/subst.json; its records are copied to step0/. A data unit, run once (approved).",
+ "argv": ["{python}", "-B", "docs/validation/v0.5.12/step0/tmpdir_pytest_d.py"],
+ "identity": ["docs/validation/v0.5.12/step0/tmpdir_pytest_d.py", "docs/validation/v0.5.12/step0/tmpdir_case.py", "docs/validation/v0.5.12/step0/subst.json"],
+ "key": "data",
+ "reserve": {"cpu_s": 120, "disk_bytes": 20000000},
+ "network": false,
+ "outputs": {"tmpdir-pytest-d.json": "docs/validation/v0.5.12/step0/tmpdir-pytest-d.json"}
+}
