@@ -10,7 +10,7 @@
   "disk_bytes": 2000000000
  },
  "charged": {
-  "cpu_s": 4096.579,
+  "cpu_s": 5126.829,
   "download_bytes": 0,
   "disk_peak_bytes": 417702701
  },
@@ -3586,6 +3586,186 @@
    "cpu_s": 1.844,
    "write_bytes": 8439,
    "disk_bound_bytes": 287588819,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "c2846302e5fc4d85ad7c3b64511b0002",
+   "start": "2026-11-26T16:54:01Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.797,
+   "write_bytes": 898422,
+   "disk_bound_bytes": 288488253,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "e0129d776a9f4dd1bbfa7cae1427a796",
+   "start": "2026-11-26T16:54:03Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000
+   },
+   "status": "ok",
+   "cpu_s": 3.453,
+   "write_bytes": 1589531,
+   "disk_bound_bytes": 289326975,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "push",
+   "label": null,
+   "attempt": "aac389488d7044abaa3e8ba542c6df34",
+   "start": "2026-11-26T16:54:07Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000
+   },
+   "status": "ok",
+   "cpu_s": 2.328,
+   "write_bytes": 69736,
+   "disk_bound_bytes": 287821795,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "inspect",
+   "label": "state-suites",
+   "attempt": "1c10a4c02d714e37a813f106282adc3e",
+   "start": "2026-11-26T16:54:12Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 1.875,
+   "write_bytes": 470,
+   "disk_bound_bytes": 287757544,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh",
+   "label": null,
+   "attempt": "561f4b2a299845c195aac43678e3f515",
+   "start": "2026-11-26T16:54:14Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000
+   },
+   "status": "ok",
+   "cpu_s": 1.641,
+   "write_bytes": 1002,
+   "disk_bound_bytes": 287761831,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "inspect",
+   "label": "ruff-src",
+   "attempt": "c6414ef802714708af7c7bfd6702e1fc",
+   "start": "2026-11-26T16:55:42Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 1.922,
+   "write_bytes": 37258,
+   "disk_bound_bytes": 287801663,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "pytest-affinity",
+   "label": null,
+   "attempt": "0443fd1ee352487ebf8ae779931473ca",
+   "start": "2026-11-26T16:55:44Z",
+   "reserve": {
+    "cpu_s": 900,
+    "disk_bytes": 100000000
+   },
+   "status": "failed",
+   "cpu_s": 34.453,
+   "write_bytes": 23270,
+   "disk_bound_bytes": 287792976,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "inspect",
+   "label": "ruff-v0511",
+   "attempt": "b22cdaaf2c99431d96dcc6823d0ac255",
+   "start": "2026-11-26T16:57:02Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 1.906,
+   "write_bytes": 22208,
+   "disk_bound_bytes": 287817202,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "pytest-affinity",
+   "label": null,
+   "attempt": "74b725d7da0e42c6ab4efdcb496ba7e7",
+   "start": "2026-11-26T16:57:04Z",
+   "reserve": {
+    "cpu_s": 900,
+    "disk_bytes": 100000000
+   },
+   "status": "ok",
+   "cpu_s": 74.906,
+   "write_bytes": 10897,
+   "disk_bound_bytes": 287810907,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "pytest-affinity",
+   "label": null,
+   "attempt": "d517f94c1aa64b62ae177be12729f3a1",
+   "start": "2026-11-26T16:58:38Z",
+   "reserve": {
+    "cpu_s": 900,
+    "disk_bytes": 100000000
+   },
+   "status": "interrupted",
+   "cpu_s": 902.344,
+   "write_bytes": 3216885,
+   "disk_bound_bytes": 291028823,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "inspect",
+   "label": "src-diff",
+   "attempt": "bd9b345e4dac4ebcaebca85a92612369",
+   "start": "2026-11-26T17:14:03Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 1.844,
+   "write_bytes": 33370,
+   "disk_bound_bytes": 287849181,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "store-file",
+   "label": null,
+   "attempt": "4c0e1b9d8df042f3b82fc7d2daffc9ae",
+   "start": "2026-11-26T17:14:35Z",
+   "reserve": {
+    "cpu_s": 30,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.781,
+   "write_bytes": 16760,
+   "disk_bound_bytes": 287858220,
    "telemetry_complete": true
   }
  ]
