@@ -10,7 +10,7 @@
   "disk_bytes": 2000000000
  },
  "charged": {
-  "cpu_s": 6303.968,
+  "cpu_s": 6733.843,
   "download_bytes": 0,
   "disk_peak_bytes": 417702701
  },
@@ -4336,6 +4336,81 @@
    "cpu_s": 74.141,
    "write_bytes": 388553,
    "disk_bound_bytes": 297088674,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "fa59bebded5844c28567d13f72144745",
+   "start": "2026-11-26T17:40:08Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.797,
+   "write_bytes": 959284,
+   "disk_bound_bytes": 297938896,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "bac8d29588a443bda02d6b0d22a330eb",
+   "start": "2026-11-26T17:40:10Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000
+   },
+   "status": "ok",
+   "cpu_s": 2.516,
+   "write_bytes": 1831207,
+   "disk_bound_bytes": 299017945,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "golden-local",
+   "label": null,
+   "attempt": "041cd7a0ad544541aefa9c6c6a02cc3b",
+   "start": "2026-11-26T17:40:14Z",
+   "reserve": {
+    "cpu_s": 900,
+    "disk_bytes": 100000000
+   },
+   "status": "ok",
+   "cpu_s": 418.047,
+   "write_bytes": 758174,
+   "disk_bound_bytes": 297955015,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "claim-hashes-after",
+   "label": null,
+   "attempt": "3ca6b6300f8d4313913ee9f4a6ef18a8",
+   "start": "2026-11-26T17:47:12Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 5.703,
+   "write_bytes": 2389,
+   "disk_bound_bytes": 297586119,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "inspect",
+   "label": "ruff-cmp",
+   "attempt": "4401fb15cbc74c7382b95587f6839a02",
+   "start": "2026-11-26T17:47:39Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 1.812,
+   "write_bytes": 512,
+   "disk_bound_bytes": 297594361,
    "telemetry_complete": true
   }
  ]

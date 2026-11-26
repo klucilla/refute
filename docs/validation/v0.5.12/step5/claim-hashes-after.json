@@ -1,0 +1,25 @@
+{
+ "labels": [
+  "exploratory",
+  "method_status: not_validated"
+ ],
+ "payload": {
+  "claims": {
+   "calibration/self_claim.yaml": "f88521edaa2bb645f2aa890dc3a0c23bcbd405611582444e983b485be13232dc",
+   "calibration/v0.2/self_claim.yaml": "3bfa36a392089040385c187155cae5bc1a41dece42e928a8b38654f7c37a5514",
+   "calibration/v0.3/main/claims/2302.12465/claim/claim.yaml": "cb7720a2fd3dc4d95315bc2ea04829c10060992f1f3c6739d30ce24e614cd6c6",
+   "calibration/v0.3/main/claims/2305.19518/claim/claim.yaml": "ff1ac0933507882c63178a9fa7e7d5b0c82279a7ee758b9ac6bdbec9e8403424",
+   "calibration/v0.3/main/claims/2309.15704/claim/claim.yaml": "598543893374b9c4742d44f25bbaf7fa89cbc3f2faf7f4e857c2359a91b34957",
+   "calibration/v0.3/main/claims/2407.11735/claim/claim.yaml": "dcea7ed105a99f336a124db706d1683d058b12fb8b1a2979bc838ede9a25a34f",
+   "calibration/v0.3/main/claims/2502.16782/claim/claim.yaml": "3e59b8353da037e57d03b68817c7b01c947e06ef113555c8b79f4ec842b857ab",
+   "calibration/v0.4/claim.yaml": "d2ce83808eb026189fa76b83533aeca8b98e81ad5dff92b17e4cfa7a83eb61d5",
+   "calibration/v0.5.6/claim.yaml": "d451e995eae3f12afda0e5d807f5c5516c16c8bc1094b6d72c1623e5528b749f",
+   "calibration/v0.5/claim.yaml": "48acfe245a7231c35353319212324574d408be493c3c53d062ea02adfbd00210",
+   "calibration/v0.5/deviation/claim.generated.yaml": "ERROR ClaimError: invalid claim: targets attachment not found: selection/targets.yaml"
+  }
+ },
+ "provenance": {
+  "head": "a129f5dfed38271d143e2af643a971b177ae5784",
+  "script_sha256": "af00b7926ba16c16697de986293341c495f45c9da9c8003d54cf2a2c66034d14"
+ }
+}

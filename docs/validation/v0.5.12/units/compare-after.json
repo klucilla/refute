@@ -1,0 +1,10 @@
+{
+ "name": "compare-after",
+ "question": "The charter's step 5 and criterion 4: do the golden and claim-hash 'after' payloads equal the 'before' ones byte for byte, provenance excluded, with no unexpected error?",
+ "choices": "docs/validation/v0.5.12/step5/compare_after.py through launch_v3; a read of four committed records. A tree unit.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/step5/compare_after.py"],
+ "identity": ["docs/validation/v0.5.12/step5/compare_after.py", "docs/validation/v0.5.12/step0/golden-after.json", "docs/validation/v0.5.12/step5/claim-hashes-after.json"],
+ "key": "tree",
+ "reserve": {"cpu_s": 60, "disk_bytes": 5000000},
+ "network": false
+}
