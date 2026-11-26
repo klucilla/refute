@@ -1,0 +1,10 @@
+{
+ "name": "pytest-affinity",
+ "question": "Run named test files through scripts/run_tests_affinity.ps1 (processors 8 to 31, --disable-socket from pyproject's addopts), with the counts read from its JUnit XML (the extra arguments: -Junit <.cache path> -Tests <files>).",
+ "choices": "Offline, outside the AppContainer under amendment 1, in the launcher's job. A tree unit: the same arguments and code state is the same unit.",
+ "argv": ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "scripts/run_tests_affinity.ps1"],
+ "identity": ["scripts/run_tests_affinity.ps1"],
+ "key": "tree",
+ "reserve": {"cpu_s": 900, "disk_bytes": 100000000},
+ "network": false
+}
