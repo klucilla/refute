@@ -1,0 +1,76 @@
+{
+ "schema": "refute-v0512-m1-1",
+ "labels": [
+  "exploratory",
+  "method_status: not_validated"
+ ],
+ "rule": "per family: 0 not_assessed and the 95% Wilson upper bound of the fail rate <= 1% (at most 19 fail of 3000); M1 passes if every family passes",
+ "families": {
+  "U": {
+   "n": 3000,
+   "pass": 2992,
+   "fail": 8,
+   "not_assessed": 0,
+   "oe_box_over_2": 133,
+   "wilson_upper_95": 0.005253496791930672,
+   "family_passes": true
+  },
+  "S9.5": {
+   "n": 3000,
+   "pass": 2986,
+   "fail": 14,
+   "not_assessed": 0,
+   "oe_box_over_2": 136,
+   "wilson_upper_95": 0.007818332203691613,
+   "family_passes": true
+  },
+  "P2.4": {
+   "n": 3000,
+   "pass": 2909,
+   "fail": 91,
+   "not_assessed": 0,
+   "oe_box_over_2": 464,
+   "wilson_upper_95": 0.03709641848975932,
+   "family_passes": false
+  },
+  "P9.5": {
+   "n": 3000,
+   "pass": 1389,
+   "fail": 1611,
+   "not_assessed": 0,
+   "oe_box_over_2": 2047,
+   "wilson_upper_95": 0.5547842186040002,
+   "family_passes": false
+  },
+  "T2": {
+   "n": 3000,
+   "pass": 3000,
+   "fail": 0,
+   "not_assessed": 0,
+   "oe_box_over_2": 20,
+   "wilson_upper_95": 0.0012788487253259629,
+   "family_passes": true
+  },
+  "T6": {
+   "n": 3000,
+   "pass": 3000,
+   "fail": 0,
+   "not_assessed": 0,
+   "oe_box_over_2": 18,
+   "wilson_upper_95": 0.0012788487253259629,
+   "family_passes": true
+  },
+  "B6": {
+   "n": 3000,
+   "pass": 1,
+   "fail": 2999,
+   "not_assessed": 0,
+   "oe_box_over_2": 3000,
+   "wilson_upper_95": 0.9999411560581286,
+   "family_passes": false
+  }
+ },
+ "passed": false,
+ "wall_s": 132.0,
+ "workers": 10
+}

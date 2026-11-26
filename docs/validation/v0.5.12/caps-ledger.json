@@ -10,7 +10,7 @@
   "disk_bytes": 2000000000
  },
  "charged": {
-  "cpu_s": 705.922,
+  "cpu_s": 2028.218,
   "download_bytes": 0,
   "disk_peak_bytes": 330432609
  },
@@ -1505,6 +1505,81 @@
    "cpu_s": 2.547,
    "write_bytes": 160,
    "disk_bound_bytes": 283207820,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "72938da1f17749da9aec148e872b40ff",
+   "start": "2026-11-26T13:31:11Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.906,
+   "write_bytes": 799985,
+   "disk_bound_bytes": 284012702,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "52ae35d738a44e70b136d040f6336a28",
+   "start": "2026-11-26T13:31:20Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000
+   },
+   "status": "ok",
+   "cpu_s": 4.375,
+   "write_bytes": 1063619,
+   "disk_bound_bytes": 284335626,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "claim-hashes-host",
+   "label": null,
+   "attempt": "b135d38caf1143c08b70c93f6611d3ec",
+   "start": "2026-11-26T13:31:30Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 6.641,
+   "write_bytes": 2389,
+   "disk_bound_bytes": 283283944,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "inspect",
+   "label": "check-claims-host",
+   "attempt": "b021899ae72a44f5b3e2145f897ae40b",
+   "start": "2026-11-26T13:31:51Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 1.812,
+   "write_bytes": 136,
+   "disk_bound_bytes": 283289939,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "m1",
+   "label": null,
+   "attempt": "40b84c353da54a27a6fd42c7bf1d7c7d",
+   "start": "2026-11-26T13:32:00Z",
+   "reserve": {
+    "cpu_s": 2700,
+    "disk_bytes": 100000000
+   },
+   "status": "ok",
+   "cpu_s": 1307.562,
+   "write_bytes": 3650872,
+   "disk_bound_bytes": 286941831,
    "telemetry_complete": true
   }
  ]
