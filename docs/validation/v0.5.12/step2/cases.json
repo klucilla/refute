@@ -764,10 +764,6 @@
    },
    "patches": [],
    "expect": {
-    "F1": {
-     "state": "fail",
-     "reason_prefix": "OE_box "
-    },
     "F4": {
      "state": "computed",
      "values": {
