@@ -20,6 +20,12 @@ What the new files hold beyond the old file (new headings, a table, the triggers
 point to a moved section) is reported as **added**, so that a reader sees exactly what is
 new. The check passes (exit 0) when nothing is missing; it fails (exit 1) otherwise.
 
+With ``--normalize-links`` (the maintainer's decision of 2026-11-26, item M2), every relative link
+target of the old and the new texts is first put in its repository-root form
+(``scripts/md_links.py``), each from its own folder: the old file's (``--old-dir``, by default the
+folder of ``--old``) and each new file's (``--location NEW=FOLDER``, by default its own folder).
+A move that only re-prefixed links then compares equal; any other change still shows.
+
 The old file is read from git (``--old-rev REV --old PATH``, through ``git show``) or from
 disk (``--old-file PATH``); the new files are read from disk. Nothing is written except the
 optional JSON report (``--report``). No network.
@@ -34,6 +40,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import posixpath
 import re
 import subprocess
 import sys
@@ -104,6 +111,21 @@ def compare(old_text: str, new_texts: dict[str, str], unit: str) -> dict:
     }
 
 
+def normalized(text: str, file_dir: str) -> str:
+    """``text`` with its relative link targets in repository-root form (``md_links``), so that a
+    move that only re-prefixed links compares equal (the maintainer's decision of 2026-11-26,
+    item M2)."""
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import md_links
+
+    return md_links.normalize(text, file_dir)
+
+
+def location(name: str, declared: dict[str, str]) -> str:
+    """The repository folder a new file lives in: declared with ``--location``, or its own."""
+    return declared.get(name, posixpath.dirname(Path(name).as_posix()))
+
+
 def read_old(rev: str | None, path: str | None, file: str | None) -> tuple[str, str]:
     """The old text and a label for it."""
     if file:
@@ -124,10 +146,23 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--new", action="append", required=True)
     parser.add_argument("--unit", choices=sorted(UNITS), default="lines")
     parser.add_argument("--report")
+    parser.add_argument("--normalize-links", action="store_true")
+    parser.add_argument("--old-dir", default=None, help="the old file's repository folder")
+    parser.add_argument(
+        "--location", action="append", default=[], help="NEW=FOLDER: a new file's repository folder"
+    )
     args = parser.parse_args(argv)
     old_text, label = read_old(args.old_rev, args.old, args.old_file)
     new_texts = {name: Path(name).read_text(encoding="utf-8") for name in args.new}
+    if args.normalize_links:
+        declared = dict(item.split("=", 1) for item in args.location)
+        old_dir = args.old_dir
+        if old_dir is None:
+            old_dir = posixpath.dirname(Path(args.old).as_posix()) if args.old else ""
+        old_text = normalized(old_text, old_dir)
+        new_texts = {n: normalized(t, location(n, declared)) for n, t in new_texts.items()}
     result = {"old": label, "new": args.new, **compare(old_text, new_texts, args.unit)}
+    result["links_normalized"] = args.normalize_links
     if args.report:
         Path(args.report).write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     print(f"old: {label} ({result['old_units']} {args.unit})")
