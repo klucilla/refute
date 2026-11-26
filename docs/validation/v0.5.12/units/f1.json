@@ -1,0 +1,12 @@
+{
+ "name": "f1",
+ "question": "F-1 (the charter, step 3; #218 comment 7199254242, item 3c): on a new fixture (planet_three_years, seed 2026112601) and a new pre-logged diagnostic (version 3's sinusoid first prewhitening step, stage by stage), does any of the factors workload, threads1, import_order, misalign, random_state change amplitude_snr in all three fresh-process A/B pairs with the same first differing stage? Otherwise: cause not found.",
+ "choices": "docs/validation/v0.5.12/step3/f1_driver.py and f1_probe.py, through launch_v3 (processors 8 to 31); the seed is checked absent from the repository first; one factor at a time, three pairs each; the floating-point control state excluded. Its record is copied to step3/f1-result.json. A data unit, run once; within the step's 0.8 CPU-h cap.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/step3/f1_driver.py"],
+ "identity": ["docs/validation/v0.5.12/step3/f1_driver.py", "docs/validation/v0.5.12/step3/f1_probe.py", "src/refute/packs/tess/battery_v51.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 1800, "disk_bytes": 50000000},
+ "network": false,
+ "timeout_s": 1800,
+ "outputs": {"f1-result.json": "docs/validation/v0.5.12/step3/f1-result.json"}
+}

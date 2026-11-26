@@ -10,7 +10,7 @@
   "disk_bytes": 2000000000
  },
  "charged": {
-  "cpu_s": 6786.514,
+  "cpu_s": 6799.343,
   "download_bytes": 0,
   "disk_peak_bytes": 417702701
  },
@@ -4486,6 +4486,96 @@
    "cpu_s": 2.031,
    "write_bytes": 4308,
    "disk_bound_bytes": 297808797,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "c01b5f3abd9247dc8f03d6e33bee33c1",
+   "start": "2026-11-26T17:49:40Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.812,
+   "write_bytes": 932763,
+   "disk_bound_bytes": 298742782,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "51e3a8d817404ea1b761c4ec14f86ef2",
+   "start": "2026-11-26T17:49:42Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000
+   },
+   "status": "ok",
+   "cpu_s": 2.344,
+   "write_bytes": 1732608,
+   "disk_bound_bytes": 299720094,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "push",
+   "label": null,
+   "attempt": "1e2705212fb54cb5841cf58b5b28aab7",
+   "start": "2026-11-26T17:49:45Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000
+   },
+   "status": "ok",
+   "cpu_s": 2.938,
+   "write_bytes": 2446299,
+   "disk_bound_bytes": 300448211,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh",
+   "label": null,
+   "attempt": "946d75cda94743abaa10e915875b24e1",
+   "start": "2026-11-26T17:49:53Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000
+   },
+   "status": "ok",
+   "cpu_s": 1.922,
+   "write_bytes": 206,
+   "disk_bound_bytes": 298007699,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "ruff-format2",
+   "label": null,
+   "attempt": "b57911b99fc44d1fb3447d81154b9900",
+   "start": "2026-11-26T17:52:04Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 5000000
+   },
+   "status": "ok",
+   "cpu_s": 1.719,
+   "write_bytes": 6264,
+   "disk_bound_bytes": 298027397,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "inspect",
+   "label": "ruff-f1",
+   "attempt": "ded39e04fa7445ba95e2be56427194d5",
+   "start": "2026-11-26T17:52:06Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 2.094,
+   "write_bytes": 374,
+   "disk_bound_bytes": 298027154,
    "telemetry_complete": true
   }
  ]
