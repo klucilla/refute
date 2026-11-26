@@ -1,0 +1,11 @@
+{
+ "name": "step2-probe2",
+ "question": "The approved repetition of the step-2 probe (#218 comment 7198110621, item 2), after the removal of C05's two F1 assertions: do the remaining 323 assertions pass on the approval code, apart from the two documented failures (N07, N14), which must occur as named? Any other failure stops the work.",
+ "choices": "The same docs/validation/v0.5.12/step2/probe.py as the first probe; a new unit file (rule (c)) only so that its record goes to step2/probe-result-2.json and the first probe's record is kept unchanged. Run with --approval. A data unit, run once.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/step2/probe.py"],
+ "identity": ["docs/validation/v0.5.12/step2/probe.py", "tests/v0512_case_eval.py", "tests/v0512_fixtures.py", "docs/validation/v0.5.12/step2/cases.json", "src/refute/packs/tess/screen_d5.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 300, "disk_bytes": 10000000},
+ "network": false,
+ "outputs": {"probe-result.json": "docs/validation/v0.5.12/step2/probe-result-2.json"}
+}

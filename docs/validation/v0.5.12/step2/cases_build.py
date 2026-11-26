@@ -672,7 +672,10 @@ def fill(c) -> dict:
     if c["id"] in ("C01", "C02", "C05", "C06", "C07", "C08"):
         got = oc.f1_corrected(t, f, s, p, t0, d)
         frozen = f1_reference(t, f, s, p, t0, d)
-        exp["F1"] = {"state": got["state"], "reason_prefix": "OE_box "}
+        # #218 comment 7198110621, item 1: C05's entry is report-only and produces no F1 record,
+        # so its two F1 assertions are removed; its oracle values stay, for information
+        if c["id"] != "C05":
+            exp["F1"] = {"state": got["state"], "reason_prefix": "OE_box "}
         intended = {"C01": "pass", "C02": "fail", "C06": "pass", "C07": "pass"}
         if c["id"] in intended:
             check(c["id"], got["state"], intended[c["id"]])

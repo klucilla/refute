@@ -1,0 +1,10 @@
+{
+ "name": "step2-cases-diff",
+ "question": "#218 comment 7198110621, item 1: is the rebuilt case record different from the probed one (6f9925e, SHA-256 0bb30fac...) ONLY by the removal of case C05's two F1 assertions?",
+ "choices": "docs/validation/v0.5.12/step2/cases_diff.py, through launch_v3; a read of the two records. A tree unit.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/step2/cases_diff.py"],
+ "identity": ["docs/validation/v0.5.12/step2/cases_diff.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 60, "disk_bytes": 5000000},
+ "network": false
+}

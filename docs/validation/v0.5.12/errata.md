@@ -38,3 +38,16 @@ its impact. Working records only; approved records get separate dated correction
 - **Impact:** the estimator, the thresholds and every number are unchanged; check 3's result
   stands for the estimator. The file's SHA-256 changes; the maintainer's adoption is against the
   new one. Revision 1 was not approved, published or locked.
+
+## 4. 2026-11-26: case C05's two F1 assertions removed from the step-2 case record
+
+- **Source commit:** `6f9925e`, `docs/validation/v0.5.12/step2/cases.json` (SHA-256
+  `0bb30fac75e45a64628cb3b3f831020d500daa87de7326e74ea7617943a3b5b5`, the record the first probe
+  read), built by `step2/cases_build.py`.
+- **Correction:** C05's entry point is `report_only`, which produces no F1 record, so its F1
+  expectation (`state` and `reason_prefix`) was an assembly error of the builder. The two
+  assertions are removed (#218 comment 7198110621, item 1); the option of changing C05's entry
+  was refused. The builder keeps C05's oracle values, for information.
+  - `step2/cases_diff.py` checks that the removal is the only difference.
+- **Impact:** the first probe's record (`step2/probe-result.json`) is kept unchanged. The probe is
+  repeated once, by the same decision, item 2. No tolerance and no other expectation changes.
