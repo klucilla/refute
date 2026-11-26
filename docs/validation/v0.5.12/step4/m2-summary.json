@@ -1,0 +1,98 @@
+{
+ "schema": "refute-v0512-m2-1",
+ "labels": [
+  "exploratory",
+  "method_status: not_validated"
+ ],
+ "src_commit": "6f83a91",
+ "rule": "per family: 0 not_assessed and the 95% Wilson upper bound of the fail rate <= 1% (at most 19 fail of 3000); it passes if every family passes",
+ "families": {
+  "U": {
+   "n": 3000,
+   "pass": 2989,
+   "fail": 11,
+   "not_assessed": 0,
+   "oe_box_over_2": 136,
+   "wilson_95": [
+    0.002048668595200181,
+    0.0065541352394733925
+   ],
+   "family_passes": true
+  },
+  "S9.5": {
+   "n": 3000,
+   "pass": 2993,
+   "fail": 7,
+   "not_assessed": 0,
+   "oe_box_over_2": 108,
+   "wilson_95": [
+    0.0011307320906370833,
+    0.004808815340637359
+   ],
+   "family_passes": true
+  },
+  "P2.4": {
+   "n": 3000,
+   "pass": 2990,
+   "fail": 10,
+   "not_assessed": 0,
+   "oe_box_over_2": 151,
+   "wilson_95": [
+    0.0018116337615376188,
+    0.006125355972286172
+   ],
+   "family_passes": true
+  },
+  "P9.5": {
+   "n": 3000,
+   "pass": 2995,
+   "fail": 5,
+   "not_assessed": 0,
+   "oe_box_over_2": 155,
+   "wilson_95": [
+    0.0007121039409388156,
+    0.0038958152886360608
+   ],
+   "family_passes": true
+  },
+  "T2": {
+   "n": 3000,
+   "pass": 2992,
+   "fail": 8,
+   "not_assessed": 0,
+   "oe_box_over_2": 102,
+   "wilson_95": [
+    0.0013518647401935516,
+    0.005253496791930672
+   ],
+   "family_passes": true
+  },
+  "T6": {
+   "n": 3000,
+   "pass": 2994,
+   "fail": 6,
+   "not_assessed": 0,
+   "oe_box_over_2": 97,
+   "wilson_95": [
+    0.0009169302695833239,
+    0.004356803060841335
+   ],
+   "family_passes": true
+  },
+  "B6": {
+   "n": 3000,
+   "pass": 2988,
+   "fail": 12,
+   "not_assessed": 0,
+   "oe_box_over_2": 140,
+   "wilson_95": [
+    0.002289680812108522,
+    0.006978937123414834
+   ],
+   "family_passes": true
+  }
+ },
+ "passed": true,
+ "wall_s": 89.9,
+ "workers": 10
+}
