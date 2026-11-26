@@ -10,7 +10,7 @@
   "disk_bytes": 2000000000
  },
  "charged": {
-  "cpu_s": 7041.107,
+  "cpu_s": 7051.512,
   "download_bytes": 0,
   "disk_peak_bytes": 457191465
  },
@@ -19,7 +19,7 @@
  "gaps": 11,
  "gaps_file": "docs/validation/v0.5.12/meter-gaps.json",
  "charging_rule": "measured use for settled attempts with complete telemetry; otherwise the larger of the reservation and the measured use; the bootstrap charged once by cross-reference to v0.5.11's journal",
- "downloads_rule": "every offline unit runs in the AppContainer with no capability; only units declaring GitHub or review traffic have network, with their operations journaled",
+ "downloads_rule": "until charter amendment 1, every offline unit ran in the AppContainer with no capability; from amendment 1 (bb6292c, approved in #218 comment 7193450494; launch_v3.py) every unit without network runs outside the AppContainer, in the launcher's job object, with no network block across its process tree (a declared limit of exit criterion 6); only units declaring GitHub or review traffic are meant to use the network, with their operations journaled; downloads are declared, not blocked",
  "outside_meter": [
   "the agent's own file tools (reading and editing files; their writes are carried by the next disk scan)",
   "the agent's shell host process that starts this launcher",
@@ -5551,6 +5551,66 @@
    "cpu_s": 1.984,
    "write_bytes": 160,
    "disk_bound_bytes": 303783585,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "939c2b0acbc9438d93dffd78b10cc061",
+   "start": "2026-11-26T20:16:26Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.984,
+   "write_bytes": 1034857,
+   "disk_bound_bytes": 304820285,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "ab4c2e4edcc54923998641bb93a6cb2d",
+   "start": "2026-11-26T20:16:29Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000
+   },
+   "status": "ok",
+   "cpu_s": 3.984,
+   "write_bytes": 2128543,
+   "disk_bound_bytes": 306191077,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "inspect",
+   "label": null,
+   "attempt": "8485167c3178488a848bbaf7dc6a862d",
+   "start": "2026-11-26T20:16:37Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 1.828,
+   "write_bytes": 1069369,
+   "disk_bound_bytes": 305146320,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "push",
+   "label": null,
+   "attempt": "75f57077e171485dbdd8ebead07ab7ee",
+   "start": "2026-11-26T20:16:50Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000
+   },
+   "status": "ok",
+   "cpu_s": 2.609,
+   "write_bytes": 43894,
+   "disk_bound_bytes": 304124824,
    "telemetry_complete": true
   }
  ]
