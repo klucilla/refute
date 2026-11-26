@@ -1,0 +1,14 @@
+{
+ "reviewed": "f3d1843f5f042b19a43d8fda65c331b35d375f01",
+ "tip": "c897e4074d55e27f5590f217f853c0a9eb722658",
+ "readme_byte_equal": true,
+ "readme_git_blob_id": "b90716c38e5db872e2681c259b504d8daf49f28c",
+ "paths_changed": [
+  "docs/STATUS.md"
+ ],
+ "only_status_changed": true,
+ "status_changed_lines": 83,
+ "status_changed_targets": 95,
+ "status_problems": [],
+ "passed": true
+}

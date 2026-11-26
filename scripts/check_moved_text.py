@@ -152,6 +152,8 @@ def main(argv: list[str] | None = None) -> int:
         "--location", action="append", default=[], help="NEW=FOLDER: a new file's repository folder"
     )
     args = parser.parse_args(argv)
+    if hasattr(sys.stdout, "reconfigure"):  # a Windows console's code page cannot print "→"
+        sys.stdout.reconfigure(errors="backslashreplace")
     old_text, label = read_old(args.old_rev, args.old, args.old_file)
     new_texts = {name: Path(name).read_text(encoding="utf-8") for name in args.new}
     if args.normalize_links:
