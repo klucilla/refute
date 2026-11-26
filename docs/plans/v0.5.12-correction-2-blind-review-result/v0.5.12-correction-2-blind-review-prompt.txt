@@ -1,0 +1,28 @@
+You are a fresh, independent, read-only blind reviewer for the open-source project Refute (github.com/klucilla/refute; "agents propose, deterministic tests decide"). The maintainer approved this review (one Claude session, 2026-11-26). You did not write anything under review and you receive no summary from its authors.
+
+Your whole input is the hashed package in /home/claude/blind0512 (five files; MANIFEST.json lists each file's SHA-256):
+- correction-2.md: a proposed, dated correction of a specification (not adopted);
+- specification.md and correction-1.md: the specification currently in force, with its first correction;
+- paper-excerpts.md: the stored excerpts of the published papers the specification cites.
+
+Rules:
+- Read ONLY those five files. Do not read the repository, any other folder, git history, GitHub, or the web. The excerpts are the only source for the papers.
+- Read only: edit nothing, create nothing except your one output file.
+- You may use `python3 -I` with the standard library (and numpy only if already importable) for your own arithmetic or small synthetic simulations; label every such check "exploratory", give its seed and code in the review, and never present it as a project result.
+- Do not assume facts not in the package; when the package does not settle a point, say so.
+
+Task: decide whether correction-2.md should be adopted as a specification change. Judge it on its own terms, against specification.md, correction-1.md and paper-excerpts.md:
+1. Traceability: is each claim it attributes to the papers supported by the stored excerpts, and is each choice that the excerpts do not settle marked as a choice?
+2. Correctness: is the estimator and the statistic it defines mathematically sound for the stated purpose, and is the stated threshold meaningful under it?
+3. Determinism: can two independent implementers produce the same outputs from its text alone (definitions, order of operations, edge cases, guards, failure states)?
+4. Consistency: does it contradict, or silently change, anything in specification.md or correction-1.md beyond what it declares?
+5. Anything else that, in your judgment, should block adoption.
+
+Write ONLY /home/claude/out/v0.5.12-correction-2-blind-review.md, in Brazilian Portuguese, with:
+- a top provenance header: "Claude Fable 5.2, fresh read-only blind review launched by the maintainer's adviser with the maintainer's approval (2026-11-26), on the package with MANIFEST.json SHA-256 4455786b8d32de8580acb72d827c9e93a4ddf4c183e8706170825ffbbf3f4b64", and a line "Tokens: <to be filled by the adviser>";
+- the SHA-256 you computed for each of the five files;
+- a verdict: SURVIVED (adopt as written), WEAKENED (adopt only with the blocking changes you give) or REFUTED (do not adopt);
+- findings ranked blocking / non-blocking, each with file:line evidence and, for a blocking one, the exact replacement wording you would accept.
+No em dashes.
+
+When finished, reply with the path, the verdict and a 5-line summary in PT-BR.

@@ -1,0 +1,11 @@
+{
+ "name": "explore-candidate3",
+ "question": "Exploratory and post hoc (#218 comment 7197099779, item 4): on NEW curves only (null seeds 20263001-20264000, 20273001-20274000 and 20283001-20284000; sensitivity seeds 20268001-20268300, 20278001-20278300 and 20288001-20288300, one block per red level), how does correction 2's revision 1 (docs/plans/v0.5.12-spec-correction-2-r1.md section 4, the effective epoch count) behave in M1's seven families and the noisy-sector family S3-9.5, with red noise of one Gaussian offset per transit epoch (and per width-T bin elsewhere) at sigma_r 0, 3e-4 and 1e-3 (0, 0.5 and 5/3 of sigma0 = 6e-4)? Flags, reported and never acted on: sensitivity below 281/300 in a cell; null Wilson lower bound above the nominal 0.0027.",
+ "choices": "docs/validation/v0.5.12/step4/explore_candidate3.py with step1/m1_common.py, through launch_v3; 8 worker processes; its own code; the N_par form is scored on the same curves for comparison only; its record is copied to step4/explore-candidate3.json. A data unit, run once; the estimator is not adjusted after it.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/step4/explore_candidate3.py"],
+ "identity": ["docs/validation/v0.5.12/step4/explore_candidate3.py", "docs/validation/v0.5.12/step1/m1_common.py", "docs/plans/v0.5.12-spec-correction-2-r1.md"],
+ "key": "data",
+ "reserve": {"cpu_s": 2400, "disk_bytes": 20000000},
+ "network": false,
+ "outputs": {"explore-candidate3.json": "docs/validation/v0.5.12/step4/explore-candidate3.json"}
+}

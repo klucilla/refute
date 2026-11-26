@@ -1,0 +1,11 @@
+{
+ "name": "cache-cleanup",
+ "question": "Delete files of .cache/v0512 already integrated in the repository (the extra arguments: the folder, then cache=kept pairs), each checked equal to its committed copy, with a record (#218 comment 7197099779, item 1).",
+ "choices": "docs/validation/v0.5.12/tools/cache_cleanup.py, through launch_v3; deletion only by literal path inside .cache/v0512; the record is copied to step4/. A data unit: the arguments make the unit.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/tools/cache_cleanup.py"],
+ "identity": ["docs/validation/v0.5.12/tools/cache_cleanup.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 30, "disk_bytes": 5000000},
+ "network": false,
+ "outputs": {"cache-cleanup.json": "docs/validation/v0.5.12/step4/blind-review-cache-cleanup.json"}
+}
