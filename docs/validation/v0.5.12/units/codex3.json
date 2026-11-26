@@ -1,0 +1,11 @@
+{
+ "name": "codex3",
+ "question": "One Codex round on one closed question (charter, section 7), read-only, through .cache/v04/tools/codex_affinity.ps1 (processors 8 to 31). Its disk reservation is the largest measured Codex write so far plus 50 % (#218 comment 7196269069, item 3): 130,621,730 bytes (round 1) x 1.5 = 196 MB, counted in the phase-wide bound.",
+ "choices": "Reviewer traffic only. A new unit file (rule (c)); units/codex.json and codex2.json are unchanged. Output paths in existing folders. Tokens reported apart, by the real sum of the events. A data unit: the prompt file makes the unit.",
+ "argv": ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File"],
+ "identity": [],
+ "key": "data",
+ "reserve": {"cpu_s": 900, "disk_bytes": 196000000},
+ "timeout_s": 3000,
+ "network": {"kind": "review", "endpoints": ["the Codex CLI's service endpoints"], "operations": ["codex exec resume (read-only sandbox), one round"]}
+}

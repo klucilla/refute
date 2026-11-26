@@ -1,0 +1,10 @@
+{
+ "name": "store-file",
+ "question": "Store one file unchanged inside the project (the extra arguments: source and destination), with its SHA-256 checked before and after; for a Codex events file, also the thread and the real token sum.",
+ "choices": "docs/validation/v0.5.12/tools/store_file.py, through launch_v3. A data unit: the two paths make the unit.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/tools/store_file.py"],
+ "identity": ["docs/validation/v0.5.12/tools/store_file.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 30, "disk_bytes": 50000000},
+ "network": false
+}

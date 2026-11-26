@@ -10,9 +10,9 @@
   "disk_bytes": 2000000000
  },
  "charged": {
-  "cpu_s": 2741.326,
+  "cpu_s": 2757.045,
   "download_bytes": 0,
-  "disk_peak_bytes": 415441282
+  "disk_peak_bytes": 417702701
  },
  "within_caps": "not demonstrated",
  "telemetry_complete": true,
@@ -1970,6 +1970,51 @@
    "cpu_s": 309.484,
    "write_bytes": 4110,
    "disk_bound_bytes": 286976158,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "1dd6e890b837473380f6d3348d1b4fe9",
+   "start": "2026-11-26T15:33:46Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.906,
+   "write_bytes": 828873,
+   "disk_bound_bytes": 287813639,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "17d7fb8127264ed7abf051dc1abeeea5",
+   "start": "2026-11-26T15:33:56Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000
+   },
+   "status": "ok",
+   "cpu_s": 2.516,
+   "write_bytes": 1171465,
+   "disk_bound_bytes": 288241751,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "codex2",
+   "label": "corr2-r1b",
+   "attempt": "7de2ddf7149941c5824811ae85e15e54",
+   "start": "2026-11-26T15:34:03Z",
+   "reserve": {
+    "cpu_s": 900,
+    "disk_bytes": 600000000
+   },
+   "status": "ok",
+   "cpu_s": 11.297,
+   "write_bytes": 130621730,
+   "disk_bound_bytes": 417702701,
    "telemetry_complete": true
   }
  ]
