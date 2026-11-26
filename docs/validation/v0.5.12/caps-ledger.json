@@ -10,7 +10,7 @@
   "disk_bytes": 2000000000
  },
  "charged": {
-  "cpu_s": 5260.407,
+  "cpu_s": 5275.313,
   "download_bytes": 0,
   "disk_peak_bytes": 417702701
  },
@@ -4111,6 +4111,96 @@
    "cpu_s": 1.984,
    "write_bytes": 37364,
    "disk_bound_bytes": 288837940,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "336bdb0c6d3e49e0be18e3b6a56acef0",
+   "start": "2026-11-26T17:34:45Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000
+   },
+   "status": "ok",
+   "cpu_s": 1.844,
+   "write_bytes": 940465,
+   "disk_bound_bytes": 289764360,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "9eeb6ca93eb94ea89dd360387faa7d9a",
+   "start": "2026-11-26T17:34:47Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000
+   },
+   "status": "ok",
+   "cpu_s": 4.719,
+   "write_bytes": 1960735,
+   "disk_bound_bytes": 290973422,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "push",
+   "label": null,
+   "attempt": "3a8a54d0ac4b45348918716270e82508",
+   "start": "2026-11-26T17:34:53Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000
+   },
+   "status": "ok",
+   "cpu_s": 2.469,
+   "write_bytes": 20803,
+   "disk_bound_bytes": 289049173,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "inspect",
+   "label": "state-src",
+   "attempt": "3bb3c99450744778b3511ecf8d23ebb0",
+   "start": "2026-11-26T17:34:58Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 1.906,
+   "write_bytes": 571,
+   "disk_bound_bytes": 289034098,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "ruff-format2",
+   "label": null,
+   "attempt": "b747c5e714dc46a4981d1562f5cab10d",
+   "start": "2026-11-26T17:36:29Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 5000000
+   },
+   "status": "ok",
+   "cpu_s": 1.984,
+   "write_bytes": 12048,
+   "disk_bound_bytes": 289063219,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "inspect",
+   "label": "ruff-m2",
+   "attempt": "474db9dadff7436789beaf1c0de10e0d",
+   "start": "2026-11-26T17:36:31Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000
+   },
+   "status": "ok",
+   "cpu_s": 1.984,
+   "write_bytes": 366,
+   "disk_bound_bytes": 289057194,
    "telemetry_complete": true
   }
  ]

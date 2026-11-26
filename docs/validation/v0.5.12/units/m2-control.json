@@ -1,0 +1,21 @@
+{
+ "name": "m2-control",
+ "question": "The sensitivity control (charter, step 4, item 7, frozen there; #218 comment 7199254242, item 3a): with the corrected F1 of 6f83a91, on the seven families, seeds 200001 to 200300, with the odd box depth increased by 5*sqrt(1/sum(w_odd) + 1/sum(w_even)): does every family give at least 281 fail and 0 not_assessed of 300?",
+ "choices": "docs/validation/v0.5.12/step4/m2.py control with step1/m1_common.py, through launch_v3, at most 10 workers; every input is checked against the frozen step4/m2-inputs.json before F1; its records are copied to step4/. A data unit, run once, only after M2 runs.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/step4/m2.py", "control"],
+ "identity": ["docs/validation/v0.5.12/step4/m2.py", "docs/validation/v0.5.12/step1/m1_common.py", "docs/validation/v0.5.12/step4/m2-inputs.json", "src/refute/packs/tess/screen_d5.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 600, "disk_bytes": 20000000},
+ "network": false,
+ "timeout_s": 1800,
+ "outputs": {
+  "control-summary.json": "docs/validation/v0.5.12/step4/control-summary.json",
+  "control-U.json": "docs/validation/v0.5.12/step4/control-U.json",
+  "control-S9.5.json": "docs/validation/v0.5.12/step4/control-S9.5.json",
+  "control-P2.4.json": "docs/validation/v0.5.12/step4/control-P2.4.json",
+  "control-P9.5.json": "docs/validation/v0.5.12/step4/control-P9.5.json",
+  "control-T2.json": "docs/validation/v0.5.12/step4/control-T2.json",
+  "control-T6.json": "docs/validation/v0.5.12/step4/control-T6.json",
+  "control-B6.json": "docs/validation/v0.5.12/step4/control-B6.json"
+ }
+}

@@ -1,0 +1,11 @@
+{
+ "name": "m2-inputs",
+ "question": "M2's and the sensitivity control's input identity before any F1 call (charter, section 4; step 4, items 6 and 7; #218 comment 7199254242, item 3a): freeze the 23,100 cases' realized-input hashes and recipe, and check them against v0.5.11's calibration inputs, M1's frozen hashes and the exploratory checks' curves of the same recipe (regenerated, inputs only), and against each other; any match or unresolved identity stops the work.",
+ "choices": "docs/validation/v0.5.12/step4/m2_inputs.py with step1/m1_common.py, through launch_v3; no F1 call; its record is copied to step4/m2-inputs.json. A data unit, run once.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/step4/m2_inputs.py"],
+ "identity": ["docs/validation/v0.5.12/step4/m2_inputs.py", "docs/validation/v0.5.12/step1/m1_common.py", "docs/validation/v0.5.12/step1/m1-inputs.json"],
+ "key": "data",
+ "reserve": {"cpu_s": 600, "disk_bytes": 50000000},
+ "network": false,
+ "outputs": {"m2-inputs.json": "docs/validation/v0.5.12/step4/m2-inputs.json"}
+}

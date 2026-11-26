@@ -1,0 +1,21 @@
+{
+ "name": "m2",
+ "question": "The measurement M2 (charter, step 4, item 6; #218 comment 7199254242, item 3a): with the corrected F1 of 6f83a91, F1's fail and not_assessed counts per family on the seven families, seeds 100001 to 103000; a family passes with 0 not_assessed and at most 19 fail of 3000 (step 1's rule, unchanged).",
+ "choices": "docs/validation/v0.5.12/step4/m2.py m2 with step1/m1_common.py, through launch_v3, at most 10 workers; every input is checked against the frozen step4/m2-inputs.json before F1; its records are copied to step4/. A data unit, run once.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/step4/m2.py", "m2"],
+ "identity": ["docs/validation/v0.5.12/step4/m2.py", "docs/validation/v0.5.12/step1/m1_common.py", "docs/validation/v0.5.12/step4/m2-inputs.json", "src/refute/packs/tess/screen_d5.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 2700, "disk_bytes": 100000000},
+ "network": false,
+ "timeout_s": 1800,
+ "outputs": {
+  "m2-summary.json": "docs/validation/v0.5.12/step4/m2-summary.json",
+  "m2-U.json": "docs/validation/v0.5.12/step4/m2-U.json",
+  "m2-S9.5.json": "docs/validation/v0.5.12/step4/m2-S9.5.json",
+  "m2-P2.4.json": "docs/validation/v0.5.12/step4/m2-P2.4.json",
+  "m2-P9.5.json": "docs/validation/v0.5.12/step4/m2-P9.5.json",
+  "m2-T2.json": "docs/validation/v0.5.12/step4/m2-T2.json",
+  "m2-T6.json": "docs/validation/v0.5.12/step4/m2-T6.json",
+  "m2-B6.json": "docs/validation/v0.5.12/step4/m2-B6.json"
+ }
+}
