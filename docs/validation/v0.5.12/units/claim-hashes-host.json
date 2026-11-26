@@ -1,0 +1,11 @@
+{
+ "name": "claim-hashes-host",
+ "question": "The named rerun of charter amendment 1, item d (#218 comment 7193450494, item 2 b): the 'before' claim hashes, once, outside the container, before M1. Check: 11 processed, 10 loaded, and the only error is that of calibration/v0.5/deviation/claim.generated.yaml ('targets attachment not found'); otherwise stop.",
+ "choices": "docs/validation/v0.5.12/tools/claim_hashes.py before, through launch_v3 (outside the container, in the job, UV_OFFLINE=1); its record is copied to step0/claim-hashes-before-host.json; the container's claim-hashes-before.json is kept unchanged. A data unit, run once.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/tools/claim_hashes.py"],
+ "identity": ["docs/validation/v0.5.12/tools/claim_hashes.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 300, "disk_bytes": 20000000},
+ "network": false,
+ "outputs": {"claim-hashes-before.json": "docs/validation/v0.5.12/step0/claim-hashes-before-host.json"}
+}
