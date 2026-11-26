@@ -1,0 +1,35 @@
+{
+ "schema": "refute-v0512-blind-review-package-1",
+ "decision": "#218 comment 7196269069, item 4",
+ "purpose": "correction 2's blind review; only the correction, the cited paper excerpts, and the current specification with correction 1",
+ "files": [
+  {
+   "file": "correction-2.md",
+   "source": "docs/plans/v0.5.12-spec-correction-2.md",
+   "commit": "0d4d38e",
+   "bytes": 14603,
+   "sha256": "e5e91a6b130fa49cbc0f90a96cc1b30e4d372daecad6252fa41cd3a52c838075"
+  },
+  {
+   "file": "paper-excerpts.md",
+   "source": "docs/plans/sources/v0.5.11-screen-papers-2026-11-24.md",
+   "commit": "0d4d38e",
+   "bytes": 8712,
+   "sha256": "d40ce8d73e110e5754064c15c4c8ff091dec6519e8859c10d9d22a32715458c3"
+  },
+  {
+   "file": "specification.md",
+   "source": "docs/plans/v0.5.11-spec.md",
+   "commit": "0d4d38e",
+   "bytes": 18372,
+   "sha256": "d498a82ada2e31a5b47768d58d6af2e19af0a3c5e35364693f04886068612f15"
+  },
+  {
+   "file": "correction-1.md",
+   "source": "docs/plans/v0.5.11-spec-correction-1.md",
+   "commit": "0d4d38e",
+   "bytes": 8793,
+   "sha256": "62a5532f01c498901dd2c1546ad428e33cb4669efa14caf3d80d57f9b19b6df7"
+  }
+ ]
+}
