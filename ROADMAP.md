@@ -1507,6 +1507,8 @@ Tracking: #218. **Open** since 2026-11-25 at 20:24Z, by the maintainer's decisio
 [docs/plans/v0.5.12-charter.md](docs/plans/v0.5.12-charter.md), written on the decision of comment
 7172688755. Time box: to 2026-12-02 at 20:24Z. The gate protocol is not changed: the gate is the
 closure condition (the same decision, item 2). Records: `docs/validation/v0.5.12/`.
+**Amendment 1, pending approval:** [docs/plans/v0.5.12-charter-amendment-1.md](docs/plans/v0.5.12-charter-amendment-1.md)
+(units without network outside the AppContainer; comment 7192354006).
 
 **The question:** are version 5's core (F1, OE_box) and its report-only quantities correct enough
 to start the calibration? Three items: #222 (F1 with unequal weights), #223 (the step 1 cases and

@@ -1,0 +1,11 @@
+{
+ "schema": "refute-v0512-abandoned-1",
+ "decision": "#218 comment 7192354006, item 1: options (d) and (e) refused",
+ "status": "abandoned",
+ "note": "Committed in 5972d88 as prepared and never run; they do not run in this phase.",
+ "files": [
+  "docs/validation/v0.5.12/tools/subst_map.py",
+  "docs/validation/v0.5.12/step0/tmpdir_pytest_d.py",
+  "docs/validation/v0.5.12/units/tmpdir-pytest-d.json"
+ ]
+}
