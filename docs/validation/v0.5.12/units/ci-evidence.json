@@ -1,0 +1,10 @@
+{
+ "name": "ci-evidence",
+ "question": "Criterion 5 (the charter, step 5): does scripts/ci_evidence.py <sha> --level full hold on the src/ commit 6f83a91 (the extra arguments: the full SHA and --level full)?",
+ "choices": "In a job without the container; GitHub reads only (gh api GET), journaled. A data unit: the arguments make the unit.",
+ "argv": ["{python}", "-I", "-B", "scripts/ci_evidence.py"],
+ "identity": ["scripts/ci_evidence.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 120, "disk_bytes": 10000000},
+ "network": {"kind": "github", "endpoints": ["api.github.com:443"], "operations": ["gh api GET repos/klucilla/refute/actions/..."]}
+}

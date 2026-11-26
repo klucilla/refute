@@ -1,0 +1,11 @@
+{
+ "name": "ci-wait",
+ "question": "Wait for the src/ commit's CI run (#218 comment 7199932177, item 2: wait in the background with a time limit, with no push meanwhile): poll it every 5 minutes, at most 150 minutes (the extra argument: -Run <run id>).",
+ "choices": "powershell -File .cache/v0512/diag/wait_run.ps1, a read-only poll by gh run view; in a job without the container; GitHub reads only. A data unit: the arguments make the unit.",
+ "argv": ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", ".cache/v0512/diag/wait_run.ps1"],
+ "identity": [],
+ "key": "data",
+ "reserve": {"cpu_s": 300, "disk_bytes": 5000000},
+ "timeout_s": 9300,
+ "network": {"kind": "github", "endpoints": ["api.github.com:443"], "operations": ["gh run view (read)"]}
+}
