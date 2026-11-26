@@ -6,9 +6,11 @@ of the old phases, in their order, with no line changed. `scripts/check_moved_te
 that every line of the old `ROADMAP.md` is in the new one or here.
 
 **Links.** The relative links below were written for the repository root, where `ROADMAP.md`
-lives, and are kept as they were: read them from the root (for example,
-`docs/reports/v0.5.12-report.md` is `../reports/v0.5.12-report.md` from this folder). The
-links to headings of this file (`#v0512-...`) resolve here.
+lives. On 2026-11-26 they were re-prefixed to work from this folder (the maintainer's decision,
+#218 comment 7204660147, item M2: `docs/maintenance/link-rewrite-2026-11-26/rewrite_links.py`,
+commit `b6d3682`), and only their targets changed. `scripts/check_moved_text.py
+--normalize-links` checks the move. The links to headings of this file (`#v0512-...`) resolve
+here.
 
 ### Previous phase record: v0.5.12 Battery version 5: corrections before calibration
 
