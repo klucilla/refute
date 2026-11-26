@@ -1,0 +1,212 @@
+{
+ "schema": "refute-v0512-explore-candidate-2",
+ "labels": [
+  "exploratory",
+  "post hoc",
+  "method_status: not_validated"
+ ],
+ "decision": "#218 comment 7196269069, item 2",
+ "estimator": "docs/plans/v0.5.12-spec-correction-2.md section 4 at be14460",
+ "seeds": {
+  "null": [
+   700001,
+   701000
+  ],
+  "sensitivity": [
+   800001,
+   800300
+  ]
+ },
+ "nominal": 0.0026997960632601918,
+ "families": {
+  "U": {
+   "null": {
+    "n": 1000,
+    "not_computed": 0,
+    "fail": 1,
+    "oe_box_over_2": 46,
+    "wilson_95": [
+     0.00017654637062607817,
+     0.0056425585979579355
+    ]
+   },
+   "sensitivity": {
+    "n": 300,
+    "not_computed": 0,
+    "fail": 294,
+    "oe_box_over_2": 300,
+    "wilson_95": [
+     0.9570603791821393,
+     0.9908023684422964
+    ]
+   },
+   "odd_depth_extra": 0.00018516401995451027,
+   "flags": {
+    "sensitivity_below_281": false,
+    "null_above_nominal": false
+   }
+  },
+  "S9.5": {
+   "null": {
+    "n": 1000,
+    "not_computed": 0,
+    "fail": 0,
+    "oe_box_over_2": 40,
+    "wilson_95": [
+     2.1601063852437764e-19,
+     0.003826758485555124
+    ]
+   },
+   "sensitivity": {
+    "n": 300,
+    "not_computed": 0,
+    "fail": 296,
+    "oe_box_over_2": 298,
+    "wilson_95": [
+     0.9662244697474673,
+     0.9948030382606412
+    ]
+   },
+   "odd_depth_extra": 0.0002630026609447711,
+   "flags": {
+    "sensitivity_below_281": false,
+    "null_above_nominal": false
+   }
+  },
+  "P2.4": {
+   "null": {
+    "n": 1000,
+    "not_computed": 0,
+    "fail": 4,
+    "oe_box_over_2": 40,
+    "wilson_95": [
+     0.001556588140408431,
+     0.010239556277262253
+    ]
+   },
+   "sensitivity": {
+    "n": 300,
+    "not_computed": 0,
+    "fail": 292,
+    "oe_box_over_2": 300,
+    "wilson_95": [
+     0.9482710570494102,
+     0.986426930191353
+    ]
+   },
+   "odd_depth_extra": 0.00034041990876814804,
+   "flags": {
+    "sensitivity_below_281": false,
+    "null_above_nominal": false
+   }
+  },
+  "P9.5": {
+   "null": {
+    "n": 1000,
+    "not_computed": 0,
+    "fail": 2,
+    "oe_box_over_2": 37,
+    "wilson_95": [
+     0.0005486435881207279,
+     0.007262807863492177
+    ]
+   },
+   "sensitivity": {
+    "n": 300,
+    "not_computed": 0,
+    "fail": 294,
+    "oe_box_over_2": 300,
+    "wilson_95": [
+     0.9570603791821393,
+     0.9908023684422964
+    ]
+   },
+   "odd_depth_extra": 0.001250714081749188,
+   "flags": {
+    "sensitivity_below_281": false,
+    "null_above_nominal": false
+   }
+  },
+  "T2": {
+   "null": {
+    "n": 1000,
+    "not_computed": 0,
+    "fail": 1,
+    "oe_box_over_2": 55,
+    "wilson_95": [
+     0.00017654637062607817,
+     0.0056425585979579355
+    ]
+   },
+   "sensitivity": {
+    "n": 300,
+    "not_computed": 0,
+    "fail": 290,
+    "oe_box_over_2": 299,
+    "wilson_95": [
+     0.9397381741959452,
+     0.9817950526611452
+    ]
+   },
+   "odd_depth_extra": 0.00013415679365670694,
+   "flags": {
+    "sensitivity_below_281": false,
+    "null_above_nominal": false
+   }
+  },
+  "T6": {
+   "null": {
+    "n": 1000,
+    "not_computed": 0,
+    "fail": 2,
+    "oe_box_over_2": 58,
+    "wilson_95": [
+     0.0005486435881207279,
+     0.007262807863492177
+    ]
+   },
+   "sensitivity": {
+    "n": 300,
+    "not_computed": 0,
+    "fail": 288,
+    "oe_box_over_2": 299,
+    "wilson_95": [
+     0.9313957879613599,
+     0.9769726785120576
+    ]
+   },
+   "odd_depth_extra": 0.00013093073417596473,
+   "flags": {
+    "sensitivity_below_281": false,
+    "null_above_nominal": false
+   }
+  },
+  "B6": {
+   "null": {
+    "n": 1000,
+    "not_computed": 0,
+    "fail": 1,
+    "oe_box_over_2": 47,
+    "wilson_95": [
+     0.00017654637062607817,
+     0.0056425585979579355
+    ]
+   },
+   "sensitivity": {
+    "n": 300,
+    "not_computed": 0,
+    "fail": 294,
+    "oe_box_over_2": 300,
+    "wilson_95": [
+     0.9570603791821393,
+     0.9908023684422964
+    ]
+   },
+   "odd_depth_extra": 0.00018516401995451027,
+   "flags": {
+    "sensitivity_below_281": false,
+    "null_above_nominal": false
+   }
+  }
+ }
+}
