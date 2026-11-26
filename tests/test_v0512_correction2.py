@@ -7,12 +7,12 @@ written before the ``src/`` change. Exploratory, ``method_status: not_validated`
   example (25/18 against the legacy 1); an admissible dominant-bin witness for C; an admissible
   witness with weight ratios near 1e30 (the rounding of Q0, blind review N10); the effective
   epoch count.
-- **Strict expected failures against the approval code**, each with its ID and reason, all
-  ``xfail(strict=True, raises=AssertionError)``; the ``src/`` change removes them:
+- **The witnesses against the approval code** (strict expected failures until correction 2's
+  ``src/`` change, which removed the markers):
   - ``test_p95_witness_passes_under_the_correction`` and
-    ``test_b6_witness_passes_under_the_correction``: the approval code fails them;
+    ``test_b6_witness_passes_under_the_correction``: the approval code failed them;
   - ``test_t2_corrected_sigma_odd_is_smaller``: the corrected sigma_odd is smaller;
-  - ``test_src_f1_matches_the_oracle[*]``: the approval code's F1 is not the corrected one.
+  - ``test_src_f1_matches_the_oracle[*]``: the approval code's F1 was not the corrected one.
 - **Kept, passing before and after:** the unequal-depth binary test and the report-only tests of
   ``tests/test_v0511_screen.py``; the legacy MES noise (``_noise``), which F2 and U1 keep.
 """
@@ -34,12 +34,6 @@ import v0512_oracles as oc  # noqa: E402
 from screen_reference import f1_reference  # noqa: E402
 
 SIGMA0 = 6e-4
-XFAIL = pytest.mark.xfail(
-    strict=True,
-    raises=AssertionError,
-    reason="the approval code's F1 is the frozen estimator; correction 2 revision 1 changes it "
-    "(removed by the src/ change)",
-)
 
 
 def screen():
@@ -198,19 +192,16 @@ def test_the_oracle_witnesses_are_what_the_suite_needs():
 # --- strict expected failures against the approval code --------------------------------------
 
 
-@XFAIL
 def test_p95_witness_passes_under_the_correction():
     t, f, s = family("P9.5", 1)
     assert screen().f1_box(t, f, s, fx.P, fx.T0, fx.T)["state"] == "pass"
 
 
-@XFAIL
 def test_b6_witness_passes_under_the_correction():
     t, f, s = family("B6", 1)
     assert screen().f1_box(t, f, s, fx.P, fx.T0, fx.T)["state"] == "pass"
 
 
-@XFAIL
 def test_t2_corrected_sigma_odd_is_smaller():
     t, f, s = family("T2", 1)
     frozen = f1_reference(t, f, s, fx.P, fx.T0, fx.T).metrics["sigma_odd"]
@@ -221,7 +212,6 @@ def test_t2_corrected_sigma_odd_is_smaller():
 KEYS = ("oe_box", "sigma_odd", "sigma_even", "s2", "sigma_r", "epochs_eff_odd", "epochs_eff_even")
 
 
-@XFAIL
 @pytest.mark.parametrize("name", ["planet", "binary", "P9.5", "B6", "T2"])
 def test_src_f1_matches_the_oracle(name):
     t, f, s = family("U" if name == "planet" else name, 1)

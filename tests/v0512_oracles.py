@@ -86,10 +86,10 @@ def corrected_noise(t, f, w, period, t0, duration):
     c = float(2.0 * np.sum(wk * (prefix / big_b)))
     if not (math.isfinite(q0) and math.isfinite(c) and math.isfinite(mu_bar)) or c <= 0:
         return None
-    sig_r2 = max(0.0, (q0 - s2 * (mu.size - 1)) / c)
+    sig_r2 = (q0 - s2 * (mu.size - 1)) / c
     if not math.isfinite(sig_r2):
         return None
-    return s2, sig_r2, m_b, base
+    return s2, max(0.0, sig_r2), m_b, base
 
 
 def f1_corrected(time, flux, flux_err, period, t0, duration) -> dict:
@@ -134,9 +134,9 @@ def _f1(time, flux, flux_err, period, t0, duration):
         if int((n_in >= 3).sum()) == 0 or n < 3:
             return _na(f"too few in-transit points for the {name} parity", counts)
         m_in = _wmean(f[sel], w[sel])
-        w_par = float(np.sum(w[sel]))
         inv = np.searchsorted(ks, k[sel])
         w_e = np.bincount(inv, weights=w[sel])
+        w_par = float(np.sum(w_e))
         n_eff = w_par**2 / float(np.sum(w_e**2))
         var = s2 / w_par + sig_r2 / n_eff
         if m_in is None or not math.isfinite(var):
@@ -145,6 +145,9 @@ def _f1(time, flux, flux_err, period, t0, duration):
     denom = math.sqrt(out["odd"][1] + out["even"][1])
     if not math.isfinite(denom) or denom <= 0:
         return _na("denominator not positive", counts)
+    for name in ("odd", "even"):
+        if out[name][1] <= 0.0:
+            return _na(f"depth or pink noise unavailable for the {name} parity", counts)
     oe = abs(out["odd"][0] - out["even"][0]) / denom
     if not math.isfinite(oe):
         return _na("OE_box not finite", counts)

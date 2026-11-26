@@ -38,7 +38,14 @@ from refute.packs.tess.synthetic import (
 from refute.packs.tess.types import Candidate, LightCurveData
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import v0512_oracles as corrected  # noqa: E402
 from screen_reference import f1_reference  # noqa: E402
+
+# v0.5.12, correction 2 revision 1 (docs/plans/v0.5.12-spec-correction-2-r1.md, adopted at
+# SHA-256 c24e7fd9..., section 6 and the blind review's B2): F1's noise by parity supersedes the
+# frozen F1 values of a896c49 and of the calibration fixtures. The tests that asserted them in
+# memory now assert the corrected rule against the independent oracle (tests/v0512_oracles.py);
+# the frozen reference stays for the decisions it still documents.
 
 SPEC_SHA256 = "d498a82ada2e31a5b47768d58d6af2e19af0a3c5e35364693f04886068612f15"
 EB_HALF = SignalSpec(period=1.8, t0=1325.7, depth=0.006, duration=2 / 24, odd_depth_factor=0.75)
@@ -67,16 +74,16 @@ def _gate(status=TestStatus.PASS) -> list[TestResult]:
 
 
 @pytest.mark.parametrize("correlated", [False, True], ids=["white", "correlated"])
-def test_f1_reproduces_the_reference_decisions_on_the_calibration_fixtures(correlated):
+def test_f1_reproduces_the_corrected_oracle_on_the_calibration_fixtures(correlated):
     s = screen()
     kwargs = dict(CORRELATED_PROFILE) if correlated else {}
     for seed in range(1, 201):
         lc, _ = make_lightcurve(PLANET, seed=seed, **kwargs)
         args = (lc.time, lc.flux, lc.flux_err, PLANET.period, PLANET.t0, PLANET.duration)
-        got, ref = s.f1_box(*args), f1_reference(*args)
-        assert got["state"] == ref.state, seed
-        assert math.isclose(got["metrics"]["oe_box"], ref.metrics["oe_box"], rel_tol=1e-9)
-        assert got["coverage"] == ref.coverage
+        got, ref = s.f1_box(*args), corrected.f1_corrected(*args)
+        assert got["state"] == ref["state"], seed
+        assert math.isclose(got["metrics"]["oe_box"], ref["metrics"]["oe_box"], rel_tol=1e-9)
+        assert got["coverage"] == f1_reference(*args).coverage
 
 
 def test_f1_passes_a_planet_and_fails_a_binary_at_half_the_period():
@@ -211,20 +218,24 @@ def _equal_errors(sigma: float):
 
 
 @pytest.mark.parametrize(("name", "spec"), [("planet", PLANET), ("eb_half", EB_HALF)])
-def test_ordinary_errors_keep_the_reviewed_f1(name, spec):
+def test_ordinary_errors_follow_the_corrected_f1(name, spec):
+    # REVIEWED (a896c49) is superseded for F1 by correction 2 (B2); the states stay
     lc, _ = make_lightcurve(spec, seed=3)
-    r = screen().f1_box(lc.time, lc.flux, lc.flux_err, spec.period, spec.t0, spec.duration)
-    state, oe = REVIEWED[name]
-    assert r["state"] == state
-    assert math.isclose(r["metrics"]["oe_box"], oe, rel_tol=1e-9)
+    args = (lc.time, lc.flux, lc.flux_err, spec.period, spec.t0, spec.duration)
+    r, ref = screen().f1_box(*args), corrected.f1_corrected(*args)
+    assert r["state"] == ref["state"] == REVIEWED[name][0]
+    assert math.isclose(r["metrics"]["oe_box"], ref["metrics"]["oe_box"], rel_tol=1e-9)
 
 
 @pytest.mark.parametrize("sigma", [1e-12, 1e3], ids=["floor", "ceiling"])
 def test_the_ends_of_the_range_are_assessed_like_ordinary_errors(sigma):
-    state, oe = REVIEWED["planet"]
+    # equal errors: the corrected OE_box does not depend on their common scale
+    lc, _ = make_lightcurve(PLANET, seed=3)
+    p, t0, d = PLANET.period, PLANET.t0, PLANET.duration
+    ref = corrected.f1_corrected(lc.time, lc.flux, np.full_like(lc.flux_err, 1e-3), p, t0, d)
     r = _equal_errors(sigma)
-    assert r["state"] == state
-    assert math.isclose(r["metrics"]["oe_box"], oe, rel_tol=1e-9)
+    assert r["state"] == ref["state"] == REVIEWED["planet"][0]
+    assert math.isclose(r["metrics"]["oe_box"], ref["metrics"]["oe_box"], rel_tol=1e-9)
 
 
 def test_codex_first_witness_is_unassessed():

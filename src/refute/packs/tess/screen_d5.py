@@ -22,6 +22,13 @@ docs/plans/sources/v0.5.11-screen-papers-2026-11-24.md. No GPL implementation wa
 sigma of the cadences with finite time and flux must be finite and in [1e-12, 1e3]. Otherwise F1
 is ``not_assessed`` and each report-only quantity ``unavailable``, with the reason
 ``invalid_uncertainty``. The weight is the unscaled 1/sigma^2.
+
+**Correction 2** (docs/plans/v0.5.12-spec-correction-2-r1.md, revision 1, adopted at SHA-256
+``CORRECTION_2_SHA256``): F1's noise by parity. ``s2`` is the baseline's reduced chi-square, the
+red variance is the inverse-variance weighted moment of the bin means with a positive prefix sum
+for C, and each parity's variance is ``s2/W_par + sigma_r^2/N_eff,par``; the OE numerator is the
+difference of the two in-transit weighted means. F2 and U1 keep ``_noise`` (a declared
+report-only limit).
 """
 
 from __future__ import annotations
@@ -33,6 +40,7 @@ import numpy as np
 
 SPEC_SHA256 = "d498a82ada2e31a5b47768d58d6af2e19af0a3c5e35364693f04886068612f15"
 CORRECTION_SHA256 = "62a5532f01c498901dd2c1546ad428e33cb4669efa14caf3d80d57f9b19b6df7"
+CORRECTION_2_SHA256 = "c24e7fd936929d713f53755b53233cc453e3e65a043f887b2f9e1511869873db"
 SIGMA_MIN, SIGMA_MAX = 1e-12, 1e3  # correction 1: the input range of sigma, both ends included
 INVALID_UNCERTAINTY = "invalid_uncertainty"
 LABELS = ["exploratory", "method_status: not_validated"]
@@ -175,6 +183,48 @@ def _noise(t, f, w, period, t0, duration):
     return sigma_w, math.sqrt(sigma_r2), base
 
 
+def _noise_f1(t, f, w, period, t0, duration):
+    """F1's noise (correction 2 revision 1, section 4): (s2, sigma_r^2, m_b), or None when
+    unavailable (fewer than 10 baseline points or 3 bins, non-finite arithmetic, s2 <= 0 or
+    C <= 0; C <= 0 is a defensive guard)."""
+    base = _phase_distance(t, period, t0, 0.0) > duration
+    tb, fb, wb = t[base], f[base], w[base]
+    n_b = int(tb.size)
+    if n_b < MIN_BASELINE:
+        return None
+    m_b = _wmean(fb, wb)
+    if m_b is None:
+        return None
+    s2 = float(np.sum(wb * (fb - m_b) ** 2) / (n_b - 1))
+    if not math.isfinite(s2) or s2 <= 0:
+        return None
+    idx = _as_index(np.floor((tb - float(t.min())) / duration))
+    means, weights = [], []
+    for m in np.unique(idx):
+        sel = idx == m
+        if int(sel.sum()) < 2:
+            continue
+        mean = _wmean(fb[sel], wb[sel])
+        if mean is None:
+            return None
+        means.append(mean)
+        weights.append(float(wb[sel].sum()))
+    if len(means) < MIN_BINS:
+        return None
+    mu, wk = np.array(means), np.array(weights)
+    big_b = float(np.sum(wk))
+    mu_bar = float(np.sum(wk * mu) / big_b)
+    q0 = float(np.sum(wk * (mu - mu_bar) ** 2))
+    prefix = np.concatenate(([0.0], np.cumsum(wk)[:-1]))
+    c = float(2.0 * np.sum(wk * (prefix / big_b)))
+    if not _finite(big_b, mu_bar, q0, c) or c <= 0:
+        return None
+    sigma_r2 = (q0 - s2 * (mu.size - 1)) / c
+    if not _finite(sigma_r2):
+        return None
+    return s2, max(0.0, sigma_r2), m_b
+
+
 def _pink(sigma_w: float, sigma_r: float, n: int, n_epochs: int) -> float | None:
     if n <= 0 or n_epochs <= 0:
         return None
@@ -225,12 +275,10 @@ def _f1_box(time, flux, flux_err, period, t0, duration) -> dict:
         sel_by[name] = (sel, ks)
         good_by[name] = int((n_in >= MIN_IN_PER_EPOCH).sum())
     coverage = good_by["odd"] + good_by["even"]
-    sigma_w, sigma_r, base = _noise(t, f, w, period, t0, duration)
-    if sigma_w is None:
+    noise = _noise_f1(t, f, w, period, t0, duration)
+    if noise is None:
         return _core("not_assessed", "noise unavailable (baseline or bins)", coverage, counts)
-    base_mean = _wmean(f[base], w[base])
-    if base_mean is None:
-        return _core("not_assessed", "baseline mean unavailable", coverage, counts)
+    s2, sigma_r2, base_mean = noise
     out = {}
     for name in ("odd", "even"):
         sel, ks = sel_by[name]
@@ -239,32 +287,43 @@ def _f1_box(time, flux, flux_err, period, t0, duration) -> dict:
             reason = f"too few in-transit points for the {name} parity"
             return _core("not_assessed", reason, coverage, counts)
         m_in = _wmean(f[sel], w[sel])
-        sigma_tr = _pink(sigma_w, sigma_r, n, int(ks.size))
-        if m_in is None or sigma_tr is None:
+        w_e = np.bincount(np.searchsorted(ks, k[sel]), weights=w[sel])
+        w_par = float(np.sum(w_e))
+        n_eff = w_par**2 / float(np.sum(w_e**2))
+        var = s2 / w_par + sigma_r2 / n_eff
+        if m_in is None or not _finite(var):
             reason = f"depth or pink noise unavailable for the {name} parity"
             return _core("not_assessed", reason, coverage, counts)
-        out[name] = (base_mean - m_in, sigma_tr, n, int(ks.size))
-    d_odd, s_odd, n_odd, e_odd = out["odd"]
-    d_even, s_even, n_even, e_even = out["even"]
-    denom = math.sqrt(s_odd**2 + s_even**2)
+        out[name] = (m_in, var, n, int(ks.size), n_eff, w_par)
+    m_odd, v_odd, n_odd, e_odd, eff_odd, w_odd = out["odd"]
+    m_even, v_even, n_even, e_even, eff_even, w_even = out["even"]
+    denom = math.sqrt(v_odd + v_even)
     if not math.isfinite(denom) or denom <= 0:
         return _core("not_assessed", "denominator not positive", coverage, counts)
-    oe = abs(d_odd - d_even) / denom
+    for name, var in (("odd", v_odd), ("even", v_even)):
+        if var <= 0.0:
+            reason = f"depth or pink noise unavailable for the {name} parity"
+            return _core("not_assessed", reason, coverage, counts)
+    oe = abs(m_odd - m_even) / denom
     if not math.isfinite(oe):
         return _core("not_assessed", "OE_box not finite", coverage, counts)
     metrics = {
         **counts,
         "oe_box": oe,
-        "delta_odd": d_odd,
-        "delta_even": d_even,
-        "sigma_odd": s_odd,
-        "sigma_even": s_even,
+        "delta_odd": base_mean - m_odd,
+        "delta_even": base_mean - m_even,
+        "sigma_odd": math.sqrt(v_odd),
+        "sigma_even": math.sqrt(v_even),
         "n_odd": n_odd,
         "n_even": n_even,
         "epochs_odd": e_odd,
         "epochs_even": e_even,
-        "sigma_w": sigma_w,
-        "sigma_r": sigma_r,
+        "epochs_eff_odd": eff_odd,
+        "epochs_eff_even": eff_even,
+        "s2": s2,
+        "weight_odd": w_odd,
+        "weight_even": w_even,
+        "sigma_r": math.sqrt(sigma_r2),
     }
     state = "fail" if oe > F1_THRESHOLD else "pass"
     return _core(state, f"OE_box {oe:.3f} vs {F1_THRESHOLD}", coverage, metrics)
@@ -734,6 +793,7 @@ def compute_screen(flattened, candidate, tests, star=None, plausibility=None) ->
         "version": 5,
         "spec_sha256": SPEC_SHA256,
         "spec_correction_sha256": CORRECTION_SHA256,
+        "spec_correction_2_sha256": CORRECTION_2_SHA256,
         "entry": "search",
         "eligible": eligible,
         "outcome": None,
