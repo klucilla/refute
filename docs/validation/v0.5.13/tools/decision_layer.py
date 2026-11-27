@@ -286,6 +286,10 @@ GUARD_TABLE = {
     "catalogs is None": ALL,
     "plan.discovery is not None": ALL,
     "plan.discovery is None": set(),
+    # ``discovery = plan.discovery`` before the test (discover/measure.py:47-48,
+    # pipeline.py:599-601)
+    "discovery is not None": ALL,
+    "discovery is None": set(),
     "plan is None": set(),
     "plan is not None": ALL,
     "is_v5(plan)": set(),
