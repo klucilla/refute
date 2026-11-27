@@ -226,7 +226,7 @@ def main() -> int:
         "also_measurement_output_names": review,
         "conflicts_with_d1a_fields": conflicts,
     }
-    Path(sys.argv[1]).write_text(json.dumps(out, indent=1) + "\n", encoding="utf-8")
+    Path(sys.argv[1]).write_text(json.dumps(out, indent=1) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps({"keys": len(found), "review": review, "conflicts": conflicts}))
     return 1 if conflicts else 0
 
