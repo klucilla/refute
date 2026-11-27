@@ -1,0 +1,11 @@
+{
+ "name": "decision-layer",
+ "question": "L4(a) and M3 (#218 comments 7223634913 and 7224251159): from source only, the candidate predicates of the decision layer (amendment 2, revision 6, section 4, first paragraph), applied mechanically and inclusively over the functions reachable from the golden path's entry points, with cross-checks against J1's atoms and I2's sites. It opens no golden file. A working list, not the manifest.",
+ "choices": "docs/validation/v0.5.13/tools/decision_layer.py <out.json>. Offline. It reads the 73 modules of I2's inventory and the J1 and I2 records.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/decision_layer.py"],
+ "identity": ["docs/validation/v0.5.13/tools/decision_layer.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 120, "disk_bytes": 20000000},
+ "network": false,
+ "retry_class": "checker"
+}
