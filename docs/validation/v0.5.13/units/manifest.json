@@ -1,0 +1,11 @@
+{
+ "name": "manifest",
+ "question": "L4, M3, N1-N4 and O1 (#218): from source and records only, the margin manifest of amendment 2, revision 6, section 4 (every row of every fixture classed non-numeric, reach-unknown, absent or assessable, with operands, units and monotonicity), the comparator's frozen schema, and the freeze list with every SHA-256 taken from records. It opens no golden file.",
+ "choices": "docs/validation/v0.5.13/tools/manifest.py <out folder>. Offline. It reads the l4 working files and the ID-BEFORE and NR-A1 records, and runs git rev-parse <head>:src for each recorded head.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/manifest.py"],
+ "identity": ["docs/validation/v0.5.13/tools/manifest.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 120, "disk_bytes": 20000000},
+ "network": false,
+ "retry_class": "checker"
+}
