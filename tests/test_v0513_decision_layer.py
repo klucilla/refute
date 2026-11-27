@@ -108,6 +108,39 @@ def test_a_mutated_decision_list_is_an_effect():
     assert "x.s > t" in {r["expression"] for r in out["rows"]}
 
 
+def test_calls_resolve_through_imports():
+    sources = {
+        "src/a.py": "from b import check\n\ndef entry(d):\n    return check(d)\n",
+        "src/b.py": "def check(d):\n    if d.x > 1:\n        return TestResult()\n",
+        "src/c.py": "def check(d):\n    if d.y > 1:\n        return TestResult()\n",
+    }
+    out = dl.analyze(sources, entries=[("src/a.py", "entry")])
+    exprs = {r["expression"] for r in out["rows"]}
+    assert "d.x > 1" in exprs
+    assert "d.y > 1" not in exprs
+
+
+def test_configuration_guards_prune_per_version():
+    src = (
+        "def entry(plan, d):\n"
+        "    if plan.is_v051:\n"
+        "        return new(d)\n"
+        "    if d.a > 2:\n"
+        "        return TestResult()\n"
+        "    return old(d)\n\n"
+        "def new(d):\n    if d.n > 1:\n        return TestResult()\n\n"
+        "def old(d):\n    if d.o > 1:\n        return TestResult()\n"
+    )
+    v1 = dl.analyze({"m.py": src}, entries=[("m.py", "entry")], version="v1")
+    v3 = dl.analyze({"m.py": src}, entries=[("m.py", "entry")], version="v3")
+    rows1 = {r["expression"] for r in v1["rows"]}
+    rows3 = {r["expression"] for r in v3["rows"]}
+    assert "d.n > 1" not in rows1 and "d.o > 1" in rows1
+    assert "d.n > 1" in rows3
+    assert dl.guard_value(dl.ast.parse("plan.v05 and x", mode="eval").body, "v1") is False
+    assert dl.guard_value(dl.ast.parse("plan.v05 and x", mode="eval").body, "v2") is None
+
+
 def test_early_exits_are_recorded():
     _, rows = _rows()
     exits = rows["d.k > 1"]["early_exits_before"]

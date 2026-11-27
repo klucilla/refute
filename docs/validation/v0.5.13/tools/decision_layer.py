@@ -9,8 +9,15 @@ recorded reason. Its output is a working list for the manifest, not the manifest
 
 **Scope.** The modules are the 73 files of I2's inventory. A function is *reachable* when a chain
 of calls, resolved by name, leads to it from the golden path's entry points (``ENTRIES``, the calls
-of ``tests/baseline_code_v0511.py::_compute``). A call ``f(...)`` or ``x.f(...)`` is resolved to
-every function named ``f`` in the modules (over-inclusive on purpose).
+of ``tests/baseline_code_v0511.py::_compute``). Calls and references are resolved through each
+module's imports (``Resolver``); a method call on an object of unknown type goes to every method
+of that name (over-inclusive on purpose).
+
+**Fixtures** (the maintainer's decisions N2 and N4, #218 comment 7224847166). Each version's
+verdict (its verdict, error and report entries) and each version's ``chain`` (stage 1) is its own
+fixture. In a fixture, a call or a row that a configuration guard keeps from running there
+(``GUARD_TABLE``, each guard with its source) is pruned and listed with that guard; a guard the
+table does not hold keeps the call (inclusive). Each row lists the fixtures it is on.
 
 **Sinks** (a serialized test status, class, eligibility flag, reason code or verdict):
 - a call of ``TestResult``, ``_inconclusive``, ``_not_run`` or ``not_applicable_block``;
@@ -178,30 +185,193 @@ def _branch_nodes(stmts):
             stack.extend(ast.iter_child_nodes(n))
 
 
-def analyze(sources: dict[str, str], entries=ENTRIES) -> dict:
+def module_of(rel: str) -> str:
+    parts = rel[len("src/") : -len(".py")].split("/")
+    if parts[-1] == "__init__":
+        parts = parts[:-1]
+    return ".".join(parts)
+
+
+def _is_method(f: Func) -> bool:
+    return any(part[:1].isupper() for part in f.qual.split(".")[:-1])
+
+
+class Resolver:
+    """Calls and references resolved through each module's imports.
+
+    - A bare name ``f`` is a function of the same module named ``f`` (not a method), or the
+      function a ``from <module> import f`` of that module names.
+    - ``alias.f``, where ``alias`` is a module imported by ``from <package> import <module>`` or
+      ``import <module> as alias``, is that module's top-level ``f``; ``Name.f``, where ``Name``
+      is an imported or local class, is its method ``f``.
+    - Any other ``obj.f`` is every method named ``f`` (inclusive: the object's type is unknown).
+    Anything else (a builtin, a third-party name) resolves to nothing."""
+
+    def __init__(self, sources: dict[str, str], funcs: list[Func]):
+        self.mods = {module_of(rel): rel for rel in sources}
+        self.top = {(f.rel, f.qual): f for f in funcs}
+        self.plain: dict[tuple[str, str], list[Func]] = {}
+        self.methods: dict[str, list[Func]] = {}
+        for f in funcs:
+            if _is_method(f):
+                self.methods.setdefault(f.short, []).append(f)
+            else:
+                self.plain.setdefault((f.rel, f.short), []).append(f)
+        self.names: dict[str, dict[str, tuple[str, str]]] = {}
+        self.aliases: dict[str, dict[str, str]] = {}
+        for rel, text in sources.items():
+            names, aliases = {}, {}
+            for node in ast.walk(ast.parse(text)):
+                if isinstance(node, ast.ImportFrom) and node.module and node.level == 0:
+                    for a in node.names:
+                        sub = f"{node.module}.{a.name}"
+                        if sub in self.mods:
+                            aliases[a.asname or a.name] = self.mods[sub]
+                        elif node.module in self.mods:
+                            names[a.asname or a.name] = (self.mods[node.module], a.name)
+                elif isinstance(node, ast.Import):
+                    for a in node.names:
+                        if a.name in self.mods and a.asname:
+                            aliases[a.asname] = self.mods[a.name]
+            self.names[rel], self.aliases[rel] = names, aliases
+
+    def resolve(self, f: Func, node: ast.AST) -> list[Func]:
+        rel = f.rel
+        if isinstance(node, ast.Name):
+            found = self.plain.get((rel, node.id), [])
+            if found:
+                return found
+            if node.id in self.names[rel]:
+                mrel, orig = self.names[rel][node.id]
+                return self.plain.get((mrel, orig), [])
+            return []
+        if isinstance(node, ast.Attribute):
+            v = node.value
+            if isinstance(v, ast.Name):
+                if v.id in self.aliases[rel]:
+                    g = self.top.get((self.aliases[rel][v.id], node.attr))
+                    return [g] if g else []
+                if v.id in self.names[rel]:
+                    mrel, orig = self.names[rel][v.id]
+                    g = self.top.get((mrel, f"{orig}.{node.attr}"))
+                    if g:
+                        return [g]
+                g = self.top.get((rel, f"{v.id}.{node.attr}"))
+                if g:
+                    return [g]
+            return list(self.methods.get(node.attr, []))
+        return []
+
+
+# The configuration guards, evaluated on each fixture's plan taken from source. Each entry is the
+# guard as written (``ast.unparse``) and the versions where it is true. Sources:
+# - plan.v05 / plan.is_v051 / plan.is_v052: src/refute/packs/tess/params.py:582-596, with the plans
+#   of src/refute/packs/tess/synthetic.py:749-783 (v1: no ``stronger``; v2 and v2-eb: ``stronger``;
+#   v3: also ``v051``; v4: also ``v052``);
+# - corrections.active: params.py:252-255 with CorrectionsParams' defaults version 1, enabled False
+#   (params.py:225-226); no synthetic plan sets them;
+# - catalogs and stage: tests/baseline_code_v0511.py:84-92 (``analyze_data(data, plan, stage=2)``
+#   and ``chain(..., plan, 1)``, with no catalogs);
+# - plan.discovery: every synthetic plan has a discovery section (synthetic.py:749-783);
+# - is_v5(plan): pipeline.py:580-582, discovery version 5; the fixtures are versions 1 to 4.
+VERSIONS = ("v1", "v2", "v2-eb", "v3", "v4")
+ALL = set(VERSIONS)
+GUARD_TABLE = {
+    "plan.v05": {"v2", "v2-eb", "v3", "v4"},
+    "plan.is_v051": {"v3", "v4"},
+    "plan.is_v052": {"v4"},
+    "gp.corrections.active": set(),
+    "plan.gauntlet.corrections.active": set(),
+    "catalogs is not None": set(),
+    "catalogs is None": ALL,
+    "plan.discovery is not None": ALL,
+    "plan.discovery is None": set(),
+    "plan is None": set(),
+    "plan is not None": ALL,
+    "is_v5(plan)": set(),
+    "stage is None": set(),
+}
+
+
+def guard_value(test: ast.AST, version: str) -> bool | None:
+    if isinstance(test, ast.BoolOp):
+        vals = [guard_value(v, version) for v in test.values]
+        if isinstance(test.op, ast.And):
+            if False in vals:
+                return False
+            return True if all(v is True for v in vals) else None
+        if True in vals:
+            return True
+        return False if all(v is False for v in vals) else None
+    if isinstance(test, ast.UnaryOp) and isinstance(test.op, ast.Not):
+        v = guard_value(test.operand, version)
+        return None if v is None else not v
+    key = ast.unparse(test)
+    return (version in GUARD_TABLE[key]) if key in GUARD_TABLE else None
+
+
+def _parents(f: Func) -> dict:
+    if not hasattr(f, "_parents"):
+        parents = {}
+        for n in ast.walk(f.node):
+            for c in ast.iter_child_nodes(n):
+                parents[c] = n
+        f._parents = parents
+    return f._parents
+
+
+def pruned_by(f: Func, node: ast.AST, version: str | None) -> str | None:
+    """The configuration guard that keeps ``node`` from running in ``version``, if any."""
+    if version is None:
+        return None
+    parents, child = _parents(f), node
+    while child in parents and child is not f.node:
+        p = parents[child]
+        branch = None
+        if isinstance(p, ast.If | ast.IfExp):
+            body = p.body if isinstance(p.body, list) else [p.body]
+            orelse = p.orelse if isinstance(p.orelse, list) else [p.orelse]
+            if any(child is b for b in body):
+                branch = True
+            elif any(child is b for b in orelse):
+                branch = False
+        if branch is not None:
+            v = guard_value(p.test, version)
+            if v is not None and v != branch:
+                return ("" if branch else "not ") + ast.unparse(p.test)
+        child = p
+    return None
+
+
+def analyze(sources: dict[str, str], entries=ENTRIES, version: str | None = None) -> dict:
+    """The candidate rows. With ``version``, calls and rows that a configuration guard keeps
+    from running in that fixture are pruned (``GUARD_TABLE``)."""
     funcs = collect_functions(sources)
-    by_short: dict[str, list[Func]] = {}
+    resolver = Resolver(sources, funcs)
+    edges: dict[str, set[str]] = {}
     for f in funcs:
-        by_short.setdefault(f.short, []).append(f)
+        out = set()
         for n in f.walk():
-            if isinstance(n, ast.Call) and _name(n.func):
-                f.calls.add(_name(n.func))
-            # a function passed by reference (a list of checks, a callback) is reachable too
-            if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load):
-                f.calls.add(n.id)
-            if isinstance(n, ast.Attribute) and isinstance(n.ctx, ast.Load):
-                f.calls.add(n.attr)
-    # reachability by name
+            target = None
+            if isinstance(n, ast.Call):
+                target = n.func
+            elif isinstance(n, ast.Name | ast.Attribute) and isinstance(n.ctx, ast.Load):
+                # a function passed by reference (a list of checks, a callback) is reachable too
+                target = n
+            if target is None or pruned_by(f, n, version):
+                continue
+            out |= {g.key for g in resolver.resolve(f, target)}
+        edges[f.key] = out
+    by_key = {f.key: f for f in funcs}
     reach: set[str] = set()
-    todo = [f for f in funcs if (f.rel, f.qual) in set(entries)]
+    todo = [f.key for f in funcs if (f.rel, f.qual) in set(entries)]
     while todo:
-        f = todo.pop()
-        if f.key in reach:
+        k = todo.pop()
+        if k in reach:
             continue
-        reach.add(f.key)
-        for c in f.calls:
-            todo += [g for g in by_short.get(c, []) if g.key not in reach]
-    live = [f for f in funcs if f.key in reach]
+        reach.add(k)
+        todo += [g for g in edges[k] if g not in reach]
+    live = [by_key[k] for k in sorted(reach)]
     deciding = {f.key for f in live if any(is_sink(n) for n in f.walk())}
     rows: dict[tuple, dict] = {}
     stops: dict[str, int] = {}
@@ -256,7 +426,7 @@ def analyze(sources: dict[str, str], entries=ENTRIES) -> dict:
                         changed = True
                     rows[key]["contexts"].add(ctx)
                 else:
-                    for g in by_short.get(name or "", []):
+                    for g in resolver.resolve(f, n.func):
                         if g.key in reach and g.key not in returning:
                             returning.add(g.key)
                             changed = True
@@ -335,13 +505,17 @@ def analyze(sources: dict[str, str], entries=ENTRIES) -> dict:
                         for v in _dict_values(a):
                             if _boolish(v):
                                 changed |= walk_ctx(f, v, "serialized flag")
-    out_rows = []
+    out_rows, pruned_rows = [], []
     for row in sorted(rows.values(), key=lambda r: (r["file"], r["line"], r["node"].col_offset)):
         f, node = row.pop("func"), row.pop("node")
         row["contexts"] = sorted(row["contexts"])
         row["guards"] = _guards(f, node)
         row["early_exits_before"] = _early_exits(f, node)
-        out_rows.append(row)
+        guard = pruned_by(f, node, version)
+        if guard:
+            pruned_rows.append({**row, "pruned_by": guard})
+        else:
+            out_rows.append(row)
     return {
         "functions": len(funcs),
         "reachable": sorted(reach),
@@ -349,6 +523,7 @@ def analyze(sources: dict[str, str], entries=ENTRIES) -> dict:
         "returning": sorted(returning),
         "stops": dict(sorted(stops.items())),
         "rows": out_rows,
+        "pruned_rows": pruned_rows,
     }
 
 
@@ -457,14 +632,40 @@ def main() -> int:
         if "(reachable)" in f and (site["file"], site["line"]) not in row_sites:
             left[site["file"]] = left.get(site["file"], 0) + 1
     # the two evaluations: the rows reached from chain (stage 1) and from the verdict's entries
-    by_entry = {}
-    for label, entries in (
-        ("chain", [e for e in ENTRIES if e[1] == "chain"]),
-        ("verdict", [e for e in ENTRIES if e[1] != "chain"]),
-    ):
-        part = analyze(sources, entries)["rows"]
-        by_entry[label] = {(r["file"], r["line"], r["expression"]) for r in part}
-    both = by_entry["chain"] & by_entry["verdict"]
+    # the fixtures: each version's verdict (with its error and report) and its chain (stage 1)
+    membership: dict[tuple, list[str]] = {}
+    per_fixture: dict[str, dict] = {}
+    pruned_list = []
+    for v in VERSIONS:
+        for label, entries in (
+            (v, [e for e in ENTRIES if e[1] != "chain"]),
+            (f"chain-{v}", [e for e in ENTRIES if e[1] == "chain"]),
+        ):
+            part = analyze(sources, entries, v)
+            keys = {(r["file"], r["line"], r["expression"]) for r in part["rows"]}
+            for k in keys:
+                membership.setdefault(k, []).append(label)
+            per_fixture[label] = {
+                "rows": len(keys),
+                "numeric": sum(1 for r in part["rows"] if r["kind"] == "numeric"),
+                "finiteness": sum(1 for r in part["rows"] if r["kind"] == "finiteness"),
+                "pruned_by_configuration": len(part["pruned_rows"]),
+            }
+            pruned_list += [
+                f"{label}: {p['file']}:{p['line']} {p['expression']} [{p['pruned_by']}]"
+                for p in part["pruned_rows"]
+            ]
+    for r in rows:
+        r["fixtures"] = sorted(membership.get((r["file"], r["line"], r["expression"]), []))
+    on_none = [f"{r['file']}:{r['line']} {r['expression']}" for r in rows if not r["fixtures"]]
+    chain_rows = {
+        k for k, labels in membership.items() if any(x.startswith("chain-") for x in labels)
+    }
+    verdict_rows = {
+        k for k, labels in membership.items() if any(not x.startswith("chain-") for x in labels)
+    }
+    both = chain_rows & verdict_rows
+    by_entry = {"chain": chain_rows, "verdict": verdict_rows}
     named = {
         "battery_v52.py:338-340 (attenuated)": any(
             r["file"].endswith("battery_v52.py") and 338 <= r["line"] <= 340 for r in rows
@@ -497,11 +698,15 @@ def main() -> int:
         "rows_from_chain_entry": len(by_entry["chain"]),
         "rows_from_verdict_entries": len(by_entry["verdict"]),
         "rows_from_both": len(both),
+        "rows_on_no_fixture_after_pruning": len(on_none),
+        "per_fixture": per_fixture,
         "stops": result["stops"],
     }
     summary["i2_sites_left_per_file"] = dict(sorted(left.items()))
-    out = {"rule": "see the tool's docstring", "summary": summary, "j1_missing": j1_missing,
-           "rows_not_i2_sites": not_i2, **result}  # fmt: skip
+    out = {"rule": "see the tool's docstring", "guard_table": {k: sorted(v) for k, v in
+           GUARD_TABLE.items()}, "summary": summary, "j1_missing": j1_missing,
+           "rows_not_i2_sites": not_i2, "rows_on_no_fixture": on_none,
+           "pruned_by_configuration": pruned_list, **result}  # fmt: skip
     Path(sys.argv[1]).write_text(json.dumps(out, indent=1) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps(summary))
     return 0
