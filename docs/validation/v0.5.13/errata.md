@@ -29,3 +29,13 @@ impact. It follows Process diet 2, item 5.
   edited. They are listed in
   [correction-2026-11-27-charter-sha-abbreviation.md](correction-2026-11-27-charter-sha-abbreviation.md).
 - **Impact:** a typed abbreviation. No file, hash, approval or result changes.
+
+## 2026-11-27: i4/README.md, a code block that CI's formatter rewrote
+
+- **Source:** `docs/validation/v0.5.13/i4/README.md`, written in `8f855c5e`. The proposal's two
+  patterns were in a code block marked `python`. CI's `ruff format --check .` formats Python code
+  blocks inside Markdown, and it would have rewritten that block. So every test job of run
+  46029454065 (on `8843e1b5`) failed at the format step, before any test ran.
+- **The correction:** the block is marked `text`. Its content is unchanged.
+- **Impact:** no test result. The local checks had run ruff on the Python files only, not on
+  `ruff format --check .`. The fix is pushed in the next batch (fix forward).

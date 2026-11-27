@@ -100,7 +100,7 @@ already documentation-only (`docs/**/*.md`).
 
 **Proposed addition to `DOCS_ONLY` in `scripts/ci_plan.py`:** only the phase's data records,
 which no test, lint step or build reads:
-```python
+```text
     "docs/validation/v0.5.13/*.jsonl",       # the journal and the exceptions
     "docs/validation/v0.5.13/**/*.json",     # the records, the ledger, the manifests and the unit specs
 ```
