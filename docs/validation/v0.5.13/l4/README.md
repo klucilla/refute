@@ -22,7 +22,15 @@ before any check.
   because every value compares exactly.
 
 Its tests ([`tests/test_v0513_comparator.py`](../../../../tests/test_v0513_comparator.py)) use
-synthetic tokens only: 14 passed, 0 failed (JUnit XML).
+synthetic tokens only: 16 passed, 0 failed (JUnit XML, with `tests/test_ci_plan.py`: 44 in all,
+0 failed).
+
+**J3's docs-only pattern.** That test reads `l4/comparator-schema-parts.json` and imports a tool
+from this folder. J3 made `docs/validation/v0.5.13/*.json` documentation only, on the basis that
+no test read the folder, and that basis no longer holds for this file.
+- A commit that touches only that JSON runs no test in CI.
+- A commit that touches the tool or the test still runs them.
+- The freeze must therefore run this test itself, locally, on the frozen files.
 
 **A property of the design.** The schema's classification is consulted only when two tokens
 differ. So an incomplete measurement list can only make the comparator fail; it can never let it
@@ -47,6 +55,21 @@ written from `dumps_json`, `build_result`, `chain` and `render_report`:
 - eleven report templates, each with its source lines. A test checks that each template compiles,
   that its groups are the declared ones, and that each synthetic example line matches exactly one
   template.
+
+## Open before the freeze (found in review, not yet fixed)
+
+- **`schema_keys.MODULES` is typed by hand.** It lists 30 files and skips a missing file without
+  saying so, while I2's inventory lists 73 golden-path modules. To do:
+  - take the list from `i2/predicate-inventory.json`, and fail on a missing file;
+  - report how many `thresholds=` arguments rule 2 could not resolve, since it reads only dict
+    literals;
+  - count the entries of `metrics`, `inputs` and `sensitivity` dicts whose value is a bare plan
+    field or an all-caps constant under a key that is not exact. If any exists, a rule 3 is
+    needed for configuration echoed under another name.
+- **Fixed already:**
+  - `comparator.last_key` returned a list index for a list item, so it now returns the nearest
+    key (with a test);
+  - `comparator.main` did not compare the claim inventory, and now does.
 
 ## What does not exist yet
 

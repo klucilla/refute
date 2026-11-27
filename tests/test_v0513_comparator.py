@@ -83,6 +83,17 @@ def test_threshold_path_and_exact_key_compare_exactly():
     assert jcmp(verdict("1.5", snr_min="7.0"), verdict("1.5", snr_min="7.0000001"))
 
 
+def test_last_key_skips_list_indices():
+    assert comp.last_key("tests[0].thresholds.snr_min[1]") == "snr_min"
+    assert comp.last_key("a.b[2][0]") == "b"
+    assert comp.last_key("candidate.period") == "period"
+
+
+def test_list_under_an_exact_key_compares_exactly():
+    a = '{\n  "candidate": {\n    "snr_min": [\n      1.0\n    ]\n  }\n}\n'
+    assert jcmp(a, a.replace("1.0", "1.0000001"))
+
+
 def test_null_against_number_fails():
     assert jcmp(verdict("1.5"), verdict("null"))
     assert jcmp(verdict("null"), verdict("null")) == []

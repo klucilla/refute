@@ -22,6 +22,16 @@ was empty.
   reports is a state of the index entries, not of the files. No `--really-refresh`, checkout or
   re-staging was tried; each would write to the index or the working tree beyond what L5a
   approved.
+- **The likely cause** (`git ls-files --debug`, read only). The index caches `a0.py` at 18,206
+  bytes, while the file has 17,782. The difference, 424, is the file's number of lines, so the
+  cached size is that of a CRLF copy. Likewise `tests/test_v051_a0.py` is cached at 7,238 bytes,
+  against 7,052 on disk.
+  - The files were probably rewritten with LF outside git, during the CRLF episode of this phase,
+    and the index entries kept the old stat data.
+  - git treats a size mismatch as a change before it compares content, which is why `status`
+    lists the files while every diff is empty.
+  - The fix would be to re-stage the identical content (`git add` of the four paths). It writes
+    no new blob, but it is an index write beyond L5a, so it waits for the maintainer.
 
 ## (b) The open Dependabot alerts
 

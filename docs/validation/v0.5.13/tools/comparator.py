@@ -2,7 +2,7 @@
 #218 comment 7223634913). Frozen with the margin manifest before it reads any golden file.
 
     python -I -B docs/validation/v0.5.13/tools/comparator.py <schema.json> <ref record> <ref dir> \
-        <alt record> <alt dir>
+        <alt record> <alt dir> <ref claim-hash record> <alt claim-hash record>
 
 It compares one alternate setting with the reference (ID-BEFORE), never two alternates. It
 writes one JSON result to stdout, and exits 0 only when the setting meets section 3.1.
@@ -150,7 +150,9 @@ def _pattern(glob: str) -> re.Pattern:
 
 
 def last_key(path: str) -> str:
-    return re.split(r"[.\[]", path)[-1].rstrip("]")
+    """The nearest key of a path, skipping list indices: ``a.b[2][0]`` gives ``b``."""
+    keys = [p for p in re.split(r"[.\[]", path) if p and not p.rstrip("]").isdigit()]
+    return keys[-1] if keys else ""
 
 
 def compare_json(a: str, b: str, kind: str, schema: dict) -> list[str]:
@@ -277,10 +279,17 @@ def compare_claims(ref_rec: dict, alt_rec: dict) -> list[str]:
 
 
 def main() -> int:
+    """Arguments: the schema, the reference golden record and folder, the alternate golden record
+    and folder, then the reference and alternate claim-hash records."""
     schema = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
     ref_rec = json.loads(Path(sys.argv[2]).read_text(encoding="utf-8"))
     alt_rec = json.loads(Path(sys.argv[4]).read_text(encoding="utf-8"))
     out = compare_setting(schema, ref_rec, Path(sys.argv[3]), alt_rec, Path(sys.argv[5]))
+    ref_claims = json.loads(Path(sys.argv[6]).read_text(encoding="utf-8"))
+    alt_claims = json.loads(Path(sys.argv[7]).read_text(encoding="utf-8"))
+    out["claims"] = compare_claims(ref_claims, alt_claims)
+    if out["claims"]:
+        out["result"] = "FAIL"
     print(json.dumps(out, indent=1))
     return 0 if out["result"] == "PASS" else 1
 
