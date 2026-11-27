@@ -1,0 +1,12 @@
+{
+ "name": "g2-normalize",
+ "question": "G2 (#218 comment 7219180143): normalize to LF, in the working tree only, the five literal files (src/refute/packs/tess/a0.py, scripts/ci_shard.py, tests/test_junit_counts.py, tests/test_v051_a0.py, tests/test_v051_wp2.py) after checking that git diff is empty and that the LF content has the index blob's id; then git checkout -- <file> and git ls-files --eol showing w/lf; and list every other working-tree file with CRLF by folder, untouched.",
+ "choices": "docs/validation/v0.5.13/tools/g2_normalize.py, no arguments; the five paths are literals. Offline. Nothing is staged or committed; core.autocrlf is not changed. It writes out/g2-normalize.json.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/g2_normalize.py"],
+ "identity": ["docs/validation/v0.5.13/tools/g2_normalize.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 60, "disk_bytes": 5000000},
+ "network": false,
+ "retry_class": "checker",
+ "outputs": {"g2-normalize.json": "docs/validation/v0.5.13/g2/g2-normalize.json"}
+}

@@ -1,0 +1,12 @@
+{
+ "name": "pypi-fetch",
+ "question": "F3 (#218 comment 7218843893): download the files PyPI publishes for refute <version> (download only, no install), and compare each file's SHA-256 with the index's digest; the comparison with the build job's listing is recorded beside it.",
+ "choices": "docs/validation/v0.5.13/tools/pypi_fetch.py <version>, through launch_v4.py; files under .cache/v0513/pypi/<version>/; measured inbound bytes.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/pypi_fetch.py"],
+ "identity": ["docs/validation/v0.5.13/tools/pypi_fetch.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 60, "disk_bytes": 20000000},
+ "network": {"kind": "pypi", "endpoints": ["pypi.org:443", "files.pythonhosted.org:443"], "operations": ["GET /pypi/refute/<version>/json", "GET the listed files"], "inbound_estimate_bytes": 10000000},
+ "retry_class": "infra",
+ "outputs": {"pypi-fetch.json": "docs/validation/v0.5.13/f3/pypi-fetch.json"}
+}

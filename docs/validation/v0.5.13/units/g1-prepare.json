@@ -1,0 +1,12 @@
+{
+ "name": "g1-prepare",
+ "question": "G1 (#218 comment 7219180143), the approved rerun of check-f2, step 1: export the exact tip of main with git archive into the new folder .cache/v0513/g1/tree; copy in, byte for byte with SHA-256 recorded, the F2 files (pyproject.toml from .cache/v0513/f2/pyproject.f2.toml, scripts/make_pypi_readme.py, README-pypi.md, tests/test_pypi_readme.py); check that no file of the copy has CRLF outside the paths .gitattributes marks -text or binary.",
+ "choices": "docs/validation/v0.5.13/tools/g1_prepare.py, no arguments. Offline. It refuses if main and origin/main differ or the folder exists. It writes out/g1-prepare.json.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/g1_prepare.py"],
+ "identity": ["docs/validation/v0.5.13/tools/g1_prepare.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 120, "disk_bytes": 3000000000},
+ "network": false,
+ "retry_class": "checker",
+ "outputs": {"g1-prepare.json": "docs/validation/v0.5.13/g1/g1-prepare.json"}
+}

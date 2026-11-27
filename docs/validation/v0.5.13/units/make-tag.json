@@ -1,0 +1,12 @@
+{
+ "name": "make-tag",
+ "question": "F3 (#218 comment 7218843893): after the PyPI files' SHA-256 are checked, create the annotated tag v0.5.12 on the released commit and push that tag alone. No GitHub release.",
+ "choices": "docs/validation/v0.5.13/tools/make_tag.py <tag> <commit> <message file>; refuses an existing tag (local or origin); pushes refs/tags/<tag> only.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/make_tag.py"],
+ "identity": ["docs/validation/v0.5.13/tools/make_tag.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 60, "disk_bytes": 5000000},
+ "timeout_s": 600,
+ "network": {"kind": "github", "endpoints": ["github.com:443"], "operations": ["git ls-remote --tags origin refs/tags/<tag>", "git push origin refs/tags/<tag>"], "inbound_estimate_bytes": 2000000},
+ "retry_class": "infra"
+}

@@ -1,0 +1,11 @@
+{
+ "name": "g1-build",
+ "question": "G1 (#218 comment 7219180143), step 2: build the sdist and the wheel in the clean copy .cache/v0513/g1/tree, as release.yml builds them (uv build), offline, into .cache/v0513/g1/dist. Nothing is published or installed.",
+ "choices": "uv build --offline --out-dir .cache/v0513/g1/dist .cache/v0513/g1/tree: the project's own build backend (hatchling) from the uv cache, no download.",
+ "argv": ["uv", "build", "--offline", "--out-dir", ".cache/v0513/g1/dist", ".cache/v0513/g1/tree"],
+ "identity": [],
+ "key": "data",
+ "reserve": {"cpu_s": 300, "disk_bytes": 300000000},
+ "network": false,
+ "retry_class": "checker"
+}
