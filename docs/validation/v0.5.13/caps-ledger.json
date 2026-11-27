@@ -10,13 +10,13 @@
   "disk_bytes": 5000000000
  },
  "charged": {
-  "cpu_s": 1747.504,
+  "cpu_s": 1780.294,
   "download_bytes": 190667122,
   "disk_peak_bytes": 193730537
  },
  "within_caps_so_far": true,
  "telemetry_complete": false,
- "exceptions_outside_meter": 5,
+ "exceptions_outside_meter": 6,
  "charging_rule": "measured use for settled attempts with complete telemetry; otherwise the larger of the reservation and the measured use; plus the conservative estimates of every execution recorded outside the meter (exceptions.jsonl)",
  "downloads_rule": "offline units run with UV_OFFLINE=1 and pytest --disable-socket (no process-wide socket isolation); network units are named (github, review, mast) and charge their measured inbound bytes, or their declared conservative estimate",
  "reconciliation": "at the seal, through the sealed journal cursor, with headroom reserved for the final review, gate and closure; the post-seal tail is appended and reconciled before report approval (charter, section 8, Codex r2, item 5)",
@@ -2302,6 +2302,44 @@
    "download_bytes": 0,
    "write_bytes": 41,
    "disk_bound_bytes": 39059250,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "742bf749158140c6a9b4f6717b6f176e",
+   "start": "2026-11-27T03:30:18Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.406,
+   "download_bytes": 0,
+   "write_bytes": 897242,
+   "disk_bound_bytes": 39968895,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "3abdf2be82924ed692072bd20e22dbf5",
+   "start": "2026-11-27T03:30:20Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.984,
+   "download_bytes": 0,
+   "write_bytes": 1319523,
+   "disk_bound_bytes": 40512620,
    "case_outputs": 0,
    "telemetry_complete": true
   }
