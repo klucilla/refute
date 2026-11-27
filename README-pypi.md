@@ -19,8 +19,8 @@ signal; deterministic, versioned tests attack it, after the claim and its code a
 what survives is kept, and even that is a candidate, never a discovery.
 
 > [!IMPORTANT]
-> **Status, honestly.** No method of Refute is validated (`method_status: not_validated`), and no
-> phase is open.
+> **Status, honestly.** No method of Refute is validated (`method_status: not_validated`). The
+> current phase and the plan are in [ROADMAP.md](https://github.com/klucilla/refute/blob/main/ROADMAP.md).
 > - The last phase, v0.5.12, closed on 2026-11-26 **with declared limits** (gate `REFUTED`).
 > - The TESS battery's results carry the label 'WEAKENED; does not meet D1, D2, D4, T2a'.
 > - The v0.1 and v0.2 self-claims **failed**, and their post-mortems are published.
@@ -55,6 +55,15 @@ Refute's current job is **auditable falsification of TESS transit candidates**:
 **Agents propose. Deterministic tests decide.** No language-model output is ever a verdict.
 
 ## Quick start
+
+To try the released package from [PyPI](https://pypi.org/project/refute/) (Python 3.12 or later):
+
+```bash
+pip install refute
+refute packs        # the installed domain packs: tess and ml
+```
+
+The examples below read claims and dossiers kept in the repository, so they need a clone.
 
 Refute uses [uv](https://docs.astral.sh/uv/) 0.12.24 and Python 3.12 or later; CI tests 3.12 and
 3.13. `pyproject.toml` pins that uv version, and any other version exits with an error
