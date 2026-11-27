@@ -1,0 +1,11 @@
+{
+ "name": "store-file",
+ "question": "Store a file unchanged inside the project (a generated diff, a Codex prompt or answer actually used), byte for byte, with its SHA-256 checked before and after the copy; for a Codex events file it also reports the thread id and the sum of its turn usages.",
+ "choices": "docs/validation/v0.5.12/tools/store_file.py <source> <destination>, imported unchanged from v0.5.12; the destination must not exist. Offline. It emits no case value.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.12/tools/store_file.py"],
+ "identity": ["docs/validation/v0.5.12/tools/store_file.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 60, "disk_bytes": 20000000},
+ "network": false,
+ "retry_class": "infra"
+}
