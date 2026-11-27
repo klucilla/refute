@@ -511,7 +511,8 @@ def _journal(root: Path, freeze: dict, **change) -> list[dict]:
                                 entry["script"]: entry["script_sha256"]},
             "env": dict(entry["thread_env"]),
             "order_proof": {"manifest": entry["manifest"]["path"],
-                            "manifest_sha256": entry["manifest"]["sha256"]},
+                            "manifest_sha256": entry["manifest"]["sha256"],
+                            "evidence_commit": "M", "ci_run_id": 7},
         }  # fmt: skip
         data = (root / unit["output"]).read_bytes()
         after = {
@@ -564,7 +565,7 @@ def _git_ok(
     same=True,
     recorded=RECORDED,
 ):
-    receipt_doc = {"ci_run_created_at": PUSHED, "receipt_rel": "r/receipt.json"}
+    receipt_doc = {"ci_run_created_at": PUSHED, "receipt_rel": "r/receipt.json", "ci_run_id": 7}
     monkeypatch.setattr(comp, "ROOT", root)
     monkeypatch.setattr(comp, "committed", lambda rel, data: committed)
     monkeypatch.setattr(comp, "receipt_ok", lambda rel, s, files: receipt_doc if receipt else None)
@@ -721,11 +722,72 @@ def test_t2_3_order_pieces_missing_or_out_of_order_fail(tmp_path, monkeypatch):
         ({"journal": _journal(tmp_path, freeze, after_unit="other")}, "another unit"),
         ({"journal": _journal(tmp_path, freeze, utc=None)}, "time is missing"),
         ({"recorded": "2026-11-27T21:05:00+00:00"}, "before the run's end"),
-    )
+        (
+            {"journal": _journal(tmp_path, freeze, order_proof={
+                "manifest": "m/nr-a2.json",
+                "manifest_sha256": freeze["prospective"]["nr-a2-t2"]["manifest"]["sha256"],
+                "evidence_commit": "X", "ci_run_id": 7})},
+            "another commit or CI run",
+        ),
+    )  # fmt: skip
     for kwargs, expected in cases:
         _git_ok(monkeypatch, tmp_path, freeze, **kwargs)
         problems = _bind(freeze)
         assert any(expected in p for p in problems), (kwargs, problems)
+
+
+def test_t2_3_receipt_is_checked_against_the_commit(tmp_path, monkeypatch):
+    # attack 3: a receipt whose file list, trailer or CI run is not what git holds
+    rel, manifest_sha = "m/nr-a2.json", "a" * 64
+    receipt = {
+        "schema": "refute-v0513-order-proof-2", "passed": True, "manifest": rel,
+        "manifest_sha256": manifest_sha, "evidence_commit": "M", "evidence_files": [rel],
+        "ci_run_id": 7, "ci_run_created_at": PUSHED,
+    }  # fmt: skip
+
+    def check(files=(rel,), facts=(1, True, RECORDED), **change) -> dict | None:
+        _write(
+            tmp_path, f"{comp.RECEIPTS}/{manifest_sha}.v2.json", json.dumps({**receipt, **change})
+        )
+        monkeypatch.setattr(comp, "ROOT", tmp_path)
+        monkeypatch.setattr(comp, "committed", lambda r, data: True)
+        monkeypatch.setattr(comp, "last_commit", lambda r: "M")
+        monkeypatch.setattr(comp, "commit_files", lambda c: sorted(files))
+        monkeypatch.setattr(comp, "commit_facts", lambda c: facts)
+        return comp.receipt_ok(rel, manifest_sha, [rel])
+
+    assert check() is not None
+    assert check(files=(rel, "m/other.json")) is None  # the commit holds a second file
+    assert check(facts=(1, False, RECORDED)) is None  # no trailer
+    assert check(facts=(2, True, RECORDED)) is None  # a merge
+    assert check(ci_run_id=None) is None  # no CI run
+    assert check(evidence_commit="X") is None  # it attests another commit
+    assert check(evidence_files=[]) is None
+
+
+def test_t2_1_attack_on_the_schema_as_frozen():
+    # attack 1 on the schema built as tools/freeze_226.py builds it (parts, schema-keys,
+    # count-keys), not on a hand-written one
+    l4 = ROOT / "docs/validation/v0.5.13/l4"
+    parts = json.loads((l4 / "comparator-schema-parts.json").read_text("utf-8"))
+    keys = json.loads((l4 / "schema-keys.json").read_text("utf-8"))
+    counts = json.loads((l4 / "count-keys.json").read_text("utf-8"))
+    schema = {
+        "json": parts["json"], "report": parts["report"], "exact_keys": keys["exact_keys"],
+        "exact_subtree_keys": keys["exact_subtree_keys"],
+        "exact_key_regex": parts.get("exact_key_regex"),
+        "computed_keys_despite_name": parts.get("computed_keys_despite_name", {}),
+        "exact_integer_keys": counts["exact_integer_keys"],
+        "exact_key_exempt_paths": parts.get("exact_key_exempt_paths", []),
+        "exact_by_sibling": parts.get("exact_by_sibling", []),
+    }  # fmt: skip
+    for doc, old, new in (
+        ('{"candidate": {"n_transits": 100}}', "100", "100.00001"),
+        ('{"v05": {"discovery_version": 4}}', "4", "4.0"),
+        ('{"v05": {"cadences_per_sector": {"1": {"cadences_used": 18000}}}}', "18000", "18000.001"),
+        ('{"tests": [{"sensitivity": {"main": {"failures": 3}}}]}', "3", "3.0000001"),
+    ):
+        assert comp.compare_json(doc, doc.replace(old, new), "verdict", schema), doc
 
 
 def test_t2_4_code_records_missing_or_divergent_fail(tmp_path, monkeypatch):

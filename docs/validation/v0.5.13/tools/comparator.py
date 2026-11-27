@@ -772,6 +772,12 @@ def order_bound(
         head = before.get("head", "")
         if not (head and is_ancestor(m_commit, head) and is_ancestor(r_commit, head)):
             problems.append(f"{name}: the run's head does not hold the manifest and its receipt")
+        proof = before.get("order_proof") or {}
+        if (proof.get("evidence_commit"), proof.get("ci_run_id")) != (
+            m_commit,
+            receipt.get("ci_run_id"),
+        ):
+            problems.append(f"{name}: the run's order proof names another commit or CI run")
         try:
             start, end = utc(before["utc"]), utc(after["utc"])
         except (AttributeError, KeyError, TypeError, ValueError):

@@ -67,7 +67,10 @@ def authorization() -> tuple[str, dict]:
     if git_bytes("show", f"@:{MANIFEST}") != data:
         raise SystemExit(f"refused: {MANIFEST} is not committed with these bytes")
     manifest = json.loads(data)
-    freeze = json.loads((ROOT / manifest["freeze"]).read_text(encoding="utf-8"))
+    freeze_raw = (ROOT / manifest["freeze"]).read_bytes()
+    if git_bytes("show", f"@:{manifest['freeze']}") != freeze_raw:
+        raise SystemExit(f"refused: {manifest['freeze']} is not committed with these bytes")
+    freeze = json.loads(freeze_raw)
     entry = freeze["prospective"]["nr-a2-t2"]
     if entry["authorized_code_commit"] != manifest["authorized_code_commit"]:
         raise SystemExit("refused: the manifest and the freeze name different authorized commits")

@@ -1,5 +1,6 @@
 {
- "rule": "see the tool's docstring: int literals and conditionals of them, int/len/one-argument round calls, and int-annotated class fields, over the modules of schema-keys.json",
+ "rule": "see the tool's docstring: integer expressions by form (literals, conditionals, int/len/round/max/min calls, integer arithmetic, local names assigned integers, attributes named after int-annotated fields), through dict entries, subscript and tuple assignments and dict() keywords, and int-annotated class fields, over the modules of schema-keys.json",
+ "limit": "a source enumeration by form; it cannot be proven complete. A key it misses stays under the measurement rules where a measurement pattern covers it",
  "modules": 73,
  "exact_integer_keys": {
   "107": [
@@ -50,6 +51,10 @@
   "SE": [
    "src/refute/packs/tess/calib05/values.py:47"
   ],
+  "SECTOR": [
+   "src/refute/packs/tess/synthetic.py:567",
+   "src/refute/packs/tess/synthetic.py:587"
+  ],
   "V1": [
    "src/refute/packs/tess/calib05/values.py:45"
   ],
@@ -60,9 +65,15 @@
    "src/refute/packs/tess/a0.py:388",
    "src/refute/packs/tess/a0_v4.py:245"
   ],
+  "annex_version": [
+   "src/refute/core/seal.py:312"
+  ],
   "aperture_depth": [
    "src/refute/packs/tess/discover/claim.py:99",
    "src/refute/packs/tess/synthetic.py:743"
+  ],
+  "attempted": [
+   "src/refute/packs/tess/discover/paired.py:243"
   ],
   "attempts": [
    "src/refute/selection/walk.py:81"
@@ -71,8 +82,17 @@
    "src/refute/core/lock_compat.py:58",
    "src/refute/packs/tess/params.py:227"
   ],
+  "bins": [
+   "src/refute/packs/tess/prewhiten.py:241"
+  ],
   "bytes": [
    "src/refute/packs/tess/discover/pilot.py:104"
+  ],
+  "cadences_in_span": [
+   "src/refute/packs/tess/pipeline.py:822"
+  ],
+  "cadences_used": [
+   "src/refute/packs/tess/pipeline.py:821"
   ],
   "camera": [
    "src/refute/packs/tess/types.py:46"
@@ -103,7 +123,11 @@
    "src/refute/packs/tess/params.py:43"
   ],
   "clipped": [
-   "src/refute/packs/tess/prewhiten.py:38"
+   "src/refute/packs/tess/prewhiten.py:38",
+   "src/refute/packs/tess/prewhiten.py:52"
+  ],
+  "control_epochs": [
+   "src/refute/packs/tess/centroid_v5.py:262"
   ],
   "controls": [
    "src/refute/packs/tess/centroid_v5.py:180"
@@ -116,8 +140,12 @@
   ],
   "coverage": [
    "src/refute/core/verdict.py:82",
+   "src/refute/core/verdict.py:95",
+   "src/refute/packs/tess/battery_v5.py:277",
+   "src/refute/packs/tess/battery_v5.py:96",
    "src/refute/packs/tess/battery_v52.py:398",
    "src/refute/packs/tess/discover/dedup.py:42",
+   "src/refute/packs/tess/discover/dedup.py:50",
    "src/refute/packs/tess/screen_d5.py:239",
    "src/refute/packs/tess/screen_d5.py:339"
   ],
@@ -125,7 +153,8 @@
    "src/refute/packs/tess/calib05/c1.py:612"
   ],
   "denominator": [
-   "src/refute/packs/tess/discover/paired.py:249"
+   "src/refute/packs/tess/discover/paired.py:249",
+   "src/refute/packs/tess/discover/paired.py:260"
   ],
   "development_prefix": [
    "src/refute/packs/tess/calib05/values.py:54"
@@ -140,8 +169,16 @@
   "disk_bytes": [
    "src/refute/packs/tess/calib05/values.py:80"
   ],
+  "dof": [
+   "src/refute/packs/tess/battery_v5.py:215"
+  ],
+  "eligible": [
+   "src/refute/packs/tess/calib05/c1.py:612"
+  ],
   "epoch": [
    "src/refute/packs/tess/ephemeris.py:26",
+   "src/refute/packs/tess/holdout.py:1204",
+   "src/refute/packs/tess/holdout.py:1685",
    "src/refute/packs/tess/holdout.py:81"
   ],
   "events": [
@@ -166,7 +203,24 @@
    "src/refute/packs/tess/discover/pilot.py:706"
   ],
   "exptime_seconds": [
+   "src/refute/packs/tess/adapter.py:346",
+   "src/refute/packs/tess/adapter.py:416",
    "src/refute/packs/tess/types.py:85"
+  ],
+  "extra_frequencies": [
+   "src/refute/packs/tess/battery_v51.py:95",
+   "src/refute/packs/tess/battery_v52.py:269"
+  ],
+  "failed_tasks": [
+   "src/refute/packs/tess/discover/paired.py:194",
+   "src/refute/packs/tess/discover/paired.py:244"
+  ],
+  "failures": [
+   "src/refute/packs/tess/power.py:267",
+   "src/refute/packs/tess/power.py:349"
+  ],
+  "false_positive": [
+   "src/refute/packs/tess/discover/pilot.py:892"
   ],
   "false_positives": [
    "src/refute/packs/tess/calib05/values.py:19"
@@ -197,6 +251,9 @@
    "src/refute/packs/tess/discover/pilot.py:875",
    "src/refute/packs/tess/discover/selection.py:263"
   ],
+  "funnel": [
+   "src/refute/packs/tess/discover/pilot.py:890"
+  ],
   "funnel_accepted": [
    "src/refute/packs/tess/discover/protocol.py:33"
   ],
@@ -206,17 +263,40 @@
   "gate_passed": [
    "src/refute/packs/tess/discover/paired.py:196"
   ],
+  "heterogeneity_dof": [
+   "src/refute/packs/tess/centroid_v5.py:341"
+  ],
   "hidden_year": [
-   "src/refute/packs/tess/holdout.py:175"
+   "src/refute/packs/tess/holdout.py:175",
+   "src/refute/packs/tess/holdout.py:186",
+   "src/refute/packs/tess/pipeline.py:771",
+   "src/refute/packs/tess/pipeline.py:778",
+   "src/refute/packs/tess/pipeline.py:854"
+  ],
+  "in_transit_cadences": [
+   "src/refute/packs/tess/duration.py:117"
   ],
   "inconclusive": [
+   "src/refute/packs/tess/discover/measure.py:232",
    "src/refute/packs/tess/discover/transforms.py:63"
+  ],
+  "inconclusive_rotations": [
+   "src/refute/packs/tess/discover/transforms.py:70"
+  ],
+  "inconclusive_unclassified": [
+   "src/refute/core/inconclusive.py:152"
   ],
   "index": [
    "src/refute/packs/tess/a0.py:51",
    "src/refute/packs/tess/calib05/c1.py:553",
+   "src/refute/packs/tess/calib05/c1.py:564",
    "src/refute/packs/tess/discover/injection.py:67",
-   "src/refute/packs/tess/discover/measure.py:118"
+   "src/refute/packs/tess/discover/injection.py:76",
+   "src/refute/packs/tess/discover/measure.py:118",
+   "src/refute/packs/tess/discover/measure.py:132"
+  ],
+  "injections": [
+   "src/refute/packs/tess/discover/injection.py:202"
   ],
   "injections_fallback": [
    "src/refute/packs/tess/calib05/values.py:66"
@@ -234,9 +314,11 @@
    "src/refute/packs/tess/discover/pilot.py:876"
   ],
   "linear_crossings": [
-   "src/refute/packs/tess/timing.py:67"
+   "src/refute/packs/tess/timing.py:67",
+   "src/refute/packs/tess/timing.py:73"
   ],
   "lock_version": [
+   "src/refute/core/lock.py:410",
    "src/refute/core/lock_compat.py:156",
    "src/refute/core/lock_compat.py:88"
   ],
@@ -272,6 +354,14 @@
   "measurement_prefix": [
    "src/refute/packs/tess/discover/protocol.py:86"
   ],
+  "min_controls": [
+   "src/refute/packs/tess/centroid_v5.py:263"
+  ],
+  "min_events": [
+   "src/refute/packs/tess/battery_v5.py:125",
+   "src/refute/packs/tess/battery_v5.py:191",
+   "src/refute/packs/tess/battery_v51.py:488"
+  ],
   "min_events_for_dumps": [
    "src/refute/core/lock_compat.py:149",
    "src/refute/packs/tess/params.py:149"
@@ -296,6 +386,7 @@
   ],
   "min_sectors": [
    "src/refute/core/lock_compat.py:113",
+   "src/refute/packs/tess/centroid_v5.py:259",
    "src/refute/packs/tess/discover/protocol.py:16",
    "src/refute/packs/tess/params.py:109"
   ],
@@ -303,30 +394,46 @@
    "src/refute/packs/tess/params.py:190"
   ],
   "min_transits_each": [
+   "src/refute/packs/tess/battery_v51.py:295",
+   "src/refute/packs/tess/battery_v52.py:109",
+   "src/refute/packs/tess/gauntlet.py:69",
    "src/refute/packs/tess/params.py:84"
+  ],
+  "min_valid_placements": [
+   "src/refute/packs/tess/battery_v51.py:487"
   ],
   "min_years": [
    "src/refute/packs/tess/discover/protocol.py:17"
   ],
   "n": [
+   "src/refute/packs/tess/a0.py:195",
    "src/refute/packs/tess/battery.py:661",
+   "src/refute/packs/tess/battery.py:703",
    "src/refute/packs/tess/events.py:160",
+   "src/refute/packs/tess/events.py:168",
    "src/refute/packs/tess/rednoise.py:36",
-   "src/refute/packs/tess/rednoise.py:48"
+   "src/refute/packs/tess/rednoise.py:48",
+   "src/refute/packs/tess/rednoise.py:61"
   ],
   "n_base": [
    "src/refute/packs/tess/holdout.py:505"
   ],
   "n_bins": [
-   "src/refute/packs/tess/rednoise.py:37"
+   "src/refute/packs/tess/rednoise.py:37",
+   "src/refute/packs/tess/rednoise.py:65"
   ],
   "n_cadences": [
    "src/refute/packs/tess/battery.py:193",
+   "src/refute/packs/tess/battery.py:300",
+   "src/refute/packs/tess/battery.py:759",
    "src/refute/packs/tess/battery_v5.py:441",
    "src/refute/packs/tess/battery_v51.py:197",
    "src/refute/packs/tess/battery_v52.py:388",
    "src/refute/packs/tess/centroid_v5.py:179",
    "src/refute/packs/tess/pipeline.py:1038"
+  ],
+  "n_cadences_used": [
+   "src/refute/packs/tess/pipeline.py:935"
   ],
   "n_catalog_entries": [
    "src/refute/packs/tess/ebcatalog.py:301"
@@ -337,14 +444,22 @@
   "n_even": [
    "src/refute/packs/tess/battery_v51.py:391",
    "src/refute/packs/tess/battery_v52.py:172",
-   "src/refute/packs/tess/gauntlet.py:78"
+   "src/refute/packs/tess/gauntlet.py:78",
+   "src/refute/packs/tess/gauntlet.py:90"
   ],
   "n_events": [
+   "src/refute/packs/tess/battery_v5.py:167",
+   "src/refute/packs/tess/battery_v5.py:276",
    "src/refute/packs/tess/battery_v51_diff.py:59"
   ],
   "n_in": [
    "src/refute/packs/tess/holdout.py:303",
    "src/refute/packs/tess/holdout.py:504"
+  ],
+  "n_in_transit_cadences": [
+   "src/refute/packs/tess/battery.py:704",
+   "src/refute/packs/tess/battery.py:842",
+   "src/refute/packs/tess/battery.py:861"
   ],
   "n_members": [
    "src/refute/packs/tess/search.py:333"
@@ -359,7 +474,8 @@
   "n_odd": [
    "src/refute/packs/tess/battery_v51.py:390",
    "src/refute/packs/tess/battery_v52.py:171",
-   "src/refute/packs/tess/gauntlet.py:78"
+   "src/refute/packs/tess/gauntlet.py:78",
+   "src/refute/packs/tess/gauntlet.py:91"
   ],
   "n_params": [
    "src/refute/packs/tess/holdout.py:506"
@@ -380,10 +496,12 @@
    "src/refute/packs/tess/gauntlet.py:118"
   ],
   "n_ref": [
+   "src/refute/packs/tess/ephemeris.py:109",
    "src/refute/packs/tess/ephemeris.py:86"
   ],
   "n_rep": [
-   "src/refute/packs/tess/holdout.py:566"
+   "src/refute/packs/tess/holdout.py:566",
+   "src/refute/packs/tess/holdout.py:787"
   ],
   "n_replicas_hidden": [
    "src/refute/packs/tess/holdout.py:1473"
@@ -395,7 +513,9 @@
    "src/refute/packs/tess/holdout.py:326"
   ],
   "n_secondary_events": [
-   "src/refute/packs/tess/gauntlet.py:118"
+   "src/refute/packs/tess/battery_v5.py:76",
+   "src/refute/packs/tess/gauntlet.py:118",
+   "src/refute/packs/tess/gauntlet.py:131"
   ],
   "n_sectors": [
    "src/refute/packs/tess/battery.py:400",
@@ -412,6 +532,7 @@
    "src/refute/packs/tess/holdout.py:1061"
   ],
   "n_transits": [
+   "src/refute/packs/tess/ephemeris.py:114",
    "src/refute/packs/tess/ephemeris.py:90",
    "src/refute/packs/tess/types.py:256"
   ],
@@ -421,7 +542,11 @@
   ],
   "n_transits_with_data": [
    "src/refute/packs/tess/battery.py:955",
-   "src/refute/packs/tess/battery_v51_diff.py:419"
+   "src/refute/packs/tess/battery_v51_diff.py:419",
+   "src/refute/packs/tess/gauntlet.py:52"
+  ],
+  "n_valid": [
+   "src/refute/packs/tess/holdout.py:754"
   ],
   "n_windows": [
    "src/refute/packs/tess/holdout.py:302"
@@ -433,13 +558,21 @@
    "src/refute/packs/tess/holdout.py:260",
    "src/refute/packs/tess/holdout.py:307"
   ],
+  "n_years": [
+   "src/refute/packs/tess/holdout.py:1468",
+   "src/refute/packs/tess/holdout.py:1492"
+  ],
   "needed": [
    "src/refute/packs/tess/discover/selection.py:450",
+   "src/refute/packs/tess/discover/selection.py:467",
    "src/refute/selection/walk.py:155"
   ],
   "not_decidable_below": [
    "src/refute/packs/tess/calib05/values.py:56",
    "src/refute/packs/tess/calib05/values.py:69"
+  ],
+  "not_recovered": [
+   "src/refute/packs/tess/discover/paired.py:247"
   ],
   "numbers": [
    "src/refute/packs/tess/calib05/c1.py:166"
@@ -449,6 +582,9 @@
    "src/refute/packs/tess/calibration.py:108",
    "src/refute/packs/tess/calibration.py:115",
    "src/refute/packs/tess/calibration.py:186"
+  ],
+  "offset_dof": [
+   "src/refute/packs/tess/battery.py:288"
   ],
   "original": [
    "src/refute/packs/tess/battery_v52.py:45"
@@ -475,6 +611,9 @@
   "placements": [
    "src/refute/packs/tess/battery_v51.py:486"
   ],
+  "planet": [
+   "src/refute/packs/tess/discover/pilot.py:891"
+  ],
   "planets": [
    "src/refute/packs/tess/calib05/values.py:18"
   ],
@@ -483,6 +622,7 @@
   ],
   "position": [
    "src/refute/packs/tess/discover/measure.py:175",
+   "src/refute/packs/tess/discover/measure.py:201",
    "src/refute/packs/tess/discover/selection.py:439",
    "src/refute/selection/walk.py:142"
   ],
@@ -493,13 +633,19 @@
    "src/refute/core/lock_compat.py:70",
    "src/refute/packs/tess/params.py:234"
   ],
+  "realizations": [
+   "src/refute/packs/tess/power.py:267",
+   "src/refute/packs/tess/power.py:349"
+  ],
   "recovered": [
    "src/refute/packs/tess/discover/paired.py:246"
   ],
   "redraws": [
-   "src/refute/packs/tess/discover/transforms.py:62"
+   "src/refute/packs/tess/discover/transforms.py:62",
+   "src/refute/packs/tess/discover/transforms.py:69"
   ],
   "refit_left_out": [
+   "src/refute/packs/tess/pipeline.py:1105",
    "src/refute/packs/tess/pipeline.py:86"
   ],
   "reserve_reviewer_tokens": [
@@ -515,18 +661,24 @@
   "rotations": [
    "src/refute/packs/tess/discover/protocol.py:93"
   ],
+  "round": [
+   "src/refute/drand.py:113"
+  ],
   "rows": [
    "src/refute/packs/tess/discover/claim.py:221",
    "src/refute/packs/tess/discover/claim.py:229",
-   "src/refute/packs/tess/discover/claim.py:233"
+   "src/refute/packs/tess/discover/claim.py:233",
+   "src/refute/packs/tess/synthetic.py:898"
   ],
   "s_max": [
-   "src/refute/packs/tess/discover/pilot.py:337"
+   "src/refute/packs/tess/discover/pilot.py:337",
+   "src/refute/packs/tess/discover/pilot.py:874"
   ],
   "schema_version": [
    "src/refute/packs/tess/discover/claim.py:247"
   ],
   "search_left_out": [
+   "src/refute/packs/tess/pipeline.py:1103",
    "src/refute/packs/tess/prewhiten.py:71"
   ],
   "sector": [
@@ -535,7 +687,9 @@
    "src/refute/packs/tess/adapter.py:305",
    "src/refute/packs/tess/battery.py:187",
    "src/refute/packs/tess/battery_v51_diff.py:455",
+   "src/refute/packs/tess/calib05/c1.py:439",
    "src/refute/packs/tess/centroid_v5.py:141",
+   "src/refute/packs/tess/pipeline.py:931",
    "src/refute/packs/tess/rednoise.py:35",
    "src/refute/packs/tess/search.py:307",
    "src/refute/packs/tess/synthetic.py:618",
@@ -546,12 +700,17 @@
   "sectors": [
    "src/refute/packs/tess/discover/selection.py:84"
   ],
+  "sectors_excluded": [
+   "src/refute/packs/tess/battery.py:684"
+  ],
   "sectors_left_out": [
    "src/refute/packs/tess/prewhiten.py:62",
+   "src/refute/packs/tess/prewhiten.py:84",
    "src/refute/packs/tess/prewhiten.py:94"
   ],
   "sectors_used": [
-   "src/refute/packs/tess/prewhiten.py:61"
+   "src/refute/packs/tess/prewhiten.py:61",
+   "src/refute/packs/tess/prewhiten.py:83"
   ],
   "seed": [
    "src/refute/packs/tess/calib05/c1.py:164",
@@ -571,7 +730,8 @@
   ],
   "sine_harmonics": [
    "src/refute/core/lock_compat.py:136",
-   "src/refute/packs/tess/params.py:136"
+   "src/refute/packs/tess/params.py:136",
+   "src/refute/packs/tess/power.py:309"
   ],
   "sinusoid_extra_frequencies": [
    "src/refute/packs/tess/params.py:370"
@@ -579,8 +739,11 @@
   "stage": [
    "src/refute/packs/tess/discover/case.py:239",
    "src/refute/packs/tess/discover/measure.py:120",
+   "src/refute/packs/tess/discover/measure.py:131",
    "src/refute/packs/tess/discover/measure.py:176",
-   "src/refute/packs/tess/pipeline.py:127"
+   "src/refute/packs/tess/discover/measure.py:202",
+   "src/refute/packs/tess/pipeline.py:127",
+   "src/refute/packs/tess/pipeline.py:788"
   ],
   "stars": [
    "src/refute/packs/tess/calib05/values.py:64",
@@ -601,12 +764,19 @@
   "tess_eb": [
    "src/refute/packs/tess/discover/claim.py:188"
   ],
+  "tests_classified_by_fallback": [
+   "src/refute/core/inconclusive.py:154"
+  ],
   "tic_id": [
+   "src/refute/packs/tess/adapter.py:408",
+   "src/refute/packs/tess/battery.py:495",
+   "src/refute/packs/tess/discover/dedup.py:150",
    "src/refute/packs/tess/discover/dedup.py:32",
    "src/refute/packs/tess/discover/selection.py:440",
    "src/refute/packs/tess/discover/selection.py:536",
    "src/refute/packs/tess/discover/selection.py:59",
    "src/refute/packs/tess/discover/selection.py:83",
+   "src/refute/packs/tess/ebcatalog.py:288",
    "src/refute/packs/tess/ebcatalog.py:74",
    "src/refute/packs/tess/params.py:616",
    "src/refute/packs/tess/pipeline.py:1019",
@@ -614,6 +784,9 @@
    "src/refute/packs/tess/types.py:208",
    "src/refute/packs/tess/types.py:235",
    "src/refute/packs/tess/types.py:60"
+  ],
+  "tmax_draws": [
+   "src/refute/packs/tess/battery_v51.py:490"
   ],
   "too few events": [
    "src/refute/packs/tess/battery_v51.py:510"
@@ -623,6 +796,9 @@
   ],
   "transformed_per_star": [
    "src/refute/packs/tess/calib05/values.py:67"
+  ],
+  "transits": [
+   "src/refute/packs/tess/duration.py:118"
   ],
   "valid": [
    "src/refute/packs/tess/battery_v51.py:525",
@@ -638,6 +814,7 @@
    "src/refute/packs/tess/calib05/plans.py:21",
    "src/refute/packs/tess/discover/claim.py:96",
    "src/refute/packs/tess/params.py:225",
+   "src/refute/packs/tess/pipeline.py:1095",
    "src/refute/packs/tess/screen_d5.py:793",
    "src/refute/packs/tess/synthetic.py:761",
    "src/refute/packs/tess/synthetic.py:771",
@@ -645,9 +822,11 @@
   ],
   "worst_event": [
    "src/refute/packs/tess/battery_v5.py:162",
-   "src/refute/packs/tess/battery_v5.py:214"
+   "src/refute/packs/tess/battery_v5.py:214",
+   "src/refute/packs/tess/battery_v52.py:209"
   ],
   "year": [
+   "src/refute/packs/tess/pipeline.py:932",
    "src/refute/packs/tess/types.py:42"
   ]
  },

@@ -100,6 +100,10 @@ def main() -> int:
         print(json.dumps({"result": "FAIL", "problem": "the NR-A2 manifest draft does not name "
                           "the checked-out commit as its authorized code commit"}))  # fmt: skip
         return 1
+    if draft.get("freeze") != f"{out_rel}/freeze.json":
+        print(json.dumps({"result": "FAIL", "problem": "the NR-A2 manifest draft does not name "
+                          "this freeze list by its path"}))  # fmt: skip
+        return 1
     keys = load(f"{L4}/schema-keys.json")
     parts = load(f"{L4}/comparator-schema-parts.json")
     schema = {
