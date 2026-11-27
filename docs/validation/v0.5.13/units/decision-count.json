@@ -1,0 +1,12 @@
+{
+ "name": "decision-count",
+ "question": "J1(b) (#218 comment 7222879969): how many decision-layer predicates (whose outcome sets a serialized test status, class, eligibility, reason or verdict) are in the source of versions 1 to 4, by version? A feasibility count from source only; no golden is opened.",
+ "choices": "docs/validation/v0.5.13/tools/decision_count.py, no arguments: a static AST count by the rule in its docstring, over module groups by version. Offline. It writes out/decision-count.json.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/decision_count.py"],
+ "identity": ["docs/validation/v0.5.13/tools/decision_count.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 120, "disk_bytes": 10000000},
+ "network": false,
+ "retry_class": "checker",
+ "outputs": {"decision-count.json": "docs/validation/v0.5.13/j1/decision-count.json"}
+}
