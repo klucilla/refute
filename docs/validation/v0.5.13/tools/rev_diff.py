@@ -16,6 +16,8 @@ maintainer's decision H2, #218 comment 7219469262).
     and record links). Such hunks are reported apart.
   - ``J1``, the maintainer's decision J1 (#218 comment 7222879969). It is the only label of the
     diff from revision 4 to revision 5.
+  - ``P1``, the maintainer's decision P1 (#218 comment 7225754254). It is the only label of the
+    diff from revision 6 to revision 7.
 """
 
 from __future__ import annotations
@@ -29,7 +31,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[4]
-LABELS = {f"B{i}" for i in range(1, 7)} | set("abcdefghijk") | {"H2", "J1"}
+LABELS = {f"B{i}" for i in range(1, 7)} | set("abcdefghijk") | {"H2", "J1", "P1"}
 
 
 def sha(data: bytes) -> str:
