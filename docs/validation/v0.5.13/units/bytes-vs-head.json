@@ -1,0 +1,11 @@
+{
+ "name": "bytes-vs-head",
+ "question": "L5a follow-up (#218 comment 7223634913): for named tracked files, are the working-tree bytes equal to the HEAD blob (size and SHA-256, raw bytes, no filter)? It prints no content.",
+ "choices": "docs/validation/v0.5.13/tools/bytes_vs_head.py <paths>. Offline. Read only.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/bytes_vs_head.py"],
+ "identity": ["docs/validation/v0.5.13/tools/bytes_vs_head.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 60, "disk_bytes": 5000000},
+ "network": false,
+ "retry_class": "checker"
+}
