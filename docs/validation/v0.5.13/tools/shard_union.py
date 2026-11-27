@@ -31,7 +31,8 @@ ROOT = Path(__file__).resolve().parents[4]
 
 def collect(args: list[str]) -> list[str]:
     p = subprocess.run(
-        [sys.executable, "-m", "pytest", "--collect-only", "-q", "-p", "no:cacheprovider", *args],
+        # pyproject's addopts already has -q: one more would list files, not test IDs
+        [sys.executable, "-m", "pytest", "--collect-only", "-p", "no:cacheprovider", *args],
         cwd=ROOT,
         capture_output=True,
         text=True,
