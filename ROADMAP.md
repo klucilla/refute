@@ -77,7 +77,8 @@ how later work is done.
 2026-11-27T00:13:24Z.
 - **The opening.** It opened with the record of the maintainer's approval (#218, comment
   7206278853) of the charter at `04402e7a`:
-  [docs/plans/v0.5.13-charter.md](docs/plans/v0.5.13-charter.md), SHA-256 `2832dc48…6230c813`.
+  [docs/plans/v0.5.13-charter.md](docs/plans/v0.5.13-charter.md), SHA-256
+  `2832dc4870b0fb094e724a3ff6d6fb6c5710f2da5827791b8fa102c06230c813`.
   The decision is comment 7204660147, item 5.
 - **The time box** runs to 2026-12-04T00:13:24Z.
 - **The scope.** This phase is the charter's Part A: the preconditions #226, #227 and #224, the
@@ -87,8 +88,21 @@ how later work is done.
   The full 307-case KELT-FP cohort stays the confirmatory FP population, and the 135 non-SB1 and
   the 172 SB1 are descriptive groups. The scope question (only the types photometry can refute, or all
   307) is #230, to be decided with a blind review before v0.5.14.
+- **Amendment 2, revision 4, is adopted** (#218, comment 7222329150, item I1), at `288d5785`
+  (SHA-256 `7d96726de18157ccd4d20f494a9efcef076107efda9337179b1f5f67870d8d4e`):
+  [docs/plans/v0.5.13-charter-amendment-2-rev4.md](docs/plans/v0.5.13-charter-amendment-2-rev4.md).
+  - It replaces Step 1's rule and exit criterion 1 with decision identity, with no thread pin.
+  - Its blind review and the diff from revision 3 are in
+    [docs/plans/v0.5.13-amendment-2-blind-review-result/](docs/plans/v0.5.13-amendment-2-blind-review-result/README.md)
+    and [docs/plans/v0.5.13-amendment-2-rev4/](docs/plans/v0.5.13-amendment-2-rev4/README.md).
+  - **Part B may rely on #226 met under it, only with the amendment's label always visible where
+    it is cited** (the decision blocking item 6 requires): '#226 met under amendment 2 (decision
+    identity, post hoc, on exposed records); the charter's byte-identity rule was not met at 1 and
+    4 threads (NR-A1: STOP); N declared limits'.
 - **Part A is stopped at step 1** (#226: the pinned BLAS settings change two golden outputs of
   versions 3 and 4). No pin and no `src/` change were approved (item D1).
+  - #226 is being prepared under amendment 2 (item I2). No check and no NR-A2 runs before the
+    maintainer approves the margin manifest by its hash.
 - **Records:** `docs/validation/v0.5.13/`.
 - **Labels:** `exploratory`, `method_status: not_validated`.
 
