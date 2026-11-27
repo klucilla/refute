@@ -1,0 +1,13 @@
+{
+ "name": "shard-union",
+ "question": "I4 (#218 comment 7222329150): after rest is split into rest and heavy-g, is the union of the CI shards exactly the set of tests of the full suite, with no test in two shards?",
+ "choices": "docs/validation/v0.5.13/tools/shard_union.py, no arguments: pytest --collect-only (no test runs) of the full suite and of each shard's arguments. Offline. It writes out/shard-union.json.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/shard_union.py"],
+ "identity": ["docs/validation/v0.5.13/tools/shard_union.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 900, "disk_bytes": 50000000},
+ "timeout_s": 1800,
+ "network": false,
+ "retry_class": "checker",
+ "outputs": {"shard-union.json": "docs/validation/v0.5.13/i4/shard-union.json"}
+}
