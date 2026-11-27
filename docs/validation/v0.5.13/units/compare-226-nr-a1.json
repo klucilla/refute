@@ -1,0 +1,10 @@
+{
+ "name": "compare-226-nr-a1",
+ "question": "U3(a) (#218 comment 7228263565), exploratory and post hoc (amendment 2, revision 8, section 4, 'Blind review, item 6, as written'): do NR-A1's existing records meet decision identity under section 3.1 against ID-BEFORE? Quantity: the comparator's result per setting (PASS, FAIL or INCONCLUSIVE) with its coverage: files compared, numeric pairs compared and differing, the largest relative difference, and every problem. Cases: the 20 golden files and the claim-hash records of each of NR-A1's three settings (nr-a1-default at 24 threads, nr-a1-t1, nr-a1-t4) against ID-BEFORE's, one run per setting. The rule was written with NR-A1 and D1a known; the result changes no recorded result (NR-A1's STOP stands) and is no confirmation under Process diet 2, item 4.",
+ "choices": "comparator.py <freeze-226-t3/freeze.json> <label> <goldens/before> <goldens/<label>>: the comparator approved in U2 by hash, frozen at 493ce707; reads only the files the freeze list binds. One run per setting, none repeated (U3).",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/comparator.py"],
+ "identity": ["docs/validation/v0.5.13/tools/comparator.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 300, "disk_bytes": 10000000},
+ "network": false
+}

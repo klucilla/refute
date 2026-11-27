@@ -1,0 +1,10 @@
+{
+ "name": "compare-226-nr-a2",
+ "question": "U3(d) (#218 comment 7228263565): does NR-A2 (2 threads, the only prospective evidence of #226, revision 8, section 6, criterion (c)) meet decision identity under section 3.1 against ID-BEFORE? Quantity: the comparator's result (PASS, FAIL or INCONCLUSIVE) with its coverage: files compared, numeric pairs compared and differing, the largest relative difference, and every problem, including any refused binding of NR-A2's records (S3, T2(3), T2(4)). Cases: NR-A2's 20 golden files and its claim-hash record against ID-BEFORE's, one run.",
+ "choices": "comparator.py <freeze-226-t3/freeze.json> nr-a2-t2 <goldens/before> <.cache/v0513/golden/nr-a2-t2>: the comparator approved in U2 by hash, frozen at 493ce707. One run, not repeated (U3).",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/comparator.py"],
+ "identity": ["docs/validation/v0.5.13/tools/comparator.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 300, "disk_bytes": 10000000},
+ "network": false
+}
