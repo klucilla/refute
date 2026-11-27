@@ -100,3 +100,58 @@ Those go to the proposal list below. In doubt, an issue stays open.
 5. **#195: a reproduction criterion with verifiable inputs.** Amendment 2's decision identity may supersede it, for versions 1 to 4 only. Decide (b), or keep it for version 5 (Part B).
 6. **#207: release archives and the reply period.** A rule gap in `docs/data-publication.md`, which needs a rule decision.
 7. **#56: the repository's security settings.** These are settings only the maintainer changes: non-provider secret patterns and CodeQL default setup.
+
+## Maintainer's decisions W1 and W2 (2026-11-27)
+
+The decision block W is recorded on #218, comment 7229841832. It acts on this record at `7726c7990f5be0f337de12e0291a77fb62fa31ed`. Every issue was read through the meter (unit `gh4`).
+
+**Counts.**
+- 63 issues were open before W, and W closed 19 of them. GitHub lists **44 open** on 2026-11-27, read through the meter after the closings.
+- Under V and W together, 23 issues are closed: 4 under V and 19 under W.
+
+### Closed under W1 and W2 (19)
+
+| # | Title (short) | Criterion | Evidence |
+| --- | --- | --- | --- |
+| 9, 10, 11, 12, 13, 16, 17, 18, 21, 24, 25, 26, 27, 28, 29, 167 | the future-phase ideas | W2 (moved) | `docs/backlog/ideas.md` at `91a7b913ae2b785eb86e2dcac2e252dbe47bdbab`, sections 1 to 16 in this order. Each closing comment names its section. Codex's round (WEAKENED: omissions, nothing invented) was applied before the commit (`codex/w2-r1-*.md`). |
+| 209 | v0.5.1 WP2: per-event error model | (b), superseded by #224 | What it held of its own was carried to #224 first (https://github.com/klucilla/refute/issues/224#issuecomment-7230041229). Closing comment: https://github.com/klucilla/refute/issues/209#issuecomment-7230044850 |
+| 15 | Vacuous checks in paper replication | (b), tracked by #47 | #47's W4.3 rows (https://github.com/klucilla/refute/issues/47#issuecomment-6280921763). Closing comment: https://github.com/klucilla/refute/issues/15#issuecomment-7230046156 |
+| 56 | Repository security settings | a declared limit (W1(f)) | The state given by the maintainer's adviser (CodeQL default setup, secret scanning and push protection on). Generic (non-provider) patterns are available only to organization-owned repositories (`sources/github-generic-patterns-2026-11-27.md`). No setting was changed. Comment: https://github.com/klucilla/refute/issues/56#issuecomment-7230048338 |
+
+### Kept open under W1 and W2, with the reason
+
+| # | Title (short) | Decision | Reason |
+| --- | --- | --- | --- |
+| 212 | BLS peaks across machines | W1(a): kept open | The existing records give no direct evidence. #212's differences are across machines, operating systems and Python versions (CI runs 42353283742 and 42356576130). F-1's cause is the BLAS thread count on one machine. The charter keeps "the mechanism of the historical CI difference" as F-1's declared limit (`docs/plans/v0.5.13-charter.md`, line 110). #226 is decision identity across thread counts on one machine (amendment 2, revision 8, sections 3 and 6). The rerun needed is proposed below; it was not run. |
+| 195 | A reproduction criterion with verifiable inputs | W1(b): kept open | Revision 8 covers decision identity: for versions 1 to 4 in its sections 2 and 3, and the serialized operands of version 5 in section 5. Items 1 to 3 of #195 were done in v0.5. Its open item 4 is not covered by revision 8: the end-to-end `verify_promotion` wiring, left library-only until a phase has a promotion step. No Part B item exists yet to inherit it, so it could not be copied there before closing. |
+| 30 | Lock canonicalization and new optional fields | W2.3: kept open | An unresolved finding, not an idea: the resolved claim hash changes when the schema gains an optional field, and `refute verify` then reports TAMPERED. Codex's note: the code already projects the two historical locks it lists, under strict conditions. The `claim` component can then match, while a code difference still gives TAMPERED (`docs/lock-format.md`, section "Historical locks: projection of the claim hash", line 155; `src/refute/core/lock_compat.py`). The general defect stands for any other lock. |
+| 47 | v0.3 WP4: synthetic toy papers | W1(d): kept open | The item of a future paper-replication phase, with no target now. Comment: https://github.com/klucilla/refute/issues/47#issuecomment-7230047669 |
+| 207 | Release archives and papers in a reply period | W1(e): kept open | The rule diff is proposed for the maintainer's approval (`proposals/207-rule.patch` and `proposals/README.md`), not adopted. |
+| 135 | Decommission the Refute VM | W1(g): kept open | It closes when the maintainer reports the removal done, citing the archive's manifests. The checklist is posted on #135 after the commit of this section. Its link is in the stop report of block W on #218. |
+| 171 | Disk quota for the ML containers on the VM | W1(g): kept open | It closes with #135, under (c): no future runner is planned. |
+
+### Proposals for the maintainer (new under W)
+
+1. **#212: the rerun that would decide it** (not run; it needs approval of its reason and exact procedure).
+   - **Reason:** to learn whether #212's cross-platform differences disappear when the BLAS and OpenMP threads are pinned to 1. If they do, F-1's cause, and #226's decision identity, would cover #212.
+   - **Procedure:**
+     1. Re-run, on the four CI pairs (ubuntu-24.04 and windows-2025, Python 3.12.15 and 3.13.16), the analyses of the two failing tests named in #212:
+        - `tests/test_v051_wp4.py::test_4_2_earlier_claims_keep_the_bytes_of_their_outputs`, at `911c9a5`;
+        - `tests/test_v051_wp5.py::test_5_2_the_plans_of_earlier_claims_produce_the_recorded_bytes` and the paired-chain test, at `6aa9531`.
+     2. Set `OMP_NUM_THREADS`, `OPENBLAS_NUM_THREADS` and `MKL_NUM_THREADS` to 1 before any numerical import, and record the BLAS backend and the effective thread count, as NR-A1 did.
+     3. Compare each platform's outputs with the same analyses run at 1 thread on the maintainer's machine. Use revision 8's comparator (decision identity) and, as a diagnostic, the byte differences of #212's fields (`search_diagnostics.stage1`, the clusters, the refined peaks, `worst_event`).
+     4. An optional second arm, from #212's own plan item 2: `NPY_DISABLE_CPU_FEATURES` set to force a common code path.
+   - **Outcome:**
+     - decision identity on every platform at 1 thread: #212 closes under (a), with that record;
+     - otherwise it stays open, with the platform cause separated.
+   - **Its own approvals:** it needs a CI job that does not exist (a change under `.github/workflows`), and it re-executes exposed synthetic cases.
+2. **#195: where its item 4 goes.** Either a Part B (v0.5.14) issue that inherits it, or a decision that it stays deferred until a phase has a promotion step. Then #195 can close under (b).
+3. **#30:** it stays open as a finding. The fix (a schema-versioned canonical form, or hashing only set values) is a design decision for a later phase.
+4. **#207:** the proposed rule, and its two open questions: whether item 2's exception is adopted, and whether a dated note is linked to v0.4.0's Zenodo record.
+
+### Process notes under W
+
+- **X9:** sixteen `grep` reads of the launcher's own result lines ran outside the meter while the W2 issues were closed. They were recorded at once (`exceptions.jsonl`, X9).
+- **One `gh4` call failed before acting,** on an unknown flag (`--comment-file-placeholder`, a slip in the command). It closed nothing; #209 was then commented and closed in order.
+- **The VM archive's summary reports one problem by design:** no file could be read from `C:\ProgramData\RefuteVm-backup` without administrator rights. Part A of the #135 checklist copies it.
+- **Codex:** one round each for W2 and for the #135 checklist (W1(g)), and three rounds in one conversation for the #207 rule (W1(e), a rule change). Every answer was WEAKENED, and its findings are applied; the stored rounds are in `codex/`.
