@@ -82,8 +82,13 @@ how later work is done.
 - **The time box** runs to 2026-12-04T00:13:24Z.
 - **The scope.** This phase is the charter's Part A: the preconditions #226, #227 and #224, the
   reason map, and the meter of #228. Part B (v0.5.14) needs its own charter.
-- **Amendment 1 is proposed, not approved:**
-  [docs/plans/v0.5.13-charter-amendment-1.md](docs/plans/v0.5.13-charter-amendment-1.md).
+- **Amendment 1 is approved** (#218, comment 7207651312, item D2), at `69de5f9f` (SHA-256
+  `cd2a6892…cdbaefc`): [docs/plans/v0.5.13-charter-amendment-1.md](docs/plans/v0.5.13-charter-amendment-1.md).
+  The full 307-case KELT-FP cohort stays the confirmatory FP population, and the 135 non-SB1 and
+  the 172 SB1 are descriptive groups. The scope question (only the types photometry can refute, or all
+  307) is #230, to be decided with a blind review before v0.5.14.
+- **Part A is stopped at step 1** (#226: the pinned BLAS settings change two golden outputs of
+  versions 3 and 4). No pin and no `src/` change were approved (item D1).
 - **Records:** `docs/validation/v0.5.13/`.
 - **Labels:** `exploratory`, `method_status: not_validated`.
 
