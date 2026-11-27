@@ -10,8 +10,8 @@
   "disk_bytes": 5000000000
  },
  "charged": {
-  "cpu_s": 3796.857,
-  "download_bytes": 1046963970,
+  "cpu_s": 3810.762,
+  "download_bytes": 1048963970,
   "disk_peak_bytes": 1199241106
  },
  "within_caps_so_far": true,
@@ -15525,6 +15525,120 @@
    "download_bytes": 0,
    "write_bytes": 45709,
    "disk_bound_bytes": 54202798,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "cb1865be1a304f48afb9289fb4745291",
+   "start": "2026-11-27T20:56:59Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.609,
+   "download_bytes": 0,
+   "write_bytes": 1328565,
+   "disk_bound_bytes": 55496301,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "2e30fbccfef54595aebb2f08eece4924",
+   "start": "2026-11-27T20:57:01Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 4.578,
+   "download_bytes": 0,
+   "write_bytes": 4191237,
+   "disk_bound_bytes": 58862544,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "push",
+   "label": null,
+   "attempt": "0e190fd6cc3f401faf3de82e737c9428",
+   "start": "2026-11-27T20:57:06Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000,
+    "download_bytes": 2000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 2.516,
+   "download_bytes": 2000000,
+   "write_bytes": 66072,
+   "disk_bound_bytes": 54755592,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "git-read",
+   "label": null,
+   "attempt": "4703f10ba7c14db2b29d9cc49d346363",
+   "start": "2026-11-27T20:57:12Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.734,
+   "download_bytes": 0,
+   "write_bytes": 82,
+   "disk_bound_bytes": 54695233,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "ruff",
+   "label": null,
+   "attempt": "6a7ea78065674cdbbe4c5fd45cff17b1",
+   "start": "2026-11-27T21:00:39Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.734,
+   "download_bytes": 0,
+   "write_bytes": 13139,
+   "disk_bound_bytes": 54718413,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "ruff",
+   "label": null,
+   "attempt": "d2a17f01bb4b4344ba6f66875a34924c",
+   "start": "2026-11-27T21:00:42Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.734,
+   "download_bytes": 0,
+   "write_bytes": 2399,
+   "disk_bound_bytes": 54711064,
    "case_outputs": 0,
    "telemetry_complete": true
   }
