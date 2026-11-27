@@ -1,0 +1,11 @@
+{
+ "name": "index-refresh",
+ "question": "L5a (#218 comment 7223634913): refresh the stat information of the index only (git update-index --refresh), so that files whose content equals the index, and which show as modified only through stale stat data (line endings on disk), stop showing as modified. No commit.",
+ "choices": "git update-index --refresh, with no path: it only rewrites cached stat data for entries whose content matches; it never stages content. Offline. A tree unit; it emits no case value.",
+ "argv": ["git", "update-index", "--refresh"],
+ "identity": [],
+ "key": "tree",
+ "reserve": {"cpu_s": 60, "disk_bytes": 10000000},
+ "network": false,
+ "retry_class": "infra"
+}
