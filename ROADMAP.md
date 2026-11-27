@@ -80,7 +80,12 @@ how later work is done.
   [docs/plans/v0.5.13-charter.md](docs/plans/v0.5.13-charter.md), SHA-256
   `2832dc4870b0fb094e724a3ff6d6fb6c5710f2da5827791b8fa102c06230c813`.
   The decision is comment 7204660147, item 5.
-- **The time box** runs to 2026-12-04T00:13:24Z.
+- **The time box** runs to **2026-12-18T00:13:24Z**, extended from 2026-12-04T00:13:24Z by
+  amendment 3, approved as it stands (#218, comment 7223634913, item L2), at `5d99b7b0` (SHA-256
+  `e6981c1645c2531729b166b6f334d1750ace0f3999c619a3640200a56428aac4`):
+  [docs/plans/v0.5.13-charter-amendment-3-extension.md](docs/plans/v0.5.13-charter-amendment-3-extension.md).
+  It is the charter's one extension. A short progress report against J2's estimate is due in #218
+  on 2026-12-11.
 - **The scope.** This phase is the charter's Part A: the preconditions #226, #227 and #224, the
   reason map, and the meter of #228. Part B (v0.5.14) needs its own charter.
 - **Amendment 1 is approved** (#218, comment 7207651312, item D2), at `69de5f9f` (SHA-256
@@ -88,21 +93,30 @@ how later work is done.
   The full 307-case KELT-FP cohort stays the confirmatory FP population, and the 135 non-SB1 and
   the 172 SB1 are descriptive groups. The scope question (only the types photometry can refute, or all
   307) is #230, to be decided with a blind review before v0.5.14.
-- **Amendment 2, revision 4, is adopted** (#218, comment 7222329150, item I1), at `288d5785`
-  (SHA-256 `7d96726de18157ccd4d20f494a9efcef076107efda9337179b1f5f67870d8d4e`):
-  [docs/plans/v0.5.13-charter-amendment-2-rev4.md](docs/plans/v0.5.13-charter-amendment-2-rev4.md).
-  - It replaces Step 1's rule and exit criterion 1 with decision identity, with no thread pin.
-  - Its blind review and the diff from revision 3 are in
+- **Amendment 2, revision 6, is adopted** (#218, comment 7223634913, item L1), at `c6236e91`
+  (SHA-256 `86a3853e3d052e5f65c2b3049e58f913abb105997109d362f07056801e235b7c`):
+  [docs/plans/v0.5.13-charter-amendment-2-rev6.md](docs/plans/v0.5.13-charter-amendment-2-rev6.md).
+  - It replaces Step 1's rule and exit criterion 1 with decision identity, with no thread pin. Its
+    margin manifest covers the decision layer; that internal selections were not assessed for
+    margin is a declared limit of #226.
+  - It replaces revision 4 (adopted in item I1, at `288d5785`, SHA-256
+    `7d96726de18157ccd4d20f494a9efcef076107efda9337179b1f5f67870d8d4e`), which stays as the record
+    with revision 5.
+  - The second blind review and the diff from revision 5 are in
+    [docs/plans/v0.5.13-amendment-2-blind-review-2-result/](docs/plans/v0.5.13-amendment-2-blind-review-2-result/README.md)
+    and [docs/plans/v0.5.13-amendment-2-rev6/](docs/plans/v0.5.13-amendment-2-rev6/README.md). The
+    first blind review and the diff from revision 3 are in
     [docs/plans/v0.5.13-amendment-2-blind-review-result/](docs/plans/v0.5.13-amendment-2-blind-review-result/README.md)
     and [docs/plans/v0.5.13-amendment-2-rev4/](docs/plans/v0.5.13-amendment-2-rev4/README.md).
   - **Part B may rely on #226 met under it, only with the amendment's label always visible where
-    it is cited** (the decision blocking item 6 requires): '#226 met under amendment 2 (decision
-    identity, post hoc, on exposed records); the charter's byte-identity rule was not met at 1 and
-    4 threads (NR-A1: STOP); N declared limits'.
+    it is cited** (item I1, the decision the first blind review's item 6 requires): '#226 met
+    under amendment 2 (decision identity, post hoc, on exposed records); the charter's
+    byte-identity rule was not met at 1 and 4 threads (NR-A1: STOP); N declared limits, the first
+    being that internal selections were not assessed for margin'.
 - **Part A is stopped at step 1** (#226: the pinned BLAS settings change two golden outputs of
   versions 3 and 4). No pin and no `src/` change were approved (item D1).
-  - #226 is being prepared under amendment 2 (item I2). No check and no NR-A2 runs before the
-    maintainer approves the margin manifest by its hash.
+  - #226 is being prepared under amendment 2, revision 6 (item L4). No check and no NR-A2 runs
+    before the maintainer approves the margin manifest by its hash.
 - **Records:** `docs/validation/v0.5.13/`.
 - **Labels:** `exploratory`, `method_status: not_validated`.
 
