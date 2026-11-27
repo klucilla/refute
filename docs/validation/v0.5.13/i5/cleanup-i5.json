@@ -1,0 +1,55 @@
+{
+ "rows": [
+  {
+   "path": ".cache/v0513/g7/tree",
+   "present": true,
+   "files": 5320,
+   "bytes": 385490919,
+   "deleted": true
+  },
+  {
+   "path": ".cache/v0513/g7/dist",
+   "present": true,
+   "files": 3,
+   "bytes": 1967702,
+   "deleted": true
+  },
+  {
+   "path": ".cache/v0513/f2/dist",
+   "present": true,
+   "files": 2,
+   "bytes": 619606,
+   "deleted": true
+  },
+  {
+   "path": ".cache/v0513/f2/pyproject.f2.toml",
+   "present": true,
+   "files": 1,
+   "bytes": 4165,
+   "deleted": true
+  },
+  {
+   "path": ".cache/v0513/f2/pyproject.applied.toml",
+   "present": true,
+   "files": 1,
+   "bytes": 4165,
+   "deleted": true
+  },
+  {
+   "path": ".cache/v0513/testpypi/0.5.12",
+   "present": true,
+   "files": 2,
+   "bytes": 1963422,
+   "deleted": true
+  },
+  {
+   "path": ".cache/v0513/pypi/0.5.12",
+   "present": true,
+   "files": 2,
+   "bytes": 1967742,
+   "deleted": true
+  }
+ ],
+ "bytes_freed": 392017721,
+ "all_ok": true
+}

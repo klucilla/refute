@@ -1,0 +1,11 @@
+{
+ "name": "golden-commit",
+ "question": "I2(a) (#218 comment 7222329150; amendment 2 revision 4, section 3.1, H2(b)): copy the raw goldens of ID-BEFORE and NR-A1's three settings into docs/validation/v0.5.13/goldens/, each file's SHA-256 equal to the one recorded for the same setting and with no CR byte (copy); after the commit, check each committed blob's SHA-256 against the record (verify).",
+ "choices": "docs/validation/v0.5.13/tools/golden_commit.py copy|verify. Offline. It hashes bytes and never parses or prints a golden value. The records are read from their committed blobs at HEAD.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/golden_commit.py"],
+ "identity": ["docs/validation/v0.5.13/tools/golden_commit.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 120, "disk_bytes": 10000000},
+ "network": false,
+ "retry_class": "checker"
+}
