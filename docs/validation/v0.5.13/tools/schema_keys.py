@@ -1,27 +1,36 @@
-"""The exact keys of the comparator's schema, from source only (v0.5.13, the maintainer's decision
-L4(b), #218 comment 7223634913). It opens no golden file.
+"""The exact keys of the comparator's schema, from source only (v0.5.13, the maintainer's decisions
+L4(b) and M3, #218 comments 7223634913 and 7224251159). It opens no golden file.
 
     unit schema-keys:  {python} -I -B docs/validation/v0.5.13/tools/schema_keys.py <out.json>
 
+**The modules** are the 73 files of I2's inventory (``module_files`` of
+``docs/validation/v0.5.13/i2/predicate-inventory.json``), the import closure of the golden path.
+A listed file that does not exist is a failure.
+
 A JSON key is an **exact key** (a threshold or configuration value, compared byte for byte by the
-comparator even under a measurement pattern) when, in the source at HEAD:
+comparator even under a measurement pattern) when, in the source of those modules:
 1. it is the name of a field of a pydantic model in ``src/refute/packs/tess/params.py`` (an
-   annotated name in the body of a class), that is, a configuration field of the test plan; or
-2. it is a string key of a dict literal given as the ``thresholds`` argument of a call, or
-   assigned to a name ``thresholds``, in a module of the golden path (``MODULES``).
+   annotated name in the body of a class), that is, a configuration field of the test plan, and
+   is not a measurement output name (below);
+2. it is a key of a ``thresholds`` mapping: a string key of a dict literal, or a keyword of a
+   ``dict(...)`` call, given as the ``thresholds`` argument of a call, assigned to a name
+   ``thresholds``, added by ``thresholds["key"] = ...`` or by ``thresholds.update({...})``. A
+   ``thresholds`` argument that is a name is resolved through the dict literal assigned to that
+   name in the same function. Every ``thresholds`` argument it cannot resolve is listed;
+3. it is a key of a ``metrics``, ``inputs`` or ``sensitivity`` mapping (the same forms as rule 2)
+   whose value echoes configuration: an attribute whose last name is a plan field, an all-caps
+   name, a numeric literal, or one of these inside ``float(...)``, ``int(...)`` or ``bool(...)``.
 
-Rule 1 does not take a **measurement output name**: a field of the dataclasses ``Candidate``
-(``types.py``) and ``Ephemeris`` (``ephemeris.py``), a key their ``to_dict`` adds, or a literal key
-of ``key_values`` in ``pipeline.build_result`` (with ``t_ref_bjd``, which ``build_result`` adds to
-the ephemeris). Those names are what the search and the ephemeris fit measure; a plan field of the
-same name (for example a published or injected value) is a different quantity. Rule 2 takes every
-key it finds, measurement output name or not.
+A **measurement output name** is a field of the dataclasses ``Candidate`` (``types.py``) and
+``Ephemeris`` (``ephemeris.py``), a key their ``to_dict`` adds, or a literal key of ``key_values``
+in ``pipeline.build_result`` (with ``t_ref_bjd``, which ``build_result`` adds to the ephemeris).
+Those are what the search and the ephemeris fit measure; a plan field of the same name (a
+published or injected value) is a different quantity. Only rule 1 leaves them out.
 
-Otherwise the rule over-includes on purpose: a measurement key that shares a name with a
-configuration field becomes exact, which can only make the comparator fail, never pass. The tool
-also reports
+The rules over-include on purpose: a measurement key that shares a name with a configuration
+value becomes exact, which can only make the comparator fail, never pass. The tool also reports
 which of the fields D1a found to differ (``step1/diag-golden-diff.json``, already exposed) are
-exact keys; any such field is a conflict to be resolved before the freeze.
+exact keys; any such field is a conflict, and the tool exits 1.
 """
 
 from __future__ import annotations
@@ -33,19 +42,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[4]
 TESS = "src/refute/packs/tess/"
-MODULES = (
-    [
-        TESS + m + ".py"
-        for m in (
-            "pipeline battery gauntlet ebcatalog holdout battery_v5 power centroid_v5 battery_v51 "
-            "battery_v51_diff a0 duration pipeline_v52 battery_v52 a0_v4 report search detrend "
-            "detrend_fast prewhiten rednoise rednoise_fast ephemeris events timing inconclusive"
-        ).split()
-    ]
-    + [TESS + "discover/measure.py"]
-    + [f"src/refute/core/{m}.py" for m in ("verdict", "sensitivity", "inconclusive")]
-)
+INVENTORY = "docs/validation/v0.5.13/i2/predicate-inventory.json"
 D1A = "docs/validation/v0.5.13/step1/diag-golden-diff.json"
+CONTAINERS = {"metrics", "inputs", "sensitivity"}
+
+
+def modules() -> list[str]:
+    listed = json.loads((ROOT / INVENTORY).read_text(encoding="utf-8"))["module_files"]
+    missing = [m for m in listed if not (ROOT / m).is_file()]
+    if missing:
+        raise SystemExit(f"modules listed by I2's inventory are missing: {missing}")
+    return listed
 
 
 def plan_fields() -> set[str]:
@@ -91,57 +98,131 @@ def measurement_names() -> set[str]:
     return names
 
 
-def threshold_keys() -> dict[str, list[str]]:
-    found: dict[str, set[str]] = {}
+def _entries(node: ast.AST) -> list[tuple[str, ast.AST, int]]:
+    """(key, value, line) of a dict literal or a dict(...) call; [] for anything else."""
+    if isinstance(node, ast.Dict):
+        return [
+            (k.value, v, k.lineno)
+            for k, v in zip(node.keys, node.values, strict=True)
+            if isinstance(k, ast.Constant) and isinstance(k.value, str)
+        ]
+    if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "dict":
+        return [(kw.arg, kw.value, kw.value.lineno) for kw in node.keywords if kw.arg]
+    return []
 
-    def take(d: ast.AST, rel: str) -> None:
-        if isinstance(d, ast.Dict):
-            for k in d.keys:
-                if isinstance(k, ast.Constant) and isinstance(k.value, str):
-                    found.setdefault(k.value, set()).add(f"{rel}:{k.lineno}")
 
-    for rel in MODULES:
-        path = ROOT / rel
-        if not path.is_file():
-            continue
-        tree = ast.parse(path.read_text(encoding="utf-8"))
-        for node in ast.walk(tree):
+def _mappings(tree: ast.AST, names: set[str]):
+    """Every (container name, key, value, line) written to a mapping called by one of ``names``,
+    and every argument of that name that is not a literal mapping (``unresolved``)."""
+    found, unresolved = [], []
+    for func in [
+        n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef | ast.AsyncFunctionDef)
+    ] + [tree]:
+        local = {}
+        for node in ast.walk(func):
+            if isinstance(node, ast.Assign) and len(node.targets) == 1:
+                t = node.targets[0]
+                if isinstance(t, ast.Name):
+                    local.setdefault(t.id, node.value)
+        for node in ast.walk(func):
             if isinstance(node, ast.Call):
                 for kw in node.keywords:
-                    if kw.arg == "thresholds":
-                        take(kw.value, rel)
+                    if kw.arg in names:
+                        value = kw.value
+                        if isinstance(value, ast.Name) and value.id in local:
+                            value = local[value.id]
+                        items = _entries(value)
+                        if items:
+                            found += [(kw.arg, k, v, line) for k, v, line in items]
+                        elif not (isinstance(value, ast.Constant) and value.value is None):
+                            unresolved.append((kw.arg, kw.value.lineno, ast.unparse(kw.value)))
+                if (
+                    isinstance(node.func, ast.Attribute)
+                    and node.func.attr == "update"
+                    and isinstance(node.func.value, ast.Name)
+                    and node.func.value.id in names
+                    and node.args
+                ):
+                    found += [
+                        (node.func.value.id, k, v, line) for k, v, line in _entries(node.args[0])
+                    ]
             if isinstance(node, ast.Assign):
-                if any(isinstance(t, ast.Name) and t.id == "thresholds" for t in node.targets):
-                    take(node.value, rel)
-    return {k: sorted(v) for k, v in sorted(found.items())}
+                for t in node.targets:
+                    if isinstance(t, ast.Name) and t.id in names:
+                        found += [(t.id, k, v, line) for k, v, line in _entries(node.value)]
+                    if (
+                        isinstance(t, ast.Subscript)
+                        and isinstance(t.value, ast.Name)
+                        and t.value.id in names
+                        and isinstance(t.slice, ast.Constant)
+                        and isinstance(t.slice.value, str)
+                    ):
+                        found.append((t.value.id, t.slice.value, node.value, node.lineno))
+    return found, unresolved
+
+
+def echoes_config(value: ast.AST, fields: set[str]) -> bool:
+    if isinstance(value, ast.Call) and isinstance(value.func, ast.Name):
+        if value.func.id in {"float", "int", "bool"} and len(value.args) == 1:
+            return echoes_config(value.args[0], fields)
+    if isinstance(value, ast.Attribute):
+        return value.attr in fields
+    if isinstance(value, ast.Name):
+        return value.id.isupper()
+    if isinstance(value, ast.Constant):
+        return isinstance(value.value, int | float) and not isinstance(value.value, bool)
+    return False
 
 
 def main() -> int:
+    mods = modules()
     measured = measurement_names()
     fields = plan_fields()
-    thresholds = threshold_keys()
-    exact = sorted((fields - measured) | set(thresholds))
+    thresholds: dict[str, set[str]] = {}
+    echoes: dict[str, set[str]] = {}
+    unresolved = []
+    seen = set()
+    for rel in mods:
+        tree = ast.parse((ROOT / rel).read_text(encoding="utf-8"))
+        found, missed = _mappings(tree, {"thresholds"} | CONTAINERS)
+        for container, key, value, line in found:
+            if (rel, container, key, line) in seen:
+                continue
+            seen.add((rel, container, key, line))
+            if container == "thresholds":
+                thresholds.setdefault(key, set()).add(f"{rel}:{line}")
+            elif echoes_config(value, fields):
+                echoes.setdefault(key, set()).add(f"{rel}:{line} {container}: {ast.unparse(value)}")
+        for container, line, text in missed:
+            if container == "thresholds" and (rel, line, text) not in {
+                (u["file"], u["line"], u["expression"]) for u in unresolved
+            }:
+                unresolved.append({"file": rel, "line": line, "expression": text})
+    exact = sorted((fields - measured) | set(thresholds) | set(echoes))
     d1a = json.loads((ROOT / D1A).read_text(encoding="utf-8"))
     differing = sorted(
         {f for s in d1a["settings"].values() for f in s["differing_fields_max_rel_diff"]}
     )
     conflicts = sorted(set(differing) & set(exact))
     out = {
-        "rule": "plan model fields of params.py that are not measurement output names, and keys "
-        "of thresholds dicts on the golden path",
-        "modules": MODULES,
+        "rule": "see the tool's docstring: rule 1 plan fields less measurement output names; "
+        "rule 2 thresholds keys; rule 3 configuration echoed in metrics, inputs or sensitivity",
+        "modules": mods,
         "measurement_output_names": sorted(measured),
         "plan_fields_left_out": sorted(fields & measured),
         "plan_fields": sorted(fields),
-        "threshold_keys": thresholds,
+        "threshold_keys": {k: sorted(v) for k, v in sorted(thresholds.items())},
+        "unresolved_thresholds_arguments": sorted(unresolved, key=lambda u: (u["file"], u["line"])),
+        "config_echo_keys": {k: sorted(v) for k, v in sorted(echoes.items())},
         "exact_keys": exact,
         "d1a_differing_fields": differing,
         "d1a_conflicts": conflicts,
     }
     Path(sys.argv[1]).write_text(json.dumps(out, indent=1) + "\n", encoding="utf-8", newline="\n")
-    print(json.dumps({"exact_keys": len(exact), "plan_fields": len(fields),
+    print(json.dumps({"modules": len(mods), "exact_keys": len(exact), "plan_fields": len(fields),
                       "left_out": sorted(fields & measured), "threshold_keys": len(thresholds),
-                      "measured_and_threshold": sorted(measured & set(thresholds)),
+                      "unresolved_thresholds": len(unresolved), "config_echo_keys": len(echoes),
+                      "echo_and_measured": sorted(measured & set(echoes)),
                       "d1a_conflicts": conflicts}))  # fmt: skip
     return 0 if not conflicts else 1
 
