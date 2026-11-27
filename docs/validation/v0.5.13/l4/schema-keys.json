@@ -1,36 +1,79 @@
 {
- "rule": "plan model fields of params.py that are not measurement output names, and keys of thresholds dicts on the golden path",
+ "rule": "see the tool's docstring: rule 1 plan fields less measurement output names; rule 2 thresholds keys; rule 3 configuration echoed in metrics, inputs or sensitivity",
  "modules": [
-  "src/refute/packs/tess/pipeline.py",
+  "src/refute/__init__.py",
+  "src/refute/core/canonical.py",
+  "src/refute/core/chi2.py",
+  "src/refute/core/claim.py",
+  "src/refute/core/codehash.py",
+  "src/refute/core/dossier.py",
+  "src/refute/core/hashing.py",
+  "src/refute/core/inconclusive.py",
+  "src/refute/core/io.py",
+  "src/refute/core/lock.py",
+  "src/refute/core/lock_compat.py",
+  "src/refute/core/pack.py",
+  "src/refute/core/reproduce.py",
+  "src/refute/core/review.py",
+  "src/refute/core/runner.py",
+  "src/refute/core/seal.py",
+  "src/refute/core/sensitivity.py",
+  "src/refute/core/verdict.py",
+  "src/refute/drand.py",
+  "src/refute/packs/tess/__init__.py",
+  "src/refute/packs/tess/a0.py",
+  "src/refute/packs/tess/a0_v4.py",
+  "src/refute/packs/tess/adapter.py",
   "src/refute/packs/tess/battery.py",
-  "src/refute/packs/tess/gauntlet.py",
-  "src/refute/packs/tess/ebcatalog.py",
-  "src/refute/packs/tess/holdout.py",
   "src/refute/packs/tess/battery_v5.py",
-  "src/refute/packs/tess/power.py",
-  "src/refute/packs/tess/centroid_v5.py",
   "src/refute/packs/tess/battery_v51.py",
   "src/refute/packs/tess/battery_v51_diff.py",
-  "src/refute/packs/tess/a0.py",
-  "src/refute/packs/tess/duration.py",
-  "src/refute/packs/tess/pipeline_v52.py",
   "src/refute/packs/tess/battery_v52.py",
-  "src/refute/packs/tess/a0_v4.py",
-  "src/refute/packs/tess/report.py",
-  "src/refute/packs/tess/search.py",
+  "src/refute/packs/tess/calib05/c1.py",
+  "src/refute/packs/tess/calib05/plans.py",
+  "src/refute/packs/tess/calib05/values.py",
+  "src/refute/packs/tess/calibration.py",
+  "src/refute/packs/tess/centroid_v5.py",
   "src/refute/packs/tess/detrend.py",
   "src/refute/packs/tess/detrend_fast.py",
+  "src/refute/packs/tess/discover/__init__.py",
+  "src/refute/packs/tess/discover/case.py",
+  "src/refute/packs/tess/discover/claim.py",
+  "src/refute/packs/tess/discover/dedup.py",
+  "src/refute/packs/tess/discover/funnel.py",
+  "src/refute/packs/tess/discover/injection.py",
+  "src/refute/packs/tess/discover/measure.py",
+  "src/refute/packs/tess/discover/paired.py",
+  "src/refute/packs/tess/discover/pilot.py",
+  "src/refute/packs/tess/discover/protocol.py",
+  "src/refute/packs/tess/discover/runs.py",
+  "src/refute/packs/tess/discover/selection.py",
+  "src/refute/packs/tess/discover/steps.py",
+  "src/refute/packs/tess/discover/transforms.py",
+  "src/refute/packs/tess/duration.py",
+  "src/refute/packs/tess/ebcatalog.py",
+  "src/refute/packs/tess/ephemeris.py",
+  "src/refute/packs/tess/events.py",
+  "src/refute/packs/tess/exporter.py",
+  "src/refute/packs/tess/gauntlet.py",
+  "src/refute/packs/tess/holdout.py",
+  "src/refute/packs/tess/inconclusive.py",
+  "src/refute/packs/tess/params.py",
+  "src/refute/packs/tess/pipeline.py",
+  "src/refute/packs/tess/pipeline_v52.py",
+  "src/refute/packs/tess/plots.py",
+  "src/refute/packs/tess/power.py",
   "src/refute/packs/tess/prewhiten.py",
   "src/refute/packs/tess/rednoise.py",
   "src/refute/packs/tess/rednoise_fast.py",
-  "src/refute/packs/tess/ephemeris.py",
-  "src/refute/packs/tess/events.py",
+  "src/refute/packs/tess/report.py",
+  "src/refute/packs/tess/schema.py",
+  "src/refute/packs/tess/screen_d5.py",
+  "src/refute/packs/tess/search.py",
+  "src/refute/packs/tess/synthetic.py",
   "src/refute/packs/tess/timing.py",
-  "src/refute/packs/tess/inconclusive.py",
-  "src/refute/packs/tess/discover/measure.py",
-  "src/refute/core/verdict.py",
-  "src/refute/core/sensitivity.py",
-  "src/refute/core/inconclusive.py"
+  "src/refute/packs/tess/types.py",
+  "src/refute/selection/walk.py"
  ],
  "measurement_output_names": [
   "chi2_reduced",
@@ -388,12 +431,283 @@
    "src/refute/packs/tess/gauntlet.py:209"
   ]
  },
+ "unresolved_thresholds_arguments": [
+  {
+   "file": "src/refute/core/verdict.py",
+   "line": 111,
+   "expression": "dict(data.get('thresholds', {}))",
+   "category": "not resolved"
+  },
+  {
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 277,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 315,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 326,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 368,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 383,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 411,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 423,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 434,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 472,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 482,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 533,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 544,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 555,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 670,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 843,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 873,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 885,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 896,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 937,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 1034,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 1046,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 1056,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery_v51.py",
+   "line": 281,
+   "expression": "parameter thresholds",
+   "category": "a parameter: its values are its callers' arguments"
+  },
+  {
+   "file": "src/refute/packs/tess/battery_v51.py",
+   "line": 463,
+   "expression": "parameter thresholds",
+   "category": "a parameter: its values are its callers' arguments"
+  },
+  {
+   "file": "src/refute/packs/tess/battery_v51_diff.py",
+   "line": 216,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery_v51_diff.py",
+   "line": 234,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery_v51_diff.py",
+   "line": 274,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery_v51_diff.py",
+   "line": 297,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery_v51_diff.py",
+   "line": 407,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery_v51_diff.py",
+   "line": 576,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/battery_v52.py",
+   "line": 100,
+   "expression": "parameter thresholds",
+   "category": "a parameter: its values are its callers' arguments"
+  },
+  {
+   "file": "src/refute/packs/tess/ebcatalog.py",
+   "line": 238,
+   "expression": "parameter thresholds",
+   "category": "a parameter: its values are its callers' arguments"
+  },
+  {
+   "file": "src/refute/packs/tess/ebcatalog.py",
+   "line": 238,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/ebcatalog.py",
+   "line": 318,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/ebcatalog.py",
+   "line": 333,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/ebcatalog.py",
+   "line": 346,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/ebcatalog.py",
+   "line": 357,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 1918,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 1957,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  },
+  {
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 1994,
+   "expression": "parameter thresholds",
+   "category": "a parameter: its values are its callers' arguments"
+  },
+  {
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 1994,
+   "expression": "params.model_dump(mode='json')",
+   "category": "a plan model's dump: its keys are plan fields (rule 1)"
+  }
+ ],
+ "config_echo_keys": {
+  "aggregation": [
+   "src/refute/packs/tess/holdout.py:1993 metrics: AGGREGATION_SPEC_B"
+  ],
+  "attempt": [
+   "src/refute/packs/tess/discover/pilot.py:217 inputs: self.out_dir.name"
+  ],
+  "inconclusive_class": [
+   "src/refute/packs/tess/pipeline_v52.py:155 metrics: OUT_OF_DOMAIN_CLASS",
+   "src/refute/packs/tess/pipeline_v52.py:28 metrics: OUT_OF_DOMAIN_CLASS"
+  ],
+  "inconclusive_detail": [
+   "src/refute/packs/tess/battery_v52.py:423 metrics: AMBIGUOUS_SINUSOID"
+  ]
+ },
  "exact_keys": [
+  "aggregation",
   "alias_f",
   "alias_z_f",
   "alpha",
   "aperture_alternative_ratio_increment",
   "aperture_depth",
+  "attempt",
   "attenuation_fraction",
   "attenuation_sigmas",
   "author",
@@ -466,6 +780,8 @@
   "hidden_detrend_window_factor",
   "holdout_by_year",
   "ignored_dispositions",
+  "inconclusive_class",
+  "inconclusive_detail",
   "inputs",
   "k_clip",
   "key",
@@ -602,6 +918,43 @@
   "version",
   "window_days"
  ],
+ "exact_subtree_keys": [
+  "attenuation_fraction",
+  "attenuation_sigmas",
+  "m4",
+  "max_sigma",
+  "min_events",
+  "min_valid_placements",
+  "thresholds",
+  "thresholds_m4",
+  "tmax_draws"
+ ],
+ "exact_subtree_sources": {
+  "attenuation_fraction": [
+   "src/refute/packs/tess/battery_v52.py:271 value ATTENUATION_FRACTION"
+  ],
+  "attenuation_sigmas": [
+   "src/refute/packs/tess/battery_v52.py:272 value ATTENUATION_SIGMAS"
+  ],
+  "m4": [
+   "src/refute/packs/tess/battery.py:643 value m4"
+  ],
+  "max_sigma": [
+   "src/refute/packs/tess/battery_v51.py:485 value DURATION_MAX_SIGMA"
+  ],
+  "min_events": [
+   "src/refute/packs/tess/battery_v51.py:488 value MIN_EVENTS"
+  ],
+  "min_valid_placements": [
+   "src/refute/packs/tess/battery_v51.py:487 value DURATION_MIN_VALID"
+  ],
+  "thresholds_m4": [
+   "src/refute/packs/tess/battery.py:659 value m4"
+  ],
+  "tmax_draws": [
+   "src/refute/packs/tess/battery_v51.py:490 value TMAX_DRAWS"
+  ]
+ },
  "d1a_differing_fields": [
   "amplitude_snr",
   "beta",

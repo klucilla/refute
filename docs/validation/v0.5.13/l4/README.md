@@ -38,16 +38,37 @@ pass. Lists that are too wide are what the review must catch.
 
 **The schema's exact keys** ([schema-keys.json](schema-keys.json), the committed unit
 `schema-keys`, from source only):
+- **The modules:** the 73 files of I2's inventory (its `module_files`), not a typed list; a
+  missing file fails (decision M3).
 - **Rule 1:** the fields of the plan models in `params.py`, except the names of measurement
   outputs. These are the fields and `to_dict` keys of `Candidate` and `Ephemeris`, and the
   literal keys of `key_values` in `build_result`.
-- **Rule 2:** the keys of `thresholds` dicts on the golden path.
-- **The result:** 212 exact keys. Five plan-field names are left out as measurement outputs:
-  `depth_ppm`, `duration_hours`, `period_days`, `snr` and `t0_bjd`.
+- **Rule 2:** the keys of `thresholds` mappings: dict literals, `dict(...)` keywords,
+  `thresholds["key"] = ...`, `thresholds.update({...})`, and a name resolved to its dict literal
+  in the same or an enclosing function. Of 42 arguments it lists apart:
+  - 36 are a plan model's dump, whose keys are plan fields (rule 1);
+  - 5 are a function's parameter, whose values are its callers' arguments, which the rule reads at
+    the call sites;
+  - 1 is not resolved: `src/refute/core/verdict.py:111`, `TestResult.from_dict`, which reads
+    thresholds back from a serialized record. It writes no new key.
+- **Rule 3:** a key of a `metrics`, `inputs` or `sensitivity` mapping whose value echoes
+  configuration: a plan-field attribute that is not a measurement name, an all-caps name, or a
+  numeric literal. It finds 4 keys: `aggregation`, `attempt`, `inconclusive_class` and
+  `inconclusive_detail`.
+- **Rule 4, the exact subtrees:** `thresholds` itself, and the key of a dict entry whose value is
+  a name the same function also puts in a `thresholds` mapping. Everything under such a key
+  compares exactly, wherever it sits. There are 9, among them `thresholds_m4`
+  (`battery.py:659`).
+- **The result:** 216 exact keys and 9 exact subtree keys. Five plan-field names are left out as
+  measurement outputs: `depth_ppm`, `duration_hours`, `period_days`, `snr` and `t0_bjd`.
 - **D1a's differing fields:** none of them is an exact key. Their names were known when the
   schema was written.
-- **The first run:** it used rule 1 without the exception for measurement names. Its output was
-  never committed and is replaced by this one. The change was committed before the second run.
+- **The earlier runs:** four runs, each after a committed change to the rule, were replaced by
+  the next one. None of their outputs was committed:
+  - the first, without the exception for measurement names;
+  - the second, whose rule 3 took `candidate.snr` as configuration;
+  - the third, with unclassified parameters;
+  - the fourth, without rule 4.
 
 **The schema's other parts, a draft** ([comparator-schema-parts.json](comparator-schema-parts.json)),
 written from `dumps_json`, `build_result`, `chain` and `render_report`:
@@ -56,17 +77,11 @@ written from `dumps_json`, `build_result`, `chain` and `render_report`:
   that its groups are the declared ones, and that each synthetic example line matches exactly one
   template.
 
-## Open before the freeze (found in review, not yet fixed)
+## Found in review and fixed
 
-- **`schema_keys.MODULES` is typed by hand.** It lists 30 files and skips a missing file without
-  saying so, while I2's inventory lists 73 golden-path modules. To do:
-  - take the list from `i2/predicate-inventory.json`, and fail on a missing file;
-  - report how many `thresholds=` arguments rule 2 could not resolve, since it reads only dict
-    literals;
-  - count the entries of `metrics`, `inputs` and `sensitivity` dicts whose value is a bare plan
-    field or an all-caps constant under a key that is not exact. If any exists, a rule 3 is
-    needed for configuration echoed under another name.
-- **Fixed already:**
+- **The three open items of the interim report** (the module list, the unresolved `thresholds`
+  arguments and the renamed configuration echoes) are closed by decision M3. See the rules above.
+- **Also fixed:**
   - `comparator.last_key` returned a list index for a list item, so it now returns the nearest
     key (with a test);
   - `comparator.main` did not compare the claim inventory, and now does.
