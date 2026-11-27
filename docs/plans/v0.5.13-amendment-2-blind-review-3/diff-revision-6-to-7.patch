@@ -1,0 +1,188 @@
+--- a/docs/plans/v0.5.13-charter-amendment-2-rev6.md
++++ b/docs/plans/v0.5.13-charter-amendment-2-rev7.md
+@@ -1,34 +1,26 @@
+-# v0.5.13 charter: amendment 2, revision 6 (proposed): decision identity as the reproducibility criterion
+-
+-> **PROPOSED, not approved.** Revision 6 was written on 2026-11-27 under the maintainer's decision
+-> K2 (#218, comment 7223240289). This is its only header (decision K2(d)).
+-> - **How it is adopted:** by the maintainer's approval of its SHA-256 in #218, with no third blind
+->   review. The maintainer's reason (decision K2(d)): the new texts are the reviewer's own, and
+->   their application is checked by a script. Only the four replacement texts of the blocking
+->   items are the reviewer's; the other changes are the agent's wording of the maintainer's
+->   decisions, listed below.
+-> - **What it replaces:** revision 5 ([v0.5.13-charter-amendment-2-rev5.md](v0.5.13-charter-amendment-2-rev5.md),
+->   commit `86f1f289ce0327168f9bc7437080ca2752e56a1a`, SHA-256
+->   `c69b23e9074477bb481638f39577ac98eaed549e9e00271478900d944235518b`), which stays unchanged as the
+->   record, as do revisions 1 to 4. Revision 4 (commit `288d5785053ea139d23d2c5eced5ad7d1329a85b`,
+->   SHA-256 `7d96726de18157ccd4d20f494a9efcef076107efda9337179b1f5f67870d8d4e`) was adopted in
+->   #218, comment 7222329150, item I1.
+-> - **What was known when it was written:** the second blind review, of revision 5
+->   ([v0.5.13-amendment-2-blind-review-2-result/](v0.5.13-amendment-2-blind-review-2-result/README.md),
+->   `answer.md` SHA-256 `7f71b206d7efbc1afef2ce62d14cb8483365b2ac04ed12752007c1f63f70114a`),
+->   returned **`NOT_APPROVABLE`**, with four blocking items and eight non-blocking items. No check
+->   of this amendment has run, so no margin or decision-identity result is known.
+-> - **What changed from revision 5:**
+->   - the four blocking items of that review, with their replacement texts exactly as written
+->     (marked "blind review 2, item N"): the first paragraph of section 4 (item 1), the examples
+->     of section 4 (item 2), the label and item (c) of section 6 (item 3), and the open items of
+->     section 7 (item 4);
+->   - the maintainer's decisions K2(b), K2(c), K2(e), K2(f) and K2(g) on the non-blocking items,
+->     taken before any result (marked "decision K2(x)"), and this header (K2(d)). Decision K2(a)
+->     is the committed map, K2(h) changes nothing, and under K2(i) every SHA-256 here is written
+->     in full.
+->   - The committed diff from revision 5 ties each hunk to its item or decision
+->     ([v0.5.13-amendment-2-rev6/](v0.5.13-amendment-2-rev6/README.md)).
++# v0.5.13 charter: amendment 2, revision 7 (proposed): decision identity as the reproducibility criterion
++
++> **PROPOSED, not approved.** Revision 7 was written on 2026-11-27 under the maintainer's decision
++> P1 (#218, comment 7225754254). This is its only header.
++> - **How it is adopted:** a third blind review runs first, then the maintainer approves it by its
++>   SHA-256 in #218.
++> - **What it replaces:** revision 6 ([v0.5.13-charter-amendment-2-rev6.md](v0.5.13-charter-amendment-2-rev6.md),
++>   commit `c6236e91a6bbb108b06e731c2d272ce6b9bd2a57`, SHA-256
++>   `86a3853e3d052e5f65c2b3049e58f913abb105997109d362f07056801e235b7c`), adopted in #218, comment
++>   7223634913, item L1. It stays unchanged as the record, as do revisions 1 to 5.
++> - **The direction (P1), not reopened with Codex:** the margin check leaves versions 1 to 4.
++> - **What changed from revision 6** (each hunk of the committed diff is tied to P1,
++>   [v0.5.13-amendment-2-rev7/](v0.5.13-amendment-2-rev7/README.md)):
++>   - **section 4:** the margin check does not apply to versions 1 to 4, and that is a declared
++>     limit of #226 (P1(a));
++>   - **section 3:** decision identity of versions 1 to 4 no longer includes the margin check
++>     (P1(a), P1(b));
++>   - **section 5:** from version 5 the margin check still holds, with a design requirement for
++>     v0.5.14 (P1(d));
++>   - **section 6:** #226's criteria and its label (P1(b), P1(c));
++>   - **sections 1 and 7:** what was known (P1(e)), and the open items made consistent with
++>     P1(a).
++>   - Nothing else changes.
+ > - **What it amends:** the charter approved at `04402e7a4cae71fd7bab8a7157dd38a36a4d2e60` (SHA-256
+ >   `2832dc4870b0fb094e724a3ff6d6fb6c5710f2da5827791b8fa102c06230c813`), together with amendment 1
+ >   (`69de5f9f5df0ea621dc6bc7d036f3f1b02448199`, SHA-256
+@@ -51,7 +43,7 @@
+ > - "Codex round 3, item N" is Codex's last round ([review record](v0.5.13-amendment-2/README.md)).
+ >   No text written after that round has been reviewed by Codex. Its item 4, on the survey, was
+ >   applied as a correction comment on #231;
+-> - "decision H2(x)", "J1(x)" and "K2(x)" are the maintainer's decisions in #218.
++> - "decision H2(x)", "J1(x)", "K2(x)" and "P1(x)" are the maintainer's decisions in #218.
+ >
+ > **No change to `src/`, `tests/`, `pyproject.toml` or `uv.lock`.**
+ >
+@@ -115,6 +107,26 @@
+     (decision K2(b)). Its rule finds only decisions set directly in a branch; the manifest
+     attributes each row to its fixture.
+ 
++**Also known when revision 7 was written** (decision P1(e)):
++- **The frozen manifest under revision 6.** The freeze commit
++  `ba94f3a6ccca09c6868ee00d80429bb09ac01be2` holds
++  `docs/validation/v0.5.13/manifests/margin-226/manifest.json` (SHA-256
++  `df2d3eebadae071bc2cf99c5f1d810d956bb4d2a57e11a04338aab4a7fb2d6cf`). It was built from source and
++  records only; no golden file was opened.
++  - Its counts: 2 to 9 assessable rows per fixture (8, 9, 9, 7 and 5 in the verdict fixtures of
++    v1, v2, v2-eb, v3 and v4; 2, 3, 3, 2 and 2 in their `chain` fixtures), and 874 declared limits.
++    Most decisions of versions 1 to 4 do not have their operands recorded in the goldens.
++  - The reach rule used to build it was changed after its second run had shown zero coverage in
++    every `chain` fixture. The record is `docs/validation/v0.5.13/l4/README.md`.
++- **Codex's round on that manifest**
++  (`docs/validation/v0.5.13/l4/codex/answer.md`, SHA-256
++  `51d67f62937c63663867359a0be80ea112982901af516ab2e93dffc8cda3e933`) returned
++  **`NOT_APPROVABLE`**, with 8 blocking items. It found the decision layer incomplete. It also
++  answered **`N3: yes`**: the maintainer's interpretation N1(c) changes the acceptance condition
++  of sections 4 and 6(c).
++- **Both are preserved as records, unedited.** No check of this amendment has run, so no margin or
++  decision-identity result is known.
++
+ ## 2. (a) Versions 1 to 4: no change
+ 
+ Blind review, item 5, as written:
+@@ -139,7 +151,11 @@
+ ## 3. (b) Other thread settings: decision identity
+ 
+ > Under any other thread setting, versions 1 to 4 meet **decision identity** when all of
+-> sections 3.1 and 3.2 hold, together with the margin check of section 4.
++> sections 3.1 and 3.2 hold.
++
++Decision P1(a) removes "together with the margin check of section 4" from the sentence above.
++Under revision 6 that sentence ended with those words. For versions 1 to 4, the margin check does
++not apply (section 4).
+ 
+ **NR-A2** (decision H2(a)). One setting never run before, **2 threads**, becomes the named
+ verification NR-A2: the goldens and the claim hashes, once, in a fresh process.
+@@ -211,8 +227,26 @@
+ 
+ ## 4. (c) The margin check: only the operands present in the existing goldens
+ 
+-The first two paragraphs below are blind review 2, item 1, as written. The rest of the quoted text
+-is unchanged.
++**Versions 1 to 4: the margin check does not apply** (decision P1(a)).
++- **The declared limit.** For versions 1 to 4, the distance from the decision thresholds is not
++  assessed. That is a declared limit of #226, and section 6's label names it.
++- **The reason.** The goldens of versions 1 to 4 do not record the operands of most decisions.
++  The manifest frozen under revision 6 (section 1) found 2 to 9 assessable rows per fixture and
++  874 declared limits. Codex's round found that manifest incomplete.
++- **The records.** That manifest (`docs/validation/v0.5.13/manifests/margin-226/manifest.json`,
++  SHA-256 `df2d3eebadae071bc2cf99c5f1d810d956bb4d2a57e11a04338aab4a7fb2d6cf`) and Codex's answer
++  (`docs/validation/v0.5.13/l4/codex/answer.md`, SHA-256
++  `51d67f62937c63663867359a0be80ea112982901af516ab2e93dffc8cda3e933`) stay as records, unedited.
++  No margin manifest is used for versions 1 to 4.
++- **What still holds for versions 1 to 4.** The freeze in the quoted text below still applies, but
++  without a manifest: the fixture list, the source commits and code digests, the resolved plans,
++  the golden files' SHA-256, and the comparator with its schema and span mapping are frozen,
++  hashed, committed and pushed before the comparator of §3.1 reads a golden file.
++- **What applies from version 5 onward.** The rest of this section, including the decision layer
++  and its declared limit on internal selections, applies from version 5 onward (section 5).
++
++The first two paragraphs of the quoted text below are blind review 2, item 1, as written. The rest
++of the quoted text is unchanged.
+ 
+ > The margin manifest covers the **decision layer** of each golden fixture. A predicate belongs to the decision layer when its boolean outcome reaches an output that the goldens serialize as a test status, a test class, an eligibility flag, a reason code or the aggregate verdict, and reaches it only through branch tests, assignments, returns, arguments and boolean operators, with no arithmetic and no selection of data in between. This includes the compound predicates, the numeric coverage and count cutoffs, and a comparison that sets a named boolean which a later branch tests (for example `attenuated`, `src/refute/packs/tess/battery_v52.py:338-340`, tested at line 411). Each is traced to its source location. A numeric predicate of the decision layer gets a row under the rules below. A non-numeric predicate of the decision layer (an identity, type, string or membership test, or a bare configuration flag) is listed with its source location and a reason class; it gets no margin row, is not a declared limit and is not counted as assessed. In the rest of this amendment, "predicate", "operative predicate" and "the manifest is complete" refer to the decision layer as defined here.
+ >
+@@ -319,23 +353,29 @@
+ decision-layer scope of section 4 and its declared limit on internal selections also apply, unless
+ that version's approved charter widens the scope before the evidence exists.
+ 
++Decision P1(d): from version 5 onward, the margin check still holds. A design requirement for
++v0.5.14's charter: version 5 records, before any lock, the operands of every numeric predicate of
++its decision layer, so that the margin check is possible.
++
+ (Sources: `src/refute/core/environment.py:54-104`; `src/refute/core/run.py:137` and `365`.)
+ 
+ ## 6. (f) Step 1's rule and Part A's exit criterion 1, replaced
+ 
+-The last sentence of item (c) and the label sentence below are blind review 2, item 3, as written.
++Items (a) to (c) and the label sentence below are decisions P1(b) and P1(c). In revision 6, item (c)
++was the margin check and the label named N declared limits; both were blind review 2, item 3.
+ 
+ > **1. #226 passed** when all of the following are evidenced:
+ > - **(a)** For versions 1 to 4, the inherited-default NR-A1 golden bytes, error outputs and
+ >   claim-hash payload match ID-BEFORE in its recorded numerical environment. The dated sidecar of
+ >   section 2 is written and maps each locked claim and tag to that record by hash.
+-> - **(b)** At 1 and 4 threads (NR-A1's existing records) and at 2 threads (NR-A2, section 3),
+->   versions 1 to 4 meet decision identity under section 3.
+-> - **(c)** The margin check of section 4 passes on every predicate with present operands, at each of those settings, with no zero coverage as section 4 defines it. Its list of absent operands, together with the limit on internal selections of section 4, is recorded one by one as declared limits of #226 and approved by the maintainer in #218 by the hash of the margin record.
++> - **(b)** At 1 and 4 threads (NR-A1's existing records), versions 1 to 4 meet decision identity
++>   under section 3.
++> - **(c)** At 2 threads (NR-A2, section 3), versions 1 to 4 meet decision identity under section
++>   3. NR-A2 is the only prospective evidence. An NR-A2 that fails leaves #226 unmet.
+ >
+ > The mechanism of the historical CI difference stays a declared limit of F-1.
+ >
+-> Wherever #226 is cited as met under this rule (in #226, the phase report, Part B's charter and every later result that relies on it), it carries the label **'#226 met under amendment 2 (decision identity, post hoc, on exposed records); the charter's byte-identity rule was not met at 1 and 4 threads (NR-A1: STOP); N declared limits, the first being that internal selections were not assessed for margin'**, with N from the margin record. Under the charter's section 2, Part B may rely on #226 only with that label, and only if the maintainer's approval of this amendment says so explicitly.
++> Wherever #226 is cited as met under this rule (in #226, the phase report, Part B's charter and every later result that relies on it), it carries the label **'#226 met under amendment 2 (decision identity, post hoc, on exposed records); the charter's byte-identity rule was not met at 1 and 4 threads (NR-A1: STOP); margin from decision thresholds not assessed for versions 1 to 4'**. Under the charter's section 2, Part B may rely on #226 only with that label, and only if the maintainer's approval of this amendment says so explicitly.
+ 
+ Codex round 3, item 3, as written (the ID-AFTER sentences are blind review, item 5; the last
+ paragraph is changed by decisions H2(a) and H2(g)):
+@@ -378,3 +418,14 @@
+ - The list of absent operands exists only once the margin manifest is built. Section 4's examples
+   are not that list.
+ - The v5 evidence and provenance work in §5 is a Part B item and is not scheduled here.
++
++**The open items under revision 7** (decision P1(a)). The two bullets above are kept as written in
++revision 6. Since then:
++- **The comparator** of 3.1 exists, with its schema and span mapping:
++  `docs/validation/v0.5.13/tools/comparator.py`, corrected under decision P2.
++- **A freeze commit made under revision 6** exists (section 1). It is a record. For versions 1 to
++  4 there is no margin manifest and no margin check.
++- **A new freeze commit** is made before the comparator reads a golden file. It holds the fixture
++  list, the source commits and code digests, the resolved plans, the golden files' SHA-256, and
++  the corrected comparator with its schema and span mapping.
++- **NR-A2** does not exist yet.

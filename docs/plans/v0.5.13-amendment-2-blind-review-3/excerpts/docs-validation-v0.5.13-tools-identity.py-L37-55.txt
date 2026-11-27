@@ -1,0 +1,19 @@
+THREAD_VARS = ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS")
+CHILD = (
+    "import json, numpy, scipy.linalg, threadpoolctl; "
+    "info = threadpoolctl.threadpool_info(); "
+    "print(json.dumps([{k: d.get(k) for k in ('user_api', 'internal_api', 'prefix', 'version', "
+    "'num_threads', 'threading_layer')} for d in info]))"
+)
+
+
+def head() -> str:
+    return subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, check=True,
+                          text=True).stdout.strip()  # fmt: skip
+
+
+def blas_record() -> dict:
+    env_seen = {v: os.environ.get(v) for v in THREAD_VARS}
+    out = subprocess.run([sys.executable, "-I", "-B", "-c", CHILD], capture_output=True,
+                         text=True, check=True).stdout  # fmt: skip
+    return {"thread_env": env_seen, "child_threadpool_info": json.loads(out)}

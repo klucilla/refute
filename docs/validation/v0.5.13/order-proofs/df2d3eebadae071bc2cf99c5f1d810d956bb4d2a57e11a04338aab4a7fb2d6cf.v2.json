@@ -1,0 +1,46 @@
+{
+ "schema": "refute-v0513-order-proof-2",
+ "utc": "2026-11-27T18:48:41Z",
+ "manifest": "docs/validation/v0.5.13/manifests/margin-226/manifest.json",
+ "manifest_sha256": "df2d3eebadae071bc2cf99c5f1d810d956bb4d2a57e11a04338aab4a7fb2d6cf",
+ "evidence_commit": "ba94f3a6ccca09c6868ee00d80429bb09ac01be2",
+ "evidence_files": [
+  "docs/validation/v0.5.13/manifests/margin-226/comparator-schema.json",
+  "docs/validation/v0.5.13/manifests/margin-226/decision-layer.json",
+  "docs/validation/v0.5.13/manifests/margin-226/freeze.json",
+  "docs/validation/v0.5.13/manifests/margin-226/manifest.json",
+  "docs/validation/v0.5.13/manifests/margin-226/operand-map.json",
+  "docs/validation/v0.5.13/manifests/margin-226/reach-table.json",
+  "docs/validation/v0.5.13/manifests/margin-226/schema-keys.json"
+ ],
+ "ci_run_id": 46049731071,
+ "ci_run_created_at": "2026-11-27T18:28:28Z",
+ "ci_jobs": [
+  {
+   "conclusion": "success",
+   "name": "plan",
+   "status": "completed"
+  },
+  {
+   "conclusion": "skipped",
+   "name": "${{ matrix.pair.os }} / Python ${{ matrix.pair.python }} / ${{ matrix.shard }}",
+   "status": "completed"
+  },
+  {
+   "conclusion": "skipped",
+   "name": "${{ matrix.pair.os }} / Python ${{ matrix.pair.python }} / recorded-values",
+   "status": "completed"
+  }
+ ],
+ "checks": {
+  "one_parent": true,
+  "trailer": true,
+  "only_manifests": true,
+  "pushed_to_origin_main": true,
+  "ci_push_run_found_before_now": true,
+  "ci_run_completed": true,
+  "plan_job_succeeded": true,
+  "record_only_other_jobs_all_skipped": true
+ },
+ "passed": true
+}

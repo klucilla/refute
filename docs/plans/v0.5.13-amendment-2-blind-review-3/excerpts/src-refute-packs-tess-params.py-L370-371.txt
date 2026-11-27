@@ -1,0 +1,2 @@
+    sinusoid_extra_frequencies: int = Field(3, ge=0)
+    sinusoid_extra_min_snr: float = Field(4.0, gt=0)

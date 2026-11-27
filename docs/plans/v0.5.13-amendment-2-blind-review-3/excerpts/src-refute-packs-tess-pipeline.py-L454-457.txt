@@ -1,0 +1,4 @@
+        (
+            v51.check_sinusoid(data.lc, final, sp, plan.v051, seed("sinusoid", final))
+            if plan.is_v051
+            else v5.check_sinusoid(data.lc, final, sp, seed("sinusoid", final))
