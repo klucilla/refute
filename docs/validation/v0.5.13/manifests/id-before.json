@@ -1,0 +1,29 @@
+{
+ "manifest": "ID-BEFORE",
+ "charter": "docs/plans/v0.5.13-charter.md at 04402e7a (SHA-256 2832dc4870b0fb094e724a3ff6d6fb6c5710f2da5827791b8fa102c06230c813), step 0, 'The named identity units' (Codex r2, item 3)",
+ "trigger": "step 0 of Part A, once; the charter authorizes it",
+ "purpose": "establish protected identity: the payloads that ID-AFTER (step 5) and NR-A1 (step 1) are compared with",
+ "units": [
+  {
+   "unit": "docs/validation/v0.5.13/units/id-before-golden.json",
+   "command": "{python} -I -B docs/validation/v0.5.13/tools/identity.py golden before",
+   "inputs": "tests/baseline_code_v0511.py (the synthetic fixtures of versions 1 to 4), src/ at the approval state",
+   "environment": "the inherited default thread settings (no OMP_NUM_THREADS, OPENBLAS_NUM_THREADS or MKL_NUM_THREADS set by the unit); processors 8 to 31, BelowNormal (the job object)",
+   "outputs": [".cache/v0513/golden/before/*", "docs/validation/v0.5.13/step0/golden-before.json"]
+  },
+  {
+   "unit": "docs/validation/v0.5.13/units/id-before-claims.json",
+   "command": "{python} -I -B docs/validation/v0.5.13/tools/identity.py claims before",
+   "inputs": "every tracked YAML claim (pack and kind keys)",
+   "outputs": ["docs/validation/v0.5.13/step0/claim-hashes-before.json"]
+  },
+  {
+   "unit": "docs/validation/v0.5.13/units/id-before-tags.json",
+   "command": "{python} -I -B scripts/verify_locked_tags.py --out .cache/v0513/tags/before",
+   "inputs": "the ten locked tags, in the warm environments under .cache/lock-compat",
+   "outputs": [".cache/v0513/tags/before/*", "the unit's stdout (joint PASS, n of 10) in the journal by its hash"]
+  }
+ ],
+ "comparison": "ID-AFTER (step 5) and NR-A1 (step 1) compare every protected output byte (payload.files_sha256 and payload.error_outputs of the golden record; payload.claims of the claim record) with these, provenance compared separately; verify_locked_tags gives joint PASS 10 of 10. A byte mismatch, missing output or unverified pin stops Part A.",
+ "labels": ["exploratory", "method_status: not_validated"]
+}
