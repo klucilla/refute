@@ -1,0 +1,12 @@
+{
+ "name": "predicate-inventory",
+ "question": "I2(c) (#218 comment 7222329150; amendment 2 revision 4, section 4): which comparison and selection sites lie in the refute modules on the golden path, and are those modules' sources identical at HEAD, at ID-BEFORE's head and at NR-A1's head? The countable basis of the margin manifest's completeness; source only, no golden value.",
+ "choices": "docs/validation/v0.5.13/tools/predicate_inventory.py, no arguments: a static AST walk from the golden path's entry modules, imports followed to closure inside refute. Offline. It writes out/predicate-inventory.json.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/predicate_inventory.py"],
+ "identity": ["docs/validation/v0.5.13/tools/predicate_inventory.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 300, "disk_bytes": 50000000},
+ "network": false,
+ "retry_class": "checker",
+ "outputs": {"predicate-inventory.json": "docs/validation/v0.5.13/i2/predicate-inventory.json"}
+}
