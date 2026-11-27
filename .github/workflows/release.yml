@@ -1,0 +1,113 @@
+# Build Refute's wheel and sdist, and publish them to TestPyPI or PyPI with Trusted Publishing.
+#
+# The maintainer's decision of 2026-11-26, item M5 (#218, comment 7204660147). It is triggered
+# ONLY by hand (workflow_dispatch), from main, with the input `target` = testpypi | pypi.
+# - No secret, no token and no PYPI_* variable is used anywhere: the publish job proves its
+#   identity to the index with a short-lived OIDC token (`id-token: write`, that job only), which
+#   matches the pending publisher registered by the maintainer: owner klucilla, repository
+#   refute, workflow release.yml, environment `testpypi` (TestPyPI) or `pypi` (PyPI).
+# - The publish job runs in the GitHub environment of the target's name. Each environment has a
+#   required reviewer: the deployment waits until the maintainer approves it, by their own
+#   click. Nothing in this repository approves, rejects or changes an environment.
+# - The rest of the workflow has minimal permissions: none at the top, `contents: read` for the
+#   build.
+# - Actions are pinned to the full SHA of a commit, with the release tag in the comment. Each
+#   release was at least 7 days old when it was chosen (CLAUDE.md, the 7-day cooldown):
+#   - pypa/gh-action-pypi-publish v1.14.3, published 2026-10-20T18:53:36Z,
+#     https://github.com/pypa/gh-action-pypi-publish/releases/tag/v1.14.3, read 2026-11-26;
+#   - actions/upload-artifact v7.0.2, published 2026-10-07T10:08:14Z,
+#     https://github.com/actions/upload-artifact/releases/tag/v7.0.2, read 2026-11-26;
+#   - actions/download-artifact v8.0.2, published 2026-10-07T10:09:51Z,
+#     https://github.com/actions/download-artifact/releases/tag/v8.0.2, read 2026-11-26;
+#   - actions/checkout v7.0.1 and astral-sh/setup-uv v10.2.0: the pins of ci.yml.
+# - The metadata check runs twine 7.0.0 (released 2026-07-27, https://pypi.org/project/twine/7.0.0/,
+#   read 2026-11-26) through uvx, in the build job only.
+
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Where to publish: testpypi or pypi"
+        required: true
+        type: choice
+        options:
+          - testpypi
+          - pypi
+
+permissions: {}
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: build (wheel and sdist)
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      # Codex's round on this workflow (#218, item M5d): expression comparisons are
+      # case-insensitive, so the exact ref and target are checked in the shell first.
+      - name: Require the exact release ref and target
+        shell: bash
+        env:
+          TARGET: ${{ inputs.target }}
+        run: |
+          [[ "$GITHUB_REF" == refs/heads/main ]] || {
+            echo "::error::Release requires refs/heads/main."
+            exit 1
+          }
+          [[ "$TARGET" == testpypi || "$TARGET" == pypi ]] || {
+            echo "::error::Release target must be testpypi or pypi."
+            exit 1
+          }
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version: "0.12.24"
+          python-version: "3.13.16"
+      - name: Build the wheel and the sdist
+        run: uv build --out-dir dist
+      - name: Check the metadata (the README must render on the index)
+        run: uvx --from twine==7.0.0 twine check --strict dist/*
+      - name: List what would be published
+        shell: bash
+        run: |
+          ls -l dist
+          sha256sum dist/*
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    name: publish to ${{ inputs.target }}
+    needs: build
+    if: github.ref == 'refs/heads/main' && (inputs.target == 'testpypi' || inputs.target == 'pypi')
+    runs-on: ubuntu-24.04
+    environment:
+      name: ${{ inputs.target }}
+      url: ${{ inputs.target == 'testpypi' && 'https://test.pypi.org/p/refute' || 'https://pypi.org/p/refute' }}
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: dist
+          path: dist/
+      - name: Publish to TestPyPI
+        if: inputs.target == 'testpypi'
+        uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3
+        with:
+          repository-url: https://test.pypi.org/legacy/
+      - name: Publish to PyPI
+        if: inputs.target == 'pypi'
+        uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3

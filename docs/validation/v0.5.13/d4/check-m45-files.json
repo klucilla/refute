@@ -1,0 +1,10 @@
+{
+ "diff_sha256": "70b4aeaba5019b399cfe282e68366409fc951a316abfa193eb393e47f4d2ff6e",
+ "diff_is_approved": true,
+ "workflow_sha256": "b48adbef34360ec58cd0b3ecf9424b3c64ddaded320657602b2bb5c072d0f448",
+ "workflow_is_approved": true,
+ "head_plus_diff_equals_patched": true,
+ "working_pyproject_equals_patched": true,
+ "working_release_yml_equals_approved": true,
+ "passed": true
+}

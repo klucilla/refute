@@ -1,0 +1,11 @@
+{
+ "hunks": 1,
+ "removed": [
+  "-version = \"0.5.0\""
+ ],
+ "added": [
+  "+version = \"0.5.12\""
+ ],
+ "only_refute_version": true,
+ "passed": true
+}
