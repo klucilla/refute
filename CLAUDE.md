@@ -293,10 +293,10 @@ and review (the standing approval of 2026-10-14 and 2026-10-15).
    - **Every push to main and every pull request starts a run.** There is no trigger-level
      path filter; the plan job is the only path classifier.
    - **The fast matrix** is the default: ubuntu-24.04 with Python 3.12.15 and windows-2025
-     with Python 3.13.16, all 7 shards (14 jobs). The recorded-value tests also run on the
+     with Python 3.13.16, all 8 shards (16 jobs). The recorded-value tests also run on the
      two other pairs, because `docs/validation/v0.3/wp3-acceptance.md` requires them on
      every CI job.
-   - **The full matrix** (the 4 pairs, 28 jobs) runs:
+   - **The full matrix** (the 4 pairs, 32 jobs) runs:
      - when any commit of the push or pull request touches `src/**`, `pyproject.toml`,
        `uv.lock`, `calibration/**` or `.github/workflows/**`;
      - when a push is not a fast-forward;
