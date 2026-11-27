@@ -1,0 +1,12 @@
+{
+ "name": "g7-prepare",
+ "question": "G7 (#218 comment 7219469262), resuming G1's one approved rerun of check-f2: delete the discarded export .cache/v0513/g1 by literal path; check main = origin/main; export the exact tip with git archive into the new folder .cache/v0513/g7/tree; copy in the four F2 files byte for byte with SHA-256; check that no file has CRLF outside the -text paths, exempting only files git treats as binary (git ls-files --eol: i/-text).",
+ "choices": "docs/validation/v0.5.13/tools/g7_prepare.py, no arguments. Offline. It writes out/g7-prepare.json.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/g7_prepare.py"],
+ "identity": ["docs/validation/v0.5.13/tools/g7_prepare.py", "docs/validation/v0.5.13/tools/g1_prepare.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 120, "disk_bytes": 3000000000},
+ "network": false,
+ "retry_class": "checker",
+ "outputs": {"g7-prepare.json": "docs/validation/v0.5.13/g7/g7-prepare.json"}
+}

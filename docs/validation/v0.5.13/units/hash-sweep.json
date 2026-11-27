@@ -1,0 +1,12 @@
+{
+ "name": "hash-sweep",
+ "question": "G9 (#218 comment 7219469262), read only: for each SHA-256 recorded in this phase's files (docs/validation/v0.5.13/, docs/plans/v0.5.13-*, the packages) that refers to a tracked file, compare it with the SHA-256 of the file's blob at HEAD, and list each divergence (file, where recorded, both values). No correction.",
+ "choices": "docs/validation/v0.5.13/tools/hash_sweep.py, no arguments. Offline, read only. Divergences are classified crlf-of-head, earlier-version or no-match. It writes out/hash-sweep.json.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/hash_sweep.py"],
+ "identity": ["docs/validation/v0.5.13/tools/hash_sweep.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 600, "disk_bytes": 20000000},
+ "network": false,
+ "retry_class": "checker",
+ "outputs": {"hash-sweep.json": "docs/validation/v0.5.13/g9/hash-sweep.json"}
+}

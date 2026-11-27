@@ -1,0 +1,11 @@
+{
+ "name": "rev-diff",
+ "question": "H2 (#218 comment 7219469262): the diff from amendment 2's revision 3 to revision 4 (diff mode), and the deterministic check that every hunk is tied to a blocking item B1 to B6 of the blind review or a decision a to k, with no other change (check mode).",
+ "choices": "docs/validation/v0.5.13/tools/rev_diff.py diff <old> <new> <out> | check <patch> <map>. Offline.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/rev_diff.py"],
+ "identity": ["docs/validation/v0.5.13/tools/rev_diff.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 60, "disk_bytes": 5000000},
+ "network": false,
+ "retry_class": "checker"
+}

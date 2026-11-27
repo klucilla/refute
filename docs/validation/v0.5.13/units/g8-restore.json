@@ -1,0 +1,12 @@
+{
+ "name": "g8-restore",
+ "question": "G8 (#218 comment 7219469262): write to disk the exact bytes of the index blob of five literal files (src/refute/packs/tess/a0.py, scripts/ci_shard.py, tests/test_junit_counts.py, tests/test_v051_a0.py, tests/test_v051_wp2.py), in binary mode; then check that each file's SHA-256 equals the blob's, git hash-object --no-filters equals the index blob, git diff is empty and git ls-files --eol shows w/lf.",
+ "choices": "docs/validation/v0.5.13/tools/g8_restore.py, no arguments; the paths are literals. Offline. Nothing is staged or committed; no other file is touched. It writes out/g8-restore.json.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/g8_restore.py"],
+ "identity": ["docs/validation/v0.5.13/tools/g8_restore.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 60, "disk_bytes": 5000000},
+ "network": false,
+ "retry_class": "checker",
+ "outputs": {"g8-restore.json": "docs/validation/v0.5.13/g8/g8-restore.json"}
+}

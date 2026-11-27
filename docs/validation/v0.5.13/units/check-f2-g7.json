@@ -1,0 +1,11 @@
+{
+ "name": "check-f2-g7",
+ "question": "G7 (#218 comment 7219469262), the ONE approved rerun of check-f2 (approved in G1, comment 7219180143, unused until now). The first run (check-f2__2461452eb282) compared a wheel built from a working tree where src/refute/packs/tess/a0.py had CRLF. Does the wheel built from the clean git-archive copy of the tip of main, plus the four F2 files, differ from 0.5.12 on TestPyPI only in METADATA and RECORD? Also required: README.md unchanged against HEAD, README-pypi.md differing from README.md only in link targets, and README-pypi.md up to date. If it fails: stop.",
+ "choices": "docs/validation/v0.5.13/tools/check_f2.py .cache/v0513/g7/dist/refute-0.5.12-py3-none-any.whl .cache/v0513/testpypi/0.5.12/refute-0.5.12-py3-none-any.whl, unchanged since 6b7caf59. Offline. Run once (trigger: G1 and G7 only).",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/check_f2.py"],
+ "identity": ["docs/validation/v0.5.13/tools/check_f2.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 60, "disk_bytes": 5000000},
+ "network": false,
+ "outputs": {"check-f2.json": "docs/validation/v0.5.13/g7/check-f2-g7.json"}
+}
