@@ -8,7 +8,9 @@ comment 7218843893): byte-for-byte copies only, then a MANIFEST.md with each fil
 - Excerpts are the exact bytes of the named line ranges of a file at the named commit.
 - The export of #231 (the ``gh issue view`` output of a metered unit) is copied byte for byte.
 - ``PROMPT.md`` must already be in the package folder; it is listed like every other file.
-- The folder must hold nothing else. The script writes no file outside the folder.
+- The folder may hold only PROMPT.md and files of this list; a file left by an earlier refused
+  run is kept only if its bytes are the ones this run would write (nothing is deleted). The
+  script writes no file outside the folder.
 """
 
 from __future__ import annotations
@@ -26,9 +28,12 @@ REV = "c92ff977"  # the commit of revision 3, named by the maintainer (F1)
 WHOLE = [
     ("amendment-2-revision-3.md", REV, "docs/plans/v0.5.13-charter-amendment-2-rev3.md",
      "f5598f0050ada236e3944b623ee42b46888e0f1bc8c9b564ab67b529fffcdc38"),
-    ("charter.md", "04402e7a", "docs/plans/v0.5.13-charter.md", ("2832dc48", "c230c813")),
+    # the full SHA-256 cited in the maintainer's approval (#218 comment 7204660147, item 5)
+    ("charter.md", "04402e7a", "docs/plans/v0.5.13-charter.md",
+     "2832dc4870b0fb094e724a3ff6d6fb6c5710f2da5827791b8fa102c06230c813"),
+    # the full SHA-256 cited in the maintainer's approval (#218 comment 7207651312, item D2)
     ("amendment-1.md", "69de5f9f", "docs/plans/v0.5.13-charter-amendment-1.md",
-     ("cd2a6892", "cdbaefc")),
+     "cd2a689231688b5e22c3e6c9602a706fbbca37b7de16ea087417227d5cdbaefc"),
     ("records/step0-golden-before.json", REV, "docs/validation/v0.5.13/step0/golden-before.json",
      None),
     ("records/step1-comparison-nr-a1.json", REV,
@@ -81,9 +86,12 @@ def expect(name: str, digest: str, want) -> None:
 def put(name: str, data: bytes, rows: list, source: str) -> None:
     path = OUT / name
     if path.exists():
-        raise SystemExit(f"refused: {name} already exists")
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(data)
+        # a file left by an earlier, refused run is kept only if it is the same bytes
+        if path.read_bytes() != data:
+            raise SystemExit(f"refused: {name} already exists with other bytes")
+    else:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(data)
     if path.read_bytes() != data:
         raise SystemExit(f"refused: {name} did not write back byte for byte")
     rows.append((name, len(data), sha(data), source))
@@ -94,9 +102,10 @@ def main() -> int:
     prompt = OUT / "PROMPT.md"
     if not prompt.is_file():
         raise SystemExit("refused: PROMPT.md must be written first")
-    present = sorted(p.relative_to(OUT).as_posix() for p in OUT.rglob("*") if p.is_file())
-    if present != ["PROMPT.md"]:
-        raise SystemExit(f"refused: the folder holds more than PROMPT.md: {present}")
+    present = {p.relative_to(OUT).as_posix() for p in OUT.rglob("*") if p.is_file()}
+    allowed = {"PROMPT.md", "issue-231.json"} | {w[0] for w in WHOLE} | {e[0] for e in EXCERPTS}
+    if "PROMPT.md" not in present or present - allowed:
+        raise SystemExit(f"refused: unexpected files in the folder: {sorted(present - allowed)}")
     rows: list = []
     data = prompt.read_bytes()
     rows.append(("PROMPT.md", len(data), sha(data), "the review prompt (written for this package)"))
