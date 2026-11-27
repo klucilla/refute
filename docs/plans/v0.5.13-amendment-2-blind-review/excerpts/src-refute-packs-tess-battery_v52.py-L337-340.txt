@@ -1,0 +1,4 @@
+    box_after, sigma_r = box_after_model(lc.time, flux, err, keep, x_all, x, candidate, beta)
+    attenuated = math.isfinite(sigma_r) and box_after + ATTENUATION_SIGMAS * sigma_r < (
+        ATTENUATION_FRACTION * depth
+    )
