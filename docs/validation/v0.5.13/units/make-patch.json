@@ -1,0 +1,11 @@
+{
+ "name": "make-patch",
+ "question": "Write an exact, applicable patch of a proposed change that is not applied (amendment 2's src/ diff and its dependency proposal; #218 comment 7207651312, item D1b), or the dependency patch from an offline uv lock in a copy under .cache.",
+ "choices": "docs/validation/v0.5.13/tools/make_patch.py file <repo path> <proposed file> <out> | lock <out>. Offline. It changes no repository file other than the named output patch; the lock copy lives under .cache/v0513/d1b2/lockcopy.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/make_patch.py"],
+ "identity": ["docs/validation/v0.5.13/tools/make_patch.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 120, "disk_bytes": 50000000},
+ "network": false,
+ "retry_class": "checker"
+}
