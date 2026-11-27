@@ -131,11 +131,17 @@ how later work is done.
     [docs/plans/v0.5.13-amendment-2-blind-review-result/](docs/plans/v0.5.13-amendment-2-blind-review-result/README.md)
     and [docs/plans/v0.5.13-amendment-2-rev4/](docs/plans/v0.5.13-amendment-2-rev4/README.md).
   - Its label (item I1) is replaced by revision 8's label above.
-- **Part A is stopped at step 1** (#226: the pinned BLAS settings change two golden outputs of
-  versions 3 and 4). No pin and no `src/` change were approved (item D1).
-  - #226 is being prepared under amendment 2, revision 8 (item R3). The comparator does not run on
-    goldens, and NR-A2 does not run, before the maintainer approves the comparator by its hash and
-    decides the execution.
+- **Step 1 is met (#226), before its checkpoint of 2026-12-03** (#218, comment 7228712102, item
+  V1). The maintainer declared #226 met under amendment 2, revision 8, with its label: '#226 met
+  under amendment 2 (decision identity, post hoc, on exposed records); the charter's
+  byte-identity rule was not met at 1 and 4 threads (NR-A1: STOP); margin from decision
+  thresholds not assessed for versions 1 to 4'.
+  - No pin and no `src/` change were made (item D1). The comparator was approved by hash in item
+    U2, frozen at `493ce707c8ea967a232a39421d8d479fdd5371ac`.
+  - The records: `docs/validation/v0.5.13/step1/decision-identity-nr-a1-default.json`,
+    `-nr-a1-t1.json` and `-nr-a1-t4.json` (exploratory, post hoc), and
+    `decision-identity-nr-a2-t2.json` (NR-A2, 2 threads). All four PASS, 20 files each.
+  - Part A goes on to step 2 (#227).
 - **Records:** `docs/validation/v0.5.13/`.
 - **Labels:** `exploratory`, `method_status: not_validated`.
 

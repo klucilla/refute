@@ -1,0 +1,11 @@
+{
+ "name": "golden-commit-v2",
+ "question": "V2 (#218 comment 7228712102): copy NR-A2's raw goldens into docs/validation/v0.5.13/goldens/nr-a2-t2/, each file's SHA-256 equal to the one recorded in step1/golden-nr-a2-t2.json, with no CR byte and 5 MB at most in total (copy); after the commit, check each committed blob's SHA-256 against the record (verify).",
+ "choices": "docs/validation/v0.5.13/tools/golden_commit_v2.py copy|verify. Offline. It hashes bytes and never parses or prints a golden value. The record is read from its committed blob at HEAD.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/golden_commit_v2.py"],
+ "identity": ["docs/validation/v0.5.13/tools/golden_commit_v2.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 120, "disk_bytes": 10000000},
+ "network": false,
+ "retry_class": "checker"
+}
