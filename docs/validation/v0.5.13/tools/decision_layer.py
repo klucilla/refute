@@ -509,6 +509,7 @@ def analyze(sources: dict[str, str], entries=ENTRIES, version: str | None = None
     for row in sorted(rows.values(), key=lambda r: (r["file"], r["line"], r["node"].col_offset)):
         f, node = row.pop("func"), row.pop("node")
         row["contexts"] = sorted(row["contexts"])
+        row["col"] = node.col_offset
         row["guards"] = _guards(f, node)
         row["early_exits_before"] = _early_exits(f, node)
         guard = pruned_by(f, node, version)

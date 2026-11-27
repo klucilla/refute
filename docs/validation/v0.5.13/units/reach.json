@@ -1,0 +1,11 @@
+{
+ "name": "reach",
+ "question": "N1 and O1 (#218 comments 7224847166 and the block of 2026-11-27 (11)): from source only, the reach class of every candidate row of every fixture: reached-if, with the evidence conditions read later from the serialized non-numeric output, or reach unknown, with its reason; the explicit loop rule. It opens no golden file.",
+ "choices": "docs/validation/v0.5.13/tools/reach.py <out.json>. Offline. It imports decision_layer.py from the same folder and reads the 73 modules of I2's inventory.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/reach.py"],
+ "identity": ["docs/validation/v0.5.13/tools/reach.py", "docs/validation/v0.5.13/tools/decision_layer.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 300, "disk_bytes": 20000000},
+ "network": false,
+ "retry_class": "checker"
+}
