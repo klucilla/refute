@@ -1,0 +1,61 @@
+diff --git a/.cache/v0513/d1b/tests/test_runner_blas_pin.py b/.cache/v0513/d1b/tests/test_runner_blas_pin.py
+new file mode 100644
+index 0000000..c95e8dc
+--- /dev/null
++++ b/.cache/v0513/d1b/tests/test_runner_blas_pin.py
+@@ -0,0 +1,55 @@
++"""The BLAS pin of run_processes_pinned (v0.5.13 charter, amendment 2, proposed; #226).
++Synthetic tasks only, no network. Written before the code (the charter's order)."""
++
++from __future__ import annotations
++
++import builtins
++import os
++
++import pytest
++
++from refute.core import runner
++
++
++def test_pinned_workers_report_one_blas_thread_each():
++    results, record = runner.run_processes_pinned(runner.selftest_task, [1, 2, 3, 4], workers=2)
++    assert [r[1] for r in results] == [1, 4, 9, 16]
++    assert record["in_process"] is False and record["workers"]
++    for w in record["workers"]:
++        assert all(v == "1" for v in w["thread_env"].values())
++        assert w["blas"] and all(lib["num_threads"] == 1 for lib in w["blas"])
++
++
++def test_pinned_run_restores_the_parent_environment():
++    before = {n: os.environ.get(n) for n in runner._SINGLE_THREAD_ENV}
++    runner.run_processes_pinned(runner.selftest_task, [1, 2], workers=2)
++    assert {n: os.environ.get(n) for n in runner._SINGLE_THREAD_ENV} == before
++
++
++def test_the_pin_is_refused_when_it_cannot_be_checked(monkeypatch):
++    real_import = builtins.__import__
++
++    def no_threadpoolctl(name, *args, **kwargs):
++        if name == "threadpoolctl":
++            raise ImportError("absent for the test")
++        return real_import(name, *args, **kwargs)
++
++    monkeypatch.setattr(builtins, "__import__", no_threadpoolctl)
++    with pytest.raises(runner.BlasPinError):
++        runner.check_blas_pin()
++
++
++def test_the_pin_is_refused_when_a_library_has_another_count(monkeypatch):
++    monkeypatch.setattr(
++        runner, "blas_threads", lambda: [{"user_api": "blas", "num_threads": 4}]
++    )
++    for name in runner._SINGLE_THREAD_ENV:
++        monkeypatch.setenv(name, "1")
++    with pytest.raises(runner.BlasPinError):
++        runner.check_blas_pin()
++
++
++def test_run_processes_is_unchanged_for_versions_1_to_4():
++    # the default path keeps setdefault and returns results only (no record)
++    out = runner.run_processes(runner.selftest_task, [3], workers=1)
++    assert out[0][1] == 9

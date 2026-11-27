@@ -1,0 +1,133 @@
+diff --git a/src/refute/core/runner.py b/.cache/v0513/d1b/src/refute/core/runner.py
+index 730c1dc..af6c1f6 100644
+--- a/src/refute/core/runner.py
++++ b/.cache/v0513/d1b/src/refute/core/runner.py
+@@ -13,6 +13,15 @@ it to every core of the runner. The number of workers should change only the
+ execution, preserving the scientific results
+ (docs/validation/v0.2.1/workers-equivalence-acceptance.md).
+ Tasks must be top-level functions with picklable arguments.
++
++**The BLAS pin, for discovery version 5 onward** (v0.5.13 charter, amendment 2, proposed;
++#226). :func:`run_processes_pinned` runs tasks with one BLAS thread per process: the thread
++variables are set to ``"1"`` in the parent before any worker process is created (so each
++worker starts with them, before its numerical imports), and each worker checks, in its
++initializer, that every loaded BLAS library reports one thread (``threadpoolctl``); a worker
++that cannot check it, or finds another count, refuses to run. It returns the results and the
++record of the check. :func:`run_processes` is unchanged: versions 1 to 4 keep their behaviour
++and their bytes.
+ """
+ 
+ from __future__ import annotations
+@@ -20,8 +29,9 @@ from __future__ import annotations
+ import multiprocessing
+ import os
+ import sys
+-from collections.abc import Callable, Sequence
++from collections.abc import Callable, Iterator, Sequence
+ from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
++from contextlib import contextmanager
+ from typing import Any
+ 
+ _SINGLE_THREAD_ENV = (
+@@ -150,6 +160,101 @@ def run_processes[T, R](fn: Callable[[T], R], tasks: Sequence[T], workers: int)
+         return [future.result() for future in futures]
+ 
+ 
++class BlasPinError(RuntimeError):
++    """A worker could not check, or did not find, one BLAS thread per library."""
++
++
++def blas_threads() -> list[dict[str, Any]]:
++    """The BLAS libraries loaded in this process and their thread counts
++    (``threadpoolctl``). Raises :class:`BlasPinError` if ``threadpoolctl`` is absent."""
++    try:
++        import threadpoolctl
++    except ImportError as exc:  # the pin cannot be checked
++        msg = "threadpoolctl is not importable: the BLAS pin cannot be checked"
++        raise BlasPinError(msg) from exc
++    import numpy  # noqa: F401  (loads numpy's BLAS so that it is listed)
++
++    return [
++        {k: d.get(k) for k in ("user_api", "internal_api", "prefix", "version", "num_threads")}
++        for d in threadpoolctl.threadpool_info()
++        if d.get("user_api") == "blas"
++    ]
++
++
++def check_blas_pin() -> dict[str, Any]:
++    """Check that every loaded BLAS library uses one thread; raise :class:`BlasPinError`
++    otherwise. Returns the record: the thread variables and the libraries."""
++    libs = blas_threads()
++    env = {name: os.environ.get(name) for name in _SINGLE_THREAD_ENV}
++    if not libs:
++        raise BlasPinError("no BLAS library is loaded: the BLAS pin cannot be checked")
++    wrong = [lib for lib in libs if lib.get("num_threads") != 1]
++    if wrong or any(value != "1" for value in env.values()):
++        raise BlasPinError(f"the BLAS pin does not hold: env={env}, libraries={wrong or libs}")
++    return {"pid": os.getpid(), "thread_env": env, "blas": libs}
++
++
++def _init_pinned_worker() -> None:
++    """Initializer of a pinned worker: the plot backend, then the pin's check (refuse)."""
++    import matplotlib
++
++    matplotlib.use("Agg")
++    check_blas_pin()
++
++
++def _pin_probe(_: Any) -> dict[str, Any]:
++    """Top-level (picklable) task: the record of the pin in the worker that runs it."""
++    return check_blas_pin()
++
++
++@contextmanager
++def _pinned_environ() -> Iterator[None]:
++    """The thread variables forced to "1" (not setdefault), restored afterwards."""
++    saved = dict(os.environ)
++    try:
++        for name in _SINGLE_THREAD_ENV:
++            os.environ[name] = "1"
++        yield
++    finally:
++        _restore_environ(saved)
++
++
++def run_processes_pinned[T, R](
++    fn: Callable[[T], R], tasks: Sequence[T], workers: int
++) -> tuple[list[R], dict[str, Any]]:
++    """Like :func:`run_processes`, with one BLAS thread per worker process, checked; for
++    discovery version 5 onward. Returns ``(results, record)``: the record holds the pin's
++    check in each worker that ran (or in this process, for an in-process run).
++
++    In-process runs (``workers == 1`` or a single task) are refused when a BLAS library is
++    already loaded with another thread count: the variables are read only at the
++    library's load, so the pin could not hold.
++    """
++    if workers < 1:
++        raise ValueError("workers must be >= 1")
++    if not tasks:
++        return [], {"workers": []}
++    with _pinned_environ():
++        if workers == 1 or len(tasks) == 1:
++            saved = dict(os.environ)
++            try:
++                _configure_worker()
++                record = check_blas_pin()
++                return [fn(task) for task in tasks], {"in_process": True, "workers": [record]}
++            finally:
++                _restore_environ(saved)
++        n = min(workers, len(tasks))
++        context = multiprocessing.get_context("spawn")
++        with ProcessPoolExecutor(
++            max_workers=n, mp_context=context, initializer=_init_pinned_worker
++        ) as pool:
++            probes = [pool.submit(_pin_probe, i) for i in range(n)]
++            futures = [pool.submit(fn, task) for task in tasks]
++            results = [future.result() for future in futures]
++            records = [probe.result() for probe in probes]
++    return results, {"in_process": False, "workers": records}
++
++
+ def run_threads[T, R](fn: Callable[[T], R], tasks: Sequence[T], workers: int = 4) -> list[R]:
+     """Run ``fn`` over ``tasks`` in threads (for network I/O); results keep the task order."""
+     if not tasks:

@@ -1,0 +1,135 @@
+diff --git a/tests/test_runner_blas_pin.py b/tests/test_runner_blas_pin.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_runner_blas_pin.py
+@@ -0,0 +1,130 @@
++"""The BLAS pin of run_processes_pinned (v0.5.13 charter, amendment 2, proposed; #226).
++Synthetic tasks only, no network. Written before the code (the charter's order).
++
++The pinned path needs the runtime extra ``blas-pin`` (threadpoolctl); these tests are skipped
++only if it is absent, which the v5 test manifest forbids (it selects the extra)."""
++
++from __future__ import annotations
++
++import os
++import sys
++
++import pytest
++
++from refute.core import pinned_worker, runner
++
++threadpoolctl = pytest.importorskip("threadpoolctl")
++
++
++def frozen_manifest() -> list[dict]:
++    """This environment's library identities, as a frozen manifest would hold them."""
++    import numpy  # noqa: F401
++    import scipy.linalg  # noqa: F401
++
++    return [
++        {k: d.get(k) for k in ("internal_api", "prefix", "version")}
++        for d in threadpoolctl.threadpool_info()
++        if d.get("user_api") == "blas"
++    ]
++
++
++def run(tasks, workers, tmp_path, manifest=None, version=5):
++    return runner.run_processes_pinned(
++        runner.selftest_task,
++        tasks,
++        workers,
++        discovery_version=version,
++        manifest=frozen_manifest() if manifest is None else manifest,
++        work_dir=str(tmp_path),
++    )
++
++
++def identities(libs: list[dict]) -> list[tuple]:
++    return sorted((d["internal_api"], d["prefix"], d["version"]) for d in libs)
++
++
++def test_one_startup_record_per_child_and_exact_task_coverage(tmp_path):
++    results, ev = run([1, 2, 3, 4, 5], 2, tmp_path)
++    assert [r[1] for r in results] == [1, 4, 9, 16, 25]  # the task order is kept
++    pids = [w["pid"] for w in ev["workers"]]
++    assert len(ev["workers"]) == 2 and len(set(pids)) == 2  # one record per child
++    assert sorted(w["shard"] for w in ev["workers"]) == [0, 1]
++    assert sorted(ev["tasks"]) == [0, 1, 2, 3, 4]  # exact task coverage
++    assert set(ev["tasks"].values()) == set(pids)  # recorded = task-mapped PIDs
++    assert {r[0] for r in results} == set(pids)  # = the PIDs that ran the tasks
++    for w in ev["workers"]:
++        assert all(v == "1" for v in w["launch_vars"].values())  # read before any import
++        assert identities(w["startup"]) == identities(frozen_manifest())  # both providers
++        assert all(lib["num_threads"] == 1 for lib in w["startup"])
++
++
++def test_a_single_task_runs_in_a_fresh_child_not_in_the_parent(tmp_path, monkeypatch):
++    monkeypatch.setenv("OPENBLAS_NUM_THREADS", "8")  # conflicting parent settings
++    import numpy  # noqa: F401  (a BLAS library already loaded in the parent)
++
++    results, ev = run([7], 1, tmp_path)
++    assert results[0][1] == 49 and results[0][0] != os.getpid()
++    assert os.environ["OPENBLAS_NUM_THREADS"] == "8"  # the caller's environment is unchanged
++
++
++def test_versions_before_5_are_refused(tmp_path):
++    with pytest.raises(runner.BlasPinError):
++        run([1], 1, tmp_path, version=4)
++
++
++def test_an_unexpected_library_inventory_refuses_the_batch(tmp_path):
++    wrong = [{"internal_api": "mkl", "prefix": "libmkl_rt", "version": "0"}]
++    with pytest.raises(runner.BlasPinError):
++        run([1, 2], 2, tmp_path, manifest=wrong)
++
++
++def test_the_worker_refuses_wrong_launch_variables(tmp_path, monkeypatch):
++    monkeypatch.setenv("OMP_NUM_THREADS", "4")
++    monkeypatch.setattr(
++        pinned_worker.sys, "argv", ["w", str(tmp_path / "in"), str(tmp_path / "out")]
++    )
++    assert pinned_worker.main() == 3
++
++
++def test_a_second_library_with_a_count_other_than_one_is_refused(monkeypatch):
++    libs = [
++        {"internal_api": "openblas", "prefix": "a", "version": "v", "num_threads": 1},
++        {"internal_api": "openblas", "prefix": "b", "version": "v", "num_threads": 4},
++    ]
++    monkeypatch.setattr(pinned_worker, "inventory", lambda: libs)
++    expected = [{k: d[k] for k in ("internal_api", "prefix", "version")} for d in libs]
++    with pytest.raises(pinned_worker.RefusedError):
++        pinned_worker.check(expected)
++
++
++def test_an_unchecked_second_library_is_refused(monkeypatch):
++    libs = [
++        {"internal_api": "openblas", "prefix": "a", "version": "v", "num_threads": 1},
++        {"internal_api": "openblas", "prefix": "b", "version": "v", "num_threads": 1},
++    ]
++    monkeypatch.setattr(pinned_worker, "inventory", lambda: libs)
++    with pytest.raises(pinned_worker.RefusedError):  # the manifest names only the first
++        pinned_worker.check([{"internal_api": "openblas", "prefix": "a", "version": "v"}])
++
++
++def test_missing_verification_support_is_refused(monkeypatch):
++    monkeypatch.setitem(sys.modules, "threadpoolctl", None)  # import fails
++    with pytest.raises(pinned_worker.RefusedError):
++        pinned_worker.inventory()
++
++
++def test_a_child_without_its_record_rejects_the_batch(tmp_path):
++    with pytest.raises(runner.BlasPinError):  # the child exits before writing its output
++        runner.run_processes_pinned(
++            os._exit,
++            [0],
++            1,
++            discovery_version=5,
++            manifest=frozen_manifest(),
++            work_dir=str(tmp_path),
++        )
++
++
++def test_run_processes_is_unchanged_for_versions_1_to_4():
++    out = runner.run_processes(runner.selftest_task, [3], workers=1)
++    assert out[0][1] == 9

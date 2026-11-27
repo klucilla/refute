@@ -1,0 +1,98 @@
+diff --git a/src/refute/core/pinned_worker.py b/src/refute/core/pinned_worker.py
+new file mode 100644
+--- /dev/null
++++ b/src/refute/core/pinned_worker.py
+@@ -0,0 +1,93 @@
++"""The worker of a pinned run: one fresh Python interpreter per shard, one BLAS thread checked
++(v0.5.13 charter, amendment 2, proposed; #226). Discovery version 5 onward only.
++
++    python -I -B -m refute.core.pinned_worker <shard input> <shard output>
++
++The runner (:func:`refute.core.runner.run_processes_pinned`) launches it with an explicit
++environment in which the thread variables are ``"1"`` from the process's creation. The worker:
++1. **before importing the numerical stack or reading its tasks,** checks that the launch
++   variables are ``"1"``;
++2. loads NumPy and ``scipy.linalg``, reads every BLAS library with ``threadpoolctl``, and compares
++   the inventory with the frozen library manifest named in its input: a missing or unexpected
++   backend, an unreadable count, or any effective count other than one refuses the shard;
++3. only then unpickles its tasks (which imports their module), checks again, runs each task,
++   checks again before returning each result;
++4. writes its output: its startup record (the shard's nonce, its PID, the launch variables, the
++   libraries' identities and counts), and, per task, the task index, the PID that ran it and the
++   result. A refusal writes the reason and exits 3.
++"""
++
++from __future__ import annotations
++
++import os
++import pickle
++import sys
++
++THREAD_VARS = ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS")
++LIB_KEYS = ("user_api", "internal_api", "prefix", "version", "threading_layer", "num_threads")
++
++
++class RefusedError(Exception):
++    pass
++
++
++def launch_vars() -> dict[str, str | None]:
++    return {name: os.environ.get(name) for name in THREAD_VARS}
++
++
++def inventory() -> list[dict]:
++    """The BLAS libraries of the approved numerical paths, after loading NumPy and scipy.linalg."""
++    try:
++        import threadpoolctl
++    except ImportError as exc:
++        raise RefusedError("threadpoolctl is not importable: the pin cannot be checked") from exc
++    import numpy  # noqa: F401
++    import scipy.linalg  # noqa: F401
++
++    return [
++        {k: d.get(k) for k in LIB_KEYS}
++        for d in threadpoolctl.threadpool_info()
++        if d.get("user_api") == "blas"
++    ]
++
++
++def check(expected: list[dict]) -> list[dict]:
++    libs = inventory()
++    ident = sorted((d["internal_api"], d["prefix"], d["version"]) for d in libs)
++    want = sorted((d["internal_api"], d["prefix"], d["version"]) for d in expected)
++    if ident != want:
++        raise RefusedError(f"the BLAS libraries {ident} differ from the frozen manifest {want}")
++    bad = [d for d in libs if d.get("num_threads") != 1]
++    if bad:
++        raise RefusedError(f"a BLAS library does not run one thread: {bad}")
++    return libs
++
++
++def main() -> int:
++    in_path, out_path = sys.argv[1], sys.argv[2]
++    out: dict = {"pid": os.getpid(), "launch_vars": launch_vars()}
++    try:
++        if any(v != "1" for v in out["launch_vars"].values()):
++            raise RefusedError(f"the launch variables are not all '1': {out['launch_vars']}")
++        with open(in_path, "rb") as f:
++            header = pickle.load(f)  # plain data only: nonce and the library manifest
++            out["nonce"] = header["nonce"]
++            out["startup"] = check(header["manifest"])
++            fn, items = pickle.load(f)  # imports the task module
++        check(header["manifest"])
++        out["tasks"] = []
++        for index, task in items:
++            result = fn(task)
++            check(header["manifest"])
++            out["tasks"].append({"index": index, "pid": os.getpid(), "result": result})
++        code = 0
++    except RefusedError as exc:
++        out["refused"] = str(exc)
++        code = 3
++    with open(out_path, "wb") as f:
++        pickle.dump(out, f)
++    return code
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())

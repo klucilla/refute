@@ -1,0 +1,113 @@
+diff --git a/src/refute/core/runner.py b/src/refute/core/runner.py
+--- a/src/refute/core/runner.py
++++ b/src/refute/core/runner.py
+@@ -13,6 +13,11 @@
+ execution, preserving the scientific results
+ (docs/validation/v0.2.1/workers-equivalence-acceptance.md).
+ Tasks must be top-level functions with picklable arguments.
++
++Discovery version 5 onward runs its tasks through :func:`run_processes_pinned` (v0.5.13
++charter, amendment 2, proposed; #226): one fresh interpreter per shard, one BLAS thread per
++worker, checked at the start and around every task, with the evidence returned.
++:func:`run_processes` is unchanged: versions 1 to 4 keep their behaviour and their bytes.
+ """
+ 
+ from __future__ import annotations
+@@ -167,3 +172,97 @@
+ def selftest_thread_env(_: Any) -> tuple[int, dict[str, str | None]]:
+     """Picklable task used by the test suite: the thread variables a worker sees."""
+     return os.getpid(), {name: os.environ.get(name) for name in _SINGLE_THREAD_ENV}
++
++
++# ---- the BLAS pin, discovery version 5 onward (v0.5.13 charter, amendment 2, proposed; #226) ----
++
++
++class BlasPinError(RuntimeError):
++    """A pinned batch was refused: a launch, a startup check, a task check or the evidence
++    failed."""
++
++
++def _shards[T](tasks: Sequence[T], workers: int) -> list[list[tuple[int, T]]]:
++    n = min(workers, len(tasks))
++    shards: list[list[tuple[int, T]]] = [[] for _ in range(n)]
++    for index, task in enumerate(tasks):
++        shards[index % n].append((index, task))
++    return shards
++
++
++def run_processes_pinned[T, R](
++    fn: Callable[[T], R],
++    tasks: Sequence[T],
++    workers: int,
++    *,
++    discovery_version: int,
++    manifest: list[dict[str, Any]],
++    work_dir: str,
++) -> tuple[list[R], dict[str, Any]]:
++    """Run ``fn`` over ``tasks`` with one BLAS thread per worker, checked; for discovery
++    version 5 onward only. Returns ``(results, evidence)``; results keep the task order.
++
++    Every nonempty batch is split into ``min(workers, len(tasks))`` nonempty shards, each run
++    by a fresh interpreter (``python -I -B -m refute.core.pinned_worker``) launched with an
++    explicit environment in which the thread variables are ``"1"`` (the caller's environment
++    is not changed), even for one task or ``workers == 1``. ``manifest`` is the frozen list of
++    the BLAS libraries expected in that environment (``internal_api``, ``prefix``,
++    ``version``); a worker refuses any other inventory or any count other than one.
++
++    The evidence holds one startup record per launched shard (its nonce, PID, launch
++    variables and libraries) and the task-to-PID map. A missing, duplicate or mismatched
++    record, an incomplete shard, a refusal or a child failure raises :class:`BlasPinError`;
++    nothing of that batch is accepted. ``run_processes`` is unchanged for versions 1 to 4.
++    """
++    import pickle
++    import secrets
++    import subprocess
++    from pathlib import Path
++
++    if discovery_version < 5:
++        raise BlasPinError("the BLAS pin is for discovery version 5 onward only")
++    if workers < 1:
++        raise ValueError("workers must be >= 1")
++    if not tasks:
++        return [], {"workers": [], "tasks": {}}
++    base = Path(work_dir)
++    base.mkdir(parents=True, exist_ok=True)
++    env = dict(os.environ)
++    for name in _SINGLE_THREAD_ENV:
++        env[name] = "1"
++    launched = []
++    for shard_id, items in enumerate(_shards(tasks, workers)):
++        nonce = secrets.token_hex(16)
++        src, dst = base / f"shard-{shard_id}.in.pkl", base / f"shard-{shard_id}.out.pkl"
++        with open(src, "wb") as f:
++            pickle.dump({"nonce": nonce, "manifest": manifest}, f)
++            pickle.dump((fn, items), f)
++        cmd = [sys.executable, "-I", "-B", "-m", "refute.core.pinned_worker", str(src), str(dst)]
++        proc = subprocess.Popen(cmd, env=env)
++        launched.append((shard_id, nonce, items, proc, dst))
++    results: dict[int, Any] = {}
++    evidence: dict[str, Any] = {"workers": [], "tasks": {}}
++    failures = []
++    for shard_id, nonce, items, proc, dst in launched:
++        code = proc.wait()
++        if code != 0 or not dst.exists():
++            failures.append(f"shard {shard_id}: exit {code}")
++            continue
++        with open(dst, "rb") as f:
++            out = pickle.load(f)
++        if out.get("refused") or out.get("nonce") != nonce or "startup" not in out:
++            failures.append(f"shard {shard_id}: {out.get('refused') or 'no matching startup'}")
++            continue
++        got = [t["index"] for t in out.get("tasks", [])]
++        if got != [i for i, _ in items] or any(t["pid"] != out["pid"] for t in out["tasks"]):
++            failures.append(f"shard {shard_id}: incomplete or mismatched tasks")
++            continue
++        record = {k: out[k] for k in ("nonce", "pid", "launch_vars", "startup")}
++        evidence["workers"].append({"shard": shard_id, "launcher_pid": proc.pid, **record})
++        for t in out["tasks"]:
++            results[t["index"]] = t["result"]
++            evidence["tasks"][t["index"]] = t["pid"]
++    pids = [w["pid"] for w in evidence["workers"]]
++    if failures or len(set(pids)) != len(launched) or len(results) != len(tasks):
++        raise BlasPinError("the pinned batch was refused: " + "; ".join(failures or ["evidence"]))
++    return [results[i] for i in range(len(tasks))], evidence

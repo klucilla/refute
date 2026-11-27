@@ -1,0 +1,39 @@
+diff --git a/pyproject.toml b/pyproject.toml
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -31,6 +31,9 @@
+   "pyyaml>=6.0",
+   "pydantic>=2.6",
+ ]
++
++[project.optional-dependencies]
++blas-pin = ["threadpoolctl==3.7.0"]
+ 
+ [project.urls]
+ Homepage = "https://refute.science"
+diff --git a/uv.lock b/uv.lock
+--- a/uv.lock
++++ b/uv.lock
+@@ -2309,6 +2309,11 @@
+     { name = "typer" },
+ ]
+ 
++[package.optional-dependencies]
++blas-pin = [
++    { name = "threadpoolctl" },
++]
++
+ [package.dev-dependencies]
+ calibration = [
+     { name = "py-ecc" },
+@@ -2331,8 +2336,10 @@
+     { name = "numpy", specifier = ">=1.26" },
+     { name = "pydantic", specifier = ">=2.6" },
+     { name = "pyyaml", specifier = ">=6.0" },
++    { name = "threadpoolctl", marker = "extra == 'blas-pin'", specifier = "==3.7.0" },
+     { name = "typer", specifier = ">=0.12" },
+ ]
++provides-extras = ["blas-pin"]
+ 
+ [package.metadata.requires-dev]
+ calibration = [
