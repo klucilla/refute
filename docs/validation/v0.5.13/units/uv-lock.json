@@ -1,0 +1,11 @@
+{
+ "name": "uv-lock",
+ "question": "Regenerate uv.lock after the project's own version changes to 0.5.12 (the maintainer's decision D4), offline, with no dependency change; check-m45 uvlock verifies that only the refute package's version line changed.",
+ "choices": "uv lock --offline (UV_OFFLINE=1 from the launcher). A tree unit. It changes uv.lock only.",
+ "argv": ["uv", "lock", "--offline"],
+ "identity": [],
+ "key": "tree",
+ "reserve": {"cpu_s": 120, "disk_bytes": 50000000},
+ "network": false,
+ "retry_class": "infra"
+}

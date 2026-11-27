@@ -1,0 +1,11 @@
+{
+ "name": "ci-evidence",
+ "question": "Test evidence of CI for one exact commit: scripts/ci_evidence.py <sha> --level full (the maintainer's decision D4: required on the version commit after the push).",
+ "choices": "Extra arguments: the SHA and --level full. GitHub reads only. It checks existing runs and emits no case value.",
+ "argv": ["{python}", "-B", "scripts/ci_evidence.py"],
+ "identity": ["scripts/ci_evidence.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 60, "disk_bytes": 10000000},
+ "network": {"kind": "github", "endpoints": ["api.github.com:443"], "operations": ["gh api GET actions runs and jobs"], "inbound_estimate_bytes": 3000000},
+ "retry_class": "checker"
+}

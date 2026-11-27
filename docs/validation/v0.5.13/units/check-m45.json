@@ -1,0 +1,12 @@
+{
+ "name": "check-m45",
+ "question": "The deterministic checks of D4: 'files' (the diff and the workflow match the approved SHA-256; the working pyproject.toml equals HEAD plus the approved diff; release.yml equals the approved file), before the version change; 'uvlock' (uv.lock's diff changes only the refute package's version), after uv lock.",
+ "choices": "docs/validation/v0.5.13/tools/check_m45.py files|uvlock; records copied to d4/. It reads files and git only.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/check_m45.py"],
+ "identity": ["docs/validation/v0.5.13/tools/check_m45.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 60, "disk_bytes": 10000000},
+ "network": false,
+ "retry_class": "checker",
+ "outputs": {"check-m45-files.json": "docs/validation/v0.5.13/d4/check-m45-files.json", "check-m45-uvlock.json": "docs/validation/v0.5.13/d4/check-m45-uvlock.json"}
+}

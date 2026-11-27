@@ -1,0 +1,12 @@
+{
+ "name": "gh2",
+ "question": "One GitHub operation through gh, for the maintainer's decisions of 2026-11-26 (2) (#218 comment 7207651312): issue create for the v0.6 FP population issue; issue comment 218; workflow run release.yml --ref main -f target=testpypi (D5, once) or workflow run ci.yml --ref main (D4's full evidence); run list/view/watch (a run's state, jobs or the build job's log); api GET.",
+ "choices": "The arguments make the unit. Inbound bytes at the declared conservative estimate. Never: approving or rejecting a deployment, environments, protection rules, secrets, pending publishers, or any token.",
+ "argv": ["gh"],
+ "identity": [],
+ "key": "data",
+ "reserve": {"cpu_s": 120, "disk_bytes": 20000000},
+ "timeout_s": 3900,
+ "network": {"kind": "github", "endpoints": ["api.github.com:443", "github.com:443"], "operations": ["gh issue create", "gh issue comment 218", "gh workflow run release.yml (once, target testpypi)", "gh workflow run ci.yml", "gh run list/view/watch", "gh api GET"], "inbound_estimate_bytes": 5000000},
+ "retry_class": "infra"
+}

@@ -1,0 +1,12 @@
+{
+ "name": "testpypi-fetch",
+ "question": "D5 (#218 comment 7207651312): download the files TestPyPI publishes for refute <version> (download only, no install), and compare each file's SHA-256 with the index's digest; the comparison with the build job's listing is recorded beside it.",
+ "choices": "docs/validation/v0.5.13/tools/testpypi_fetch.py <version>; files under .cache/v0513/testpypi/<version>/; record copied to d5/testpypi-fetch.json; measured inbound bytes.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/testpypi_fetch.py"],
+ "identity": ["docs/validation/v0.5.13/tools/testpypi_fetch.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 60, "disk_bytes": 20000000},
+ "network": {"kind": "testpypi", "endpoints": ["test.pypi.org:443", "test-files.pythonhosted.org:443"], "operations": ["GET /pypi/refute/<version>/json", "GET the listed files"], "inbound_estimate_bytes": 10000000},
+ "retry_class": "infra",
+ "outputs": {"testpypi-fetch.json": "docs/validation/v0.5.13/d5/testpypi-fetch.json"}
+}

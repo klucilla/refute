@@ -1,0 +1,11 @@
+{
+ "name": "diag-golden-diff",
+ "question": "D1a (#218 comment 7207651312), a new diagnostic beside NR-A1, exploratory and post hoc, replacing nothing. QUESTION: where, and by how much, do the golden outputs of the pinned settings nr-a1-t1 and nr-a1-t4 differ from ID-BEFORE? QUANTITY: per file, the lines and the differing lines; per differing line, whether only numbers differ, its field name and the largest relative difference |a-b|/max(|a|,|b|) among its numbers; per setting, the differing fields, the count of non-numeric differing lines and the largest relative difference. CASES: the 20 golden output files of .cache/v0513/golden/before, nr-a1-t1 and nr-a1-t4, read only; nothing is recomputed.",
+ "choices": "docs/validation/v0.5.13/tools/diag_golden_diff.py; record copied to step1/diag-golden-diff.json. It reads the three folders only.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/diag_golden_diff.py"],
+ "identity": ["docs/validation/v0.5.13/tools/diag_golden_diff.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 60, "disk_bytes": 10000000},
+ "network": false,
+ "outputs": {"diag-golden-diff.json": "docs/validation/v0.5.13/step1/diag-golden-diff.json"}
+}
