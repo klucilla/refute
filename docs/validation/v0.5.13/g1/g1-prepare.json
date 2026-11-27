@@ -1,0 +1,68 @@
+{
+ "main": "882547369b00b80fa62830ba5b68a0ef86dab104",
+ "origin_main": "882547369b00b80fa62830ba5b68a0ef86dab104",
+ "steps": {
+  "tip_matches_origin": true,
+  "copies_byte_for_byte": true,
+  "no_crlf_outside_not_text": false
+ },
+ "archive_sha256": "08bf4fe40faceb2a16dd8ad6eb519618790724775c51b3478e5173e7fddd6e15",
+ "copies": [
+  {
+   "destination": "pyproject.toml",
+   "source": ".cache/v0513/f2/pyproject.f2.toml",
+   "bytes": 4165,
+   "source_sha256": "d320e50b135277faddf66fc74014b5a39445334c18d5964add68f93b088a00e9",
+   "destination_sha256": "d320e50b135277faddf66fc74014b5a39445334c18d5964add68f93b088a00e9",
+   "equal": true
+  },
+  {
+   "destination": "scripts/make_pypi_readme.py",
+   "source": "scripts/make_pypi_readme.py",
+   "bytes": 2285,
+   "source_sha256": "766b8914cc77d360f7bd7b56fd30ad2e2d2aa0691f0feace04581a2778babe0d",
+   "destination_sha256": "766b8914cc77d360f7bd7b56fd30ad2e2d2aa0691f0feace04581a2778babe0d",
+   "equal": true
+  },
+  {
+   "destination": "README-pypi.md",
+   "source": "README-pypi.md",
+   "bytes": 10293,
+   "source_sha256": "62ed43d55b50f84cd7cacf24c453a0e8c783b0162c654c7f311536262afca361",
+   "destination_sha256": "62ed43d55b50f84cd7cacf24c453a0e8c783b0162c654c7f311536262afca361",
+   "equal": true
+  },
+  {
+   "destination": "tests/test_pypi_readme.py",
+   "source": "tests/test_pypi_readme.py",
+   "bytes": 1683,
+   "source_sha256": "b9b2793ca127a997e0022fb053fbf246c64ee3f6a416354945315c4dc16fd2fc",
+   "destination_sha256": "b9b2793ca127a997e0022fb053fbf246c64ee3f6a416354945315c4dc16fd2fc",
+   "equal": true
+  }
+ ],
+ "not_text_patterns": [
+  "*.fits",
+  "*.png",
+  "*.zip",
+  "*.npz",
+  "calibration/v0.2/audit/**",
+  "docs/validation/v0.2.1/pre-document-runs/**",
+  "docs/validation/v0.2.1/baseline/**",
+  "docs/validation/v0.2.1/population/**",
+  "calibration/v0.3/main/dossiers/*/dossier/**",
+  "docs/validation/v0.5.8/zenodo/**",
+  "docs/plans/process-diet-2/**",
+  "docs/plans/research-2026-11-23/**",
+  "docs/plans/v0.5.11-consensus/**",
+  "docs/maintenance/cache-archive-2026-11-24/a/**",
+  "docs/maintenance/cache-archive-2026-11-24/b/**"
+ ],
+ "files": 5307,
+ "crlf_files": 59,
+ "crlf_outside_not_text": [
+  "calibration/v0.5/reviews/criterion6/attempt-01/step-06.log",
+  "tests/fixtures/tensorboard/tf2/events.out.tfevents.1792343505.27d2db5d88cb.1.0.v2"
+ ],
+ "all_ok": false
+}

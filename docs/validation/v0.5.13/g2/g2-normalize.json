@@ -1,0 +1,530 @@
+{
+ "before": [
+  {
+   "path": "src/refute/packs/tess/a0.py",
+   "eol": "i/lf    w/crlf  attr/text=auto eol=lf \tsrc/refute/packs/tess/a0.py",
+   "diff_empty": true,
+   "crlf_count": 424,
+   "index_blob": "f126ccee3ba004dfaad6a37c4381c421c2b62ac3",
+   "lf_content_blob": "f126ccee3ba004dfaad6a37c4381c421c2b62ac3",
+   "lf_content_equals_index": true
+  },
+  {
+   "path": "scripts/ci_shard.py",
+   "eol": "i/lf    w/crlf  attr/text=auto eol=lf \tscripts/ci_shard.py",
+   "diff_empty": true,
+   "crlf_count": 123,
+   "index_blob": "8b1f23f90b39ec5fb24e6260650e5779add821ee",
+   "lf_content_blob": "8b1f23f90b39ec5fb24e6260650e5779add821ee",
+   "lf_content_equals_index": true
+  },
+  {
+   "path": "tests/test_junit_counts.py",
+   "eol": "i/lf    w/crlf  attr/text=auto eol=lf \ttests/test_junit_counts.py",
+   "diff_empty": true,
+   "crlf_count": 157,
+   "index_blob": "e4fc09f1f32a40a1144733e23b046c55fe83b222",
+   "lf_content_blob": "e4fc09f1f32a40a1144733e23b046c55fe83b222",
+   "lf_content_equals_index": true
+  },
+  {
+   "path": "tests/test_v051_a0.py",
+   "eol": "i/lf    w/crlf  attr/text=auto eol=lf \ttests/test_v051_a0.py",
+   "diff_empty": true,
+   "crlf_count": 186,
+   "index_blob": "b1ce136017ed4cf06db06df3d48c8da2a5d4f2b5",
+   "lf_content_blob": "b1ce136017ed4cf06db06df3d48c8da2a5d4f2b5",
+   "lf_content_equals_index": true
+  },
+  {
+   "path": "tests/test_v051_wp2.py",
+   "eol": "i/lf    w/crlf  attr/text=auto eol=lf \ttests/test_v051_wp2.py",
+   "diff_empty": true,
+   "crlf_count": 107,
+   "index_blob": "5ebf0113b3964f56c3555dbd7001cc8e88d0ce9d",
+   "lf_content_blob": "5ebf0113b3964f56c3555dbd7001cc8e88d0ce9d",
+   "lf_content_equals_index": true
+  }
+ ],
+ "ready": true,
+ "after": [
+  {
+   "path": "src/refute/packs/tess/a0.py",
+   "checkout_exit": 0,
+   "eol": "i/lf    w/crlf  attr/text=auto eol=lf \tsrc/refute/packs/tess/a0.py",
+   "w_lf": false,
+   "crlf_count": 424
+  },
+  {
+   "path": "scripts/ci_shard.py",
+   "checkout_exit": 0,
+   "eol": "i/lf    w/crlf  attr/text=auto eol=lf \tscripts/ci_shard.py",
+   "w_lf": false,
+   "crlf_count": 123
+  },
+  {
+   "path": "tests/test_junit_counts.py",
+   "checkout_exit": 0,
+   "eol": "i/lf    w/crlf  attr/text=auto eol=lf \ttests/test_junit_counts.py",
+   "w_lf": false,
+   "crlf_count": 157
+  },
+  {
+   "path": "tests/test_v051_a0.py",
+   "checkout_exit": 0,
+   "eol": "i/lf    w/crlf  attr/text=auto eol=lf \ttests/test_v051_a0.py",
+   "w_lf": false,
+   "crlf_count": 186
+  },
+  {
+   "path": "tests/test_v051_wp2.py",
+   "checkout_exit": 0,
+   "eol": "i/lf    w/crlf  attr/text=auto eol=lf \ttests/test_v051_wp2.py",
+   "w_lf": false,
+   "crlf_count": 107
+  }
+ ],
+ "other_crlf_files": 317,
+ "other_crlf_by_folder": {
+  "calibration/v0.2/audit/tess-eb-search": [
+   "calibration/v0.2/audit/tess-eb-search/hits_located_2026-10-11T1313Z.tsv",
+   "calibration/v0.2/audit/tess-eb-search/hits_located_2026-10-11T1402Z.tsv",
+   "calibration/v0.2/audit/tess-eb-search/hits_located_2026-10-11T1509Z.tsv",
+   "calibration/v0.2/audit/tess-eb-search/record_zip_members_2026-10-11T1313Z.txt",
+   "calibration/v0.2/audit/tess-eb-search/tess_eb_search.txt"
+  ],
+  "calibration/v0.2/eb_snapshot": [
+   "calibration/v0.2/eb_snapshot/gaia_failed_attempts.json"
+  ],
+  "calibration/v0.3/main/claims/2302.12465/claim": [
+   "calibration/v0.3/main/claims/2302.12465/claim/claim.yaml"
+  ],
+  "calibration/v0.3/main/claims/2305.19518/claim": [
+   "calibration/v0.3/main/claims/2305.19518/claim/claim.yaml"
+  ],
+  "calibration/v0.3/main/claims/2309.15704/claim": [
+   "calibration/v0.3/main/claims/2309.15704/claim/claim.yaml"
+  ],
+  "calibration/v0.3/main/claims/2407.11735/claim": [
+   "calibration/v0.3/main/claims/2407.11735/claim/claim.yaml"
+  ],
+  "calibration/v0.3/main/claims/2502.16782/claim": [
+   "calibration/v0.3/main/claims/2502.16782/claim/claim.yaml"
+  ],
+  "calibration/v0.4/inputs-references": [
+   "calibration/v0.4/inputs-references/pscomppars-references.json"
+  ],
+  "calibration/v0.4/runs": [
+   "calibration/v0.4/runs/p5_anchor.json"
+  ],
+  "calibration/v0.5/inputs-references": [
+   "calibration/v0.5/inputs-references/pscomppars-references.json"
+  ],
+  "calibration/v0.5/results/criterion2": [
+   "calibration/v0.5/results/criterion2/baseline-check.json"
+  ],
+  "calibration/v0.5/reviews/criterion6/attempt-01": [
+   "calibration/v0.5/reviews/criterion6/attempt-01/reproduce.json",
+   "calibration/v0.5/reviews/criterion6/attempt-01/step-05.log"
+  ],
+  "calibration/v0.5/reviews/criterion6/attempt-02": [
+   "calibration/v0.5/reviews/criterion6/attempt-02/reproduce.json",
+   "calibration/v0.5/reviews/criterion6/attempt-02/step-05.log",
+   "calibration/v0.5/reviews/criterion6/attempt-02/step-07.log",
+   "calibration/v0.5/reviews/criterion6/attempt-02/step-08.log",
+   "calibration/v0.5/reviews/criterion6/attempt-02/step-09.log"
+  ],
+  "docs/gates": [
+   "docs/gates/v0.5.10-gate-prompt.md"
+  ],
+  "docs/history": [
+   "docs/history/roadmap-archive-check.json"
+  ],
+  "docs/maintenance/link-rewrite-2026-11-26": [
+   "docs/maintenance/link-rewrite-2026-11-26/archive-moved-check.json",
+   "docs/maintenance/link-rewrite-2026-11-26/archive-resolve.json",
+   "docs/maintenance/link-rewrite-2026-11-26/m3-check.json",
+   "docs/maintenance/link-rewrite-2026-11-26/status-moved-check.json",
+   "docs/maintenance/link-rewrite-2026-11-26/status-resolve.json"
+  ],
+  "docs/maintenance/package-check-2026-11-26": [
+   "docs/maintenance/package-check-2026-11-26/build-check.json"
+  ],
+  "docs/plans/claude-md-reorg": [
+   "docs/plans/claude-md-reorg/check-lines.json",
+   "docs/plans/claude-md-reorg/check-sentences.json"
+  ],
+  "docs/plans/release-workflow-review": [
+   "docs/plans/release-workflow-review/m45-builds.json"
+  ],
+  "docs/plans/v0.5.13-amendment-1": [
+   "docs/plans/v0.5.13-amendment-1/power-a1.json",
+   "docs/plans/v0.5.13-amendment-1/power-a1b.json",
+   "docs/plans/v0.5.13-amendment-1/power-a1c.json",
+   "docs/plans/v0.5.13-amendment-1/type-count.json"
+  ],
+  "docs/plans/v0.5.13-charter-prep": [
+   "docs/plans/v0.5.13-charter-prep/exposure-check.json",
+   "docs/plans/v0.5.13-charter-prep/power-v2.json",
+   "docs/plans/v0.5.13-charter-prep/power.json",
+   "docs/plans/v0.5.13-charter-prep/power.md"
+  ],
+  "docs/reports": [
+   "docs/reports/v0.5.10-report.md"
+  ],
+  "docs/validation/v0.2.1/population/corrections-plan/calc": [
+   "docs/validation/v0.2.1/population/corrections-plan/calc/calibration-sizing-rev3.json"
+  ],
+  "docs/validation/v0.2.1/population/d6": [
+   "docs/validation/v0.2.1/population/d6/d6-memory.json",
+   "docs/validation/v0.2.1/population/d6/d6-timing.json"
+  ],
+  "docs/validation/v0.2.1/population/review/verifiers/outputs-round2": [
+   "docs/validation/v0.2.1/population/review/verifiers/outputs-round2/kill-1.out",
+   "docs/validation/v0.2.1/population/review/verifiers/outputs-round2/manifest-6.json",
+   "docs/validation/v0.2.1/population/review/verifiers/outputs-round2/race.err",
+   "docs/validation/v0.2.1/population/review/verifiers/outputs-round2/race.out",
+   "docs/validation/v0.2.1/population/review/verifiers/outputs-round2/seed_check.txt",
+   "docs/validation/v0.2.1/population/review/verifiers/outputs-round2/ser_check.txt",
+   "docs/validation/v0.2.1/population/review/verifiers/outputs-round2/snr_check.txt",
+   "docs/validation/v0.2.1/population/review/verifiers/outputs-round2/stats_check.txt"
+  ],
+  "docs/validation/v0.2.1/population/review/verifiers/outputs-round3": [
+   "docs/validation/v0.2.1/population/review/verifiers/outputs-round3/compare_outcomes.txt",
+   "docs/validation/v0.2.1/population/review/verifiers/outputs-round3/seed_check.txt",
+   "docs/validation/v0.2.1/population/review/verifiers/outputs-round3/ser_check.txt",
+   "docs/validation/v0.2.1/population/review/verifiers/outputs-round3/snr_check.txt",
+   "docs/validation/v0.2.1/population/review/verifiers/outputs-round3/stats_check.txt"
+  ],
+  "docs/validation/v0.2.1/population/selftest-2": [
+   "docs/validation/v0.2.1/population/selftest-2/snapshot-after-kill.json"
+  ],
+  "docs/validation/v0.2.1/population/selftest-2/negative-tests": [
+   "docs/validation/v0.2.1/population/selftest-2/negative-tests/g2-full-output.txt"
+  ],
+  "docs/validation/v0.2.1/population/selftest-v2": [
+   "docs/validation/v0.2.1/population/selftest-v2/SHA256SUMS"
+  ],
+  "docs/validation/v0.2.1/population/v4-acceptance": [
+   "docs/validation/v0.2.1/population/v4-acceptance/determinism.json",
+   "docs/validation/v0.2.1/population/v4-acceptance/first-run.json",
+   "docs/validation/v0.2.1/population/v4-acceptance/order.json",
+   "docs/validation/v0.2.1/population/v4-acceptance/population-1.json",
+   "docs/validation/v0.2.1/population/v4-acceptance/population-2.json",
+   "docs/validation/v0.2.1/population/v4-acceptance/population-3.json",
+   "docs/validation/v0.2.1/population/v4-acceptance/sabotages.json"
+  ],
+  "docs/validation/v0.3/wp6-results/isolation": [
+   "docs/validation/v0.3/wp6-results/isolation/isolation-2026-10-17-guest.txt",
+   "docs/validation/v0.3/wp6-results/isolation/isolation-2026-10-17.md"
+  ],
+  "docs/validation/v0.5": [
+   "docs/validation/v0.5/study-188.json",
+   "docs/validation/v0.5/study-188.md"
+  ],
+  "docs/validation/v0.5.1/archive": [
+   "docs/validation/v0.5.1/archive/manifest-2026-11-08.json"
+  ],
+  "docs/validation/v0.5.1/feasibility": [
+   "docs/validation/v0.5.1/feasibility/sap-affine-check.json",
+   "docs/validation/v0.5.1/feasibility/sap-rule-effect.json"
+  ],
+  "docs/validation/v0.5.1/feasibility/strategy": [
+   "docs/validation/v0.5.1/feasibility/strategy/diagnose-dispersion.json",
+   "docs/validation/v0.5.1/feasibility/strategy/diagnose-matched.json",
+   "docs/validation/v0.5.1/feasibility/strategy/diagnose-matched_nomask.json",
+   "docs/validation/v0.5.1/feasibility/strategy/forecast-rule.json",
+   "docs/validation/v0.5.1/feasibility/strategy/pools.json",
+   "docs/validation/v0.5.1/feasibility/strategy/real-sectors.json",
+   "docs/validation/v0.5.1/feasibility/strategy/strata.json"
+  ],
+  "docs/validation/v0.5.10": [
+   "docs/validation/v0.5.10/caps-ledger.json",
+   "docs/validation/v0.5.10/recheck-after-codex.json",
+   "docs/validation/v0.5.10/recount-section2.md"
+  ],
+  "docs/validation/v0.5.10/cleanup": [
+   "docs/validation/v0.5.10/cleanup/cleanup_v0510.py"
+  ],
+  "docs/validation/v0.5.10/engines": [
+   "docs/validation/v0.5.10/engines/README.md",
+   "docs/validation/v0.5.10/engines/build_table.py",
+   "docs/validation/v0.5.10/engines/data-check.json",
+   "docs/validation/v0.5.10/engines/delete_profile.py",
+   "docs/validation/v0.5.10/engines/fetch_data.py",
+   "docs/validation/v0.5.10/engines/gpl-workers.json",
+   "docs/validation/v0.5.10/engines/install-record.json",
+   "docs/validation/v0.5.10/engines/isolation-test.json",
+   "docs/validation/v0.5.10/engines/isolation_probe.py",
+   "docs/validation/v0.5.10/engines/isolation_test.py",
+   "docs/validation/v0.5.10/engines/licences.json",
+   "docs/validation/v0.5.10/engines/requirements-install.txt",
+   "docs/validation/v0.5.10/engines/run_engines.py",
+   "docs/validation/v0.5.10/engines/sandbox.py",
+   "docs/validation/v0.5.10/engines/settings.json",
+   "docs/validation/v0.5.10/engines/staged-catalogs.json",
+   "docs/validation/v0.5.10/engines/table.json",
+   "docs/validation/v0.5.10/engines/table.md",
+   "docs/validation/v0.5.10/engines/tfopwg.json",
+   "docs/validation/v0.5.10/engines/wheelhouse-manifest.json",
+   "docs/validation/v0.5.10/engines/wheelhouse.py",
+   "docs/validation/v0.5.10/engines/worker_exovetter.py"
+  ],
+  "docs/validation/v0.5.10/engines/results": [
+   "docs/validation/v0.5.10/engines/results/synthetic-exovetter-smoke-2.json",
+   "docs/validation/v0.5.10/engines/results/synthetic-exovetter-smoke.json",
+   "docs/validation/v0.5.10/engines/results/synthetic-leo-smoke-2.json",
+   "docs/validation/v0.5.10/engines/results/synthetic-leo-smoke.json",
+   "docs/validation/v0.5.10/engines/results/synthetic-tls-cost-4s-nobin-b.json",
+   "docs/validation/v0.5.10/engines/results/synthetic-tls-cost-4s-nobin.json",
+   "docs/validation/v0.5.10/engines/results/synthetic-triceratops-smoke.json"
+  ],
+  "docs/validation/v0.5.10/engines/results/exovetter": [
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-124206468.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-124379043.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-142937186.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-146846569.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-153078576.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-161223358.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-172110606.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-18318288.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-219388773.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-220016044.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-259172249.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-295354126.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-299799658.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-301051430.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-356235833.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-365733349.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-372596795.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-401604346.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-419858461.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-452866790.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-46432937.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-467783290.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-47244580.json",
+   "docs/validation/v0.5.10/engines/results/exovetter/TIC-55275863.json"
+  ],
+  "docs/validation/v0.5.10/engines/results/leo": [
+   "docs/validation/v0.5.10/engines/results/leo/TIC-124206468.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-124379043.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-142937186.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-146846569.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-153078576.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-161223358.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-172110606.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-18318288.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-219388773.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-220016044.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-259172249.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-295354126.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-299799658.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-301051430.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-356235833.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-365733349.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-372596795.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-401604346.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-419858461.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-452866790.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-46432937.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-467783290.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-47244580.json",
+   "docs/validation/v0.5.10/engines/results/leo/TIC-55275863.json"
+  ],
+  "docs/validation/v0.5.10/engines/results/tls": [
+   "docs/validation/v0.5.10/engines/results/tls/TIC-124206468.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-124379043.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-142937186.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-146846569.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-153078576.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-161223358.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-172110606.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-18318288.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-219388773.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-220016044.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-259172249.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-295354126.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-299799658.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-301051430.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-356235833.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-365733349.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-372596795.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-401604346.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-419858461.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-452866790.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-46432937.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-467783290.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-47244580.json",
+   "docs/validation/v0.5.10/engines/results/tls/TIC-55275863.json"
+  ],
+  "docs/validation/v0.5.10/engines/results/triceratops": [
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-124206468.json",
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-124379043.json",
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-142937186.json",
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-146846569.json",
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-153078576.json",
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-161223358.json",
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-172110606.json",
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-219388773.json",
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-220016044.json",
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-259172249.json",
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-295354126.json",
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-299799658.json",
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-301051430.json",
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-356235833.json",
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-365733349.json",
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-372596795.json",
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-401604346.json",
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-419858461.json",
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-452866790.json",
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-46432937.json",
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-467783290.json",
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-47244580.json",
+   "docs/validation/v0.5.10/engines/results/triceratops/TIC-55275863.json"
+  ],
+  "docs/validation/v0.5.12/step1": [
+   "docs/validation/v0.5.12/step1/m1-B6.json",
+   "docs/validation/v0.5.12/step1/m1-P2.4.json",
+   "docs/validation/v0.5.12/step1/m1-P9.5.json",
+   "docs/validation/v0.5.12/step1/m1-S9.5.json",
+   "docs/validation/v0.5.12/step1/m1-T2.json",
+   "docs/validation/v0.5.12/step1/m1-T6.json",
+   "docs/validation/v0.5.12/step1/m1-U.json"
+  ],
+  "docs/validation/v0.5.12/step3": [
+   "docs/validation/v0.5.12/step3/f1-result.json"
+  ],
+  "docs/validation/v0.5.12/step4": [
+   "docs/validation/v0.5.12/step4/control-B6.json",
+   "docs/validation/v0.5.12/step4/control-P2.4.json",
+   "docs/validation/v0.5.12/step4/control-P9.5.json",
+   "docs/validation/v0.5.12/step4/control-S9.5.json",
+   "docs/validation/v0.5.12/step4/control-T2.json",
+   "docs/validation/v0.5.12/step4/control-T6.json",
+   "docs/validation/v0.5.12/step4/control-U.json",
+   "docs/validation/v0.5.12/step4/m2-B6.json",
+   "docs/validation/v0.5.12/step4/m2-P2.4.json",
+   "docs/validation/v0.5.12/step4/m2-P9.5.json",
+   "docs/validation/v0.5.12/step4/m2-S9.5.json",
+   "docs/validation/v0.5.12/step4/m2-T2.json",
+   "docs/validation/v0.5.12/step4/m2-T6.json",
+   "docs/validation/v0.5.12/step4/m2-U.json"
+  ],
+  "docs/validation/v0.5.12/step5": [
+   "docs/validation/v0.5.12/step5/ci-evidence-6f83a91.txt",
+   "docs/validation/v0.5.12/step5/ci-wait-45868952282.txt"
+  ],
+  "docs/validation/v0.5.13/d4": [
+   "docs/validation/v0.5.13/d4/check-m45-files.json",
+   "docs/validation/v0.5.13/d4/check-m45-uvlock.json"
+  ],
+  "docs/validation/v0.5.13/d5": [
+   "docs/validation/v0.5.13/d5/testpypi-fetch.json"
+  ],
+  "docs/validation/v0.5.13/e5": [
+   "docs/validation/v0.5.13/e5/testpypi-fetch.json"
+  ],
+  "docs/validation/v0.5.13/f2": [
+   "docs/validation/v0.5.13/f2/check-f2.json"
+  ],
+  "docs/validation/v0.5.13/step0": [
+   "docs/validation/v0.5.13/step0/demo-check.json"
+  ],
+  "docs/validation/v0.5.13/step1": [
+   "docs/validation/v0.5.13/step1/comparison-nr-a1.json",
+   "docs/validation/v0.5.13/step1/diag-golden-diff.json"
+  ],
+  "docs/validation/v0.5.2/archive": [
+   "docs/validation/v0.5.2/archive/archive_v04_cache.py",
+   "docs/validation/v0.5.2/archive/manifest-inputs-archive-check.json",
+   "docs/validation/v0.5.2/archive/manifest-v04-cache-2026-11-08.json"
+  ],
+  "docs/validation/v0.5.2/stage1": [
+   "docs/validation/v0.5.2/stage1/cache-v04-disposition.json",
+   "docs/validation/v0.5.2/stage1/e1-mask.json",
+   "docs/validation/v0.5.2/stage1/e2-matched.json",
+   "docs/validation/v0.5.2/stage1/e3-sinusoid.json",
+   "docs/validation/v0.5.2/stage1/t3b-pool.json",
+   "docs/validation/v0.5.2/stage1/worksheet-probe.json",
+   "docs/validation/v0.5.2/stage1/worksheet-reprice.json",
+   "docs/validation/v0.5.2/stage1/worksheet-sizes.json",
+   "docs/validation/v0.5.2/stage1/worksheet-table.json"
+  ],
+  "docs/validation/v0.5.2/stage2": [
+   "docs/validation/v0.5.2/stage2/adequacy-diagnosis.json",
+   "docs/validation/v0.5.2/stage2/adequacy-result-aa037e23d0e2d011.json",
+   "docs/validation/v0.5.2/stage2/compat-v3.json",
+   "docs/validation/v0.5.2/stage2/fast-equivalence-r1.json",
+   "docs/validation/v0.5.2/stage2/fast-equivalence-r2.json",
+   "docs/validation/v0.5.2/stage2/fast-equivalence.json",
+   "docs/validation/v0.5.2/stage2/fast-identity.json",
+   "docs/validation/v0.5.2/stage2/fetch_t10k.py",
+   "docs/validation/v0.5.2/stage2/forecast-t2a-diagnosis-reading.json",
+   "docs/validation/v0.5.2/stage2/forecast-t2a-diagnosis.json",
+   "docs/validation/v0.5.2/stage2/forecast-t2a-paths.json",
+   "docs/validation/v0.5.2/stage2/forecast-t2a.json",
+   "docs/validation/v0.5.2/stage2/forecast-v4-diagnosis.json",
+   "docs/validation/v0.5.2/stage2/forecast-v4-losses.json",
+   "docs/validation/v0.5.2/stage2/forecast-v4-paths-r2.json",
+   "docs/validation/v0.5.2/stage2/forecast-v4-paths.json",
+   "docs/validation/v0.5.2/stage2/forecast-v4.json",
+   "docs/validation/v0.5.2/stage2/obsnotes-fetch.json",
+   "docs/validation/v0.5.2/stage2/plasmode-diag.json",
+   "docs/validation/v0.5.2/stage2/plasmode-evaluate-9000.json",
+   "docs/validation/v0.5.2/stage2/plasmode-member.json",
+   "docs/validation/v0.5.2/stage2/plasmode-sources.json",
+   "docs/validation/v0.5.2/stage2/probe-a0v4-cost.json",
+   "docs/validation/v0.5.2/stage2/probe-other-costs.json",
+   "docs/validation/v0.5.2/stage2/probe-workers-12-22-64.json",
+   "docs/validation/v0.5.2/stage2/probe-workers-12-22.json",
+   "docs/validation/v0.5.2/stage2/probe-workers.json",
+   "docs/validation/v0.5.2/stage2/projection.json",
+   "docs/validation/v0.5.2/stage2/sizing-v4.json",
+   "docs/validation/v0.5.2/stage2/sizing.json",
+   "docs/validation/v0.5.2/stage2/sizing.py",
+   "docs/validation/v0.5.2/stage2/t10k-disposition.json",
+   "docs/validation/v0.5.2/stage2/t10k-fetch.json",
+   "docs/validation/v0.5.2/stage2/t2a-fetch.json",
+   "docs/validation/v0.5.2/stage2/t3b-alternatives-r2.json",
+   "docs/validation/v0.5.2/stage2/t3b-alternatives.json",
+   "docs/validation/v0.5.2/stage2/t3b-inventory-r2.json",
+   "docs/validation/v0.5.2/stage2/t3b-inventory.json",
+   "docs/validation/v0.5.2/stage2/t3b-proxy-diagnosis.json",
+   "docs/validation/v0.5.2/stage2/toi-fetch.json",
+   "docs/validation/v0.5.2/stage2/topology.json"
+  ],
+  "docs/validation/v0.5.3/stageA": [
+   "docs/validation/v0.5.3/stageA/a0-refusals.json",
+   "docs/validation/v0.5.3/stageA/d1-geometry.json",
+   "docs/validation/v0.5.3/stageA/d2-bounds.json",
+   "docs/validation/v0.5.3/stageA/t2a-bounds.json"
+  ],
+  "docs/validation/v0.5.3/stageB": [
+   "docs/validation/v0.5.3/stageB/b1-fetch-e4-null.json",
+   "docs/validation/v0.5.3/stageB/b1-forecast.json",
+   "docs/validation/v0.5.3/stageB/b1-recal.json",
+   "docs/validation/v0.5.3/stageB/b1-screen.json",
+   "docs/validation/v0.5.3/stageB/b1-smoke-above20.json",
+   "docs/validation/v0.5.3/stageB/b1-smoke-d2.json",
+   "docs/validation/v0.5.3/stageB/b1-smoke-t2a.json",
+   "docs/validation/v0.5.3/stageB/d1-bound.json",
+   "docs/validation/v0.5.3/stageB/d1-infeasibility.json"
+  ],
+  "docs/validation/v0.5.4/restart-test": [
+   "docs/validation/v0.5.4/restart-test/after_restart.json",
+   "docs/validation/v0.5.4/restart-test/final.json",
+   "docs/validation/v0.5.4/restart-test/identity.json",
+   "docs/validation/v0.5.4/restart-test/post.json",
+   "docs/validation/v0.5.4/restart-test/pre.json",
+   "docs/validation/v0.5.4/restart-test/watch.json"
+  ],
+  "docs/validation/v0.5.7": [
+   "docs/validation/v0.5.7/seeded-pilot.json"
+  ],
+  "docs/validation/v0.5.8/zenodo": [
+   "docs/validation/v0.5.8/zenodo/draft.json",
+   "docs/validation/v0.5.8/zenodo/zenodo-v2-draft.log"
+  ]
+ },
+ "all_ok": false
+}
