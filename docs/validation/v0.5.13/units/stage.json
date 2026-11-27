@@ -1,0 +1,18 @@
+{
+ "name": "stage",
+ "question": "Stage named paths for the next commit (git add -- <paths>), metered.",
+ "choices": "Extra arguments: the literal paths. Offline. A tree unit; it emits no case value.",
+ "argv": [
+  "git",
+  "add",
+  "--"
+ ],
+ "identity": [],
+ "key": "tree",
+ "reserve": {
+  "cpu_s": 60,
+  "disk_bytes": 50000000
+ },
+ "network": false,
+ "retry_class": "infra"
+}

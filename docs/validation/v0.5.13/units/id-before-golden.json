@@ -1,0 +1,28 @@
+{
+ "name": "id-before-golden",
+ "question": "ID-BEFORE, part 1 (charter, step 0, Codex r2 item 3): the golden record of versions 1 to 4 on the synthetic fixtures at the approval state, at the inherited default thread settings. Identity verification, run once.",
+ "choices": "identity.py golden before; outputs under .cache/v0513/golden/before/; record copied to step0/golden-before.json. Named unit, not a retry class.",
+ "argv": [
+  "{python}",
+  "-I",
+  "-B",
+  "docs/validation/v0.5.13/tools/identity.py",
+  "golden",
+  "before"
+ ],
+ "identity": [
+  "docs/validation/v0.5.13/tools/identity.py",
+  "tests/baseline_code_v0511.py"
+ ],
+ "key": "data",
+ "reserve": {
+  "cpu_s": 1500,
+  "disk_bytes": 200000000
+ },
+ "network": false,
+ "emits_case_values": true,
+ "order_proof": "docs/validation/v0.5.13/manifests/id-before.json",
+ "outputs": {
+  "golden-before.json": "docs/validation/v0.5.13/step0/golden-before.json"
+ }
+}

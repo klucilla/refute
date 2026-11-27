@@ -73,17 +73,27 @@ how later work is done.
 
 ## Current phase
 
-**No phase is open.** The next phase is the maintainer's to open: v0.5.13 is proposed only
-([docs/plans/v0.5.13-proposal.md](docs/plans/v0.5.13-proposal.md)).
+**v0.5.13 Battery version 5: calibration on development data is open,** since
+2026-11-27T00:13:24Z.
+- **The opening.** It opened with the record of the maintainer's approval (#218, comment
+  7206278853) of the charter at `04402e7a`:
+  [docs/plans/v0.5.13-charter.md](docs/plans/v0.5.13-charter.md), SHA-256 `2832dc48…c230c813`.
+  The decision is comment 7204660147, item 5.
+- **The time box** runs to 2026-12-04T00:13:24Z.
+- **The scope.** This phase is the charter's Part A: the preconditions #226, #227 and #224, the
+  reason map, and the meter of #228. Part B (v0.5.14) needs its own charter.
+- **Amendment 1 is proposed, not approved:**
+  [docs/plans/v0.5.13-charter-amendment-1.md](docs/plans/v0.5.13-charter-amendment-1.md).
+- **Records:** `docs/validation/v0.5.13/`.
+- **Labels:** `exploratory`, `method_status: not_validated`.
 
 ## Proposals
 
 Documents only: none is adopted, and none opens a phase.
 
-- **v0.5.13 Battery version 5: calibration on development data.** The proposal:
-  [docs/plans/v0.5.13-proposal.md](docs/plans/v0.5.13-proposal.md). The charter, a draft not
-  approved: [docs/plans/v0.5.13-charter.md](docs/plans/v0.5.13-charter.md) (#218, comment
-  7203695669, item B1). The phase opens only when the maintainer approves a charter.
+- **v0.5.13** is no longer a proposal: its charter is approved, and the phase is open (above). The
+  earlier proposal stays as a record:
+  [docs/plans/v0.5.13-proposal.md](docs/plans/v0.5.13-proposal.md).
 - **Two lanes, engineering and confirmatory:**
   [docs/plans/two-lanes-proposal.md](docs/plans/two-lanes-proposal.md) (item A5a). It would
   change rules, so it needs a blind review before it could hold.

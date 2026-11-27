@@ -1,0 +1,24 @@
+{
+ "name": "demo-check",
+ "question": "The check of the meter's demonstration: it reads the journal and passes only if descendant CPU, a created-and-deleted file, a file retained across units and measured inbound bytes all show.",
+ "choices": "docs/validation/v0.5.13/tools/demo_check.py; record copied to step0/demo-check.json. Reads the journal only.",
+ "argv": [
+  "{python}",
+  "-I",
+  "-B",
+  "docs/validation/v0.5.13/tools/demo_check.py"
+ ],
+ "identity": [
+  "docs/validation/v0.5.13/tools/demo_check.py"
+ ],
+ "key": "tree",
+ "reserve": {
+  "cpu_s": 60,
+  "disk_bytes": 10000000
+ },
+ "network": false,
+ "retry_class": "checker",
+ "outputs": {
+  "demo-check.json": "docs/validation/v0.5.13/step0/demo-check.json"
+ }
+}

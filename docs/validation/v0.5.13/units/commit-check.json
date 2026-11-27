@@ -1,0 +1,20 @@
+{
+ "name": "commit-check",
+ "question": "Commit the staged changes through scripts/commit_checked.py (privacy check, ruff on staged Python files), metered.",
+ "choices": "Extra arguments: -F and the message file. Offline. A tree unit: the same staged state is the same unit; a refused commit emits no case value (retry class checker).",
+ "argv": [
+  "{python}",
+  "-B",
+  "scripts/commit_checked.py"
+ ],
+ "identity": [
+  "scripts/commit_checked.py"
+ ],
+ "key": "tree",
+ "reserve": {
+  "cpu_s": 300,
+  "disk_bytes": 100000000
+ },
+ "network": false,
+ "retry_class": "checker"
+}

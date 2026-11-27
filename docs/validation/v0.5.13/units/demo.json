@@ -1,0 +1,21 @@
+{
+ "name": "demo",
+ "question": "The meter's demonstration (charter, section 8, before using the meter): descendant CPU, a file created and deleted in a unit, a file retained across units.",
+ "choices": "docs/validation/v0.5.13/tools/demo.py <mode>: cpu-child, create-delete, retain-write, retain-check. Harmless fixtures, no case value. A data unit: the mode makes the unit.",
+ "argv": [
+  "{python}",
+  "-I",
+  "-B",
+  "docs/validation/v0.5.13/tools/demo.py"
+ ],
+ "identity": [
+  "docs/validation/v0.5.13/tools/demo.py"
+ ],
+ "key": "data",
+ "reserve": {
+  "cpu_s": 120,
+  "disk_bytes": 150000000
+ },
+ "network": false,
+ "retry_class": "infra"
+}

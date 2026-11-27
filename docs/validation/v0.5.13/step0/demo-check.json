@@ -1,0 +1,7 @@
+{
+ "cpu_child": true,
+ "create_delete": true,
+ "retained_across_units": true,
+ "transfer_bytes": true,
+ "passed": true
+}

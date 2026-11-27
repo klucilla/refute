@@ -1,0 +1,30 @@
+{
+ "name": "codex",
+ "question": "One Codex round on one closed question, read-only, through .cache/v04/tools/codex_affinity.ps1 (processors 8 to 31).",
+ "choices": "Extra arguments: the wrapper's path and -Prompt, -Answer, -Events, optional -Thread. Reviewer traffic; the tokens are reported apart (a resumed thread reports cumulative usage).",
+ "argv": [
+  "powershell",
+  "-NoProfile",
+  "-ExecutionPolicy",
+  "Bypass",
+  "-File"
+ ],
+ "identity": [],
+ "key": "data",
+ "reserve": {
+  "cpu_s": 900,
+  "disk_bytes": 500000000
+ },
+ "timeout_s": 3600,
+ "network": {
+  "kind": "review",
+  "endpoints": [
+   "the Codex CLI's service endpoints"
+  ],
+  "operations": [
+   "codex exec (read-only sandbox), one round"
+  ],
+  "inbound_estimate_bytes": 50000000
+ },
+ "retry_class": "infra"
+}

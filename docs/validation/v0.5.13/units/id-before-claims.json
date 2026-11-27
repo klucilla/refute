@@ -1,0 +1,27 @@
+{
+ "name": "id-before-claims",
+ "question": "ID-BEFORE, part 2: the resolved hash of every committed claim at the approval state. Identity verification, run once.",
+ "choices": "identity.py claims before; record copied to step0/claim-hashes-before.json. Named unit.",
+ "argv": [
+  "{python}",
+  "-I",
+  "-B",
+  "docs/validation/v0.5.13/tools/identity.py",
+  "claims",
+  "before"
+ ],
+ "identity": [
+  "docs/validation/v0.5.13/tools/identity.py"
+ ],
+ "key": "data",
+ "reserve": {
+  "cpu_s": 120,
+  "disk_bytes": 20000000
+ },
+ "network": false,
+ "emits_case_values": true,
+ "order_proof": "docs/validation/v0.5.13/manifests/id-before.json",
+ "outputs": {
+  "claim-hashes-before.json": "docs/validation/v0.5.13/step0/claim-hashes-before.json"
+ }
+}

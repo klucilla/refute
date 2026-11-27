@@ -1,0 +1,32 @@
+{
+ "name": "demo-net",
+ "question": "The meter's demonstration of transfer byte accounting: one public GitHub API read whose response bytes the unit measures.",
+ "choices": "docs/validation/v0.5.13/tools/demo.py net-bytes; the measured inbound bytes go to out/transfer.json.",
+ "argv": [
+  "{python}",
+  "-I",
+  "-B",
+  "docs/validation/v0.5.13/tools/demo.py",
+  "net-bytes"
+ ],
+ "identity": [
+  "docs/validation/v0.5.13/tools/demo.py"
+ ],
+ "key": "data",
+ "reserve": {
+  "cpu_s": 60,
+  "disk_bytes": 10000000
+ },
+ "network": {
+  "kind": "github",
+  "endpoints": [
+   "api.github.com:443",
+   "github.com:443"
+  ],
+  "inbound_estimate_bytes": 2000000,
+  "operations": [
+   "gh api GET repos/klucilla/refute/commits/main"
+  ]
+ },
+ "retry_class": "infra"
+}

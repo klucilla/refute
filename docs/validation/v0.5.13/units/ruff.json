@@ -1,0 +1,16 @@
+{
+ "name": "ruff",
+ "question": "ruff (check or format) on named files, metered.",
+ "choices": "Extra arguments: the ruff subcommand, options and paths. Offline. It formats or checks files and runs no case.",
+ "argv": [
+  ".venv/Scripts/ruff.exe"
+ ],
+ "identity": [],
+ "key": "tree",
+ "reserve": {
+  "cpu_s": 120,
+  "disk_bytes": 20000000
+ },
+ "network": false,
+ "retry_class": "formatter"
+}

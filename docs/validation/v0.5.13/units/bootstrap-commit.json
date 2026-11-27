@@ -1,0 +1,20 @@
+{
+ "name": "bootstrap-commit",
+ "question": "The phase's first unit (charter, step 0): commit the meter, its unit specs, the ID-BEFORE manifest and the phase record (ROADMAP's current phase) through scripts/commit_checked.py, metered, with the identity files hashed from the working tree (--bootstrap).",
+ "choices": "Extra arguments: -F and the message file. Offline. A tree unit.",
+ "argv": [
+  "{python}",
+  "-B",
+  "scripts/commit_checked.py"
+ ],
+ "identity": [
+  "scripts/commit_checked.py"
+ ],
+ "key": "tree",
+ "reserve": {
+  "cpu_s": 300,
+  "disk_bytes": 100000000
+ },
+ "network": false,
+ "retry_class": "checker"
+}

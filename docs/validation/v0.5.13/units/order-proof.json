@@ -1,0 +1,31 @@
+{
+ "name": "order-proof",
+ "question": "The order-proof check of a pushed manifest (charter, section 8): writes the receipt the launcher requires before a draw, probe or measurement batch.",
+ "choices": "docs/validation/v0.5.13/tools/order_proof.py <manifest>; GitHub reads only; it measures its own inbound bytes as an upper estimate.",
+ "argv": [
+  "{python}",
+  "-I",
+  "-B",
+  "docs/validation/v0.5.13/tools/order_proof.py"
+ ],
+ "identity": [
+  "docs/validation/v0.5.13/tools/order_proof.py"
+ ],
+ "key": "data",
+ "reserve": {
+  "cpu_s": 60,
+  "disk_bytes": 10000000
+ },
+ "network": {
+  "kind": "github",
+  "endpoints": [
+   "api.github.com:443",
+   "github.com:443"
+  ],
+  "inbound_estimate_bytes": 2000000,
+  "operations": [
+   "gh api GET actions runs and jobs"
+  ]
+ },
+ "retry_class": "checker"
+}

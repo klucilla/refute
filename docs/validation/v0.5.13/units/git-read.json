@@ -1,0 +1,21 @@
+{
+ "name": "git-read",
+ "question": "One read-only git command (rev-parse, status, diff, log, show, ls-files, ls-tree, merge-base, cat-file, branch --show-current), metered.",
+ "choices": "docs/validation/v0.5.13/tools/git_read.py refuses any other subcommand. Offline. It emits no case value.",
+ "argv": [
+  "{python}",
+  "-I",
+  "-B",
+  "docs/validation/v0.5.13/tools/git_read.py"
+ ],
+ "identity": [
+  "docs/validation/v0.5.13/tools/git_read.py"
+ ],
+ "key": "tree",
+ "reserve": {
+  "cpu_s": 60,
+  "disk_bytes": 10000000
+ },
+ "network": false,
+ "retry_class": "checker"
+}

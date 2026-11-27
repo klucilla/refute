@@ -1,0 +1,30 @@
+{
+ "name": "gh",
+ "question": "One GitHub operation through gh: an issue comment on #218, a read of runs or comments, a read of a PR, or the workflow_dispatch of ci.yml on main.",
+ "choices": "The arguments make the unit. Inbound bytes charged at the declared conservative estimate. Never: approving or rejecting a deployment, environments, protections, secrets or pending publishers.",
+ "argv": [
+  "gh"
+ ],
+ "identity": [],
+ "key": "data",
+ "reserve": {
+  "cpu_s": 60,
+  "disk_bytes": 10000000
+ },
+ "network": {
+  "kind": "github",
+  "endpoints": [
+   "api.github.com:443",
+   "github.com:443"
+  ],
+  "inbound_estimate_bytes": 2000000,
+  "operations": [
+   "gh issue comment 218",
+   "gh run list/view",
+   "gh api GET",
+   "gh pr view",
+   "gh workflow run ci.yml --ref main"
+  ]
+ },
+ "retry_class": "infra"
+}

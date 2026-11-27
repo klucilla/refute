@@ -1,0 +1,26 @@
+{
+ "name": "id-before-tags",
+ "question": "ID-BEFORE, part 3: scripts/verify_locked_tags.py on the ten locked tags, in the warm environments under .cache/lock-compat, offline. Identity verification, run once.",
+ "choices": "Extra arguments: --out .cache/v0513/tags/before. The lock-compat growth is charged. Named unit.",
+ "argv": [
+  "{python}",
+  "-I",
+  "-B",
+  "scripts/verify_locked_tags.py",
+  "--out",
+  ".cache/v0513/tags/before"
+ ],
+ "identity": [
+  "scripts/verify_locked_tags.py"
+ ],
+ "key": "data",
+ "reserve": {
+  "cpu_s": 600,
+  "disk_bytes": 400000000
+ },
+ "network": false,
+ "emits_case_values": true,
+ "lock_compat_scan": true,
+ "timeout_s": 3000,
+ "order_proof": "docs/validation/v0.5.13/manifests/id-before.json"
+}

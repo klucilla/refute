@@ -1,0 +1,29 @@
+{
+ "name": "push",
+ "question": "Push main to GitHub (one push per batch, or one order-proof push), a named GitHub operation.",
+ "choices": "git push origin main; inbound bytes charged at the declared conservative estimate. A tree unit.",
+ "argv": [
+  "git",
+  "push",
+  "origin",
+  "main"
+ ],
+ "identity": [],
+ "key": "tree",
+ "reserve": {
+  "cpu_s": 60,
+  "disk_bytes": 10000000
+ },
+ "network": {
+  "kind": "github",
+  "endpoints": [
+   "api.github.com:443",
+   "github.com:443"
+  ],
+  "inbound_estimate_bytes": 2000000,
+  "operations": [
+   "git push origin main"
+  ]
+ },
+ "retry_class": "infra"
+}
