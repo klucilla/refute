@@ -1,0 +1,478 @@
+{
+ "labels": [
+  "exploratory",
+  "method_status: not_validated"
+ ],
+ "json": {
+  "verdict": {
+   "measurement": [
+    "candidate.**",
+    "global_ephemeris.**",
+    "key_values.**",
+    "period_comparison.relative_error",
+    "period_comparison.found_period_days",
+    "tests[*].metrics.**",
+    "tests[*].inputs.**",
+    "tests[*].sensitivity.**",
+    "holdout_rounds[*].**",
+    "search_diagnostics.**",
+    "v05.**",
+    "v051.**",
+    "temporal_diagnostic.**"
+   ],
+   "exact": [
+    "test_plan.**",
+    "tests[*].thresholds.**",
+    "data_summary.**",
+    "published.**",
+    "provenance.**",
+    "search_diagnostics.refined[*].factor",
+    "tests[*].metrics.near_systematic_periods_days[*]",
+    "tests[*].inputs.**",
+    "tests[*].metrics.target_tmag",
+    "tests[*].metrics.median_crowdsap",
+    "tests[*].metrics.stellar_mass_msun",
+    "tests[*].metrics.neighbors_within_radius[*].tmag",
+    "tests[*].metrics.neighbors_within_radius[*].separation_arcsec",
+    "tests[*].metrics.viable_neighbors[*].tmag",
+    "tests[*].metrics.viable_neighbors[*].separation_arcsec",
+    "**.detrend_window_days",
+    "**.hidden_detrend_window_days"
+   ]
+  },
+  "chain": {
+   "measurement": [
+    "candidate.**"
+   ],
+   "exact": []
+  }
+ },
+ "report": [
+  {
+   "name": "period-row",
+   "source": "report.py:217-218",
+   "regex": "\\| Period \\(d\\) \\| (?P<found>[^|]+) \\| (?P<published>[^|]+) \\|",
+   "groups": {
+    "found": "measurement",
+    "published": "exact"
+   }
+  },
+  {
+   "name": "epoch-row",
+   "source": "report.py:209-213",
+   "regex": "\\| Epoch \\(BJD_TDB\\) \\| (?P<found>[^|]+) \\| (?P<published>[^|]+) \\|",
+   "groups": {
+    "found": "measurement",
+    "published": "exact"
+   }
+  },
+  {
+   "name": "duration-row",
+   "source": "report.py:220-221",
+   "regex": "\\| Duration \\(h\\) \\| (?P<found>[^|]+) \\| (?P<published>[^|]+) \\|",
+   "groups": {
+    "found": "measurement",
+    "published": "exact"
+   }
+  },
+  {
+   "name": "depth-row",
+   "source": "report.py:222-223",
+   "regex": "\\| Depth \\(ppm\\) \\| (?P<found>[^|]+) \\| (?P<published>[^|]+) \\|",
+   "groups": {
+    "found": "measurement",
+    "published": "exact"
+   }
+  },
+  {
+   "name": "snr-row",
+   "source": "report.py:224",
+   "regex": "\\| SNR \\| (?P<found>[^|]+) \\| \\|",
+   "groups": {
+    "found": "measurement"
+   }
+  },
+  {
+   "name": "relative-period-error",
+   "source": "report.py:226-229",
+   "regex": "- Relative period error: (?P<rel>\\S+) \\(tolerance (?P<tol>\\S+), within: (?P<within>\\S+), alias: (?P<alias>.*)\\)",
+   "groups": {
+    "rel": "measurement",
+    "tol": "exact",
+    "within": "exact",
+    "alias": "exact"
+   }
+  },
+  {
+   "name": "sde-line",
+   "source": "report.py:137-138",
+   "regex": "- SDE: (?P<note>.*)\\. SDE of the kept peak \\(largest over sectors\\): (?P<sde>\\S+)\\.",
+   "groups": {
+    "note": "exact",
+    "sde": "measurement"
+   }
+  },
+  {
+   "name": "parameters-line",
+   "source": "report.py:146-148",
+   "regex": "- Period (?P<period>\\S+) d \\(error (?P<period_err>\\S+)\\) and epoch (?P<epoch>\\S+) BJD_TDB \\(error (?P<epoch_err>\\S+)\\), from: (?P<source>.*)\\.",
+   "groups": {
+    "period": "measurement",
+    "period_err": "measurement",
+    "epoch": "measurement",
+    "epoch_err": "measurement",
+    "source": "exact"
+   },
+   "group_markers": {
+    "period_err": [
+     "None",
+     "nan",
+     "inf",
+     "-inf"
+    ],
+    "epoch_err": [
+     "None",
+     "nan",
+     "inf",
+     "-inf"
+    ],
+    "period": [
+     "nan",
+     "inf",
+     "-inf"
+    ],
+    "epoch": [
+     "n/a",
+     "nan",
+     "inf",
+     "-inf"
+    ]
+   },
+   "note": "report.py:146-148 prints the period and the errors with !r (None when the BLS fallback leaves the errors absent, pipeline.py:833-840) and the epoch with _bjd (n/a or repr)"
+  },
+  {
+   "name": "cadence-row",
+   "source": "report.py:156-159",
+   "regex": "\\| (?P<sector>[0-9]+) \\| (?P<used>[^|]+) \\| (?P<in_span>[^|]+) \\| (?P<fraction>[^|]+) \\|",
+   "note": "Codex's round 2, item 3: the row is recognized by its structure (a numeric first cell and four cells), so a malformed fraction is validated and fails",
+   "groups": {
+    "sector": "exact",
+    "used": "exact",
+    "in_span": "exact",
+    "fraction": "measurement"
+   }
+  },
+  {
+   "name": "holdout-row",
+   "source": "report.py:282-285",
+   "regex": "\\| (?P<year>[0-9]+) \\| (?P<status>[A-Z_]+) \\| (?P<windows>[^|]+) \\| (?P<hidden_snr>[^|]+) \\| (?P<control_snr>[^|]+) \\|",
+   "groups": {
+    "year": "exact",
+    "status": "exact",
+    "windows": "exact",
+    "hidden_snr": "measurement",
+    "control_snr": "measurement"
+   }
+  },
+  {
+   "name": "holdout-v05-row",
+   "source": "report.py:296-299",
+   "regex": "\\| (?P<year>[0-9]+) \\| (?P<matches>yes|no|n/a) \\| (?P<sigma>[^|]+) \\|",
+   "groups": {
+    "year": "exact",
+    "matches": "exact",
+    "sigma": "measurement"
+   }
+  },
+  {
+   "name": "gauntlet-row",
+   "source": "report.py:240-248",
+   "exact_line": true,
+   "regex": "\\| (?P<test>[a-z][a-z_0-9]*) \\| (?P<status>[A-Z_]+(?: \\([a-z_]+\\))?) \\| (?P<severity>[a-z]+) \\| (?P<message>.*) \\|",
+   "groups": {
+    "test": "exact",
+    "status": "exact",
+    "severity": "exact",
+    "message": "exact"
+   }
+  }
+ ],
+ "exact_keys": [
+  "aggregation",
+  "alias_f",
+  "alias_z_f",
+  "alpha",
+  "aperture_alternative_ratio_increment",
+  "aperture_depth",
+  "attempt",
+  "attenuation_fraction",
+  "attenuation_sigmas",
+  "author",
+  "b_min",
+  "background_alternative_increment",
+  "baseline_gap_durations",
+  "baseline_outer_durations",
+  "bin_minutes",
+  "block_gap_days",
+  "brightening_min_depth_ratio",
+  "capacity_b",
+  "capacity_s",
+  "catalog",
+  "centroid_alternative_offset_factor",
+  "centroid_control_epochs",
+  "centroid_max_unqualified_fraction",
+  "centroid_min_controls",
+  "centroid_min_sectors",
+  "centroid_qualification_sigma",
+  "centroid_shift",
+  "chi2_alpha",
+  "clip_iterations",
+  "clip_sigma",
+  "cluster_tolerance",
+  "control_epochs",
+  "core_radius_pixels",
+  "corrections",
+  "data",
+  "decisive",
+  "depth_stability_alternative_fraction",
+  "dest",
+  "detrend",
+  "detrend_window_periods",
+  "diagnostic",
+  "dilation_pixels",
+  "discovery",
+  "dump_margin_hours",
+  "durations_hours",
+  "eb_catalog",
+  "edge_alternative_depth_fraction",
+  "edge_gap_days",
+  "edge_min_fraction",
+  "edge_reach_durations",
+  "enabled",
+  "entry",
+  "events",
+  "expected_false_positives",
+  "expected_planets",
+  "exptime_seconds",
+  "extra_frequencies",
+  "extra_min_snr",
+  "fap_max",
+  "fatal_depth_ratio",
+  "final_duration_steps",
+  "final_oversample",
+  "flag_excluded_tests",
+  "flag_requires_signal_recovery",
+  "flag_signal_period_factors",
+  "flux_column",
+  "fp_reason",
+  "frequency_factor",
+  "gap_days",
+  "gap_split",
+  "gauntlet",
+  "generated_utc",
+  "generator",
+  "h_min",
+  "harmonic_max_period_days",
+  "heterogeneity_alpha",
+  "hidden_detrend_window_factor",
+  "holdout_by_year",
+  "ignored_dispositions",
+  "inconclusive_class",
+  "inconclusive_detail",
+  "inputs",
+  "k_clip",
+  "key",
+  "kind",
+  "knot_spacing_days",
+  "m4",
+  "m_beta",
+  "mask_durations",
+  "mast",
+  "match_radius_arcsec",
+  "max_background_fraction",
+  "max_background_sigma",
+  "max_clusters",
+  "max_companion_radius_rjup",
+  "max_components",
+  "max_dump_fraction",
+  "max_duration_ratio",
+  "max_duty_cycle",
+  "max_eclipse_depth",
+  "max_hidden_window_fraction",
+  "max_period_days",
+  "max_ratio",
+  "max_refuted_planets",
+  "max_sap_rel_diff",
+  "max_sap_sigma",
+  "max_sector",
+  "max_separation_arcsec",
+  "max_sigma",
+  "max_stellar_radius_rel_err",
+  "max_timing_sigma_durations",
+  "max_tmag_mismatch",
+  "max_train_duration_period_ratio",
+  "max_unqualified_fraction",
+  "method",
+  "method_status",
+  "method_status_reference",
+  "min_amplitude_ratio",
+  "min_box_delta_bic",
+  "min_controls",
+  "min_coverage",
+  "min_crowdsap",
+  "min_depth_ratio",
+  "min_events",
+  "min_events_for_dumps",
+  "min_flagged_false_positives",
+  "min_fraction",
+  "min_measured_events",
+  "min_offset_pixels",
+  "min_points_per_knot",
+  "min_predicted_transits",
+  "min_recovered_planets",
+  "min_sectors",
+  "min_significance",
+  "min_snr",
+  "min_train_transits",
+  "min_transits_each",
+  "min_valid_placements",
+  "min_window_coverage",
+  "mission",
+  "name",
+  "nearby_contamination",
+  "neighbor_radius_arcsec",
+  "notes",
+  "objective",
+  "odd_even",
+  "odd_even_alternative_depth_fraction",
+  "peaks_per_sector",
+  "period_alias",
+  "period_alias_harmonics",
+  "period_alias_realizations",
+  "period_alias_required_failures",
+  "period_alias_required_lower_bound",
+  "period_err_days",
+  "period_factors",
+  "period_max_days",
+  "period_min_days",
+  "period_tolerance",
+  "placements",
+  "plausibility",
+  "published",
+  "qualification_sigma",
+  "quality_bitmask",
+  "r_min",
+  "reach_durations",
+  "reference",
+  "refine_samples_per_width",
+  "refine_width_factor",
+  "reproduction",
+  "require_valid_train",
+  "required_diagnostics",
+  "retrieved_utc",
+  "same_photometry_catalogs",
+  "sap_alternative_increment",
+  "schema_id",
+  "search",
+  "secondary_alternative_depth_fraction",
+  "secondary_eclipse",
+  "segment_gap_days",
+  "selection",
+  "selector_certified",
+  "sha256",
+  "shape_alternative_ingress_fraction",
+  "shape_max_ingress_fraction",
+  "sine_harmonics",
+  "single_event_max_ratio",
+  "sinusoid_extra_frequencies",
+  "sinusoid_extra_min_snr",
+  "sinusoid_fail_allowed",
+  "sinusoid_harmonic_max_period_days",
+  "sinusoid_mask_durations",
+  "sinusoid_max_period_days",
+  "sinusoid_min_amplitude_ratio",
+  "sinusoid_min_significance",
+  "source",
+  "stages",
+  "stronger",
+  "survived_meaning",
+  "systematic_periods_days",
+  "systematic_tolerance",
+  "systematics",
+  "target_pixel_files",
+  "targets",
+  "tic_id",
+  "timing_scan_half_width_durations",
+  "timing_sigma",
+  "timing_step_minutes",
+  "tmax_draws",
+  "transit_mask_half_width_durations",
+  "unreliable_tic_dispositions",
+  "upper_clip_sigma",
+  "url",
+  "v051",
+  "v052",
+  "version",
+  "window_days"
+ ],
+ "exact_subtree_keys": [
+  "attenuation_fraction",
+  "attenuation_sigmas",
+  "m4",
+  "max_sigma",
+  "min_events",
+  "min_valid_placements",
+  "thresholds",
+  "thresholds_m4",
+  "tmax_draws"
+ ],
+ "exact_key_regex": "^(required_|min_|max_)|(_threshold|_limit)$",
+ "computed_keys_despite_name": {
+  "max_duration_hours": "src/refute/packs/tess/gauntlet.py:292, the circular-orbit maximum duration from the measured period and the star",
+  "max_event_snr": "src/refute/packs/tess/battery_v5.py:164, the largest per-event SNR",
+  "max_timing_sigma_days": "src/refute/packs/tess/holdout.py:1083, 1096, 1112 and 1187, the train-only timing uncertainty",
+  "required_eclipse_depth": "src/refute/packs/tess/battery.py:493-498, the depth a neighbour would need, from the measured depth and the magnitudes"
+ },
+ "exact_key_exempt_paths": [
+  "v05.parameters.period_err_days"
+ ],
+ "exact_by_sibling": [
+  {
+   "pattern": "tests[*].sensitivity.*.alternative",
+   "sibling": "effect",
+   "values": [
+    "large-to-core depth ratio",
+    "SAP relative depth difference",
+    "background rise in transit"
+   ],
+   "source": "src/refute/packs/tess/power.py:119, 178, 206 and battery_v51_diff.py:311, 623, 651: the alternative is a plan value plus a plan increment"
+  }
+ ],
+ "message_lines": {
+  "decision": "Decision S2 (#218 comment 7227283917): every message is compared byte for byte, with no tolerance; a changed message is a failure. This is not a rule change: section 3.1 compares every JSON string, and every byte outside a mapped span, exactly.",
+  "json": [
+   "tests[*].message",
+   "holdout_rounds[*].message",
+   "verdict_reason",
+   "data_quality_warnings[*]",
+   "error",
+   "temporal_diagnostic.message",
+   "temporal_diagnostic.per_year[*].reason",
+   "temporal_diagnostic.inability_reasons[*].reason"
+  ],
+  "chain": [
+   "verdict_reason",
+   "stage_verdict_reason"
+  ],
+  "sources": "pipeline.py:763-779 (temporal_diagnostic), discover/measure.py:72-84 (chain), pipeline.py:1025 and 1045, holdout.py:188, gauntlet and battery TestResult messages",
+  "report": [
+   "gauntlet-row (an exact_line template: every group exact)",
+   "the verdict line (no template: exact)",
+   "the data-quality warnings (no template: exact)",
+   "the error block (no template: exact)"
+  ]
+ },
+ "claim_exceptions": {
+  "calibration/v0.5/deviation/claim.generated.yaml": "ERROR ClaimError: invalid claim: targets attachment not found: selection/targets.yaml"
+ }
+}
