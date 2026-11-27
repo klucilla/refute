@@ -1,0 +1,587 @@
+# v0.5.13 Battery version 5: calibration on development data: charter (draft)
+
+> **DRAFT, not approved; the phase is not open.** Written on 2026-11-26 on the maintainer's
+> decision (#218, comment 7203695669, item B1). The phase opens only when the maintainer approves a
+> charter in #218, citing its commit SHA (Process diet 2, item 1). The time box starts then. Nothing
+> below starts before that approval.
+>
+> **Revision r3, the text Codex found `APPROVABLE`** (round 3, at `e66bd22`, with one editorial
+> cleanup applied as it wrote it, which it said needs no further review). Rounds 1 and 2 were
+> `NOT_APPROVABLE` (seven blocking items, then six integration defects). Each item's replacement
+> wording is applied where it belongs, quoted as written and marked "Codex r1, item N", "Codex r2,
+> item N" or "Codex r3". **Codex's verdict is an opinion on the text, not an approval:** approving
+> the charter and opening the phase are the maintainer's.
+> Where Codex and the first draft diverged, the more conservative option was taken (item B2). The
+> rounds are recorded in [v0.5.13-consensus/](v0.5.13-consensus/README.md).
+>
+> **Sources:** [the v0.5.13 proposal](v0.5.13-proposal.md) (preconditions #224, #226, #227; #228 as
+> an input); [the v0.5.12 charter](v0.5.12-charter.md); this draft's preparation records in
+> [v0.5.13-charter-prep/](v0.5.13-charter-prep/) (the exposure check, the power calculations and
+> their log).
+>
+> **Labels.** Every output is `exploratory`, `method_status: not_validated`. Nothing here is a
+> verdict, a candidate or a claim; no earlier verdict, lock, target or record changes. **Version 5
+> carries 'closed with declared limits (gate REFUTED: criterion 6 not demonstrated)'** (v0.5.11);
+> its correction 2 and its #223 cases carry **'closed with declared limits (gate REFUTED: criteria 2
+> and 6 not met)'** (v0.5.12); level 2 carries **'WEAKENED; does not meet D1, D2, D4, T2a'** (v0.5).
+> The census counts used for sizing carry **'closed with declared limits (gate REFUTED); does not
+> meet criteria 1, 2, 3, 4, 5, 7, 8, 9, 10'** (v0.5.10). Version 5 stays not adopted for
+> confirmatory use.
+
+## 1. The question
+
+Can battery version 5 be **frozen** for a future confirmatory test (v0.6), with targets that tell
+**"not assessed"** apart from **"wrong"**?
+
+"Frozen" means a candidate battery whose code, configuration and thresholds are hashed, with its
+development-data behaviour on the axes of section 5 recorded. It is never a verdict, and it adopts
+nothing: adopting it for v0.6 is the maintainer's decision after this work and its gate.
+
+## 2. Where the work splits (item f)
+
+The work does not fit one seven-day time box (v0.5.12 used its whole box for three correction
+items, and its records still had gaps). **It splits into two phases, at the end of the
+preconditions.** Codex r1, item 7, as written:
+
+> Part A ends after the three ordered preconditions, the tested reason map, and the identity, CI
+> and accounting seal. Part B is a separate proposal for calibration, futility, the hashed
+> candidate battery and the proposed v0.6 targets. It requires Part A's recorded close under the
+> advance rule, evidence that the preconditions passed, and its own approved charter and caps. A
+> close with declared limits does not satisfy a failed precondition.
+
+| | **Part A: v0.5.13** (this charter) | **Part B: v0.5.14** (sketched in section 4; its own charter) |
+|---|---|---|
+| Name (the maintainer's to set) | Battery version 5: preconditions and frozen targets | Battery version 5: calibration on development data |
+| Content | #226, #227, #224, in that order; the tested reason map with the two buckets; the meter of #228; the targets of section 5, frozen at approval | calibration, futility, the hashed candidate battery, the proposed v0.6 targets |
+
+## 3. Part A (v0.5.13): the steps, in this order
+
+**The order** (Codex r1, item 1, as written):
+
+> Step 0 must pass before #226. #226 must pass before #227. #227 must pass before #224. All three
+> must pass before Part B calibration. An answered stop authorizes only the action named in the
+> decision. The failed check must subsequently pass before work advances.
+
+Codex r2, item 1, as written:
+
+> Step 4 begins after #224 passes. Step 5 begins after the step 4 check passes.
+
+**Execution resumes only at batch boundaries** (Codex r2, item 3, as written):
+
+> Checkpoint at committed batch boundaries. A restart may proceed with independently manifested
+> batches that have never started. Re-executing a started scientific batch or case requires prior
+> #218 approval of the reason and exact procedure, including when no case value was emitted.
+
+### Step 0. The meter and the "before" proofs (#228, item e)
+
+The meter and its demonstration are as section 8 states (Codex r1's caps wording). The "before"
+proofs, at the approval commit, before any step that may change `src/`: `golden-local` on versions
+1 to 4, `claim-hashes`, and `verify_locked_tags.py` (10 of 10). **Check:** `git diff --quiet
+<approval> -- src/`, the demonstration's outcomes and the three "before" payloads in the journal.
+
+**The named identity units** (Codex r2, item 3, as written):
+
+> This charter authorizes two named identity units, `ID-BEFORE` at step 0 and `ID-AFTER` at step
+> 5, once each. Their sole purpose is to establish protected identity. Use the committed
+> `golden-local`, `claim-hashes` and `verify_locked_tags.py` procedures with the corresponding
+> before or after label and the same protected fixture and tag lists. Push each manifest with the
+> exact commands, inputs, output paths and comparison before execution. NR-A1 covers only the three
+> step 1 settings.
+
+### Step 1. #226: the BLAS threads, decided without moving versions 1 to 4
+
+Codex r1, item 1, as written:
+
+> For #226, the charter authorizes one fresh-process identity check per setting: inherited
+> default, 1 thread, and 4 threads. Set `OMP_NUM_THREADS`, `OPENBLAS_NUM_THREADS`, and
+> `MKL_NUM_THREADS` before numerical imports. Record the loaded BLAS backend and effective thread
+> count. Run the frozen golden and claim-hash fixtures with an execution manifest that fixes
+> commands, inputs, environment and outputs. Compare every protected output byte and claim hash
+> with the step 0 baseline. Compare provenance separately. A byte mismatch, missing output or
+> unverified pin stops Part A. Preserve the evidence. A pin may be proposed only after all
+> comparisons pass, and its exact diff requires approval before commit. Recheck protected source
+> and artifacts, golden outputs, claim hashes and all ten locked tags at the seal. Any mismatch
+> leaves the identity criterion unmet.
+
+- These three identity checks are the **named verification NR-A1**, approved by this charter with
+  its reason (decide #226 before any lock), its procedure (above) and its trigger (this step,
+  once). The effective thread count is read with `threadpoolctl` only if it is already importable;
+  no dependency is added.
+- The mechanism of the historical CI difference stays F-1's declared limit; this step does not
+  claim it.
+
+### Step 2. #227: assertions against the generating model, before U1
+
+Codex r1, item 1, as written:
+
+> For #227, push a branch-to-assertion manifest before the probe. For each #223 field determined by
+> the generator, freeze the expected value, its independent derivation and its tolerance. Use
+> circular phase distance with one grid step, the generated profile and sampled cadence overlap for
+> depth, and generating depth, noise and cadence or epoch counts for MES. Include the basis for
+> every tolerance and every field for which the model does not determine an expectation. Freeze
+> JUnit test IDs and any strict expected failures before the probe. Keep failed probes. An oracle
+> correction preserves the original. A source correction requires the exact-diff stop. #227 passes
+> only when every required assertion passes in the final JUnit without a skip or expected failure.
+
+The assertions are derived from the generating model's parameters, independently of
+`tests/v0512_oracles.py`. The manifest's push follows section 8's order-proof rule.
+
+### Step 3. #224: F1 under correlated noise, the isolated development experiment
+
+**Synthetic families and the correction rule** (Codex r1, item 2, as written):
+
+> Reuse the frozen v0.5.12 M1 geometry and white-noise recipes U and B6. Cross both with stationary
+> Gaussian AR(1) noise at each combination of RMS `3e-4` and `1e-3` and correlation time 1 h and
+> 6 h. Use `rho = exp(-Δt/τ)` between successive observed cadences, including gaps. Add two B6
+> cells at RMS `1e-3`. One uses the v0.5.12 aligned red blocks. The other uses duration-width blocks
+> anchored half a duration after the first cadence, with no transit-aligned override. Keep
+> `flux_err` unchanged by the added red noise.
+>
+> Run 3,000 equal-depth cases, 300 white-control cases and 300 red-control cases per cell. For each
+> control pair share geometry and noise. The white control adds `5 sqrt(1/Wodd + 1/Weven)` to the
+> odd depth. The red control adds `5 sqrt(1/Wodd + 1/Weven + Var_red(odd_mean − even_mean))`. Use
+> the generating covariance and the fixed inverse-variance weights for the red variance. Neither
+> depth uses an F1 output. Freeze disjoint seed ranges, code, input hashes and the intentional
+> pairing before any F1 call. Check input identities against prior case records. Retain the
+> historical white-only regression and report the correlated white-control results beside the red
+> control.
+>
+> Apply `z = 1.959963984540054`. Every synthetic null cell must have at most 19 F1 rejections out of
+> 3,000 and zero `not_assessed`. Every synthetic red-control cell must have at least 281 rejections
+> out of 300 and zero `not_assessed`. Retain and report all attempts. A failed required check leaves
+> #224 unmet. An estimator or decision-rule change requires a dated specification correction
+> listing the results already known, an authorized fresh blind review before adoption, tests pushed
+> before source, and approval of the exact source diff. Any follow-up measurement requires prior
+> #218 approval of its manifest and uses the same rules on fresh seeds and injections. Preserve the
+> first results. Step 3 is the isolated #224 development experiment. Ordinary real-data use of F1
+> waits for #224 to pass.
+
+**Injection into real TESS light curves** (Codex r1, section 3, "Real TESS injection wording to
+freeze", as written):
+
+> Select 20 quiet and 20 active distinct TICs. Freeze a DEV-H list and a DEV-T fallback list from
+> section 6, with deduplication by TIC and provenance for each eligible product. Order each pool by
+> SHA-256 of `v0513-f1-real-20261126/<TIC>`, with numeric TIC as the tie-breaker. Screen at most 40
+> DEV-H and 40 DEV-T stars and use DEV-T only for a class shortfall. Use the lowest-numbered
+> eligible SPOC 2-minute sector per TIC and a deterministic product tie-breaker recorded in the
+> manifest. Mask each previously recorded DEV-T transit within one recorded duration either side of
+> its center. Skip a DEV-T star with an incomplete mask ephemeris. Freeze the classification and
+> selection log before any F1 result. A class shortfall leaves the real-curve check unmet.
+>
+> Use finite PDCSAP flux and positive finite errors with the repository adapter's fixed quality
+> mask and sector normalization. Compute activity before injection and detrending. Use
+> nonoverlapping two-hour bins anchored at the first valid cadence, with at least 45 cadences per
+> bin and at least 24 eligible bins. For bin inverse-variance weight `Wb`, let `A` be the RMS of the
+> weighted bin means about their mean, divided by `sqrt(mean(1/Wb))`. Quiet is `A < 1.5`, active is
+> `A ≥ 3`. Log intermediate and unusable stars.
+>
+> *[Codex r3 replaces the first sentence:]* Generate 50 geometry slots per star using PCG64 and
+> the per-slot seed specified under "The seeds and the losses" below. Allocate 17, 17 and 16 slots to expected total SNR bands `[10,15)`, `[15,30)` and `[30,∞)`,
+> using target SNRs 12.5, 22.5 and 45. Use 2.5-hour boxes, periods drawn log-uniformly from 1 to 6
+> days, and epochs uniform over one period. Choose the first of at most 128 draws meeting the
+> predeclared timestamp and mask rule of at least two epochs per parity with at least 80% of their
+> nominal cadences. Keep a slot that exhausts its draws as unassessed.
+>
+> Compute expected SNR on the uninjected curve as mean injected depth divided by a fixed reference
+> standard error for the common depth. Use inverse-variance cadence weights and a red term from the
+> variance of nonoverlapping duration-width out-of-transit bin means after subtracting their
+> expected white variance, floored at zero. Use effective epoch counts derived from epoch weight
+> sums and record the reference terms. This is an independent injection-sizing prescription. Freeze
+> adapter, detrending parameters, masks, noise-reference code, seed and depth manifest before
+> scoring. Inject into normalized flux before the fixed detrending pass, mask the scheduled transit
+> windows from its trend fit, then call F1 at the injected ephemeris. Keep original timestamps,
+> gaps and quality masks.
+>
+> Each slot gets four paired injections on the same background: equal depth, alternating depths
+> with a shallow-to-deep ratio of `0.60` at the same mean depth, the historical white control, and
+> the red control. Alternate the deeper parity by slot. For the red control use the independent
+> uninjected reference noise, with `sigma_r²(1/N_eff,odd + 1/N_eff,even)` as the real-curve contrast
+> variance contribution. Report that approximation and both control results. A nonfinite reference
+> or a depth outside `(0,0.20]` makes the slot non-evaluable. Preserve it in the planned
+> denominator.
+>
+> Per activity class there are 1,000 planned cases of each kind, or 8,000 F1 calls across both
+> classes before losses. Require zero `not_assessed` and at most 3 null rejections out of 1,000 per
+> activity class, using the historical Wilson constant as a fixed panel criterion. Require at least
+> 937 red-control rejections out of 1,000 with zero `not_assessed`. Report the alternating-depth arm
+> by activity and SNR band and the white control beside the red control. Report per-star counts and
+> a star-cluster resampling interval separately. Repeated injections on one star do not establish
+> independent-target confidence or a population-wide 1% false-rejection bound. Include a fixed
+> equal-depth, high-SNR trapezoid stress case per star with 10% ingress and 10% egress, reported
+> separately to expose the known shape mismatch.
+
+- **The seeds and the losses** (Codex r2, item 2, as written; it replaces the round-1 draft's
+  "charter seed" bullet):
+
+  > The base seed is SHA-256 of the lowercase hexadecimal approval commit ID encoded as ASCII.
+  > Derive each real-panel slot seed from the base seed, the preapproved measurement ID, the TIC
+  > and the slot number. The initial panel uses its own measurement ID. Each approved follow-up uses
+  > a different ID and must pass a geometry and input-identity collision check against prior panels
+  > before F1 runs. Freeze the derivation and the check in the pushed manifest.
+  >
+  > A missing, exhausted or non-evaluable planned null or red-control slot counts as
+  > `not_assessed` in its activity class and fails that class's zero-`not_assessed` requirement.- **Declared limits** (Codex r1, section 3): sensitivity is gated on the five-reference-sigma
+  contrast, and the 0.60 ratio is reported by SNR band; the panel's 1 % criterion is an engineering
+  check. With 20 stars per class, the star as the independent unit gives a Wilson upper endpoint of
+  about 16 % even at zero affected stars.
+
+### Step 4. The reason map: the two "not assessed" buckets, emitted by the code
+
+Codex r1, item 3, as written (its first paragraph):
+
+> Freeze one evaluation case per predeclared TIC. The code emits an assessed outcome or one terminal
+> reason from a closed, tested map. Map product, input, quality and numerical failures to
+> `unassessed_data`. Map an explicit power or SNR gate on usable input to `unassessed_power`.
+> Distinguish insufficient usable data from insufficient expected power in separate emitting
+> branches. Apply a fixed stage order when multiple reasons are present. An unmapped reason is a
+> protocol error and leaves the criterion unmet. Optional report-only diagnostics do not change
+> assessed status. An assessed decision must be reached under the frozen aggregation rule. Zero
+> assessed coverage is `INCONCLUSIVE`.
+
+Tests come first; the code follows behind the `src/` stop. The map is frozen in a committed file
+before any calibration. **Check:** a test enumerates every emitting branch, and each is in the map.
+
+### Step 5. The seal
+
+The "after" proofs by the named unit `ID-AFTER` (step 0), as in step 1's last sentences; full CI by `scripts/ci_evidence.py <sha> --level
+full` on the exact last SHA that changes code, tests or their inputs; the accounting reconciliation
+of section 8; a pushed SHA and a journal cursor.
+
+### Part A's exit criteria
+
+1. Codex r2, item 1, as written:
+
+   > **#226 passed.** Every required comparison passed and the maintainer's pin decision is
+   > recorded. Any adopted pin was approved against its exact diff. A byte mismatch, missing output
+   > or unverified pin stops Part A and leaves #226 unmet. Following any separately authorized
+   > corrective action, all required comparisons must pass before Part A advances.
+2. **#227 passed** by step 2's rule: every required assertion passes in the final JUnit, without a
+   skip or an expected failure, with the order proved by a push.
+3. **#224 passed** by step 3's rules (synthetic cells and real-curve panel). A correction, if any,
+   passed its blind review, was adopted at its stop, and its follow-up measurement on fresh seeds
+   and injections passed.
+4. **The reason map** is emitted by the code and tested (step 4).
+5. **Identity and CI:** versions 1 to 4 did not move (golden, claim hashes, ten tags), and full CI
+   holds (step 5).
+6. **Accounting:** section 8's criterion: the reconciled caps were measured and met, and every
+   execution outside the meter was recorded at once with its estimated cost; every retry has its
+   approval or its named class.
+
+A close with declared limits does not satisfy a failed precondition (section 2).
+
+## 4. Part B (v0.5.14), sketched: calibration on development data
+
+**Its own charter, approved after Part A closes with its preconditions passed** (section 2).
+
+- **Data:** only synthetic data and explicitly documented, previously exposed DEV-H and DEV-T
+  targets and products (section 6). **No unexposed target** (no DEV-N), and **no KELT-FP target or
+  ground-discovered planet is read**.
+- **Work:** the calibration of U1 (after #227 passed) and of the screen on DEV pools and
+  injections; the orbit, sector and inversion transforms; the named reruns NR-1 and NR-2, each
+  behind its approved execution manifest.
+- **Before any host run:** recovery, gate passage, unknown eligibility, loss handling and futility
+  are frozen (the v0.5.11 consensus's blocking item 4, kept as written); the evaluation half stays
+  unread until the calibration artifact is frozen.
+- **The product (item d):** a **frozen candidate battery** (the hash of its code and configuration)
+  and the **proposed targets for v0.6**, both `exploratory`, never a verdict.
+- **Starting caps** (the proposal's 50 CPU-h, 30 GB transferred, 20 GB peak disk) are replaced by
+  Part A's measured costs.
+
+## 5. The targets, fixed before any data (item b)
+
+Frozen at this charter's approval; a change is a dated amendment stating which results were known.
+They are **proposed for v0.6**, and used in Part B only as development-data checks.
+
+### 5.1 to 5.4 The rules
+
+Codex r1, item 3, as written (the reason-map paragraph is step 4):
+
+> All of the following must pass. Among assessed FPs, the one-sided 95% Wilson upper bound on
+> survival is at most `X = 0.25`. Among assessed planets, the one-sided 95% Wilson lower bound on
+> retention is at least `Y = 0.80`. In each arm, the one-sided 95% Wilson lower bound on assessed
+> cases divided by all frozen cases is at least `Z = 0.70`. Both abstention buckets remain in that
+> denominator and are reported separately.
+>
+> Use two fixed expected-SNR bands, `<20` and `≥20`. The reference SNR is the fixed reference depth
+> times the square root of the sum of the eligible in-transit inverse-variance weights. Assign
+> strata with the same label-blind reference procedure in both arms before any battery output.
+> Missing reference SNR is recorded separately and charged to the lower band's coverage
+> denominator. In each band, apply a Wilson upper safety bound of `0.40`, a Wilson lower
+> sensitivity bound of `0.65`, and a Wilson lower coverage bound of `0.60` in each arm. An empty or
+> unevaluable required cell cannot satisfy the AND rule.
+>
+> For symmetry, compute the signed two-sided 90% Newcombe method 10 interval `[L,U]` for planet
+> minus FP abstention, counting both buckets and using all frozen cases. Require `L ≥ −0.15` and
+> `U ≤ 0.15`. Report per-type FP results descriptively. A difficult FP mix does not change the
+> pooled target, case eligibility or denominators. Any infeasibility is recorded and reviewed under
+> the advance rule.
+
+**"Wrong"** is defined on assessed cases only: a false positive that survives, or a planet that is
+not retained. Neither bucket is ever a PASS.
+
+### 5.5 The power calculation (sized on the v0.6 planning sample)
+
+Codex r1, item 4, as written:
+
+> The sample sizes 171 planets and 307 FPs are v0.5.10 census planning counts and carry its limits
+> label. The marginal calculations condition on the stated denominator. For two nearly equal bands
+> at about 80% assessed, the assessed denominators are 68 and 69 planets and 122 and 123 FPs. The
+> 80%-power alternatives are retention of at least 0.7842 and 0.7874 and FP survival of at most
+> 0.2894 and 0.2948, respectively. For the 0.60 band coverage floor, the 80%-power assessed shares
+> are 0.7286 and 0.7318 for the planet bands and 0.6946 and 0.6966 for the FP bands.
+>
+> In the planning scenario, assign 85 and 86 planets and 153 and 154 FPs to the two bands. Assume
+> independent targets, 0.85 probability of assessment in each arm and band, and conditional
+> probabilities of 0.90 planet retention and 0.15 FP survival in each band. Enumerate assessed
+> counts by band and then retained or surviving counts conditional on assessment. Apply every pooled
+> and band rule to those same counts. Apply the symmetry rule to the implied abstention counts. The
+> joint pass probability under this model is 0.9459. Unequal band sizes, heterogeneous rates or
+> dependent targets can change it. Freeze a calculator and its output with the charter. Before v0.6
+> authorization, apply the frozen sizing procedure to its documented eligibility and band sizes. A
+> shortfall is a feasibility finding. It cannot change the thresholds.
+
+- **The frozen calculators:** [power.py](v0.5.13-charter-prep/power.py) (the marginal design
+  alternatives; [power.md](v0.5.13-charter-prep/power.md)) and
+  [power_v2.py](v0.5.13-charter-prep/power_v2.py), which reproduces the full AND rule's joint pass
+  probability: **0.945942** ([power-v2.json](v0.5.13-charter-prep/power-v2.json)), against Codex's
+  0.9459. Both are deterministic binomial enumerations with negligible tail truncation (terms below
+  1e-12 and 1e-15), not simulations.
+- **Marginal reference values** (power.md, all cases assessed): safety at 307 passes with at most 64
+  survivors (80 % power at FP survival ≈ 0.191); sensitivity at 171 with at least 146 retained (80 %
+  power at retention ≈ 0.872); pooled coverage needs at least 130 of 171 planets and 229 of 307 FPs
+  assessed; symmetry has power 0.978 at equal 20 % abstention.
+- **The declared risk.** Of the 1,128 KELT-FP rows, 307 are single-lined spectroscopic binaries
+  (SB1), whose transits can look planet-like in photometry; the type mix of the 307 usable targets
+  is not counted here. Per-type results are reported descriptively; **the pooled targets do not
+  change** (above).
+
+## 6. Data and exposure (item c)
+
+**The scope** (Codex r1, item 5, as written):
+
+> Use only synthetic data and explicitly documented, previously exposed DEV-H or DEV-T targets and
+> products. Before each draw or read, reconcile the proposed TIC, aliases and product against the
+> committed exposure evidence, protected identifiers and the full route (d1) census-source lists.
+> Fail closed on an unresolved identity, missing exposure evidence or possible reserved or hidden
+> product. Log eligibility and the reason before the read. The preparation count does not authorize
+> a target or product.
+
+Route (d1)'s two arms (KELT-FP and the ground-discovered planets) are reserved for v0.6: no light
+curve or pixel file of theirs is read in v0.5.13 or v0.5.14.
+
+**The exposure check, done before this draft** (Codex r1, item 5, as written):
+
+> The exposure audit at `e66814f` uses v0.5.10's tracked-text and path-based run-record proxy. It
+> reports zero hits among the 307 usable KELT-FP TICs and one hit among all 1,126 distinct KELT-FP
+> TICs. TIC 184679932 was selected as a C3 reserve and logged a failed download. C3 analysis did not
+> run. The 171 strict ground-planet planning TICs have zero proxy hits. The 11 Kepler planet hits and
+> zero certified-FP hits in the SPOC 2-minute cohorts describe those census cohorts only. Dallas KOI
+> membership and its intersection with prior tests are `NOT DETERMINED` from the available material.
+> The Dallas no-KOI control overlap is also `NOT DETERMINED`. No per-target Dallas list was found in
+> the recorded source check. Catalogue mentions, selection records, attempted runs and completed
+> analyses are reported separately where the records distinguish them.
+
+| Set (v0.5.10 census) | Distinct TICs | Run-record proxy hits | Mentioned anywhere |
+|---|---|---|---|
+| KELT-FP, all | 1,126 | 1 (TIC 184679932: a C3 reserve, failed download, not analysed) | 5 |
+| KELT-FP, usable (SPOC 2-min, not exposed) | 307 | **0** | 2 (catalogue snapshots only) |
+| Ground-discovered planets, usable / strict | 181 / 171 | **0 / 0** | 181 / 171 (catalogue snapshots) |
+| Kepler certified FPs, SPOC 2-min | 282 | 0 | 9 |
+| Kepler planets, SPOC 2-min | 1,804 | 11 | 1,804 |
+
+Records: [exposure_check.py](v0.5.13-charter-prep/exposure_check.py),
+[exposure-check.json](v0.5.13-charter-prep/exposure-check.json), the question logged before the
+run in [log.jsonl](v0.5.13-charter-prep/log.jsonl). The inputs are the v0.5.10 census tables
+archived on the Drive, each checked against its SHA-256 in the v0.5.10 cleanup manifest. The
+script's file count includes paths it excludes or skips, and it reads working-tree bytes (Codex r1,
+section 4).
+
+**Dallas et al. 2026** (arXiv:2610.32949, https://arxiv.org/abs/2610.32949, read on 2026-11-26,
+PASP 138, 104504. Licence unconfirmed here.): a BLS search of TGLC light curves of 185,422
+Kepler stars in TESS sectors 14, 15, 16 and 26 (7,572 KOI hosts; 1,976 signals matched to 931
+KOIs). No per-target list was found on the paper's page.
+
+**The exposure log.** Every target read in Part A or B is reconciled and logged before its read; it
+is then exposed and unusable for confirmation.
+
+## 7. The product and the comparator annex (item d)
+
+- Codex r2, item 1, as written:
+
+  > **Part A's product:** evidence that the three preconditions passed, the tested reason map and
+  > the frozen targets of section 5. If a precondition stops the phase, record it as unmet and
+  > preserve its evidence.
+- **Part B's product:** a frozen candidate battery and the proposed v0.6 targets, `exploratory`,
+  never a verdict.
+- **Annex, a proposal for v0.6 only** (Codex r1, item 7, as written):
+
+  > The v0.6-only annex proposes exoVetter (expected BSD-3-Clause, unconfirmed here) and LEO-vetter
+  > (expected GPL, unconfirmed here). Record the exact licence, source URL, retrieval date and short
+  > literal excerpt for each pinned release before relying on its terms. LEO-vetter is an isolated
+  > external comparator with no code copied, imported or linked. Compare the same frozen target
+  > manifest using each tool's pinned official configuration and report risk-versus-coverage curves
+  > with a shared eligibility and abstention accounting rule. Show each invocation script to the
+  > corresponding authors before publication. Installation, first execution and external contact
+  > require their applicable approvals in v0.6.
+
+## 8. The lighter process (#228, item e)
+
+**The meter and the caps criterion** (Codex r1, section 3, "Caps and repetition wording to
+freeze", as written):
+
+> The Windows job object is the sole local CPU meter and covers the launcher and descendants.
+> Offline units use `UV_OFFLINE=1` and pytest uses `--disable-socket`. Use no AppContainer.
+> Restrict authorized network activity to the named units and destinations. These settings do not
+> establish process-wide socket isolation. Before using the meter, demonstrate descendant CPU
+> accounting, transfer byte accounting, and a disk bound that includes a file created and deleted
+> during a unit and a file retained across units.
+>
+> Open a journal entry before each execution, including remote CI and reviews, and close it at
+> completion or interruption. Each metered entry records its logical unit ID, attempt and parent
+> IDs, approval or trigger, command, hashes, timestamps, exit status, case-output count, CPU,
+> downloaded bytes and disk contribution. For an execution outside the meter, open the exception
+> before a planned launch or immediately on detecting an unexpected launch and before the next unit.
+> Record its scope, reason, timestamps, resource estimates with units and basis, and supporting
+> receipt. Use a conservative upper estimate when exact cost is unavailable. Charge local estimates
+> to the phase caps and report remote CI and reviewer costs separately in their recorded units. An
+> unbounded, unrecorded or late-recorded execution leaves the criterion unmet.
+>
+> Reserve each unit's remaining CPU, downloads and disk before launch. Add bytes from partial
+> transfers and retries. Reconcile peak concurrent phase disk from retained data, transient writes
+> and outstanding reservations. *[Codex r2, item 5, replaces the round-1 reconciliation and
+> criterion sentences:]* At the seal, reconcile all execution through the sealed journal cursor
+> and reserve headroom for the final review, gate and closure. Review the sealed SHA. Append the
+> post-seal receipts and reconcile the full tail before report approval within the applicable time
+> box and stops. The accounting criterion passes only when the final reconciled caps were measured
+> and met and every outside-meter execution was recorded at once with its estimated cost. If the
+> tail changes a control finding or criterion status, record the change and return to the
+> maintainer before approval.
+
+**The named network units:** `git push`; `gh` for issue comments, run lists and CI evidence; the
+`workflow_dispatch` of step 5; MAST reads as below; Codex and gate traffic. The MAST reads (Codex
+r2, item 4, as written):
+
+> MAST reads are authorized only for reconciled DEV products on the pushed screening manifest,
+> including candidates screened for activity before the final panel is selected. Apply the 40
+> DEV-H and 40 DEV-T limits, the fallback rule and the exposure check before the corresponding
+> reads.
+
+**The pre-approved retry classes** (same source, as written):
+
+> A retry without a new #218 approval is available only for the following named classes. A checker
+> or verifier may be retried when its manifest proves that it only checks existing artifacts and
+> emits no case value. A formatter may be repeated when its allowed paths, command and before/after
+> hashes establish that it only formats files and runs no cases. A non-scientific infrastructure
+> unit may be retried once after a recorded fault is cleared, with the same logical request and
+> evidence that no case value was emitted or persisted. Record the original attempt, class,
+> triggering evidence, exact retry command and logical identity before retrying. Paths, output names
+> and tree changes do not create a new logical identity. An unknown output state fails eligibility.
+> Golden computations and any other execution that generates case values use their separately named
+> manifests and authorizations. A scientific measurement is never eligible for these classes,
+> including one that failed before emitting a value.
+
+**Order proofs, decisions, reviews and the gate** (Codex r1, item 6, as written):
+
+> Before each draw, probe or measurement batch, push its manifest in a single non-merge,
+> fast-forward evidence commit with the `CI: order-proof` trailer. Commit and push code and tests
+> separately when needed. *[Codex r2, item 3, replaces the round-1 binding sentence:]* The
+> evidence commit binds the source SHA, commands, input and configuration hashes, and trigger. For
+> a draw it binds the ordered eligible input frame and seed. For a probe or measurement it binds
+> the already determined case IDs. Push the draw output before any acquisition or probe that uses
+> it. Before launch, the checker verifies the exact push
+> SHA, the CI run ID, `event=push`, `record-only`, and the CI `created_at` earlier than the journal
+> start. A missing receipt or mismatch blocks launch. At the seal, store full CI evidence for the
+> exact last SHA that changes code, tests or their inputs.
+>
+> Each decision in #218 quotes or identifies by hash the maintainer's exact pasted block and cites
+> the relevant charter SHA, stop and authorized artifact. Keep the pasted block in the decision
+> record. Use GitHub's comment timestamp as the decision time and omit any declared hour.
+>
+> Obtain authorization of purpose, number and cost before each blind review and gate. Every
+> scientific rule change requires a fresh blind review before adoption. After the seal, the final
+> Codex review uses a new conversation. The binding Fable gate and the independent Codex second
+> opinion each use a fresh read-only checkout of the same pushed SHA, with only the gate-review
+> protocol and phase name as the prompt. Store the reviews unchanged with model, thread ID, prompt
+> and SHA. Track every `WEAKENED` issue. `REFUTED` closes nothing. Review after fixes uses fresh
+> authorized sessions.
+
+Codex otherwise: one round per closed question; the review of every `src/` diff, attached to its
+stop.
+
+## 9. Caps, time box and stops (item f)
+
+**Part A's caps** (Codex r1: keep the split and the three ceilings):
+
+| Item | Ceiling | Reservation (Codex r1) and basis |
+|---|---|---|
+| CPU, the whole local path | **8 CPU-h** | 1.5 meter and identity setup (step 0, NR-A1); 1 #227; 3 #224 (about 44,000 F1 calls plus the stress cases: about 0.55 CPU-h of F1 arithmetic at 45 ms per call; real-curve detrending, acquisition and tag environments are the unmeasured costs); 1 the reason map; 1.5 the seal and the local review tail |
+| Downloads | **3 GB** | Codex r2, item 4, as written: "The 3 GB ceiling covers all phase-local inbound bytes from authorized network units, including partial transfers and retries. The only authorized scientific downloads are the manifested DEV products. Record remote CI and reviewer costs separately as specified in section 8." (At most 80 stars screened, one sector each, about 2 MB per SPOC 2-minute light curve, with a bounded reservation before acquisition.) |
+| Peak disk | **5 GB** | the light-curve cache, the runs and the warm tag environments, by section 8's disk bound |
+
+The caps are limits, never targets; each unit reserves its allowance first; a cap reached is a
+stop. A correction and its fresh measurement fit only if separately approved and supported by the
+remaining measured headroom. Machine rules: processors 0 to 7 free; at most 10 workers and 2
+downloads in business hours, up to 20 and 6 outside them; BelowNormal; batches of at most 30
+minutes; restarts only at batch boundaries, as section 3 states (Codex r2, item 3).
+
+**The time box** (Codex r1, item 7, as written):
+
+> Execution stops seven calendar days after approval unless the maintainer records one extension
+> before expiry, with its reason and new deadline. At the stop, mark every criterion met, failed or
+> not run. Expiry closes and advances nothing. The maintainer alone records closure under the
+> advance rule.
+
+Checkpoints: step 0 and step 1 by day 2; step 2 by day 3; step 3 by day 5; step 4 and the seal by
+day 7. A missed checkpoint is reported in #218 the same day.
+
+**Stops** (these add to Process diet 2, item 2, and remove none):
+1. The approval of this charter, which opens the phase.
+2. Step 1: a byte mismatch, missing output or unverified pin (Part A stops); and the pin itself, as
+   a `src/` change, by its exact diff.
+3. Before the first commit in `src/`, with Codex's review of the exact diff; and every later `src/`
+   commit that changes a rule or a threshold.
+4. Before adopting a specification correction, after its fresh blind review.
+5. Before any follow-up measurement of step 3: its manifest's approval in #218.
+6. Before the gate and before a blind review: the authorization of each (purpose, number, cost).
+7. Before approving the report.
+8. Any dependency change, first run of third-party code, target outside section 6, pool draw
+   outside step 3's frozen lists, unapproved rerun, or a failed reconciliation (section 6).
+9. A cap reached, a missed time box, work beyond this charter, a deletion outside `.cache/`.
+10. Public text, the site, a release, Zenodo; locks and drand rounds (none planned).
+
+## 10. Reviews and the gate
+
+As section 8 states: Codex on every `src/` diff and on a specification correction; the final review
+of all commits in a new conversation; a fresh blind review before any scientific rule change; the
+binding Fable gate and Codex's second opinion on a fresh read-only checkout of the same pushed SHA,
+with only the protocol and the phase name; every review stored unchanged.
+
+## 11. Risks, with early detection
+
+| # | Risk | Early detection |
+|---|---|---|
+| 1 | The pin moves a byte of versions 1 to 4. | NR-A1's comparison; stop 2. |
+| 2 | The model assertions expose a `src/` defect in the #223 values. | Step 2's probe; the exact-diff stop. |
+| 3 | F1's null fails on active real stars or red cells. | Step 3's rules; a correction needs a blind review and a fresh, approved measurement; v0.6 waits. |
+| 4 | DEV-H and DEV-T have too few quiet or active stars. | The screening log before any F1 result; a class shortfall leaves the check unmet. |
+| 5 | Safety is unreachable for SB1-like false positives. | Reported per type, descriptively; the pooled target does not change; infeasibility goes through the advance rule. |
+| 6 | The meter misses a descendant's network. | Declared in section 8; the network units are named. |
+
+## 12. What this phase does not do
+
+It creates no lock, tag, drand round, dossier or verdict, and submits nothing. It reads no KELT-FP
+or ground-discovered planet, and no unexposed target. It changes no `aggregate` rule, old target or
+old verdict, and neither `uv.lock` nor `pyproject.toml`. It copies, imports or links no GPL code and
+runs no third-party code. It changes no public text.
+
+## 13. External sources and what is not confirmed
+
+- **Dallas et al. 2026,** arXiv:2610.32949, https://arxiv.org/abs/2610.32949 and
+  https://arxiv.org/html/2610.32949v1, read on 2026-11-26.
+- **KELT-FP:** Collins et al. 2018, https://arxiv.org/abs/1803.01869, e-print CSV SHA-256
+  `72b21cce…`, as recorded by v0.5.10 (licence not confirmed).
+- **Not confirmed:** exoVetter's and LEO-vetter's licence texts (section 7); the KELT-FP type mix of
+  the 307 usable targets; Dallas KOI membership and any per-target Dallas list (section 6); the
+  authoritative facility provenance of the 171 strict ground-discovered planets (Codex r1,
+  non-blocking item 3: the facility-string heuristic also passes an empty facility; usable for
+  sizing only).

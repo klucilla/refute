@@ -1,0 +1,3 @@
+    attenuated = math.isfinite(sigma_r) and box_after + ATTENUATION_SIGMAS * sigma_r < (
+        ATTENUATION_FRACTION * depth
+    )

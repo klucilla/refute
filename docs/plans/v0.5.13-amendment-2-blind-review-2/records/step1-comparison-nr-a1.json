@@ -1,0 +1,155 @@
+{
+ "set": "nr-a1",
+ "labels": [
+  "exploratory",
+  "method_status: not_validated"
+ ],
+ "rows": [
+  {
+   "label": "nr-a1-default",
+   "records_present": true,
+   "golden": {
+    "missing": [],
+    "extra": [],
+    "differ": []
+   },
+   "golden_error_outputs_equal": true,
+   "claims": {
+    "missing": [],
+    "extra": [],
+    "differ": []
+   },
+   "identity_equal": true,
+   "blas": {
+    "thread_env": {
+     "OMP_NUM_THREADS": null,
+     "OPENBLAS_NUM_THREADS": null,
+     "MKL_NUM_THREADS": null
+    },
+    "child_threadpool_info": [
+     {
+      "user_api": "blas",
+      "internal_api": "openblas",
+      "prefix": "libscipy_openblas",
+      "version": "0.3.34.106.0",
+      "num_threads": 24,
+      "threading_layer": "pthreads"
+     },
+     {
+      "user_api": "blas",
+      "internal_api": "openblas",
+      "prefix": "libscipy_openblas",
+      "version": "0.3.31.dev",
+      "num_threads": 24,
+      "threading_layer": "pthreads"
+     }
+    ]
+   },
+   "pin_verified": null,
+   "provenance_head": {
+    "before": "a150096de04e4caae9ef0042e6ae4c458823ac9e",
+    "this": "ce154119c7f05ee4d317e13eecc9b0fd0edb9476"
+   }
+  },
+  {
+   "label": "nr-a1-t1",
+   "records_present": true,
+   "golden": {
+    "missing": [],
+    "extra": [],
+    "differ": [
+     "verdict-v3.txt",
+     "verdict-v4.txt"
+    ]
+   },
+   "golden_error_outputs_equal": true,
+   "claims": {
+    "missing": [],
+    "extra": [],
+    "differ": []
+   },
+   "identity_equal": false,
+   "blas": {
+    "thread_env": {
+     "OMP_NUM_THREADS": "1",
+     "OPENBLAS_NUM_THREADS": "1",
+     "MKL_NUM_THREADS": "1"
+    },
+    "child_threadpool_info": [
+     {
+      "user_api": "blas",
+      "internal_api": "openblas",
+      "prefix": "libscipy_openblas",
+      "version": "0.3.34.106.0",
+      "num_threads": 1,
+      "threading_layer": "pthreads"
+     },
+     {
+      "user_api": "blas",
+      "internal_api": "openblas",
+      "prefix": "libscipy_openblas",
+      "version": "0.3.31.dev",
+      "num_threads": 1,
+      "threading_layer": "pthreads"
+     }
+    ]
+   },
+   "pin_verified": true,
+   "provenance_head": {
+    "before": "a150096de04e4caae9ef0042e6ae4c458823ac9e",
+    "this": "ce154119c7f05ee4d317e13eecc9b0fd0edb9476"
+   }
+  },
+  {
+   "label": "nr-a1-t4",
+   "records_present": true,
+   "golden": {
+    "missing": [],
+    "extra": [],
+    "differ": [
+     "verdict-v3.txt",
+     "verdict-v4.txt"
+    ]
+   },
+   "golden_error_outputs_equal": true,
+   "claims": {
+    "missing": [],
+    "extra": [],
+    "differ": []
+   },
+   "identity_equal": false,
+   "blas": {
+    "thread_env": {
+     "OMP_NUM_THREADS": "4",
+     "OPENBLAS_NUM_THREADS": "4",
+     "MKL_NUM_THREADS": "4"
+    },
+    "child_threadpool_info": [
+     {
+      "user_api": "blas",
+      "internal_api": "openblas",
+      "prefix": "libscipy_openblas",
+      "version": "0.3.34.106.0",
+      "num_threads": 4,
+      "threading_layer": "pthreads"
+     },
+     {
+      "user_api": "blas",
+      "internal_api": "openblas",
+      "prefix": "libscipy_openblas",
+      "version": "0.3.31.dev",
+      "num_threads": 4,
+      "threading_layer": "pthreads"
+     }
+    ]
+   },
+   "pin_verified": true,
+   "provenance_head": {
+    "before": "a150096de04e4caae9ef0042e6ae4c458823ac9e",
+    "this": "ce154119c7f05ee4d317e13eecc9b0fd0edb9476"
+   }
+  }
+ ],
+ "all_identity_equal_and_pins_verified": false,
+ "outcome": "STOP: a byte mismatch, a missing output or an unverified pin stops Part A"
+}

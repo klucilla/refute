@@ -1,0 +1,7 @@
+def _wls(x, flux, err):
+    """Weighted least squares; ``np.linalg.LinAlgError`` when the design is singular."""
+    w = 1.0 / np.square(err)
+    xtw = x.T * w
+    normal = xtw @ x
+    if np.linalg.cond(normal) > 1e12:
+        raise np.linalg.LinAlgError("singular design")
