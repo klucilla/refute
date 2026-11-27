@@ -10,8 +10,8 @@
   "disk_bytes": 5000000000
  },
  "charged": {
-  "cpu_s": 1833.061,
-  "download_bytes": 304667122,
+  "cpu_s": 1853.156,
+  "download_bytes": 344643377,
   "disk_peak_bytes": 193730537
  },
  "within_caps_so_far": true,
@@ -2857,6 +2857,239 @@
    "download_bytes": 5000000,
    "write_bytes": 326,
    "disk_bound_bytes": 40809135,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "481b495fe9b240b9a989b6ed213bb33a",
+   "start": "2026-11-27T11:51:09Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.266,
+   "download_bytes": 0,
+   "write_bytes": 889683,
+   "disk_bound_bytes": 41701756,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "2faaf672b9a9498f9010e36aca578b05",
+   "start": "2026-11-27T11:51:11Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.734,
+   "download_bytes": 0,
+   "write_bytes": 1364357,
+   "disk_bound_bytes": 42287060,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh2",
+   "label": null,
+   "attempt": "dabf277914fd4f24ae9774671c811457",
+   "start": "2026-11-27T11:51:20Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": {
+    "class": "infra",
+    "kind": "class",
+    "original": "210f34c7ddaf4e46a2c0c3fdb47572d0",
+    "reason": "the watch hit the unit's 3900 s timeout while the full CI run was still in progress; same watch"
+   },
+   "status": "ok",
+   "cpu_s": 2.953,
+   "download_bytes": 5000000,
+   "write_bytes": 460268,
+   "disk_bound_bytes": 41398986,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "ci-evidence",
+   "label": null,
+   "attempt": "3e6c20cc29934d32a167f450e66f9f49",
+   "start": "2026-11-27T12:16:36Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000,
+    "download_bytes": 3000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.891,
+   "download_bytes": 3000000,
+   "write_bytes": 183023,
+   "disk_bound_bytes": 41583430,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh2",
+   "label": null,
+   "attempt": "cd4c9ad4139f43b291f68362d078a15a",
+   "start": "2026-11-27T12:16:51Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.469,
+   "download_bytes": 5000000,
+   "write_bytes": 101,
+   "disk_bound_bytes": 41406648,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh2",
+   "label": null,
+   "attempt": "677e41b8a68d4130af9dcb3a3d9754cb",
+   "start": "2026-11-27T12:16:53Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.703,
+   "download_bytes": 5000000,
+   "write_bytes": 257,
+   "disk_bound_bytes": 41410584,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh2",
+   "label": null,
+   "attempt": "b46edc448ad84c82a256e4d9e002fd8d",
+   "start": "2026-11-27T12:16:59Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.469,
+   "download_bytes": 5000000,
+   "write_bytes": 642,
+   "disk_bound_bytes": 41414883,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh2",
+   "label": null,
+   "attempt": "bce66936dad84aa89a689cea70d0bc39",
+   "start": "2026-11-27T12:17:18Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.625,
+   "download_bytes": 5000000,
+   "write_bytes": 5269,
+   "disk_bound_bytes": 41423757,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh2",
+   "label": null,
+   "attempt": "58c0cca7ae7e44489f69bc12a9b7fafb",
+   "start": "2026-11-27T12:22:32Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.516,
+   "download_bytes": 5000000,
+   "write_bytes": 395,
+   "disk_bound_bytes": 41427826,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh2",
+   "label": null,
+   "attempt": "6f1dce966d204fcd808699498863ef28",
+   "start": "2026-11-27T12:22:39Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.672,
+   "download_bytes": 5000000,
+   "write_bytes": 99544,
+   "disk_bound_bytes": 41528573,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "testpypi-fetch",
+   "label": null,
+   "attempt": "acffbf4f65834456a3e77b1d348582b3",
+   "start": "2026-11-27T12:22:47Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 20000000,
+    "download_bytes": 10000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.469,
+   "download_bytes": 1976255,
+   "write_bytes": 1964799,
+   "disk_bound_bytes": 43448693,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "store-file",
+   "label": null,
+   "attempt": "48ec2b6671e74c8f8ac17092bc6e57ec",
+   "start": "2026-11-27T12:23:15Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 20000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.328,
+   "download_bytes": 0,
+   "write_bytes": 1168,
+   "disk_bound_bytes": 43457109,
    "case_outputs": 0,
    "telemetry_complete": true
   }
