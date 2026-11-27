@@ -10,8 +10,8 @@
   "disk_bytes": 5000000000
  },
  "charged": {
-  "cpu_s": 2972.684,
-  "download_bytes": 626624858,
+  "cpu_s": 2980.84,
+  "download_bytes": 628624858,
   "disk_peak_bytes": 1199241106
  },
  "within_caps_so_far": true,
@@ -10747,6 +10747,82 @@
    "download_bytes": 0,
    "write_bytes": 1235,
    "disk_bound_bytes": 47130561,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "7968721a2c1c4651bacbb3aceb26ec43",
+   "start": "2026-11-27T17:34:52Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.594,
+   "download_bytes": 0,
+   "write_bytes": 1154423,
+   "disk_bound_bytes": 48286153,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "7b697a2f304346c68db76a2dc05f84c6",
+   "start": "2026-11-27T17:34:54Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 2.281,
+   "download_bytes": 0,
+   "write_bytes": 3045689,
+   "disk_bound_bytes": 50520694,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "push",
+   "label": null,
+   "attempt": "8075e5ce52f447cdafcef0e5cd8bb28f",
+   "start": "2026-11-27T17:34:56Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000,
+    "download_bytes": 2000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 2.562,
+   "download_bytes": 2000000,
+   "write_bytes": 97313,
+   "disk_bound_bytes": 47581069,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "git-read",
+   "label": null,
+   "attempt": "0941bdafecf1462e8b234d933503a471",
+   "start": "2026-11-27T17:35:02Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.719,
+   "download_bytes": 0,
+   "write_bytes": 668,
+   "disk_bound_bytes": 47490068,
    "case_outputs": 0,
    "telemetry_complete": true
   }
