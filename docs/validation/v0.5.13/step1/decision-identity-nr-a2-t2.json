@@ -1,0 +1,138 @@
+{
+ "result": "PASS",
+ "problems": [],
+ "files": {
+  "chain-v1.json": [],
+  "chain-v2-eb.json": [],
+  "chain-v2.json": [],
+  "chain-v3.json": [],
+  "chain-v4.json": [],
+  "error-v1.json": [],
+  "error-v2-eb.json": [],
+  "error-v2.json": [],
+  "error-v3.json": [],
+  "error-v4.json": [],
+  "plan-v1.json": [],
+  "plan-v2-eb.json": [],
+  "plan-v2.json": [],
+  "plan-v3.json": [],
+  "plan-v4.json": [],
+  "verdict-v1.txt": [],
+  "verdict-v2-eb.txt": [],
+  "verdict-v2.txt": [],
+  "verdict-v3.txt": [],
+  "verdict-v4.txt": []
+ },
+ "coverage": {
+  "files_compared": 20,
+  "numeric_tokens_compared": 5004,
+  "numeric_tokens_differing": 28,
+  "largest_relative_difference": "2.12089e-9"
+ },
+ "coverage_by_file": {
+  "chain-v1.json": {
+   "numeric_tokens_compared": 3,
+   "numeric_tokens_differing": 0,
+   "largest_relative_difference": "0"
+  },
+  "chain-v2-eb.json": {
+   "numeric_tokens_compared": 3,
+   "numeric_tokens_differing": 0,
+   "largest_relative_difference": "0"
+  },
+  "chain-v2.json": {
+   "numeric_tokens_compared": 3,
+   "numeric_tokens_differing": 0,
+   "largest_relative_difference": "0"
+  },
+  "chain-v3.json": {
+   "numeric_tokens_compared": 3,
+   "numeric_tokens_differing": 0,
+   "largest_relative_difference": "0"
+  },
+  "chain-v4.json": {
+   "numeric_tokens_compared": 3,
+   "numeric_tokens_differing": 0,
+   "largest_relative_difference": "0"
+  },
+  "error-v1.json": {
+   "numeric_tokens_compared": 0,
+   "numeric_tokens_differing": 0,
+   "largest_relative_difference": "0"
+  },
+  "error-v2-eb.json": {
+   "numeric_tokens_compared": 0,
+   "numeric_tokens_differing": 0,
+   "largest_relative_difference": "0"
+  },
+  "error-v2.json": {
+   "numeric_tokens_compared": 0,
+   "numeric_tokens_differing": 0,
+   "largest_relative_difference": "0"
+  },
+  "error-v3.json": {
+   "numeric_tokens_compared": 0,
+   "numeric_tokens_differing": 0,
+   "largest_relative_difference": "0"
+  },
+  "error-v4.json": {
+   "numeric_tokens_compared": 0,
+   "numeric_tokens_differing": 0,
+   "largest_relative_difference": "0"
+  },
+  "plan-v1.json": {
+   "numeric_tokens_compared": 0,
+   "numeric_tokens_differing": 0,
+   "largest_relative_difference": "0"
+  },
+  "plan-v2-eb.json": {
+   "numeric_tokens_compared": 0,
+   "numeric_tokens_differing": 0,
+   "largest_relative_difference": "0"
+  },
+  "plan-v2.json": {
+   "numeric_tokens_compared": 0,
+   "numeric_tokens_differing": 0,
+   "largest_relative_difference": "0"
+  },
+  "plan-v3.json": {
+   "numeric_tokens_compared": 0,
+   "numeric_tokens_differing": 0,
+   "largest_relative_difference": "0"
+  },
+  "plan-v4.json": {
+   "numeric_tokens_compared": 0,
+   "numeric_tokens_differing": 0,
+   "largest_relative_difference": "0"
+  },
+  "verdict-v1.txt": {
+   "numeric_tokens_compared": 854,
+   "numeric_tokens_differing": 0,
+   "largest_relative_difference": "0"
+  },
+  "verdict-v2-eb.txt": {
+   "numeric_tokens_compared": 1016,
+   "numeric_tokens_differing": 0,
+   "largest_relative_difference": "0"
+  },
+  "verdict-v2.txt": {
+   "numeric_tokens_compared": 990,
+   "numeric_tokens_differing": 0,
+   "largest_relative_difference": "0"
+  },
+  "verdict-v3.txt": {
+   "numeric_tokens_compared": 1033,
+   "numeric_tokens_differing": 13,
+   "largest_relative_difference": "2.12089e-9"
+  },
+  "verdict-v4.txt": {
+   "numeric_tokens_compared": 1096,
+   "numeric_tokens_differing": 15,
+   "largest_relative_difference": "2.12089e-9"
+  }
+ },
+ "claims": [],
+ "reference": "id-before",
+ "alternate": "nr-a2-t2",
+ "freeze_sha256": "bf456158bb6b55b990bed1a72234d3e6c42d71fb5ae7a9e421698eb53ba0956f"
+}
