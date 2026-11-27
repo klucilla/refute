@@ -1,0 +1,63 @@
+{
+ "manifest": "NR-A2",
+ "status": "Under the maintainer's decisions R3(c), S3, S5 and T2 to T3 (#218 comments 7226818333, 7227283917 and 7227882370). Written; committing it, pushing it and running it are the maintainer's decisions.",
+ "governing_text": "docs/plans/v0.5.13-charter-amendment-2-rev8.md (adopted in R1), section 3 (NR-A2, decision H2(a)) and section 6, criterion (c)",
+ "reason": "the only prospective evidence of #226 under revision 8: at a thread setting never run before, versions 1 to 4 meet decision identity under section 3",
+ "freeze": "docs/validation/v0.5.13/manifests/freeze-226-t3/freeze.json",
+ "freeze_note": "committed alone with a passed order-proof receipt; its entry prospective.nr-a2-t2 holds this file's SHA-256, and the commit of this manifest must carry these bytes exactly",
+ "authorized_code_commit": "96d929ec33793af7dd9870f9bcdde26bad6b4c07",
+ "authorized_code_note": "decision T2(4): HEAD itself cannot be this commit at the run, because this manifest's commit and its receipt's commit come after any commit this file can name. The executor and the comparator therefore require that the code paths (src, tests, pyproject.toml, uv.lock) at the run's HEAD are byte for byte those of this commit, that git status --porcelain of those paths and of identity_v2.py is empty, and that the code digest at HEAD is the frozen one; and they record HEAD before and after the run.",
+ "binding": {
+  "decision": "S3: (a) this manifest is committed alone at docs/validation/v0.5.13/manifests/nr-a2.json with the trailer 'CI: order-proof', pushed, and its order-proof-v2 receipt written and committed, before either unit runs; (b) each unit writes, at its end, a record with the SHA-256 of each output, and the records are committed before the comparator reads any file; (c) the comparator binds to those records and refuses any file that does not match.",
+  "what_the_comparator_checks_before_reading_a_golden": [
+   "the freeze list is committed, with a committed receipt for the commit holding the freeze folder's two files (one parent, the trailer, those files, a CI run)",
+   "the schema and ID-BEFORE's two records have the SHA-256 the freeze list records",
+   "this manifest has the frozen SHA-256 and is committed, with a committed receipt for the commit holding this manifest alone",
+   "T2(3): the freeze commit is an ancestor of this manifest's commit; each run's head holds this manifest and its receipt; each run's order proof names this manifest's commit and the receipt's CI run; each run starts after that push run was created and ends after it starts; each record is committed after its run's end",
+   "the committed journal (docs/validation/v0.5.13/log.jsonl) holds exactly one run of each unit below, with the frozen unit spec and identity_v2.py, the three thread variables at 2, this manifest as its order proof, a single successful end of the same unit, and an output SHA-256 equal to the committed record",
+   "T2(4): each record holds the executor's code checks before and after its run, at the run's head, naming this authorized commit, with the same code, a clean status and the frozen digest; the comparator recomputes the digest and the comparison from git",
+   "both records are labelled nr-a2-t2, were written by identity_v2.py at its frozen SHA-256, and record the thread variables at 2",
+   "the golden record's companion process reports num_threads = 2 for every BLAS library it lists",
+   "each golden file's SHA-256 is the one the record gives; the bytes so checked are the bytes compared"
+  ]
+ },
+ "setting": {
+  "label": "nr-a2-t2",
+  "threads": "OMP_NUM_THREADS=2, OPENBLAS_NUM_THREADS=2, MKL_NUM_THREADS=2, set in each unit's environment before the process starts (so before any numerical import); inherited by the fresh subprocess that computes the outputs (tests/baseline_code_v0511.py, _subprocess_outputs), as in NR-A1",
+  "no_pin": "no pin is made in the code; the setting is only the thread variables supplied to the process (revision 8, section 3)",
+  "verified_when": "the golden record's companion process (child_threadpool_info) reports num_threads = 2 for every BLAS library it lists. Otherwise the setting is unverified, the comparator refuses the binding, and #226 stays unmet."
+ },
+ "code": {
+  "decision": "S3: option A",
+  "script": "docs/validation/v0.5.13/tools/identity_v2.py, a new file; identity.py stays byte for byte for ID-BEFORE, NR-A1 and ID-AFTER",
+  "differences_from_identity_py": "the only label is nr-a2-t2; each record names its label; the claims record also holds the thread variables; the T2(4) code checks before and after the run, with a refusal to run or to write a record on other code",
+  "src_tree_note": "the src tree at the authorized commit differs from ID-BEFORE's and NR-A1's only in src/refute/__init__.py, the package version (commit 124bdd92a2be870ca16d53e280a1d84ac07986f9), which the goldens do not serialize"
+ },
+ "units": [
+  {
+   "unit": "docs/validation/v0.5.13/units/nr-a2-t2-golden.json",
+   "command": "{python} -I -B docs/validation/v0.5.13/tools/identity_v2.py golden nr-a2-t2",
+   "env": {"OMP_NUM_THREADS": "2", "OPENBLAS_NUM_THREADS": "2", "MKL_NUM_THREADS": "2"},
+   "reserve": {"cpu_s": 1500, "disk_bytes": 200000000},
+   "outputs": [".cache/v0513/golden/nr-a2-t2/*", "docs/validation/v0.5.13/step1/golden-nr-a2-t2.json (the spec's outputs mapping copies the record there and the journal records its SHA-256)"]
+  },
+  {
+   "unit": "docs/validation/v0.5.13/units/nr-a2-t2-claims.json",
+   "command": "{python} -I -B docs/validation/v0.5.13/tools/identity_v2.py claims nr-a2-t2",
+   "env": {"OMP_NUM_THREADS": "2", "OPENBLAS_NUM_THREADS": "2", "MKL_NUM_THREADS": "2"},
+   "reserve": {"cpu_s": 120, "disk_bytes": 20000000},
+   "outputs": ["docs/validation/v0.5.13/step1/claim-hashes-nr-a2-t2.json (the spec's outputs mapping copies the record there and the journal records its SHA-256)"]
+  }
+ ],
+ "runs": "each unit once, offline, in a fresh process, under the phase meter and journal, pinned to processors 8 to 31, BelowNormal; the label's folder must be empty; both unit specs name this manifest as their order proof, and their SHA-256 are in the freeze list",
+ "inputs": "tests/baseline_code_v0511.py (the synthetic fixtures of versions 1 to 4) and src/ at the authorized commit; every tracked YAML claim",
+ "comparison": {
+  "what": "decision identity under revision 8, section 3.1, against ID-BEFORE: the golden files and the claim hashes",
+  "command": "{python} -I -B docs/validation/v0.5.13/tools/comparator.py docs/validation/v0.5.13/manifests/freeze-226-t3/freeze.json nr-a2-t2 docs/validation/v0.5.13/goldens/before .cache/v0513/golden/nr-a2-t2",
+  "unit": "a comparator unit of its own, committed before it runs; running the comparator on goldens is the maintainer's stop",
+  "coverage": "the result reports files compared, numeric pairs compared and differing, and the largest relative difference (decision R2); zero files compared is INCONCLUSIVE (decision S4)"
+ },
+ "rule": "NR-A2 runs once. A failed decision identity, a refused binding, an unverified setting, or missing or unverifiable evidence leaves #226 unmet (revision 8, section 6, criterion (c)); the evidence is preserved, and no rerun is made without an approval in #218 of its reason and exact procedure.",
+ "after": "the raw goldens of NR-A2 enter git under docs/validation/v0.5.13/goldens/nr-a2-t2/, each checked against its record, or go to the Drive with a SHA-256 manifest if their total exceeds 5 MB (CLAUDE.md, raw outputs)",
+ "labels": ["exploratory", "method_status: not_validated"]
+}
