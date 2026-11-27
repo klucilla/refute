@@ -92,6 +92,14 @@ def test_selection_arithmetic_and_unreachable_are_left_out():
     assert "d.z > 1" not in rows
 
 
+def test_bare_flags_used_as_truth_values_are_non_numeric_rows():
+    _, rows = _rows()
+    assert rows["can_fail"]["kind"] == "non-numeric"
+    assert rows["can_fail"]["operators"] == ["name"]
+    assert rows["other(d)"]["operators"] == ["call"]
+    assert "mask" not in rows
+
+
 def test_early_exits_are_recorded():
     _, rows = _rows()
     exits = rows["d.k > 1"]["early_exits_before"]

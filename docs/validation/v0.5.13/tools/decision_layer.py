@@ -32,10 +32,16 @@ A function that holds a sink is a **decision function**.
 Inside a decision context the walk goes through ``and``/``or``/``not``, the test of a conditional
 expression, ``bool``, ``any``, ``all`` and a generator or comprehension's element (inclusive for
 ``any``/``all``). It **collects** every comparison and every call of ``isfinite``/``isnan``/
-``isinf`` (each one a candidate row), marks every name it meets as a decision variable of its
-function, and every function it calls as a returning decision function. It **stops**, recording
-the reason, at arithmetic (``BinOp``), at a subscript (selection by index or mask), and at any
-other call. The whole is repeated until nothing changes.
+``isinf`` (each one a candidate row), and, where the expression is used as a truth value (a
+test, or under ``and``/``or``/``not``/``bool``/``any``/``all``), every bare name, attribute,
+subscript or other call as a non-numeric row (a flag). It marks every name it meets as a decision
+variable of its function, and every function it calls as a returning decision function. It
+**stops**, recording the reason, at arithmetic (``BinOp``), at a subscript or call that is not
+used as a truth value (a selection, or a value), and at other nodes. The whole is repeated until
+nothing changes.
+
+**Reachability** follows calls and also references: a name or attribute that names a function
+(a check passed in a list, a callback) makes it reachable.
 
 **Each row** gives the file, line, function, the comparison as written, its operators, a kind
 (``numeric``: an ordering ``<``, ``<=``, ``>``, ``>=``, or ``==``/``!=`` with a numeric operand;
@@ -162,6 +168,11 @@ def analyze(sources: dict[str, str], entries=ENTRIES) -> dict:
         for n in f.walk():
             if isinstance(n, ast.Call) and _name(n.func):
                 f.calls.add(_name(n.func))
+            # a function passed by reference (a list of checks, a callback) is reachable too
+            if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load):
+                f.calls.add(n.id)
+            if isinstance(n, ast.Attribute) and isinstance(n.ctx, ast.Load):
+                f.calls.add(n.attr)
     # reachability by name
     reach: set[str] = set()
     todo = [f for f in funcs if (f.rel, f.qual) in set(entries)]
@@ -178,18 +189,31 @@ def analyze(sources: dict[str, str], entries=ENTRIES) -> dict:
     stops: dict[str, int] = {}
     returning: set[str] = set()
 
-    def walk_ctx(f: Func, expr: ast.AST, ctx: str) -> bool:
-        """Walk a decision context; True when it changed the state."""
+    def bare(f: Func, n: ast.AST, ctx: str, what: str) -> bool:
+        """A name, attribute, subscript or call used as a boolean: a non-numeric row."""
+        key = (f.rel, n.lineno, n.col_offset)
+        new = key not in rows
+        if new:
+            rows[key] = {"file": f.rel, "line": n.lineno, "end_line": n.end_lineno,
+                         "function": f.qual, "expression": _src(f.text, n),
+                         "operators": [what], "kind": "non-numeric", "contexts": set(),
+                         "node": n, "func": f}  # fmt: skip
+        rows[key]["contexts"].add(ctx)
+        return new
+
+    def walk_ctx(f: Func, expr: ast.AST, ctx: str, boolean: bool = False) -> bool:
+        """Walk a decision context; True when it changed the state. ``boolean`` says that the
+        expression is used as a truth value (a test, or under ``and``/``or``/``not``)."""
         changed = False
-        stack = [expr]
+        stack = [(expr, boolean)]
         while stack:
-            n = stack.pop()
+            n, is_bool = stack.pop()
             if isinstance(n, ast.BoolOp):
-                stack += n.values
+                stack += [(v, True) for v in n.values]
             elif isinstance(n, ast.UnaryOp) and isinstance(n.op, ast.Not):
-                stack.append(n.operand)
+                stack.append((n.operand, True))
             elif isinstance(n, ast.IfExp):
-                stack += [n.test, n.body, n.orelse]
+                stack += [(n.test, True), (n.body, is_bool), (n.orelse, is_bool)]
             elif isinstance(n, ast.Compare):
                 key = (f.rel, n.lineno, n.col_offset)
                 if key not in rows:
@@ -203,7 +227,7 @@ def analyze(sources: dict[str, str], entries=ENTRIES) -> dict:
             elif isinstance(n, ast.Call):
                 name = _name(n.func)
                 if name in PASS_CALLS:
-                    stack += n.args
+                    stack += [(a, True) for a in n.args]
                 elif name in ATOM_CALLS:
                     key = (f.rel, n.lineno, n.col_offset)
                     if key not in rows:
@@ -218,18 +242,29 @@ def analyze(sources: dict[str, str], entries=ENTRIES) -> dict:
                         if g.key in reach and g.key not in returning:
                             returning.add(g.key)
                             changed = True
-                    stops["call"] = stops.get("call", 0) + 1
+                    if is_bool:
+                        changed |= bare(f, n, ctx, "call")
+                    else:
+                        stops["call"] = stops.get("call", 0) + 1
             elif isinstance(n, ast.GeneratorExp | ast.ListComp | ast.SetComp):
-                stack.append(n.elt)
+                stack.append((n.elt, is_bool))
             elif isinstance(n, ast.Name):
                 if n.id not in f.dvars:
                     f.dvars.add(n.id)
                     changed = True
+                if is_bool:
+                    changed |= bare(f, n, ctx, "name")
             elif isinstance(n, ast.BinOp):
                 stops["arithmetic"] = stops.get("arithmetic", 0) + 1
             elif isinstance(n, ast.Subscript):
-                stops["subscript"] = stops.get("subscript", 0) + 1
-            elif isinstance(n, ast.Attribute | ast.Constant):
+                if is_bool:
+                    changed |= bare(f, n, ctx, "subscript")
+                else:
+                    stops["subscript"] = stops.get("subscript", 0) + 1
+            elif isinstance(n, ast.Attribute):
+                if is_bool:
+                    changed |= bare(f, n, ctx, "attribute")
+            elif isinstance(n, ast.Constant):
                 pass
             else:
                 stops[type(n).__name__] = stops.get(type(n).__name__, 0) + 1
@@ -255,9 +290,9 @@ def analyze(sources: dict[str, str], entries=ENTRIES) -> dict:
             dec = f.key in deciding or f.key in returning
             for n in f.walk():
                 if isinstance(n, ast.If | ast.While) and effect(f, n.body + n.orelse):
-                    changed |= walk_ctx(f, n.test, "branch test")
+                    changed |= walk_ctx(f, n.test, "branch test", True)
                 elif isinstance(n, ast.IfExp) and effect(f, [n.body, n.orelse]):
-                    changed |= walk_ctx(f, n.test, "conditional expression")
+                    changed |= walk_ctx(f, n.test, "conditional expression", True)
                 elif isinstance(n, ast.Assign | ast.AnnAssign | ast.AugAssign) and n.value:
                     targets = n.targets if isinstance(n, ast.Assign) else [n.target]
                     names = [_target_name(t) for t in targets]
