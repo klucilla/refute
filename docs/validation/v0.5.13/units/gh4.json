@@ -1,0 +1,12 @@
+{
+ "name": "gh4",
+ "question": "One GitHub operation through gh, for the maintainer's decision block W of 2026-11-27 (#218, recorded at comment 7229841832): issue view and list (read, with comments); issue comment on klucilla/refute (#218, #224, #135, the closed issues, and a Part B item that inherits a point of #195); issue close on klucilla/refute only for the issues W1 and W2 name, each after a comment in English that cites its evidence; run list/view (read); api GET.",
+ "choices": "The arguments make the unit. Inbound bytes at the declared conservative estimate. Never: closing #218, #59, #227, #224, #223, #228, #230, #225, #135 or #171 (those two close on the maintainer's report); any issue outside W1 and W2; changing repository settings, environments, secrets, publishers or the Actions policy; approving or rejecting a deployment; any token.",
+ "argv": ["gh"],
+ "identity": [],
+ "key": "data",
+ "reserve": {"cpu_s": 120, "disk_bytes": 20000000},
+ "timeout_s": 600,
+ "network": {"kind": "github", "endpoints": ["api.github.com:443", "github.com:443"], "operations": ["gh issue view/list/comment/close (klucilla/refute)", "gh run list/view", "gh api GET"], "inbound_estimate_bytes": 5000000},
+ "retry_class": "infra"
+}

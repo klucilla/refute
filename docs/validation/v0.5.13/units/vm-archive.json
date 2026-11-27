@@ -1,0 +1,11 @@
+{
+ "name": "vm-archive",
+ "question": "Archive the Refute VM's records (C:/ProgramData/RefuteVm, C:/ProgramData/RefuteVm-backup, and .cache/vm except ssh/ and gnupg/) to a new folder of the maintainer's Drive, with a SHA-256 manifest of source and copy, checked (block W, item W1(g)1, #218 comment 7229841832). Without administrator rights; what cannot be read is listed, never forced.",
+ "choices": "docs/validation/v0.5.13/tools/vm_archive.py --dest-name <new folder> --record <project folder>. It copies and checks; it never deletes or moves. Writes outside the phase's disk roots (the Drive folder; a declared limit). Offline. It emits no case value.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/vm_archive.py"],
+ "identity": ["docs/validation/v0.5.13/tools/vm_archive.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 120, "disk_bytes": 200000000},
+ "timeout_s": 1800,
+ "network": false
+}
