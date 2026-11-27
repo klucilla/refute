@@ -1,8 +1,23 @@
 """The comparator of amendment 2, revision 6, section 3.1 (v0.5.13, the maintainer's decision L4(b),
 #218 comment 7223634913). Frozen with the margin manifest before it reads any golden file.
 
-    python -I -B docs/validation/v0.5.13/tools/comparator.py <schema.json> <ref record> <ref dir> \
-        <alt record> <alt dir> <ref claim-hash record> <alt claim-hash record>
+    python -I -B docs/validation/v0.5.13/tools/comparator.py <freeze.json> <ref label> <alt label> \
+        <schema.json> <ref record> <ref dir> <alt record> <alt dir> \
+        <ref claim-hash record> <alt claim-hash record>
+
+**Corrections under the maintainer's decision P2** (#218 comment 7225754254, Codex's items 6 and 7
+that bear on decision identity):
+- no shortcut on equal bytes: every file is decoded and validated, and a malformed file fails even
+  when both settings hold it;
+- a duplicate key in any JSON object is malformed;
+- a report line matched by more than one template fails, equal or not;
+- a number is exact when its last key matches the schema's ``exact_key_regex`` (thresholds named
+  ``required_*``, ``min_*``, ``max_*``, ``*_threshold``, ``*_limit``), whatever pattern it sits
+  under; the global ``exact_keys`` do not apply under ``keys_not_exact_under`` (a fit's error
+  named like a plan field);
+- the claim check requires every value to be a SHA-256 except the approved exceptions, present with
+  their exact text in both records;
+- the command checks the schema and the four records against the freeze list's SHA-256 first.
 
 It compares one alternate setting with the reference (ID-BEFORE), never two alternates. It
 writes one JSON result to stdout, and exits 0 only when the setting meets section 3.1.
@@ -131,8 +146,25 @@ def lex(text: str) -> list[tuple[str, str, str]]:
         tokens.append((kind, raw, path()))
     if stack:
         raise MalformedError("unbalanced open")
-    json.loads(text)  # the text must also be valid JSON
+    strict_loads(text)  # the text must also be valid JSON, with no duplicate key
     return tokens
+
+
+def _no_duplicates(pairs: list[tuple[str, object]]) -> dict:
+    keys = [k for k, _ in pairs]
+    if len(keys) != len(set(keys)):
+        raise MalformedError(f"duplicate JSON key in an object: {sorted(set(keys))[:5]}")
+    return dict(pairs)
+
+
+def strict_loads(text: str):
+    """``json.loads`` that rejects a duplicate key in any object (P2, Codex's item 7)."""
+    try:
+        return json.loads(text, object_pairs_hook=_no_duplicates)
+    except ValueError as exc:
+        if isinstance(exc, MalformedError):
+            raise
+        raise MalformedError(f"not valid JSON: {exc}") from exc
 
 
 def _pattern(glob: str) -> re.Pattern:
@@ -170,6 +202,16 @@ def compare_json(a: str, b: str, kind: str, schema: dict) -> list[str]:
     exact = [_pattern(p) for p in schema["json"][kind].get("exact", [])]
     exact_keys = set(schema["exact_keys"])
     subtrees = set(schema.get("exact_subtree_keys", []))
+    key_rx = re.compile(schema["exact_key_regex"]) if schema.get("exact_key_regex") else None
+    free = [_pattern(p) for p in schema.get("keys_not_exact_under", [])]
+
+    def is_exact(path: str) -> bool:
+        if subtrees & set(key_segments(path)) or any(p.match(path) for p in exact):
+            return True
+        if key_rx is not None and key_rx.search(last_key(path)):
+            return True
+        return last_key(path) in exact_keys and not any(p.match(path) for p in free)
+
     for i, ((ka, ra, pa), (kb, rb, pb)) in enumerate(zip(ta, tb, strict=True)):
         if ka != kb or pa != pb:
             problems.append(f"{kind}: token {i} differs in kind or location ({pa!r})")
@@ -181,11 +223,7 @@ def compare_json(a: str, b: str, kind: str, schema: dict) -> list[str]:
             continue
         if not (is_float_form(ra) and is_float_form(rb)):
             problems.append(f"{kind}: integer token at {pa!r} differs")
-        elif (
-            last_key(pa) in exact_keys
-            or subtrees & set(key_segments(pa))
-            or any(p.match(pa) for p in exact)
-        ):
+        elif is_exact(pa):
             problems.append(f"{kind}: exact number at {pa!r} differs")
         elif not any(p.match(pa) for p in measure):
             problems.append(f"{kind}: number at {pa!r} is not a schema measurement and differs")
@@ -204,10 +242,14 @@ def compare_report(a: str, b: str, schema: dict) -> list[str]:
     templates = [(t["name"], re.compile(t["regex"]), t["groups"]) for t in schema["report"]]
     problems: list[str] = []
     for n, (x, y) in enumerate(zip(la, lb, strict=True), 1):
-        if x == y:
-            continue
         mx = [(name, rx.fullmatch(x), g) for name, rx, g in templates if rx.fullmatch(x)]
         my = [(name, rx.fullmatch(y), g) for name, rx, g in templates if rx.fullmatch(y)]
+        if len(mx) > 1 or len(my) > 1:
+            # an ambiguous mapping is a failure even on equal lines (P2, Codex's item 7)
+            problems.append(f"report line {n}: more than one template matches")
+            continue
+        if x == y:
+            continue
         if len(mx) != 1 or len(my) != 1 or mx[0][0] != my[0][0]:
             problems.append(f"report line {n}: differs and no single shared template matches")
             continue
@@ -229,14 +271,21 @@ def compare_report(a: str, b: str, schema: dict) -> list[str]:
 
 
 def compare_file(name: str, a: bytes, b: bytes, schema: dict) -> list[str]:
-    if a == b:
-        return []
+    """No shortcut on equal bytes (P2, Codex's item 7): every file is decoded and its structure
+    validated, so that a malformed file never passes because both settings hold it."""
     try:
         ta, tb = a.decode("utf-8"), b.decode("utf-8")
     except UnicodeDecodeError:
         return [f"{name}: not UTF-8"]
     if name.startswith(("plan-", "error-")) or ta.startswith("ERROR") or tb.startswith("ERROR"):
-        return [f"{name}: an exact file differs"]
+        if a != b:
+            return [f"{name}: an exact file differs"]
+        if name.startswith(("plan-", "error-")) and not ta.startswith("ERROR"):
+            try:
+                strict_loads(ta)
+            except MalformedError as exc:
+                return [f"{name}: malformed: {exc}"]
+        return []
     try:
         if name.startswith("chain-") and name.endswith(".json"):
             return [f"{name}: {p}" for p in compare_json(ta, tb, "chain", schema)]
@@ -279,26 +328,72 @@ def compare_setting(schema: dict, ref_rec: dict, ref_dir: Path, alt_rec: dict, a
     return {"result": "PASS" if not problems else "FAIL", "problems": problems, "files": files}
 
 
-def compare_claims(ref_rec: dict, alt_rec: dict) -> list[str]:
-    """Section 3.1: the exact protected claim inventory and identical resolved SHA-256 values. The
-    baseline exception (an ``ERROR`` record) must be preserved byte for byte, so an exact
-    comparison of every value covers it."""
+HEX64 = re.compile(r"[0-9a-f]{64}\Z")
+
+
+def compare_claims(ref_rec: dict, alt_rec: dict, exceptions: dict[str, str]) -> list[str]:
+    """Section 3.1: the exact protected claim inventory and identical resolved SHA-256 values.
+    Every value is a SHA-256 (64 lowercase hex digits), except the approved baseline exceptions
+    (``exceptions``: path -> the exact recorded text), which must be present with that text in
+    both records. Two records that share a gap or a malformed value fail (P2, Codex's item 7)."""
     a, b = ref_rec["payload"]["claims"], alt_rec["payload"]["claims"]
+    problems = []
     if sorted(a) != sorted(b):
-        return ["the claim inventories differ"]
-    return [f"claim {k}: resolved value differs" for k in sorted(a) if a[k] != b[k]]
+        problems.append("the claim inventories differ")
+    for path, text in exceptions.items():
+        for label, rec in (("reference", a), ("alternate", b)):
+            if rec.get(path) != text:
+                problems.append(f"claim {path}: the approved exception is not in the {label}")
+    for label, rec in (("reference", a), ("alternate", b)):
+        for k, v in rec.items():
+            if k not in exceptions and not (isinstance(v, str) and HEX64.match(v)):
+                problems.append(f"claim {k}: the {label} value is not a SHA-256")
+    problems += [f"claim {k}: resolved value differs" for k in sorted(a) if k in b and a[k] != b[k]]
+    return problems
+
+
+def check_bound(freeze: dict, label_ref: str, label_alt: str, files: dict[str, Path]) -> list[str]:
+    """Each file the command uses must have the SHA-256 the freeze list records (P2): the schema,
+    and for each of the two settings its golden record and its claim-hash record."""
+    expected = {
+        "schema": freeze["schema"]["sha256"],
+        "ref_record": freeze["settings"][label_ref]["record_sha256"],
+        "alt_record": freeze["settings"][label_alt]["record_sha256"],
+        "ref_claims": freeze["settings"][label_ref]["claim_record_sha256"],
+        "alt_claims": freeze["settings"][label_alt]["claim_record_sha256"],
+    }
+    return [
+        f"{name}: SHA-256 is not the frozen one"
+        for name, path in files.items()
+        if sha(path.read_bytes()) != expected[name]
+    ]
 
 
 def main() -> int:
-    """Arguments: the schema, the reference golden record and folder, the alternate golden record
-    and folder, then the reference and alternate claim-hash records."""
-    schema = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
-    ref_rec = json.loads(Path(sys.argv[2]).read_text(encoding="utf-8"))
-    alt_rec = json.loads(Path(sys.argv[4]).read_text(encoding="utf-8"))
-    out = compare_setting(schema, ref_rec, Path(sys.argv[3]), alt_rec, Path(sys.argv[5]))
-    ref_claims = json.loads(Path(sys.argv[6]).read_text(encoding="utf-8"))
-    alt_claims = json.loads(Path(sys.argv[7]).read_text(encoding="utf-8"))
-    out["claims"] = compare_claims(ref_claims, alt_claims)
+    """Arguments: the freeze list, the reference and alternate setting labels (as in the freeze
+    list), the schema, the reference golden record and folder, the alternate golden record and
+    folder, then the reference and alternate claim-hash records. Every file is first checked
+    against the SHA-256 the freeze list records; a mismatch fails before any golden is read."""
+    freeze = strict_loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+    label_ref, label_alt = sys.argv[2], sys.argv[3]
+    paths = {
+        "schema": Path(sys.argv[4]),
+        "ref_record": Path(sys.argv[5]),
+        "alt_record": Path(sys.argv[7]),
+        "ref_claims": Path(sys.argv[9]),
+        "alt_claims": Path(sys.argv[10]),
+    }
+    bound = check_bound(freeze, label_ref, label_alt, paths)
+    if bound:
+        print(json.dumps({"result": "FAIL", "problems": bound}, indent=1))
+        return 1
+    schema = strict_loads(paths["schema"].read_text(encoding="utf-8"))
+    ref_rec = strict_loads(paths["ref_record"].read_text(encoding="utf-8"))
+    alt_rec = strict_loads(paths["alt_record"].read_text(encoding="utf-8"))
+    out = compare_setting(schema, ref_rec, Path(sys.argv[6]), alt_rec, Path(sys.argv[8]))
+    ref_claims = strict_loads(paths["ref_claims"].read_text(encoding="utf-8"))
+    alt_claims = strict_loads(paths["alt_claims"].read_text(encoding="utf-8"))
+    out["claims"] = compare_claims(ref_claims, alt_claims, schema.get("claim_exceptions", {}))
     if out["claims"]:
         out["result"] = "FAIL"
     print(json.dumps(out, indent=1))

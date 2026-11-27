@@ -8,6 +8,7 @@
     "global_ephemeris.**",
     "key_values.**",
     "period_comparison.relative_error",
+    "period_comparison.found_period_days",
     "tests[*].metrics.**",
     "tests[*].inputs.**",
     "tests[*].sensitivity.**",
@@ -29,6 +30,12 @@
    "measurement": ["candidate.**"],
    "exact": []
   }
+ },
+ "p2": "Decision P2 (#218 comment 7225754254), Codex's item 6: exact_key_regex makes exact every number whose last key names a threshold (required_probability in sensitivity blocks, src/refute/core/sensitivity.py:248; min_train_snr and max_duration_period_ratio in holdout rounds), under any pattern; keys_not_exact_under lets the fit's errors in v05.parameters (pipeline.py:825) be measurements although period_err_days is also a plan field; period_comparison.found_period_days (pipeline.py:898) is a measurement. Measurements printed inside test messages stay exact: section 3.1 maps numeric spans only in rendered reports, and the same message is a JSON string in the verdict, which compares exactly.",
+ "exact_key_regex": "^(required_|min_|max_)|(_threshold|_limit)$",
+ "keys_not_exact_under": ["v05.parameters.**"],
+ "claim_exceptions": {
+  "calibration/v0.5/deviation/claim.generated.yaml": "ERROR ClaimError: invalid claim: targets attachment not found: selection/targets.yaml"
  },
  "report": [
   {"name": "period-row", "source": "report.py:217-218", "regex": "\\| Period \\(d\\) \\| (?P<found>[^|]+) \\| (?P<published>[^|]+) \\|", "groups": {"found": "measurement", "published": "exact"}},

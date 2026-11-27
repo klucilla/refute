@@ -173,6 +173,11 @@ def main() -> int:
         "report": parts["report"],
         "exact_keys": keys["exact_keys"],
         "exact_subtree_keys": keys["exact_subtree_keys"],
+        # decision P2: thresholds by key name, fit errors under v05.parameters, the claim
+        # exception
+        "exact_key_regex": parts.get("exact_key_regex"),
+        "keys_not_exact_under": parts.get("keys_not_exact_under", []),
+        "claim_exceptions": parts.get("claim_exceptions", {}),
     }
     manifest = {
         "labels": ["exploratory", "method_status: not_validated"],

@@ -239,9 +239,85 @@ def test_frozen_schema_loads_and_compiles():
     assert comp.compare_file("verdict-v1.txt", v.encode(), v.encode(), schema) == []
 
 
+H1, H2 = "a" * 64, "b" * 64
+EXC = {"d.yaml": "ERROR ClaimError: x"}
+
+
 def test_claims():
-    a = {"payload": {"claims": {"c.yaml": "ab", "d.yaml": "ERROR ClaimError: x"}}}
-    assert comp.compare_claims(a, json.loads(json.dumps(a))) == []
-    b = {"payload": {"claims": {"c.yaml": "ab", "d.yaml": "ERROR ClaimError: y"}}}
-    assert comp.compare_claims(a, b)
-    assert comp.compare_claims(a, {"payload": {"claims": {"c.yaml": "ab"}}})
+    a = {"payload": {"claims": {"c.yaml": H1, "d.yaml": "ERROR ClaimError: x"}}}
+    assert comp.compare_claims(a, json.loads(json.dumps(a)), EXC) == []
+    b = {"payload": {"claims": {"c.yaml": H2, "d.yaml": "ERROR ClaimError: x"}}}
+    assert comp.compare_claims(a, b, EXC)
+    assert comp.compare_claims(a, {"payload": {"claims": {"c.yaml": H1}}}, EXC)
+
+
+def test_claims_reject_shared_gaps_and_bad_values():
+    # the same malformed value, or the same missing exception, in both records still fails
+    bad = {"payload": {"claims": {"c.yaml": "ab", "d.yaml": "ERROR ClaimError: x"}}}
+    assert comp.compare_claims(bad, json.loads(json.dumps(bad)), EXC)
+    gap = {"payload": {"claims": {"c.yaml": H1}}}
+    assert comp.compare_claims(gap, json.loads(json.dumps(gap)), EXC)
+    other = {"payload": {"claims": {"c.yaml": H1, "d.yaml": "ERROR ClaimError: y"}}}
+    assert comp.compare_claims(other, json.loads(json.dumps(other)), EXC)
+
+
+def test_no_shortcut_on_equal_bytes():
+    assert comp.compare_file("chain-v1.json", b"{", b"{", SCHEMA)
+    assert comp.compare_file("chain-v1.json", b'{"a": 1, "a": 1}', b'{"a": 1, "a": 1}', SCHEMA)
+    assert comp.compare_file("plan-v1.json", b'{"a": 1, "a": 2}', b'{"a": 1, "a": 2}', SCHEMA)
+    v = verdict("1.5").encode()
+    assert comp.compare_file("verdict-v1.txt", v, v, SCHEMA)  # no report separator
+    assert comp.compare_file("plan-v1.json", b'{"a": 1}', b'{"a": 1}', SCHEMA) == []
+
+
+def test_ambiguous_template_fails_on_equal_lines():
+    schema = dict(SCHEMA)
+    schema["report"] = SCHEMA["report"] + [
+        {"name": "dup", "regex": r"\| SNR \| (?P<x>\S+) \| \|", "groups": {"x": "measurement"}}
+    ]
+    assert comp.compare_report("| SNR | 1.0 | |", "| SNR | 1.0 | |", schema)
+
+
+def test_threshold_key_names_and_the_exception_for_fit_errors():
+    schema = {
+        **SCHEMA,
+        "exact_keys": ["snr_min", "period_err_days"],
+        "exact_key_regex": "^(required_|min_|max_)|(_threshold|_limit)$",
+        "keys_not_exact_under": ["v05.parameters.**"],
+        "json": {"verdict": {"measurement": ["candidate.**", "v05.**"], "exact": []}},
+    }
+    doc = '{\n  "candidate": {\n    "KEY": 1.0\n  }\n}\n'
+    for key, fails in (("required_probability", True), ("min_train_snr", True), ("x", False)):
+        a = doc.replace("KEY", key)
+        result = comp.compare_json(a, a.replace("1.0", "1.0000001"), "verdict", schema)
+        assert bool(result) is fails, key
+    fit = '{\n  "v05": {\n    "parameters": {\n      "period_err_days": 1.0\n    }\n  }\n}\n'
+    assert comp.compare_json(fit, fit.replace("1.0", "1.0000001"), "verdict", schema) == []
+    cand = doc.replace("KEY", "period_err_days")
+    assert comp.compare_json(cand, cand.replace("1.0", "1.0000001"), "verdict", schema)
+
+
+def test_files_are_bound_to_the_freeze(tmp_path):
+    files = {}
+    for name in ("schema", "ref_record", "alt_record", "ref_claims", "alt_claims"):
+        files[name] = tmp_path / f"{name}.json"
+        files[name].write_bytes(name.encode())
+    digest = {n: hashlib.sha256(n.encode()).hexdigest() for n in files}
+    freeze = {
+        "schema": {"sha256": digest["schema"]},
+        "settings": {
+            "r": {
+                "record_sha256": digest["ref_record"],
+                "claim_record_sha256": digest["ref_claims"],
+            },
+            "a": {
+                "record_sha256": digest["alt_record"],
+                "claim_record_sha256": digest["alt_claims"],
+            },
+        },
+    }
+    assert comp.check_bound(freeze, "r", "a", files) == []
+    files["alt_claims"].write_bytes(b"changed")
+    assert comp.check_bound(freeze, "r", "a", files) == [
+        "alt_claims: SHA-256 is not the frozen one"
+    ]
