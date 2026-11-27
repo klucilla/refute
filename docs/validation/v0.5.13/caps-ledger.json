@@ -10,7 +10,7 @@
   "disk_bytes": 5000000000
  },
  "charged": {
-  "cpu_s": 4402.943,
+  "cpu_s": 4410.178,
   "download_bytes": 1206099374,
   "disk_peak_bytes": 1199241106
  },
@@ -17577,6 +17577,63 @@
    "download_bytes": 0,
    "write_bytes": 41,
    "disk_bound_bytes": 55909169,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "baf8e6850e2b45d69ceeec46450e5884",
+   "start": "2026-11-27T21:45:37Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.891,
+   "download_bytes": 0,
+   "write_bytes": 1357320,
+   "disk_bound_bytes": 57267652,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "e641eab21896406cac56bfafce0c8d9e",
+   "start": "2026-11-27T21:45:39Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 3.547,
+   "download_bytes": 0,
+   "write_bytes": 4189582,
+   "disk_bound_bytes": 60629860,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "golden-commit-v2",
+   "label": null,
+   "attempt": "2dddb50c010341f7a32a00dbbaad412a",
+   "start": "2026-11-27T21:45:43Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 10000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.797,
+   "download_bytes": 0,
+   "write_bytes": 384722,
+   "disk_bound_bytes": 56837414,
    "case_outputs": 0,
    "telemetry_complete": true
   }
