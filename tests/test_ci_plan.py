@@ -91,6 +91,19 @@ def test_documentation_only_runs_no_test_but_readme_and_data_files_do():
         assert run("push", Change(("ROADMAP.md", path))).level == "fast"
 
 
+def test_v0513_data_records_are_documentation_but_its_tools_are_code():
+    # #218 item J3: v0.5.13's .json and .jsonl records are read by no test, lint step or build
+    records = (
+        "docs/validation/v0.5.13/log.jsonl",
+        "docs/validation/v0.5.13/caps-ledger.json",
+        "docs/validation/v0.5.13/g9/hash-sweep.json",
+        "docs/validation/v0.5.13/units/ruff.json",
+    )
+    assert run("push", Change(("ROADMAP.md", *records))).level == "docs"
+    for path in ("docs/validation/v0.5.13/tools/launch_v4.py", "docs/validation/v0.5.12/x.json"):
+        assert run("push", Change(("docs/validation/v0.5.13/log.jsonl", path))).level == "fast"
+
+
 @pytest.mark.parametrize("event", ["schedule", "workflow_dispatch"])
 def test_nightly_and_manual_runs_are_full(event):
     assert run(event).level == "full"

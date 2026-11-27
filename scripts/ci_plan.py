@@ -69,6 +69,12 @@ DOCS_ONLY = (
     "PROMPT-v0.1.md",
     "ROADMAP.md",
     "SECURITY.md",
+    # v0.5.13's data records (#218, the maintainer's decision J3, comment 7222879969): no test,
+    # lint step or build reads a .json or .jsonl file of this folder (checked by a search of
+    # tests/ and scripts/ on 2026-11-27); its tools/*.py stay code. A test that starts reading one
+    # of these files must remove the pattern first.
+    "docs/validation/v0.5.13/*.json",
+    "docs/validation/v0.5.13/*.jsonl",
 )
 ORDER_PROOF = "CI: order-proof"
 
