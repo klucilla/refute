@@ -11,10 +11,8 @@ This file has two parts:
 2. **The README as it was on 2026-11-26** (commit `65e83be`), moved here literally by the
    maintainer's decision of 2026-11-26 (#218, comment 7203695669, item A3), so that no recorded
    result or failure is lost. `scripts/check_moved_text.py` checks that every line of that
-   README is in the new README or here. Its relative links were written for the repository
-   root and are kept as they were: read them from the root (for example `docs/verdicts.md` is
-   `verdicts.md` from this folder, and `calibration/POSTMORTEM.md` is
-   `../calibration/POSTMORTEM.md`).
+   README is in the new README or here. Its relative links were re-prefixed on 2026-11-26 to
+   work from this folder (#218, comment 7204660147, item M2); only their targets changed.
 
 ## 1. The phases since the README's last status
 
