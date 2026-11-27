@@ -11,15 +11,17 @@ compared byte for byte, and a change of notation such as ``4`` against ``4.0`` f
 source of those modules:
 1. it is the string key of a dict literal entry, of a subscript assignment ``d["key"] = value``,
    or the keyword of a ``dict(...)`` call, whose value is an integer: an ``int`` literal (not a
-   ``bool``), a negated ``int`` literal, or a call to ``int``, ``len`` or one-argument ``round``;
+   ``bool``), a negated ``int`` literal, a conditional expression whose branches are all such
+   values, or a call to ``int``, ``len`` or one-argument ``round``;
 2. it is a field of a class annotated ``int``, ``int | None``, ``Optional[int]``, ``list[int]``,
    ``tuple[int, ...]`` or ``set[int]``.
 
 The rules over-include on purpose: a float measurement that shares a name with an integer key
 becomes exact, which can only make the comparator fail, never pass. The tool lists each key with
-its sources, and it reports which of these keys are also a measurement output name or a field D1a
-found to differ (``schema-keys.json``); any such key is a conflict, listed for review, and the tool
-exits 1.
+its sources. It lists for review the keys that are also a measurement output name of
+``schema-keys.json`` (for example ``n_transits`` and ``n_ref``, integer fields of the candidate
+and the ephemeris: integer by their annotation, so exact). A key that is also a field D1a found
+to differ is a conflict, and the tool exits 1.
 """
 
 from __future__ import annotations
@@ -39,6 +41,8 @@ def is_int_value(node: ast.AST) -> bool:
         return type(node.value) is int
     if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub):
         return is_int_value(node.operand)
+    if isinstance(node, ast.IfExp):  # "discovery_version": 4 if ... else 3 ...
+        return is_int_value(node.body) and is_int_value(node.orelse)
     if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
         if node.func.id in INT_CALLS:
             return True
@@ -121,17 +125,19 @@ def main() -> int:
     for rel in modules:
         scan(rel, found)
     found = {k: sorted(set(v)) for k, v in sorted(found.items())}
-    measured = set(keys["measurement_output_names"]) | set(keys["d1a_differing_fields"])
-    conflicts = sorted(k for k in found if k in measured)
+    review = sorted(k for k in found if k in set(keys["measurement_output_names"]))
+    conflicts = sorted(k for k in found if k in set(keys["d1a_differing_fields"]))
     out = {
-        "rule": "see the tool's docstring: int literals, int/len/one-argument round calls, and "
-        "int-annotated class fields, over the modules of schema-keys.json",
+        "rule": "see the tool's docstring: int literals and conditionals of them, "
+        "int/len/one-argument round calls, and int-annotated class fields, over the modules of "
+        "schema-keys.json",
         "modules": len(modules),
         "exact_integer_keys": found,
-        "conflicts_with_measurement_names": conflicts,
+        "also_measurement_output_names": review,
+        "conflicts_with_d1a_fields": conflicts,
     }
     Path(sys.argv[1]).write_text(json.dumps(out, indent=1) + "\n", encoding="utf-8")
-    print(json.dumps({"keys": len(found), "conflicts": conflicts}))
+    print(json.dumps({"keys": len(found), "review": review, "conflicts": conflicts}))
     return 1 if conflicts else 0
 
 
