@@ -2,7 +2,14 @@
 R3(a), #218 comment 7226818333). From source and records only: it opens no golden file and runs
 no comparator.
 
-    unit freeze-226:  {python} -I -B docs/validation/v0.5.13/tools/freeze_226.py <out folder>
+    unit freeze-226:  {python} -I -B docs/validation/v0.5.13/tools/freeze_226.py <out folder> \
+        <NR-A2 manifest draft>
+
+**Under decision S3** (#218 comment 7227283917) the freeze list also holds ``prospective``: the
+entry that binds NR-A2, which runs after the freeze. It names the path where NR-A2's manifest will
+be committed (alone, with its order proof) and the SHA-256 of the draft given as the second
+argument, which that commit must carry byte for byte; the paths of NR-A2's two records; the
+SHA-256 of ``tools/identity_v2.py``, which must write them; and the two-thread setting.
 
 Under revision 8, section 4 (blind review 3, item 1), the freeze of versions 1 to 4 holds: the
 fixture list, the source commits and code digests, the resolved plans, the SHA-256 of each golden
@@ -55,6 +62,9 @@ COMPARATOR = f"{V}/tools/comparator.py"
 FIXTURE_CODE = "tests/baseline_code_v0511.py"
 REVISION = "docs/plans/v0.5.13-charter-amendment-2-rev8.md"
 LABELS = ["exploratory", "method_status: not_validated"]
+NR_A2_MANIFEST = f"{V}/manifests/nr-a2.json"
+IDENTITY_V2 = f"{V}/tools/identity_v2.py"
+THREAD_VARS = ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS")
 
 
 def load(rel: str):
@@ -85,7 +95,10 @@ def main() -> int:
         "exact_keys": keys["exact_keys"],
         "exact_subtree_keys": keys["exact_subtree_keys"],
         "exact_key_regex": parts.get("exact_key_regex"),
-        "keys_not_exact_under": parts.get("keys_not_exact_under", []),
+        "computed_keys_despite_name": parts.get("computed_keys_despite_name", {}),
+        "exact_key_exempt_paths": parts.get("exact_key_exempt_paths", []),
+        "exact_by_sibling": parts.get("exact_by_sibling", []),
+        "message_lines": parts.get("message_lines", {}),
         "claim_exceptions": parts.get("claim_exceptions", {}),
     }
     schema_text = json.dumps(schema, indent=1) + "\n"
@@ -128,11 +141,26 @@ def main() -> int:
         "schema": {"path": f"{out_rel}/comparator-schema.json",
                    "sha256": sha(schema_text.encode("utf-8")),
                    "span_mapping": "the schema's json measurement and exact patterns, exact keys, "
-                   "exact subtree keys, exact key regex, keys not exact under, and report "
+                   "exact subtree keys, exact key regex, computed keys despite their name, "
+                   "exact-key exempt paths, exact by sibling, message lines, and report "
                    "templates",
                    "built_from": [file_item(f"{L4}/comparator-schema-parts.json"),
                                   file_item(f"{L4}/schema-keys.json")]},
         "margin_manifest": None,
+        # decision S3: NR-A2 runs after this freeze; its records are bound to this entry
+        "prospective": {
+            "nr-a2-t2": {
+                "manifest": {"path": NR_A2_MANIFEST,
+                             "sha256": sha((ROOT / sys.argv[2]).read_bytes()),
+                             "draft": Path(sys.argv[2]).as_posix()},
+                "record": f"{V}/step1/golden-nr-a2-t2.json",
+                "claim_record": f"{V}/step1/claim-hashes-nr-a2-t2.json",
+                "script": IDENTITY_V2,
+                "script_sha256": sha((ROOT / IDENTITY_V2).read_bytes()),
+                "thread_env": {v: "2" for v in THREAD_VARS},
+                "threads": 2,
+            }
+        },
     }  # fmt: skip
     out.mkdir(parents=True, exist_ok=True)
     (out / "comparator-schema.json").write_text(schema_text, encoding="utf-8", newline="\n")
@@ -147,6 +175,8 @@ def main() -> int:
         "schema_sha256": freeze["schema"]["sha256"],
         "comparator_sha256": freeze["comparator"]["sha256"],
         "revision_sha256": freeze["revision"]["sha256"],
+        "nr_a2_manifest_sha256": freeze["prospective"]["nr-a2-t2"]["manifest"]["sha256"],
+        "identity_v2_sha256": freeze["prospective"]["nr-a2-t2"]["script_sha256"],
         "report_templates": len(schema["report"]),
     }, indent=1))  # fmt: skip
     return 0

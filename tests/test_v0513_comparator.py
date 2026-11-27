@@ -122,7 +122,9 @@ def test_report_templates():
     assert rep("| SNR | 12.3456 | |", "| SNR | 12.3456 | |", SCHEMA) == []
     assert rep("| SNR | 1.0000000 | |", "| SNR | 1.0000001 | |", SCHEMA) == []
     assert rep("| SNR | 12.35 | |", "| SNR | 12.34 | |", SCHEMA)
-    assert rep("| SNR | 1.2e+05 | |", "| SNR | 120000.0 | |", SCHEMA)
+    # decision S1, item 4: a valid change of printed form is compared by value
+    assert rep("| SNR | 1.2e+05 | |", "| SNR | 120000.0 | |", SCHEMA) == []
+    assert rep("| SNR | 99999.9999 | |", "| SNR | 1.0000e+05 | |", SCHEMA) == []
     assert rep("| SNR | n/a | |", "| SNR | 1.0 | |", SCHEMA)
     assert rep("a\nb", "a", SCHEMA)
     assert rep("free text 1.0", "free text 1.0000001", SCHEMA)
@@ -199,6 +201,7 @@ EXAMPLES = {
     "cadence-row": "| 1 | 18000 | 19000 | 0.947 |",
     "holdout-row": "| 2019 | PASS | 4 | 12.1 | 0.3 |",
     "holdout-v05-row": "| 2019 | yes | 0.85 |",
+    "gauntlet-row": "| odd_even | INCONCLUSIVE (out_of_domain) | fatal | depths 12.3, 11.9 |",
 }
 
 
@@ -243,22 +246,35 @@ H1, H2 = "a" * 64, "b" * 64
 EXC = {"d.yaml": "ERROR ClaimError: x"}
 
 
+def rec(claims: dict) -> str:
+    return json.dumps({"payload": {"claims": claims}}, indent=1)
+
+
 def test_claims():
-    a = {"payload": {"claims": {"c.yaml": H1, "d.yaml": "ERROR ClaimError: x"}}}
-    assert comp.compare_claims(a, json.loads(json.dumps(a)), EXC) == []
-    b = {"payload": {"claims": {"c.yaml": H2, "d.yaml": "ERROR ClaimError: x"}}}
-    assert comp.compare_claims(a, b, EXC)
-    assert comp.compare_claims(a, {"payload": {"claims": {"c.yaml": H1}}}, EXC)
+    a = rec({"c.yaml": H1, "d.yaml": "ERROR ClaimError: x"})
+    assert comp.compare_claims(a, a, EXC) == []
+    assert comp.compare_claims(a, rec({"c.yaml": H2, "d.yaml": "ERROR ClaimError: x"}), EXC)
+    assert comp.compare_claims(a, rec({"c.yaml": H1}), EXC)
 
 
 def test_claims_reject_shared_gaps_and_bad_values():
     # the same malformed value, or the same missing exception, in both records still fails
-    bad = {"payload": {"claims": {"c.yaml": "ab", "d.yaml": "ERROR ClaimError: x"}}}
-    assert comp.compare_claims(bad, json.loads(json.dumps(bad)), EXC)
-    gap = {"payload": {"claims": {"c.yaml": H1}}}
-    assert comp.compare_claims(gap, json.loads(json.dumps(gap)), EXC)
-    other = {"payload": {"claims": {"c.yaml": H1, "d.yaml": "ERROR ClaimError: y"}}}
-    assert comp.compare_claims(other, json.loads(json.dumps(other)), EXC)
+    bad = rec({"c.yaml": "ab", "d.yaml": "ERROR ClaimError: x"})
+    assert comp.compare_claims(bad, bad, EXC)
+    gap = rec({"c.yaml": H1})
+    assert comp.compare_claims(gap, gap, EXC)
+    other = rec({"c.yaml": H1, "d.yaml": "ERROR ClaimError: y"})
+    assert comp.compare_claims(other, other, EXC)
+    number = '{"payload": {"claims": {"c.yaml": 1, "d.yaml": "ERROR ClaimError: x"}}}'
+    assert comp.compare_claims(number, number, EXC)
+
+
+def test_claim_exception_is_compared_by_its_bytes():
+    # decision S1, item 5: "ERROR" decodes to "ERROR" but is not the same serialized value
+    a = rec({"c.yaml": H1, "d.yaml": "ERROR ClaimError: x"})
+    b = a.replace('"ERROR ClaimError', '"\\u0045RROR ClaimError')
+    assert json.loads(a) == json.loads(b)
+    assert comp.compare_claims(a, b, EXC) == ["claim d.yaml: serialized value differs"]
 
 
 def test_no_shortcut_on_equal_bytes():
@@ -278,23 +294,94 @@ def test_ambiguous_template_fails_on_equal_lines():
     assert comp.compare_report("| SNR | 1.0 | |", "| SNR | 1.0 | |", schema)
 
 
-def test_threshold_key_names_and_the_exception_for_fit_errors():
-    schema = {
-        **SCHEMA,
-        "exact_keys": ["snr_min", "period_err_days"],
-        "exact_key_regex": "^(required_|min_|max_)|(_threshold|_limit)$",
-        "keys_not_exact_under": ["v05.parameters.**"],
-        "json": {"verdict": {"measurement": ["candidate.**", "v05.**"], "exact": []}},
-    }
+NAMES = {
+    **SCHEMA,
+    "exact_keys": ["snr_min", "period_err_days"],
+    "exact_key_regex": "^(required_|min_|max_)|(_threshold|_limit)$",
+    "computed_keys_despite_name": {"max_event_snr": "s", "max_timing_sigma_days": "s"},
+    "exact_key_exempt_paths": ["v05.parameters.period_err_days"],
+    "json": {
+        "verdict": {
+            "measurement": ["candidate.**", "v05.**", "tests[*].**", "search_diagnostics.**"],
+            "exact": [
+                "search_diagnostics.refined[*].factor",
+                "tests[*].metrics.near_systematic_periods_days[*]",
+            ],
+        }
+    },
+    "exact_by_sibling": [
+        {
+            "pattern": "tests[*].sensitivity.*.alternative",
+            "sibling": "effect",
+            "values": ["SAP relative depth difference"],
+        }
+    ],
+}
+
+
+def nudged(doc: str, old: str = "1.0", new: str = "1.0000001") -> list[str]:
+    return comp.compare_json(doc, doc.replace(old, new), "verdict", NAMES)
+
+
+def test_threshold_names_and_computed_measurements():
     doc = '{\n  "candidate": {\n    "KEY": 1.0\n  }\n}\n'
-    for key, fails in (("required_probability", True), ("min_train_snr", True), ("x", False)):
-        a = doc.replace("KEY", key)
-        result = comp.compare_json(a, a.replace("1.0", "1.0000001"), "verdict", schema)
-        assert bool(result) is fails, key
+    cases = (
+        ("required_probability", True),
+        ("min_train_snr", True),
+        ("max_event_snr", False),  # decision S1, item 1: a computed measurement
+        ("max_timing_sigma_days", False),
+        ("x", False),
+    )
+    for key, fails in cases:
+        assert bool(nudged(doc.replace("KEY", key))) is fails, key
+
+
+def test_the_fit_error_exemption_is_one_path():
     fit = '{\n  "v05": {\n    "parameters": {\n      "period_err_days": 1.0\n    }\n  }\n}\n'
-    assert comp.compare_json(fit, fit.replace("1.0", "1.0000001"), "verdict", schema) == []
-    cand = doc.replace("KEY", "period_err_days")
-    assert comp.compare_json(cand, cand.replace("1.0", "1.0000001"), "verdict", schema)
+    assert nudged(fit) == []
+    other = fit.replace('"parameters"', '"other"')
+    assert nudged(other)  # the plan field elsewhere under v05 stays exact
+    cand = '{\n  "candidate": {\n    "period_err_days": 1.0\n  }\n}\n'
+    assert nudged(cand)
+
+
+def test_configuration_under_broad_patterns_is_exact():
+    refined = '{"search_diagnostics": {"refined": [{"factor": 1.0, "period": 1.0}]}}'
+    assert nudged(refined, '"factor": 1.0', '"factor": 1.0000001')
+    assert nudged(refined, '"period": 1.0', '"period": 1.0000001') == []
+    near = '{"tests": [{"metrics": {"near_systematic_periods_days": [1.0]}}]}'
+    assert nudged(near)
+
+
+def test_alternative_exact_when_the_plan_sets_it():
+    block = '{"tests": [{"sensitivity": {"sap": {"effect": "EFFECT", "alternative": 1.0}}}]}'
+    assert nudged(block.replace("EFFECT", "SAP relative depth difference"))
+    assert nudged(block.replace("EFFECT", "odd/even depth difference")) == []
+
+
+def test_gauntlet_message_lines_are_exact():
+    # decision S2: a message line is compared byte for byte, even when only a number changes
+    parts = json.loads(
+        (ROOT / "docs/validation/v0.5.13/l4/comparator-schema-parts.json").read_text("utf-8")
+    )
+    schema = {**SCHEMA, "report": parts["report"]}
+    line = "| snr | PASS | fatal | SNR 12.3456 >= 7.0 |"
+    assert comp.compare_report(line, line, schema) == []
+    assert comp.compare_report(line, line.replace("12.3456", "12.3456001"), schema)
+    assert "message" in parts["message_lines"]["decision"]
+
+
+def test_malformed_measurement_groups_fail_even_when_equal():
+    rep = comp.compare_report
+    assert rep("| SNR | bogus | |", "| SNR | bogus | |", SCHEMA)
+    assert rep("| SNR | n/a | |", "| SNR | n/a | |", SCHEMA) == []
+    assert rep("| SNR | inf | |", "| SNR | inf | |", SCHEMA) == []
+    assert rep("| SNR | inf | |", "| SNR | 1.0 | |", SCHEMA)
+
+
+def test_non_standard_json_constants_are_malformed():
+    assert comp.compare_file("plan-v1.json", b'{"a": NaN}', b'{"a": NaN}', SCHEMA)
+    assert comp.compare_file("chain-v1.json", b'{"a": Infinity}', b'{"a": Infinity}', SCHEMA)
 
 
 def test_coverage_counts_json_and_report_pairs():
@@ -345,58 +432,119 @@ def test_setting_reports_coverage_and_zero_coverage_is_inconclusive(tmp_path):
     assert out["coverage"]["files_compared"] == 0
 
 
-def test_files_are_bound_to_the_freeze(tmp_path):
-    files = {}
-    for name in ("schema", "ref_record", "alt_record", "ref_claims", "alt_claims"):
-        files[name] = tmp_path / f"{name}.json"
-        files[name].write_bytes(name.encode())
-    digest = {n: hashlib.sha256(n.encode()).hexdigest() for n in files}
-    freeze = {
-        "schema": {"sha256": digest["schema"]},
-        "settings": {
-            "r": {
-                "record_sha256": digest["ref_record"],
-                "claim_record_sha256": digest["ref_claims"],
-            },
-            "a": {
-                "record_sha256": digest["alt_record"],
-                "claim_record_sha256": digest["alt_claims"],
-            },
-        },
+def _write(root: Path, rel: str, text: str) -> str:
+    path = root / rel
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
+def _freeze(root: Path) -> dict:
+    """A synthetic freeze list: the reference, one frozen setting, the NR-A2 entry."""
+    digest = {
+        "schema": _write(root, "s/schema.json", json.dumps(SCHEMA)),
+        "ref": _write(root, "s/ref.json", '{"payload": {}}'),
+        "ref_c": _write(root, "s/ref-c.json", '{"payload": {}}'),
+        "t1": _write(root, "s/t1.json", '{"payload": {}}'),
+        "t1_c": _write(root, "s/t1-c.json", '{"payload": {}}'),
+        "manifest": _write(root, "m/nr-a2.json", '{"manifest": "NR-A2"}'),
     }
-    assert comp.check_bound(freeze, "r", "a", files) == []
-    assert comp.unbound_alternate(freeze, "a", files) is None
-    files["alt_claims"].write_bytes(b"changed")
-    assert comp.check_bound(freeze, "r", "a", files) == [
-        "alt_claims: SHA-256 is not the frozen one"
-    ]
-
-
-def test_an_alternate_after_the_freeze_is_reported_not_bound(tmp_path):
-    # NR-A2 runs after the freeze, so its records cannot be in the freeze list
-    files = {}
-    for name in ("schema", "ref_record", "alt_record", "ref_claims", "alt_claims"):
-        files[name] = tmp_path / f"{name}.json"
-        files[name].write_bytes(name.encode())
-    digest = {n: hashlib.sha256(n.encode()).hexdigest() for n in files}
-    freeze = {
-        "schema": {"sha256": digest["schema"]},
+    return {
+        "schema": {"path": "s/schema.json", "sha256": digest["schema"]},
         "settings": {
-            "r": {
-                "record_sha256": digest["ref_record"],
-                "claim_record_sha256": digest["ref_claims"],
+            "id-before": {"record": "s/ref.json", "record_sha256": digest["ref"],
+                          "claim_record": "s/ref-c.json", "claim_record_sha256": digest["ref_c"]},
+            "nr-a1-t1": {"record": "s/t1.json", "record_sha256": digest["t1"],
+                         "claim_record": "s/t1-c.json", "claim_record_sha256": digest["t1_c"]},
+        },
+        "prospective": {
+            "nr-a2-t2": {
+                "manifest": {"path": "m/nr-a2.json", "sha256": digest["manifest"]},
+                "record": "s/a2.json",
+                "claim_record": "s/a2-c.json",
+                "script_sha256": "f" * 64,
+                "thread_env": {"OMP_NUM_THREADS": "2"},
+                "threads": 2,
             }
         },
+    }  # fmt: skip
+
+
+def _nr_a2_records(root: Path, label="nr-a2-t2", script="f" * 64, threads=2, env="2") -> None:
+    prov = {"script_sha256": script, "blas": {"thread_env": {"OMP_NUM_THREADS": env}}}
+    golden = {"label": label, "payload": {}, "provenance": {**prov}}
+    golden["provenance"]["blas"] = {
+        "thread_env": {"OMP_NUM_THREADS": env},
+        "child_threadpool_info": [{"num_threads": threads}, {"num_threads": threads}],
     }
-    assert comp.check_bound(freeze, "r", "nr-a2-t2", files) == []
-    assert comp.unbound_alternate(freeze, "nr-a2-t2", files) == {
-        "label": "nr-a2-t2",
-        "bound": False,
-        "alt_record_sha256": digest["alt_record"],
-        "alt_claims_sha256": digest["alt_claims"],
-    }
-    files["ref_record"].write_bytes(b"changed")
-    assert comp.check_bound(freeze, "r", "nr-a2-t2", files) == [
-        "ref_record: SHA-256 is not the frozen one"
-    ]
-    assert comp.check_bound(freeze, "missing", "nr-a2-t2", files)
+    _write(root, "s/a2.json", json.dumps(golden))
+    _write(root, "s/a2-c.json", json.dumps({"label": label, "payload": {}, "provenance": prov}))
+
+
+def _git_ok(monkeypatch, root: Path, ancestor=True, receipt=True, committed=True):
+    monkeypatch.setattr(comp, "ROOT", root)
+    monkeypatch.setattr(comp, "committed", lambda rel, data: committed)
+    monkeypatch.setattr(comp, "receipt_passed", lambda s: receipt)
+    monkeypatch.setattr(comp, "last_commit", lambda rel: "m" if rel.startswith("m/") else "r")
+    monkeypatch.setattr(comp, "is_ancestor", lambda a, b: ancestor)
+
+
+def test_frozen_settings_are_bound_by_hash(tmp_path, monkeypatch):
+    freeze = _freeze(tmp_path)
+    _git_ok(monkeypatch, tmp_path)
+    parsed, problems = comp.bind(freeze, "nr-a1-t1")
+    assert problems == [] and "raw" in parsed
+    (tmp_path / "s/t1-c.json").write_text('{"payload": {"x": 1}}', encoding="utf-8")
+    _, problems = comp.bind(freeze, "nr-a1-t1")
+    assert problems == ["alt_claims: SHA-256 is not the frozen one"]
+
+
+def test_no_unbound_path(tmp_path, monkeypatch):
+    # decision S3: a label that is neither frozen nor the frozen prospective one is refused
+    freeze = _freeze(tmp_path)
+    _git_ok(monkeypatch, tmp_path)
+    _, problems = comp.bind(freeze, "nr-a2-t3")
+    assert problems and "neither" in problems[0]
+    _, problems = comp.bind(freeze, "id-before")
+    assert problems  # the reference is never an alternate
+
+
+def test_nr_a2_is_bound_to_its_manifest_and_setting(tmp_path, monkeypatch):
+    freeze = _freeze(tmp_path)
+    _nr_a2_records(tmp_path)
+    _git_ok(monkeypatch, tmp_path)
+    _, problems = comp.bind(freeze, "nr-a2-t2")
+    assert problems == []
+    for kwargs, expected in (
+        ({"label": "nr-a1-t1"}, "labelled"),
+        ({"script": "e" * 64}, "identity script"),
+        ({"threads": 4}, "thread count"),
+        ({"env": "4"}, "thread variables"),
+    ):
+        _nr_a2_records(tmp_path, **kwargs)
+        _, problems = comp.bind(freeze, "nr-a2-t2")
+        assert any(expected in p for p in problems), (kwargs, problems)
+    _nr_a2_records(tmp_path)
+    for kwargs, expected in (
+        ({"ancestor": False}, "after the NR-A2 manifest"),
+        ({"receipt": False}, "order-proof receipt"),
+        ({"committed": False}, "not committed"),
+    ):
+        _git_ok(monkeypatch, tmp_path, **kwargs)
+        _, problems = comp.bind(freeze, "nr-a2-t2")
+        assert any(expected in p for p in problems), (kwargs, problems)
+    _git_ok(monkeypatch, tmp_path)
+    (tmp_path / "m/nr-a2.json").write_text('{"manifest": "changed"}', encoding="utf-8")
+    _, problems = comp.bind(freeze, "nr-a2-t2")
+    assert any("not the frozen one" in p for p in problems)
+
+
+def test_compared_bytes_are_the_checked_bytes(tmp_path):
+    # read_folder keeps only bytes whose SHA-256 it checked
+    files = {"plan-v1.json": b"{}\n"}
+    rec = _record(tmp_path / "f", files)
+    data, problems = comp.read_folder(tmp_path / "f", rec["payload"]["files_sha256"])
+    assert problems == [] and data == files
+    (tmp_path / "f" / "plan-v1.json").write_bytes(b"{} \n")
+    data, problems = comp.read_folder(tmp_path / "f", rec["payload"]["files_sha256"])
+    assert problems and data == {}
