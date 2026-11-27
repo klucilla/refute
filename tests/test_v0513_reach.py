@@ -72,10 +72,25 @@ def test_candidate_guard_adds_a_condition_and_exits_follow():
     assert status == "ok" and conds == set()
 
 
-def test_short_circuit():
+def test_no_short_circuit_condition_and_a_second_conjunct_shares_its_statement():
     f, _ = _func("attack_candidate")
-    status, reason = reach.position(f, _compare(f, "d.z < 3"), "v3")
-    assert status == "unknown"
+    first = reach.position(f, _compare(f, "d.y > 2"), "v3")
+    second = reach.position(f, _compare(f, "d.z < 3"), "v3")
+    assert first == second
+
+
+def test_scoped_local_guard():
+    src = (
+        "def attack_candidate(gp, final, d):\n"
+        "    noise = None\n"
+        "    if gp.corrections.active:\n"
+        "        noise = make(d)\n"
+        "    if noise is None:\n"
+        "        x = d.a > 1\n"
+    )
+    f = next(g for g in dl.collect_functions({PIPE: src}) if g.qual == "attack_candidate")
+    node = next(n for n in f.walk() if isinstance(n, ast.Compare) and ast.unparse(n) == "d.a > 1")
+    assert reach.position(f, node, "v1") == ("ok", set())
 
 
 def test_configuration_guard_and_execution_chain():

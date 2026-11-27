@@ -24,9 +24,11 @@ resolves to that one function (``decision_layer.Resolver``; a call with several 
 proves nothing). A position in a function is unconditional when, inside that function:
 1. it is not inside a ``for``, ``while``, comprehension or generator (the loop rule, below);
 2. it is not inside a ``try`` block or an ``except`` handler;
-3. it is not after the first operand of an ``and`` or ``or`` (short-circuit);
+3. (no condition on ``and``/``or``: section 4 of revision 6 splits a conjunction or disjunction
+   into its comparisons, each a row, and its own example, ``attenuated``, is a second conjunct;
+   N1 decides on statements and exits, not on the order operands are evaluated);
 4. every enclosing ``if`` or conditional expression is either a configuration guard of
-   ``decision_layer.GUARD_TABLE`` that is true for the fixture, or the guard
+   ``decision_layer.GUARD_TABLE`` or of ``LOCAL_GUARDS`` that is true for the fixture, or the guard
    ``candidate is None`` / ``candidate is not None`` in ``CANDIDATE_FUNCS``, which adds the
    condition ``candidate-null`` or ``candidate-present``;
 5. no ``return``, ``raise``, ``break`` or ``continue`` of the function comes before it in the
@@ -63,7 +65,26 @@ CANDIDATE_FUNCS = {
     "src/refute/packs/tess/pipeline.py:attack_candidate",
     "src/refute/packs/tess/pipeline.py:build_result",
     "src/refute/packs/tess/discover/measure.py:chain",
+    # called with the search's final candidate (pipeline.py:271) or with None when the search
+    # found none (pipeline.py:215): its ``candidate`` is None exactly when the serialized one is
+    "src/refute/packs/tess/gauntlet.py:check_snr",
 }
+# Configuration guards on a local name, scoped to one function. ``noise`` is None unless
+# ``gp.corrections.active`` (pipeline.py:259-263), which is false in every fixture.
+LOCAL_GUARDS = {
+    ("src/refute/packs/tess/pipeline.py:attack_candidate", "noise is None"): set(dl.VERSIONS),
+    ("src/refute/packs/tess/pipeline.py:attack_candidate", "noise is not None"): set(),
+}
+
+
+def guard(f, test: ast.AST, version: str) -> bool | None:
+    """A configuration guard's value in ``version``: the global table, or a scoped local one."""
+    v = dl.guard_value(test, version)
+    if v is None and (f.key, ast.unparse(test)) in LOCAL_GUARDS:
+        return version in LOCAL_GUARDS[(f.key, ast.unparse(test))]
+    return v
+
+
 CANDIDATE_GUARDS = {
     "candidate is None": "candidate-null",
     "candidate is not None": "candidate-present",
@@ -105,12 +126,10 @@ def position(f, node, version: str) -> tuple[str, object]:
             return "unknown", "inside a loop (the loop rule)"
         if isinstance(p, ast.Try | ast.ExceptHandler):
             return "unknown", "inside a try block or handler"
-        if isinstance(p, ast.BoolOp) and child is not p.values[0]:
-            return "unknown", "after the first operand of and/or"
         if isinstance(p, ast.If | ast.IfExp):
             branch = _branch(p, child)
             if branch is not None:
-                v = dl.guard_value(p.test, version)
+                v = guard(f, p.test, version)
                 text = ast.unparse(p.test)
                 if v is not None:
                     if v != branch:
@@ -155,7 +174,7 @@ def _only_candidate_guard(f, node, version) -> bool:
             return False
         if isinstance(p, ast.If | ast.IfExp) and _branch(p, child) is not None:
             text = ast.unparse(p.test)
-            v = dl.guard_value(p.test, version)
+            v = guard(f, p.test, version)
             if v is None and not (f.key in CANDIDATE_FUNCS and text in CANDIDATE_GUARDS):
                 return False
         child = p
@@ -172,7 +191,7 @@ def position_no_exits(f, node, version):
         if isinstance(p, ast.If | ast.IfExp):
             branch = _branch(p, child)
             if branch is not None:
-                v = dl.guard_value(p.test, version)
+                v = guard(f, p.test, version)
                 text = ast.unparse(p.test)
                 if v is not None and v != branch:
                     return "pruned", text
