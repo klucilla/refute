@@ -101,13 +101,27 @@ how later work is done.
   The full 307-case KELT-FP cohort stays the confirmatory FP population, and the 135 non-SB1 and
   the 172 SB1 are descriptive groups. The scope question (only the types photometry can refute, or all
   307) is #230, to be decided with a blind review before v0.5.14.
-- **Amendment 2, revision 6, is adopted** (#218, comment 7223634913, item L1), at `c6236e91`
-  (SHA-256 `86a3853e3d052e5f65c2b3049e58f913abb105997109d362f07056801e235b7c`):
-  [docs/plans/v0.5.13-charter-amendment-2-rev6.md](docs/plans/v0.5.13-charter-amendment-2-rev6.md).
-  - It replaces Step 1's rule and exit criterion 1 with decision identity, with no thread pin. Its
-    margin manifest covers the decision layer; that internal selections were not assessed for
-    margin is a declared limit of #226.
-  - It replaces revision 4 (adopted in item I1, at `288d5785`, SHA-256
+- **Amendment 2, revision 8, is adopted** (#218, comment 7226818333, item R1), at
+  `ba9a8ab00cd2d5efab3786f2f20a62d67309d5e3` (SHA-256
+  `08ea91d8fd406c629bb67eaa288d8380fa6b0f1deb8c3f638bb3a076a5143d66`):
+  [docs/plans/v0.5.13-charter-amendment-2-rev8.md](docs/plans/v0.5.13-charter-amendment-2-rev8.md).
+  - It replaces Step 1's rule and exit criterion 1 with decision identity, with no thread pin. The
+    margin check does not apply to versions 1 to 4; that is a declared limit of #226 (decision
+    P1).
+  - It replaces revision 6 (adopted in item L1, at `c6236e91a6bbb108b06e731c2d272ce6b9bd2a57`,
+    SHA-256 `86a3853e3d052e5f65c2b3049e58f913abb105997109d362f07056801e235b7c`). Revision 7 was
+    proposed and never adopted. Revisions 1 to 7 stay as the record.
+  - The third blind review of revision 7 and the diff from it are in
+    [docs/plans/v0.5.13-amendment-2-blind-review-3-result/](docs/plans/v0.5.13-amendment-2-blind-review-3-result/README.md)
+    and [docs/plans/v0.5.13-amendment-2-rev8/](docs/plans/v0.5.13-amendment-2-rev8/README.md).
+  - The dated correction of the sidecar takes effect with this adoption:
+    [docs/validation/v0.5.13/correction-2026-11-27-numerical-environment.md](docs/validation/v0.5.13/correction-2026-11-27-numerical-environment.md).
+  - **Part B may rely on #226 met under revision 8 only with its label, always visible where it
+    is cited** (item R1): '#226 met under amendment 2 (decision identity, post hoc, on exposed
+    records); the charter's byte-identity rule was not met at 1 and 4 threads (NR-A1: STOP);
+    margin from decision thresholds not assessed for versions 1 to 4'.
+- **Amendment 2, revision 6** was adopted in item L1 and is replaced by revision 8.
+  - It had replaced revision 4 (adopted in item I1, at `288d5785`, SHA-256
     `7d96726de18157ccd4d20f494a9efcef076107efda9337179b1f5f67870d8d4e`), which stays as the record
     with revision 5.
   - The second blind review and the diff from revision 5 are in
@@ -116,15 +130,12 @@ how later work is done.
     first blind review and the diff from revision 3 are in
     [docs/plans/v0.5.13-amendment-2-blind-review-result/](docs/plans/v0.5.13-amendment-2-blind-review-result/README.md)
     and [docs/plans/v0.5.13-amendment-2-rev4/](docs/plans/v0.5.13-amendment-2-rev4/README.md).
-  - **Part B may rely on #226 met under it, only with the amendment's label always visible where
-    it is cited** (item I1, the decision the first blind review's item 6 requires): '#226 met
-    under amendment 2 (decision identity, post hoc, on exposed records); the charter's
-    byte-identity rule was not met at 1 and 4 threads (NR-A1: STOP); N declared limits, the first
-    being that internal selections were not assessed for margin'.
+  - Its label (item I1) is replaced by revision 8's label above.
 - **Part A is stopped at step 1** (#226: the pinned BLAS settings change two golden outputs of
   versions 3 and 4). No pin and no `src/` change were approved (item D1).
-  - #226 is being prepared under amendment 2, revision 6 (item L4). No check and no NR-A2 runs
-    before the maintainer approves the margin manifest by its hash.
+  - #226 is being prepared under amendment 2, revision 8 (item R3). The comparator does not run on
+    goldens, and NR-A2 does not run, before the maintainer approves the comparator by its hash and
+    decides the execution.
 - **Records:** `docs/validation/v0.5.13/`.
 - **Labels:** `exploratory`, `method_status: not_validated`.
 

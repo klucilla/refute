@@ -1,0 +1,11 @@
+{
+ "name": "freeze-226",
+ "question": "R3(a) (#218 comment 7226818333): from source and records only, the freeze of amendment 2, revision 8, section 4 for versions 1 to 4: the fixture list, the source commits and code digests, the resolved plans, every golden SHA-256 taken from the records of ID-BEFORE and NR-A1's three settings, and the comparator with its schema and span mapping. No margin manifest. It opens no golden file and runs no comparator.",
+ "choices": "docs/validation/v0.5.13/tools/freeze_226.py <out folder>. Offline. It reads the golden and claim-hash records, l4/comparator-schema-parts.json and l4/schema-keys.json, and runs git rev-parse <head>:src and git show <head>:tests/baseline_code_v0511.py for each recorded head.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/freeze_226.py"],
+ "identity": ["docs/validation/v0.5.13/tools/freeze_226.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 60, "disk_bytes": 5000000},
+ "network": false,
+ "retry_class": "checker"
+}

@@ -1,4 +1,4 @@
-"""The comparator of v0.5.13's amendment 2, revision 6, section 3.1, on synthetic tokens only.
+"""The comparator of v0.5.13's amendment 2, section 3.1 (revision 8), on synthetic tokens only.
 
 It opens no golden file: every input here is written by the test.
 """
@@ -297,6 +297,54 @@ def test_threshold_key_names_and_the_exception_for_fit_errors():
     assert comp.compare_json(cand, cand.replace("1.0", "1.0000001"), "verdict", schema)
 
 
+def test_coverage_counts_json_and_report_pairs():
+    # decision R2: numeric pairs compared and differing, and the largest relative difference
+    cov = comp.Coverage()
+    v = verdict("1.5") + comp.SEPARATOR + "| SNR | 2.0 | |\nfree text 9.0"
+    w = verdict("1.5000003") + comp.SEPARATOR + "| SNR | 2.0000002 | |\nfree text 9.0"
+    assert comp.compare_file("verdict-v1.txt", v.encode(), w.encode(), SCHEMA, cov) == []
+    # JSON: period, n, snr_min, thr (4 pairs); report: one templated group (free text: none)
+    d = cov.as_dict()
+    assert d["numeric_tokens_compared"] == 5
+    assert d["numeric_tokens_differing"] == 2
+    # 0.0000003 / 1.5000003 (1.9999996e-7) is the larger of the two; 6 significant digits
+    assert d["largest_relative_difference"] == "2.00000e-7"
+
+
+def test_coverage_of_equal_and_exact_files():
+    cov = comp.Coverage()
+    assert comp.compare_file("plan-v1.json", b'{"a": 1.0}', b'{"a": 1.0}', SCHEMA, cov) == []
+    assert cov.as_dict() == {
+        "numeric_tokens_compared": 0,
+        "numeric_tokens_differing": 0,
+        "largest_relative_difference": "0",
+    }
+    a = b'{"candidate": {"p": 1.0, "q": 0.0}}'
+    assert comp.compare_file("chain-v1.json", a, a, SCHEMA, cov) == []
+    assert cov.as_dict()["numeric_tokens_compared"] == 2
+    assert cov.as_dict()["numeric_tokens_differing"] == 0
+
+
+def test_setting_reports_coverage_and_zero_coverage_is_inconclusive(tmp_path):
+    files = {"plan-v1.json": b"{}\n", "chain-v1.json": b'{"candidate": {"p": 1.0}}\n'}
+    ref = _record(tmp_path / "ref", files)
+    alt = _record(tmp_path / "alt", files)
+    out = comp.compare_setting(SCHEMA, ref, tmp_path / "ref", alt, tmp_path / "alt")
+    assert out["result"] == "PASS"
+    assert out["coverage"] == {
+        "files_compared": 2,
+        "numeric_tokens_compared": 1,
+        "numeric_tokens_differing": 0,
+        "largest_relative_difference": "0",
+    }
+    assert sorted(out["coverage_by_file"]) == ["chain-v1.json", "plan-v1.json"]
+    empty_ref = _record(tmp_path / "e1", {})
+    empty_alt = _record(tmp_path / "e2", {})
+    out = comp.compare_setting(SCHEMA, empty_ref, tmp_path / "e1", empty_alt, tmp_path / "e2")
+    assert out["result"] == "INCONCLUSIVE"
+    assert out["coverage"]["files_compared"] == 0
+
+
 def test_files_are_bound_to_the_freeze(tmp_path):
     files = {}
     for name in ("schema", "ref_record", "alt_record", "ref_claims", "alt_claims"):
@@ -317,7 +365,38 @@ def test_files_are_bound_to_the_freeze(tmp_path):
         },
     }
     assert comp.check_bound(freeze, "r", "a", files) == []
+    assert comp.unbound_alternate(freeze, "a", files) is None
     files["alt_claims"].write_bytes(b"changed")
     assert comp.check_bound(freeze, "r", "a", files) == [
         "alt_claims: SHA-256 is not the frozen one"
     ]
+
+
+def test_an_alternate_after_the_freeze_is_reported_not_bound(tmp_path):
+    # NR-A2 runs after the freeze, so its records cannot be in the freeze list
+    files = {}
+    for name in ("schema", "ref_record", "alt_record", "ref_claims", "alt_claims"):
+        files[name] = tmp_path / f"{name}.json"
+        files[name].write_bytes(name.encode())
+    digest = {n: hashlib.sha256(n.encode()).hexdigest() for n in files}
+    freeze = {
+        "schema": {"sha256": digest["schema"]},
+        "settings": {
+            "r": {
+                "record_sha256": digest["ref_record"],
+                "claim_record_sha256": digest["ref_claims"],
+            }
+        },
+    }
+    assert comp.check_bound(freeze, "r", "nr-a2-t2", files) == []
+    assert comp.unbound_alternate(freeze, "nr-a2-t2", files) == {
+        "label": "nr-a2-t2",
+        "bound": False,
+        "alt_record_sha256": digest["alt_record"],
+        "alt_claims_sha256": digest["alt_claims"],
+    }
+    files["ref_record"].write_bytes(b"changed")
+    assert comp.check_bound(freeze, "r", "nr-a2-t2", files) == [
+        "ref_record: SHA-256 is not the frozen one"
+    ]
+    assert comp.check_bound(freeze, "missing", "nr-a2-t2", files)

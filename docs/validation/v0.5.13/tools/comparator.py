@@ -1,5 +1,13 @@
-"""The comparator of amendment 2, revision 6, section 3.1 (v0.5.13, the maintainer's decision L4(b),
-#218 comment 7223634913). Frozen with the margin manifest before it reads any golden file.
+"""The comparator of amendment 2, section 3.1 (v0.5.13; written under the maintainer's decision
+L4(b), #218 comment 7223634913, for revision 6; used under revision 8, adopted in decision R1,
+#218 comment 7226818333). Frozen with its schema and span mapping by the freeze commit of
+revision 8, section 4, before it reads any golden file.
+
+**Two additions beyond decision R2's wording, each for the maintainer's approval by hash:**
+- a setting with no file compared is ``INCONCLUSIVE``, never ``PASS`` (zero coverage);
+- an alternate setting that runs after the freeze (NR-A2) is not in the freeze list: then the
+  schema and the reference are bound, and the alternate's records are reported by SHA-256 as not
+  bound (``unbound_alternate``), instead of failing on a missing key.
 
     python -I -B docs/validation/v0.5.13/tools/comparator.py <freeze.json> <ref label> <alt label> \
         <schema.json> <ref record> <ref dir> <alt record> <alt dir> \
@@ -18,6 +26,17 @@ that bear on decision identity):
 - the claim check requires every value to be a SHA-256 except the approved exceptions, present with
   their exact text in both records;
 - the command checks the schema and the four records against the freeze list's SHA-256 first.
+
+**Coverage, under the maintainer's decision R2** (#218 comment 7226818333; amendment 2, revision 8,
+section 3.1, decision Q2(f)). The result reports, for the compared setting, ``coverage``:
+- ``files_compared``: the files whose contents were compared (after the inventory check);
+- ``numeric_tokens_compared``: the pairs of numbers compared, that is every pair of JSON number
+  tokens, and every pair of numbers in a report group of a line that one template matches;
+- ``numeric_tokens_differing``: those pairs whose two texts differ;
+- ``largest_relative_difference``: the largest ``abs(a - b) / max(abs(a), abs(b))`` over those
+  pairs, in exact rational arithmetic, printed with 6 significant digits (``0`` when none differs).
+It also reports the same counts for each file (``coverage_by_file``). A setting with no file
+compared is ``INCONCLUSIVE``, never ``PASS`` (zero coverage).
 
 It compares one alternate setting with the reference (ID-BEFORE), never two alternates. It
 writes one JSON result to stdout, and exits 0 only when the setting meets section 3.1.
@@ -88,6 +107,41 @@ def within_budget(a: str, b: str) -> bool:
     except (InvalidOperation, ValueError) as exc:
         raise MalformedError(f"not a finite decimal: {a!r} or {b!r}") from exc
     return abs(x - y) <= BUDGET * max(abs(x), abs(y))
+
+
+class Coverage:
+    """The counts of decision R2: numeric pairs compared and differing, and the largest relative
+    difference among them, in exact rational arithmetic."""
+
+    def __init__(self) -> None:
+        self.compared = 0
+        self.differing = 0
+        self.largest = Fraction(0)
+
+    def add(self, a: str, b: str) -> None:
+        self.compared += 1
+        if a == b:
+            return
+        self.differing += 1
+        try:
+            x, y = Fraction(Decimal(a)), Fraction(Decimal(b))
+        except (InvalidOperation, ValueError) as exc:
+            raise MalformedError(f"not a finite decimal: {a!r} or {b!r}") from exc
+        if x != y:
+            self.largest = max(self.largest, abs(x - y) / max(abs(x), abs(y)))
+
+    def merge(self, other: Coverage) -> None:
+        self.compared += other.compared
+        self.differing += other.differing
+        self.largest = max(self.largest, other.largest)
+
+    def as_dict(self) -> dict:
+        largest = Decimal(self.largest.numerator) / Decimal(self.largest.denominator)
+        return {
+            "numeric_tokens_compared": self.compared,
+            "numeric_tokens_differing": self.differing,
+            "largest_relative_difference": "0" if not self.largest else f"{largest:.5e}",
+        }
 
 
 def lex(text: str) -> list[tuple[str, str, str]]:
@@ -193,7 +247,8 @@ def last_key(path: str) -> str:
     return keys[-1] if keys else ""
 
 
-def compare_json(a: str, b: str, kind: str, schema: dict) -> list[str]:
+def compare_json(a: str, b: str, kind: str, schema: dict, cov: Coverage | None = None) -> list[str]:
+    cov = cov if cov is not None else Coverage()
     problems: list[str] = []
     ta, tb = lex(a), lex(b)
     if len(ta) != len(tb):
@@ -216,6 +271,8 @@ def compare_json(a: str, b: str, kind: str, schema: dict) -> list[str]:
         if ka != kb or pa != pb:
             problems.append(f"{kind}: token {i} differs in kind or location ({pa!r})")
             continue
+        if ka == "num":
+            cov.add(ra, rb)
         if ra == rb:
             continue
         if ka != "num":
@@ -235,7 +292,8 @@ def compare_json(a: str, b: str, kind: str, schema: dict) -> list[str]:
 NUMBER = re.compile(r"-?[0-9]+(?:\.[0-9]+)?(?:e[+-][0-9]+)?\Z")
 
 
-def compare_report(a: str, b: str, schema: dict) -> list[str]:
+def compare_report(a: str, b: str, schema: dict, cov: Coverage | None = None) -> list[str]:
+    cov = cov if cov is not None else Coverage()
     la, lb = a.split("\n"), b.split("\n")
     if len(la) != len(lb):
         return [f"report: line counts differ ({len(la)} and {len(lb)})"]
@@ -248,9 +306,15 @@ def compare_report(a: str, b: str, schema: dict) -> list[str]:
             # an ambiguous mapping is a failure even on equal lines (P2, Codex's item 7)
             problems.append(f"report line {n}: more than one template matches")
             continue
+        shared = len(mx) == 1 and len(my) == 1 and mx[0][0] == my[0][0]
+        if shared:
+            for group in mx[0][2]:
+                u, v = mx[0][1].group(group), my[0][1].group(group)
+                if u is not None and v is not None and NUMBER.match(u) and NUMBER.match(v):
+                    cov.add(u, v)
         if x == y:
             continue
-        if len(mx) != 1 or len(my) != 1 or mx[0][0] != my[0][0]:
+        if not shared:
             problems.append(f"report line {n}: differs and no single shared template matches")
             continue
         _, gx, groups = mx[0]
@@ -270,9 +334,14 @@ def compare_report(a: str, b: str, schema: dict) -> list[str]:
     return problems
 
 
-def compare_file(name: str, a: bytes, b: bytes, schema: dict) -> list[str]:
+def compare_file(
+    name: str, a: bytes, b: bytes, schema: dict, cov: Coverage | None = None
+) -> list[str]:
     """No shortcut on equal bytes (P2, Codex's item 7): every file is decoded and its structure
-    validated, so that a malformed file never passes because both settings hold it."""
+    validated, so that a malformed file never passes because both settings hold it. Exact files
+    (``plan-``, ``error-``, ``ERROR`` texts) add no numeric pair to ``cov``: they compare as
+    bytes."""
+    cov = cov if cov is not None else Coverage()
     try:
         ta, tb = a.decode("utf-8"), b.decode("utf-8")
     except UnicodeDecodeError:
@@ -288,13 +357,14 @@ def compare_file(name: str, a: bytes, b: bytes, schema: dict) -> list[str]:
         return []
     try:
         if name.startswith("chain-") and name.endswith(".json"):
-            return [f"{name}: {p}" for p in compare_json(ta, tb, "chain", schema)]
+            return [f"{name}: {p}" for p in compare_json(ta, tb, "chain", schema, cov)]
         if name.startswith("verdict-") and name.endswith(".txt"):
             if ta.count(SEPARATOR) != 1 or tb.count(SEPARATOR) != 1:
                 return [f"{name}: the report separator is not there exactly once"]
             ja, ra = ta.split(SEPARATOR)
             jb, rb = tb.split(SEPARATOR)
-            out = compare_json(ja, jb, "verdict", schema) + compare_report(ra, rb, schema)
+            out = compare_json(ja, jb, "verdict", schema, cov)
+            out += compare_report(ra, rb, schema, cov)
             return [f"{name}: {p}" for p in out]
     except MalformedError as exc:
         return [f"{name}: malformed: {exc}"]
@@ -318,14 +388,32 @@ def compare_setting(schema: dict, ref_rec: dict, ref_dir: Path, alt_rec: dict, a
             path = folder / name
             if not path.is_file() or sha(path.read_bytes()) != digest:
                 problems.append(f"{folder.name}/{name}: missing, or SHA-256 not as recorded")
+    total = Coverage()
+    by_file: dict[str, dict] = {}
+
+    def coverage() -> dict:
+        return {"files_compared": len(by_file), **total.as_dict()}
+
     if problems:
-        return {"result": "FAIL", "problems": problems, "files": files}
+        return {"result": "FAIL", "problems": problems, "files": files,
+                "coverage": coverage(), "coverage_by_file": by_file}  # fmt: skip
     for name in sorted(ref_files):
+        cov = Coverage()
         found = compare_file(name, (ref_dir / name).read_bytes(), (alt_dir / name).read_bytes(),
-                             schema)  # fmt: skip
+                             schema, cov)  # fmt: skip
         files[name] = found
+        by_file[name] = cov.as_dict()
+        total.merge(cov)
         problems += found
-    return {"result": "PASS" if not problems else "FAIL", "problems": problems, "files": files}
+    if problems:
+        result = "FAIL"
+    elif not by_file:
+        result = "INCONCLUSIVE"  # zero coverage is never a PASS
+        problems.append("no file was compared")
+    else:
+        result = "PASS"
+    return {"result": result, "problems": problems, "files": files,
+            "coverage": coverage(), "coverage_by_file": by_file}  # fmt: skip
 
 
 HEX64 = re.compile(r"[0-9a-f]{64}\Z")
@@ -354,19 +442,38 @@ def compare_claims(ref_rec: dict, alt_rec: dict, exceptions: dict[str, str]) -> 
 
 def check_bound(freeze: dict, label_ref: str, label_alt: str, files: dict[str, Path]) -> list[str]:
     """Each file the command uses must have the SHA-256 the freeze list records (P2): the schema,
-    and for each of the two settings its golden record and its claim-hash record."""
+    and for each of the two settings its golden record and its claim-hash record.
+
+    The reference must be in the freeze list. An alternate setting that runs after the freeze
+    (NR-A2) cannot be in it: then only the schema and the reference are bound, and the alternate's
+    records are reported by SHA-256 as not bound (``unbound_alternate``)."""
+    if label_ref not in freeze["settings"]:
+        return [f"the reference {label_ref!r} is not in the freeze list"]
     expected = {
         "schema": freeze["schema"]["sha256"],
         "ref_record": freeze["settings"][label_ref]["record_sha256"],
-        "alt_record": freeze["settings"][label_alt]["record_sha256"],
         "ref_claims": freeze["settings"][label_ref]["claim_record_sha256"],
-        "alt_claims": freeze["settings"][label_alt]["claim_record_sha256"],
     }
+    if label_alt in freeze["settings"]:
+        expected["alt_record"] = freeze["settings"][label_alt]["record_sha256"]
+        expected["alt_claims"] = freeze["settings"][label_alt]["claim_record_sha256"]
     return [
         f"{name}: SHA-256 is not the frozen one"
         for name, path in files.items()
-        if sha(path.read_bytes()) != expected[name]
+        if name in expected and sha(path.read_bytes()) != expected[name]
     ]
+
+
+def unbound_alternate(freeze: dict, label_alt: str, files: dict[str, Path]) -> dict | None:
+    """The SHA-256 of the alternate's records when the alternate is not in the freeze list."""
+    if label_alt in freeze["settings"]:
+        return None
+    return {
+        "label": label_alt,
+        "bound": False,
+        "alt_record_sha256": sha(files["alt_record"].read_bytes()),
+        "alt_claims_sha256": sha(files["alt_claims"].read_bytes()),
+    }
 
 
 def main() -> int:
@@ -393,6 +500,7 @@ def main() -> int:
     out = compare_setting(schema, ref_rec, Path(sys.argv[6]), alt_rec, Path(sys.argv[8]))
     ref_claims = strict_loads(paths["ref_claims"].read_text(encoding="utf-8"))
     alt_claims = strict_loads(paths["alt_claims"].read_text(encoding="utf-8"))
+    out["unbound_alternate"] = unbound_alternate(freeze, label_alt, paths)
     out["claims"] = compare_claims(ref_claims, alt_claims, schema.get("claim_exceptions", {}))
     if out["claims"]:
         out["result"] = "FAIL"
