@@ -1,0 +1,11 @@
+{
+ "name": "order-proof-v2",
+ "question": "The order-proof check, version 2, of a pushed manifest (charter, section 8): the CI push run completed, its plan job succeeded and every other job was skipped. It writes the receipt launch_v2.py requires before a draw, probe or measurement batch.",
+ "choices": "docs/validation/v0.5.13/tools/order_proof_v2.py <manifest>; GitHub reads only; it records an upper estimate of its inbound bytes. Version 1 passed vacuously on ID-BEFORE (only the plan job existed, queued).",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/order_proof_v2.py"],
+ "identity": ["docs/validation/v0.5.13/tools/order_proof_v2.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 60, "disk_bytes": 10000000},
+ "network": {"kind": "github", "endpoints": ["api.github.com:443"], "operations": ["gh api GET actions runs and jobs"], "inbound_estimate_bytes": 2000000},
+ "retry_class": "checker"
+}
