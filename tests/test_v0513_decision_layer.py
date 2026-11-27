@@ -100,6 +100,14 @@ def test_bare_flags_used_as_truth_values_are_non_numeric_rows():
     assert "mask" not in rows
 
 
+def test_a_mutated_decision_list_is_an_effect():
+    src = "def entry(xs, t):\n    flagged = []\n    for x in xs:\n        if x.s > t:\n"
+    src += "            flagged.append(x)\n"
+    src += "    return TestResult(status=TestStatus.FAIL if flagged else None)\n"
+    out = dl.analyze({"m.py": src}, entries=[("m.py", "entry")])
+    assert "x.s > t" in {r["expression"] for r in out["rows"]}
+
+
 def test_early_exits_are_recorded():
     _, rows = _rows()
     exits = rows["d.k > 1"]["early_exits_before"]

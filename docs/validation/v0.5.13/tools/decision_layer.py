@@ -15,14 +15,15 @@ every function named ``f`` in the modules (over-inclusive on purpose).
 **Sinks** (a serialized test status, class, eligibility flag, reason code or verdict):
 - a call of ``TestResult``, ``_inconclusive``, ``_not_run`` or ``not_applicable_block``;
 - a reference to ``TestStatus.<x>``;
-- an assignment to a name, attribute or string subscript in ``DECISION_NAMES``.
+- an assignment to a name, attribute or string subscript in ``DECISION_NAMES``, or a call of
+  ``append``, ``extend``, ``add``, ``insert`` or ``update`` on such a name (``flagged.append``).
 
 A function that holds a sink is a **decision function**.
 
 **Decision contexts** (where a boolean reaches a sink):
 1. the test of an ``if``, ``elif``, conditional expression or ``while`` whose branch (at any depth,
    not into nested functions) holds a sink, a ``return``, ``break``, ``continue`` or ``raise``
-   in a decision function, or an assignment to a decision variable;
+   in a decision function, or an assignment to, or a mutating call on, a decision variable;
 2. the value assigned to a decision variable or to a name in ``DECISION_NAMES``;
 3. the value of a ``return`` in a decision function, or in a function whose call sits in a
    decision context (a *returning decision function*);
@@ -130,8 +131,25 @@ def collect_functions(sources: dict[str, str]) -> list[Func]:
     return funcs
 
 
+MUTATORS = {"append", "extend", "add", "insert", "update"}
+
+
+def _mutated(node: ast.AST) -> str | None:
+    """The name a call such as ``flagged.append(x)`` mutates, if any."""
+    if (
+        isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Attribute)
+        and node.func.attr in MUTATORS
+        and isinstance(node.func.value, ast.Name)
+    ):
+        return node.func.value.id
+    return None
+
+
 def is_sink(node: ast.AST) -> bool:
     if isinstance(node, ast.Call) and _name(node.func) in SINK_CALLS:
+        return True
+    if _mutated(node) in DECISION_NAMES:
         return True
     if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name):
         return node.value.id == "TestStatus"
@@ -277,6 +295,8 @@ def analyze(sources: dict[str, str], entries=ENTRIES) -> dict:
                 return True
             if dec and isinstance(n, ast.Return | ast.Break | ast.Continue | ast.Raise):
                 return True
+            if _mutated(n) in f.dvars:
+                return True
             if isinstance(n, ast.Assign | ast.AugAssign | ast.AnnAssign):
                 targets = n.targets if isinstance(n, ast.Assign) else [n.target]
                 if any(isinstance(t, ast.Name) and t.id in f.dvars for t in targets):
@@ -414,8 +434,20 @@ def main() -> int:
     not_i2 = [f"{r['file']}:{r['line']}" for r in rows if (r["file"], r["line"]) not in i2]
     j1 = json.loads((ROOT / J1).read_text(encoding="utf-8"))["rows"]
     lines = {(r["file"], ln) for r in rows for ln in range(r["line"], r["end_line"] + 1)}
+    funcs = collect_functions(sources)
+    reach = set(result["reachable"])
+
+    def where(rel: str, line: int) -> str:
+        inner = [f for f in funcs if f.rel == rel and f.node.lineno <= line <= f.node.end_lineno]
+        if not inner:
+            return "module level"
+        f = max(inner, key=lambda g: g.node.lineno)
+        return f"{f.qual} ({'reachable' if f.key in reach else 'not reachable'})"
+
     j1_missing = [
-        f"{a['file']}:{a['line']} {a['atom']}" for a in j1 if (a["file"], a["line"]) not in lines
+        f"{a['file']}:{a['line']} {a['atom']} [in {where(a['file'], a['line'])}]"
+        for a in j1
+        if (a["file"], a["line"]) not in lines
     ]
     named = {
         "battery_v52.py:338-340 (attenuated)": any(
@@ -441,6 +473,9 @@ def main() -> int:
         "rows_not_i2_sites": len(not_i2),
         "j1_atoms": len(j1),
         "j1_atoms_not_found": len(j1_missing),
+        "j1_atoms_not_found_in_reachable_functions": sum(
+            1 for m in j1_missing if "(reachable)" in m
+        ),
         "named": named,
         "stops": result["stops"],
     }
