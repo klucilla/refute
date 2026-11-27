@@ -1,0 +1,11 @@
+{
+ "name": "make-patch-w",
+ "question": "Write the exact, applicable patch of a proposed rule change that is not applied: the rule on release archives and papers in a reply period, in docs/data-publication.md (#207; block W, item W1(e), #218 comment 7229841832). The rule is proposed for the maintainer's approval, not adopted.",
+ "choices": "docs/validation/v0.5.13/tools/make_patch.py file <repo path> <proposed file> <out>, the tool of make-patch, unchanged. Offline. It changes no repository file other than the named output patch.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/make_patch.py"],
+ "identity": ["docs/validation/v0.5.13/tools/make_patch.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 120, "disk_bytes": 50000000},
+ "network": false,
+ "retry_class": "checker"
+}

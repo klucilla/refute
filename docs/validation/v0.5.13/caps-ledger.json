@@ -10,8 +10,8 @@
   "disk_bytes": 5000000000
  },
  "charged": {
-  "cpu_s": 7180.163,
-  "download_bytes": 1355099374,
+  "cpu_s": 7253.897,
+  "download_bytes": 1535099374,
   "disk_peak_bytes": 1199241106
  },
  "within_caps_so_far": true,
@@ -18977,6 +18977,633 @@
    "download_bytes": 0,
    "write_bytes": 2495,
    "disk_bound_bytes": 59324552,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "44c526523dff4c4694da179ef723cc91",
+   "start": "2026-11-27T23:06:17Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.703,
+   "download_bytes": 0,
+   "write_bytes": 1391581,
+   "disk_bound_bytes": 60718008,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "4394a43092b546009b23af63ce2a6514",
+   "start": "2026-11-27T23:06:19Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 3.531,
+   "download_bytes": 0,
+   "write_bytes": 4471943,
+   "disk_bound_bytes": 64359292,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "vm-archive",
+   "label": null,
+   "attempt": "57b1727c070e4c01ab0c25f275213fe1",
+   "start": "2026-11-27T23:06:26Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 200000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "failed",
+   "cpu_s": 1.875,
+   "download_bytes": 0,
+   "write_bytes": 1449684,
+   "disk_bound_bytes": 61349645,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "ea06ba787e424498afbf91a1e8e157df",
+   "start": "2026-11-27T23:06:40Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.688,
+   "download_bytes": 5000000,
+   "write_bytes": 9417,
+   "disk_bound_bytes": 59929085,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "02894ea5ae964d9dbbb1c43cabd78c77",
+   "start": "2026-11-27T23:06:43Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.875,
+   "download_bytes": 5000000,
+   "write_bytes": 4474,
+   "disk_bound_bytes": 59937691,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "2bad5ee883414950a1b56269eb2a341f",
+   "start": "2026-11-27T23:06:45Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.688,
+   "download_bytes": 5000000,
+   "write_bytes": 2434,
+   "disk_bound_bytes": 59944259,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "2bc41c172b13423390af6dfa1160f1ae",
+   "start": "2026-11-27T23:06:47Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.75,
+   "download_bytes": 5000000,
+   "write_bytes": 1289,
+   "disk_bound_bytes": 59949681,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "1659009248484892b2cc11f8537958ef",
+   "start": "2026-11-27T23:06:50Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.828,
+   "download_bytes": 5000000,
+   "write_bytes": 4964,
+   "disk_bound_bytes": 59958775,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "eb572e3013bf4e77b7347669f0990a5b",
+   "start": "2026-11-27T23:06:52Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.703,
+   "download_bytes": 5000000,
+   "write_bytes": 1377,
+   "disk_bound_bytes": 59964285,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "42254638216a47b7baae6aaec83a7d49",
+   "start": "2026-11-27T23:06:54Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.844,
+   "download_bytes": 5000000,
+   "write_bytes": 1587,
+   "disk_bound_bytes": 59970006,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "c7fa82bd41b746509dd00f3333d7dade",
+   "start": "2026-11-27T23:06:57Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.766,
+   "download_bytes": 5000000,
+   "write_bytes": 2991,
+   "disk_bound_bytes": 59977131,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "f7242cece519409883eb0b9443d2e44f",
+   "start": "2026-11-27T23:06:59Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.75,
+   "download_bytes": 5000000,
+   "write_bytes": 3728,
+   "disk_bound_bytes": 59984993,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "dfb5f6452198424cbfe964781f975bdc",
+   "start": "2026-11-27T23:07:01Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.719,
+   "download_bytes": 5000000,
+   "write_bytes": 7068,
+   "disk_bound_bytes": 59996190,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "f75475952f5b4b989d71625d532b5c15",
+   "start": "2026-11-27T23:07:03Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.672,
+   "download_bytes": 5000000,
+   "write_bytes": 1813,
+   "disk_bound_bytes": 60002136,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "21b7e566679040e98c92bc0dafada85e",
+   "start": "2026-11-27T23:07:06Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.719,
+   "download_bytes": 5000000,
+   "write_bytes": 1864,
+   "disk_bound_bytes": 60008133,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "53a1a4907d4d4f1ea4501b3d4dee6a99",
+   "start": "2026-11-27T23:07:08Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.688,
+   "download_bytes": 5000000,
+   "write_bytes": 1963,
+   "disk_bound_bytes": 60014228,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "4007b5c8c5804b99a3fd467fe04312b0",
+   "start": "2026-11-27T23:07:10Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.812,
+   "download_bytes": 5000000,
+   "write_bytes": 1156,
+   "disk_bound_bytes": 60019517,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "676fb01508ae42afa01f503801bca4a9",
+   "start": "2026-11-27T23:07:12Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.797,
+   "download_bytes": 5000000,
+   "write_bytes": 4243,
+   "disk_bound_bytes": 60027893,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "205501a320884f04b835f1dd1e39cc46",
+   "start": "2026-11-27T23:07:15Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.844,
+   "download_bytes": 5000000,
+   "write_bytes": 17099,
+   "disk_bound_bytes": 60049125,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "f9875a1abc2e478694898ce5e9824af4",
+   "start": "2026-11-27T23:07:17Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.812,
+   "download_bytes": 5000000,
+   "write_bytes": 8230,
+   "disk_bound_bytes": 60061491,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "1b1079c245a4406c8fbc8fbdd339bbb2",
+   "start": "2026-11-27T23:07:19Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.781,
+   "download_bytes": 5000000,
+   "write_bytes": 2822,
+   "disk_bound_bytes": 60068446,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "7edc6cb578a7442a9ab6539c41bb93c0",
+   "start": "2026-11-27T23:07:22Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.859,
+   "download_bytes": 5000000,
+   "write_bytes": 3234,
+   "disk_bound_bytes": 60075813,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "78332af6271f4d76b84963f8752315ad",
+   "start": "2026-11-27T23:07:24Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.922,
+   "download_bytes": 5000000,
+   "write_bytes": 5119,
+   "disk_bound_bytes": 60085065,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "0c1a926e08ae4d0db72b3ec4b862abd7",
+   "start": "2026-11-27T23:07:26Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.734,
+   "download_bytes": 5000000,
+   "write_bytes": 2445,
+   "disk_bound_bytes": 60091643,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "bdcbdc1291ef4ff78e72ccba43112902",
+   "start": "2026-11-27T23:07:29Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.656,
+   "download_bytes": 5000000,
+   "write_bytes": 2272,
+   "disk_bound_bytes": 60098048,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "77a05f1ab7264ce68e5120c0550b280f",
+   "start": "2026-11-27T23:07:31Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.812,
+   "download_bytes": 5000000,
+   "write_bytes": 2656,
+   "disk_bound_bytes": 60104837,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "6c853564093947d6801cee32e6269600",
+   "start": "2026-11-27T23:07:33Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.75,
+   "download_bytes": 5000000,
+   "write_bytes": 3455,
+   "disk_bound_bytes": 60112425,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "93a1f1905880448e83bfced4a2cf8001",
+   "start": "2026-11-27T23:07:36Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.859,
+   "download_bytes": 5000000,
+   "write_bytes": 1621,
+   "disk_bound_bytes": 60118176,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "gh4",
+   "label": null,
+   "attempt": "f620a55c593448cbab75f4f5b12bb279",
+   "start": "2026-11-27T23:07:38Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 5000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.922,
+   "download_bytes": 5000000,
+   "write_bytes": 3651,
+   "disk_bound_bytes": 60125957,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "codex",
+   "label": null,
+   "attempt": "58df2725eef746f5ae0338a9099aac63",
+   "start": "2026-11-27T23:10:29Z",
+   "reserve": {
+    "cpu_s": 900,
+    "disk_bytes": 500000000,
+    "download_bytes": 50000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 14.875,
+   "download_bytes": 50000000,
+   "write_bytes": 158654172,
+   "disk_bound_bytes": 218810587,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "store-file",
+   "label": null,
+   "attempt": "9a5c50c04c2e43feaa43bba8952ef436",
+   "start": "2026-11-27T23:16:33Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 20000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.828,
+   "download_bytes": 0,
+   "write_bytes": 3621,
+   "disk_bound_bytes": 60427301,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "store-file",
+   "label": null,
+   "attempt": "392860948fbf4294ba3ae8640cefc898",
+   "start": "2026-11-27T23:16:35Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 20000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.953,
+   "download_bytes": 0,
+   "write_bytes": 9363,
+   "disk_bound_bytes": 60440330,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "store-file",
+   "label": null,
+   "attempt": "40e657926d4d4817b4db265d24fc44cc",
+   "start": "2026-11-27T23:16:37Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 20000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.719,
+   "download_bytes": 0,
+   "write_bytes": 198335,
+   "disk_bound_bytes": 60642312,
    "case_outputs": 0,
    "telemetry_complete": true
   }

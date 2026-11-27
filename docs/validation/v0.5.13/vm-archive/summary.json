@@ -1,0 +1,45 @@
+{
+ "schema": "refute-v0513-vm-archive-1",
+ "labels": [
+  "exploratory",
+  "method_status: not_validated"
+ ],
+ "decision": "#218 comment 7229841832, item W1(g)1",
+ "destination": "Drive: Projetos/refute/vm-decommission-2026-11-27",
+ "files": 69,
+ "bytes": 1423420,
+ "manifest_sha256": "cfbc08f815b525c1c286f5264707088d56119d9581069344b561c3d2b949c4a7",
+ "excluded": [
+  {
+   "path": "cache-vm/gnupg",
+   "reason": "a private key or keyring: never archived generically"
+  },
+  {
+   "path": "cache-vm/ssh",
+   "reason": "a private key or keyring: never archived generically"
+  }
+ ],
+ "needs_elevation": [
+  {
+   "path": "programdata/RefuteVm.pssc",
+   "source": "C:\\ProgramData\\RefuteVm\\RefuteVm.pssc",
+   "reason": "reading: Permission denied"
+  },
+  {
+   "path": "programdata/Transcripts",
+   "source": "C:\\ProgramData\\RefuteVm\\Transcripts",
+   "reason": "listing: Acesso negado"
+  },
+  {
+   "path": "programdata-backup/.",
+   "source": "C:\\ProgramData\\RefuteVm-backup",
+   "reason": "listing: Acesso negado"
+  }
+ ],
+ "problems": [
+  {
+   "path": "programdata-backup",
+   "problem": "no file archived from this source"
+  }
+ ]
+}
