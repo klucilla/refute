@@ -1,0 +1,11 @@
+{
+ "name": "build-wheel",
+ "question": "Build the wheel of the working tree offline, for decision F2's check that it differs from 0.5.12 on TestPyPI only in METADATA and RECORD (#218 comment 7218843893). Nothing is published or installed.",
+ "choices": "uv build --wheel --offline --out-dir .cache/v0513/f2/dist: the project's own build backend (hatchling, the one uv sync already uses for the editable install), from the uv cache, with no download.",
+ "argv": ["uv", "build", "--wheel", "--offline", "--out-dir", ".cache/v0513/f2/dist"],
+ "identity": [],
+ "key": "tree",
+ "reserve": {"cpu_s": 300, "disk_bytes": 200000000},
+ "network": false,
+ "retry_class": "checker"
+}

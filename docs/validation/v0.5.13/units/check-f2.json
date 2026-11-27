@@ -1,0 +1,11 @@
+{
+ "name": "check-f2",
+ "question": "The deterministic checks of decision F2 (#218 comment 7218843893) before the commit of the index README: README.md unchanged against HEAD; README-pypi.md differs from README.md only in link targets (md_links); README-pypi.md up to date; the new wheel differs from 0.5.12 on TestPyPI only in METADATA and RECORD.",
+ "choices": "docs/validation/v0.5.13/tools/check_f2.py <new wheel> <reference wheel>. Offline. It writes out/check-f2.json and exits 0 only if all four checks hold.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/check_f2.py"],
+ "identity": ["docs/validation/v0.5.13/tools/check_f2.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 60, "disk_bytes": 5000000},
+ "network": false,
+ "retry_class": "checker"
+}

@@ -1,0 +1,11 @@
+{
+ "name": "make-pypi-readme",
+ "question": "Write README-pypi.md from README.md with scripts/make_pypi_readme.py (decision F2, #218 comment 7218843893), or check it with --check.",
+ "choices": "scripts/make_pypi_readme.py [--check], as it is in the working tree (it is committed with F2, after the checks; the unit's tree key records the state). Offline. It writes only README-pypi.md at the root (none with --check).",
+ "argv": ["{python}", "-I", "-B", "scripts/make_pypi_readme.py"],
+ "identity": [],
+ "key": "tree",
+ "reserve": {"cpu_s": 30, "disk_bytes": 2000000},
+ "network": false,
+ "retry_class": "checker"
+}
