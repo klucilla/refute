@@ -116,11 +116,14 @@ def _entries(node: ast.AST) -> list[tuple[str, ast.AST, int]]:
 def _mappings(tree: ast.AST, names: set[str]):
     """Every (container name, key, value, line) written to a mapping called by one of ``names``,
     and every argument of that name that is not a literal mapping (``unresolved``)."""
-    found, unresolved = [], []
+    found, unresolved, resolved = [], [], set()
     for func in [
         n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef | ast.AsyncFunctionDef)
     ] + [tree]:
         local = {}
+        params = set()
+        if isinstance(func, ast.FunctionDef | ast.AsyncFunctionDef):
+            params = {a.arg for a in func.args.args + func.args.kwonlyargs}
         for node in ast.walk(func):
             if isinstance(node, ast.Assign) and len(node.targets) == 1:
                 t = node.targets[0]
@@ -136,6 +139,12 @@ def _mappings(tree: ast.AST, names: set[str]):
                         items = _entries(value)
                         if items:
                             found += [(kw.arg, k, v, line) for k, v, line in items]
+                            resolved.add(kw.value.lineno)
+                        elif "model_dump(" in ast.unparse(value):
+                            resolved.add(kw.value.lineno)
+                            unresolved.append((kw.arg, kw.value.lineno, ast.unparse(value)))
+                        elif isinstance(value, ast.Name) and value.id in params:
+                            unresolved.append((kw.arg, kw.value.lineno, "parameter " + value.id))
                         elif not (isinstance(value, ast.Constant) and value.value is None):
                             unresolved.append((kw.arg, kw.value.lineno, ast.unparse(value)))
                 if (
@@ -160,6 +169,13 @@ def _mappings(tree: ast.AST, names: set[str]):
                         and isinstance(t.slice.value, str)
                     ):
                         found.append((t.value.id, t.slice.value, node.value, node.lineno))
+    # a line resolved in an enclosing function (a closure's free variable) is not unresolved
+    unresolved = [
+        u
+        for u in unresolved
+        if u[1] not in resolved or "model_dump(" in u[2] or u[2].startswith("parameter ")
+    ]
+    unresolved = [u for u in unresolved if not (u[1] in resolved and u[2] == "thresholds")]
     return found, unresolved
 
 
@@ -200,11 +216,12 @@ def main() -> int:
             if container == "thresholds" and (rel, line, text) not in {
                 (u["file"], u["line"], u["expression"]) for u in unresolved
             }:
-                category = (
-                    "a plan model's dump: its keys are plan fields (rule 1)"
-                    if "model_dump(" in text
-                    else "not resolved"
-                )
+                if "model_dump(" in text:
+                    category = "a plan model's dump: its keys are plan fields (rule 1)"
+                elif text.startswith("parameter "):
+                    category = "a parameter: its values are its callers' arguments"
+                else:
+                    category = "not resolved"
                 unresolved.append(
                     {"file": rel, "line": line, "expression": text, "category": category}
                 )
