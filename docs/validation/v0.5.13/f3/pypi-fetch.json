@@ -1,0 +1,25 @@
+{
+ "utc": "2026-11-27T15:20:27Z",
+ "metadata_url": "https://pypi.org/pypi/refute/0.5.12/json",
+ "version": "0.5.12",
+ "files": [
+  {
+   "filename": "refute-0.5.12-py3-none-any.whl",
+   "bytes": 619565,
+   "sha256": "038b507b1dfc827cd4169eaa161bd55e5a84a3fc876a14b4415cc6d4fe3bac29",
+   "index_sha256": "038b507b1dfc827cd4169eaa161bd55e5a84a3fc876a14b4415cc6d4fe3bac29",
+   "matches_index": true,
+   "url": "https://files.pythonhosted.org/packages/f9/41/e7b1323256cf02b13002e9af42a2df00183b20c377108779a5e142e008f7/refute-0.5.12-py3-none-any.whl",
+   "packagetype": "bdist_wheel"
+  },
+  {
+   "filename": "refute-0.5.12.tar.gz",
+   "bytes": 1348177,
+   "sha256": "037e58d92d58b2075095062d9e3723e6f036c436751e9115c74eeed8a3b33851",
+   "index_sha256": "037e58d92d58b2075095062d9e3723e6f036c436751e9115c74eeed8a3b33851",
+   "matches_index": true,
+   "url": "https://files.pythonhosted.org/packages/08/7b/1611ad8a9e612f56c830738bd47a0455d8f055f71bbcbec0fb9ac8dd5fbd/refute-0.5.12.tar.gz",
+   "packagetype": "sdist"
+  }
+ ]
+}
