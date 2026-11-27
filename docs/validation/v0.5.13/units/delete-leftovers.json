@@ -1,0 +1,11 @@
+{
+ "name": "delete-leftovers",
+ "question": "Delete, by literal path with a prefix guard, the three untracked leftovers of docs/plans/v0.5.13-amendment-2/ (runner.patch, runner.diff, test_runner_blas_pin.diff), after checking with git that none is tracked and that the four committed r2-*.patch files exist at HEAD (the maintainer's decision E3, #218 comment 7216128796).",
+ "choices": "docs/validation/v0.5.13/tools/delete_leftovers.py, no arguments; the three paths are literals in the script. Offline. Nothing is deleted if any check fails. It prints each file's size and SHA-256 before deleting it.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/delete_leftovers.py"],
+ "identity": ["docs/validation/v0.5.13/tools/delete_leftovers.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 60, "disk_bytes": 1000000},
+ "network": false,
+ "retry_class": "checker"
+}
