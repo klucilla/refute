@@ -18,7 +18,8 @@ comparator even under a measurement pattern) when, in the source of those module
    ``thresholds`` argument that is a name is resolved through the dict literal assigned to that
    name in the same function. Every ``thresholds`` argument it cannot resolve is listed;
 3. it is a key of a ``metrics``, ``inputs`` or ``sensitivity`` mapping (the same forms as rule 2)
-   whose value echoes configuration: an attribute whose last name is a plan field, an all-caps
+   whose value echoes configuration: an attribute whose last name is a plan field and not a
+   measurement output name (so ``candidate.snr`` is not an echo), an all-caps
    name, a numeric literal, or one of these inside ``float(...)``, ``int(...)`` or ``bool(...)``.
 
 A **measurement output name** is a field of the dataclasses ``Candidate`` (``types.py``) and
@@ -45,6 +46,7 @@ TESS = "src/refute/packs/tess/"
 INVENTORY = "docs/validation/v0.5.13/i2/predicate-inventory.json"
 D1A = "docs/validation/v0.5.13/step1/diag-golden-diff.json"
 CONTAINERS = {"metrics", "inputs", "sensitivity"}
+MEASURED: set[str] = set()  # filled by main() before rule 3 runs
 
 
 def modules() -> list[str]:
@@ -135,7 +137,7 @@ def _mappings(tree: ast.AST, names: set[str]):
                         if items:
                             found += [(kw.arg, k, v, line) for k, v, line in items]
                         elif not (isinstance(value, ast.Constant) and value.value is None):
-                            unresolved.append((kw.arg, kw.value.lineno, ast.unparse(kw.value)))
+                            unresolved.append((kw.arg, kw.value.lineno, ast.unparse(value)))
                 if (
                     isinstance(node.func, ast.Attribute)
                     and node.func.attr == "update"
@@ -166,7 +168,7 @@ def echoes_config(value: ast.AST, fields: set[str]) -> bool:
         if value.func.id in {"float", "int", "bool"} and len(value.args) == 1:
             return echoes_config(value.args[0], fields)
     if isinstance(value, ast.Attribute):
-        return value.attr in fields
+        return value.attr in fields and value.attr not in MEASURED
     if isinstance(value, ast.Name):
         return value.id.isupper()
     if isinstance(value, ast.Constant):
@@ -177,6 +179,7 @@ def echoes_config(value: ast.AST, fields: set[str]) -> bool:
 def main() -> int:
     mods = modules()
     measured = measurement_names()
+    MEASURED.update(measured)
     fields = plan_fields()
     thresholds: dict[str, set[str]] = {}
     echoes: dict[str, set[str]] = {}
@@ -197,7 +200,14 @@ def main() -> int:
             if container == "thresholds" and (rel, line, text) not in {
                 (u["file"], u["line"], u["expression"]) for u in unresolved
             }:
-                unresolved.append({"file": rel, "line": line, "expression": text})
+                category = (
+                    "a plan model's dump: its keys are plan fields (rule 1)"
+                    if "model_dump(" in text
+                    else "not resolved"
+                )
+                unresolved.append(
+                    {"file": rel, "line": line, "expression": text, "category": category}
+                )
     exact = sorted((fields - measured) | set(thresholds) | set(echoes))
     d1a = json.loads((ROOT / D1A).read_text(encoding="utf-8"))
     differing = sorted(
@@ -221,7 +231,10 @@ def main() -> int:
     Path(sys.argv[1]).write_text(json.dumps(out, indent=1) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps({"modules": len(mods), "exact_keys": len(exact), "plan_fields": len(fields),
                       "left_out": sorted(fields & measured), "threshold_keys": len(thresholds),
-                      "unresolved_thresholds": len(unresolved), "config_echo_keys": len(echoes),
+                      "unresolved_thresholds": len(unresolved),
+                      "unresolved_not_model_dump": sum(1 for u in unresolved
+                                                       if u["category"] == "not resolved"),
+                      "config_echo_keys": len(echoes),
                       "echo_and_measured": sorted(measured & set(echoes)),
                       "d1a_conflicts": conflicts}))  # fmt: skip
     return 0 if not conflicts else 1
