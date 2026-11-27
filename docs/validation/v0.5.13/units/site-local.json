@@ -1,0 +1,11 @@
+{
+ "name": "site-local",
+ "question": "One local operation in the site's working copy for V4 (#218 comment 7228712102), through v0.5.12's tools/in_site.ps1 (the extra arguments: the command and its arguments): git reads, git switch -c of the new branch, git add, the commit through the project's scripts/commit_checked.py (privacy check), npm run translation:accept, and the site's suites through its scripts/run-heavy.ps1 (logical processors 8-31, at most 10 workers).",
+ "choices": "A v0.5.13 unit file over v0.5.12's unchanged in_site.ps1. In the launcher's job object, BelowNormal; no network intended (the site's npm packages are already installed). Its writes are in C:/Projetos/refute-site, outside the phase's disk roots (a declared limit). A data unit: the arguments make the unit. Never merge or deploy.",
+ "argv": ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "docs/validation/v0.5.12/tools/in_site.ps1"],
+ "identity": ["docs/validation/v0.5.12/tools/in_site.ps1"],
+ "key": "data",
+ "reserve": {"cpu_s": 1500, "disk_bytes": 1000000000},
+ "timeout_s": 1800,
+ "network": false
+}

@@ -1,0 +1,10 @@
+{
+ "name": "site-net",
+ "question": "One GitHub operation of the site for V4 (#218 comment 7228712102), through v0.5.12's tools/in_site.ps1: git fetch, git push -u origin of the new branch, or gh pr create --draft on klucilla/refute-site (no merge, no deploy).",
+ "choices": "A v0.5.13 unit file over v0.5.12's unchanged in_site.ps1. The operation and the endpoint are journaled. A data unit: the arguments make the unit.",
+ "argv": ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "docs/validation/v0.5.12/tools/in_site.ps1"],
+ "identity": ["docs/validation/v0.5.12/tools/in_site.ps1"],
+ "key": "data",
+ "reserve": {"cpu_s": 120, "disk_bytes": 10000000},
+ "network": {"kind": "github", "endpoints": ["github.com:443", "api.github.com:443"], "operations": ["git fetch", "git push -u origin <branch>", "gh pr create --draft"]}
+}
