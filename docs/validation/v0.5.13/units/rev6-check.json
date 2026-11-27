@@ -1,0 +1,11 @@
+{
+ "name": "rev6-check",
+ "question": "K2 (#218 comment 7223240289): the deterministic check of amendment 2, revision 6: each replacement text of the second blind review's blocking items appears in revision 6 word for word (normalizing only quote prefixes and whitespace); each replaced passage of revision 5 is gone; decisions (b), (d), (g) and (i) hold and (c), (e), (f), (g) are marked; the committed rev5-to-rev6 patch equals a fresh diff, and every hunk is labelled with B1 to B4 or a to i only.",
+ "choices": "docs/validation/v0.5.13/tools/rev6_check.py, no arguments. Offline. It reads the committed answer, revisions 5 and 6, the patch and the map.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/rev6_check.py"],
+ "identity": ["docs/validation/v0.5.13/tools/rev6_check.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 60, "disk_bytes": 5000000},
+ "network": false,
+ "retry_class": "checker"
+}
