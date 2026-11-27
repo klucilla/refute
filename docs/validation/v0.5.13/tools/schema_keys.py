@@ -10,8 +10,16 @@ comparator even under a measurement pattern) when, in the source at HEAD:
 2. it is a string key of a dict literal given as the ``thresholds`` argument of a call, or
    assigned to a name ``thresholds``, in a module of the golden path (``MODULES``).
 
-The rule over-includes on purpose: a measurement key that shares a name with a configuration
-field becomes exact, which can only make the comparator fail, never pass. The tool also reports
+Rule 1 does not take a **measurement output name**: a field of the dataclasses ``Candidate``
+(``types.py``) and ``Ephemeris`` (``ephemeris.py``), a key their ``to_dict`` adds, or a literal key
+of ``key_values`` in ``pipeline.build_result`` (with ``t_ref_bjd``, which ``build_result`` adds to
+the ephemeris). Those names are what the search and the ephemeris fit measure; a plan field of the
+same name (for example a published or injected value) is a different quantity. Rule 2 takes every
+key it finds, measurement output name or not.
+
+Otherwise the rule over-includes on purpose: a measurement key that shares a name with a
+configuration field becomes exact, which can only make the comparator fail, never pass. The tool
+also reports
 which of the fields D1a found to differ (``step1/diag-golden-diff.json``, already exposed) are
 exact keys; any such field is a conflict to be resolved before the freeze.
 """
@@ -51,6 +59,38 @@ def plan_fields() -> set[str]:
     return names
 
 
+def measurement_names() -> set[str]:
+    names = {"t_ref_bjd"}
+    for rel, cls in ((TESS + "types.py", "Candidate"), (TESS + "ephemeris.py", "Ephemeris")):
+        tree = ast.parse((ROOT / rel).read_text(encoding="utf-8"))
+        node = next(n for n in ast.walk(tree) if isinstance(n, ast.ClassDef) and n.name == cls)
+        for item in node.body:
+            if isinstance(item, ast.AnnAssign) and isinstance(item.target, ast.Name):
+                names.add(item.target.id)
+            if isinstance(item, ast.FunctionDef) and item.name == "to_dict":
+                for sub in ast.walk(item):
+                    if isinstance(sub, ast.Subscript) and isinstance(sub.slice, ast.Constant):
+                        names.add(sub.slice.value)
+                    if isinstance(sub, ast.Dict):
+                        names |= {k.value for k in sub.keys if isinstance(k, ast.Constant)}
+    tree = ast.parse((ROOT / TESS / "pipeline.py").read_text(encoding="utf-8"))
+    build = next(
+        n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef) and n.name == "build_result"
+    )
+    for sub in ast.walk(build):
+        if (
+            isinstance(sub, ast.Call)
+            and isinstance(sub.func, ast.Attribute)
+            and sub.func.attr == "update"
+            and isinstance(sub.func.value, ast.Name)
+            and sub.func.value.id == "key_values"
+            and sub.args
+            and isinstance(sub.args[0], ast.Dict)
+        ):
+            names |= {k.value for k in sub.args[0].keys if isinstance(k, ast.Constant)}
+    return names
+
+
 def threshold_keys() -> dict[str, list[str]]:
     found: dict[str, set[str]] = {}
 
@@ -77,17 +117,21 @@ def threshold_keys() -> dict[str, list[str]]:
 
 
 def main() -> int:
+    measured = measurement_names()
     fields = plan_fields()
     thresholds = threshold_keys()
-    exact = sorted(fields | set(thresholds))
+    exact = sorted((fields - measured) | set(thresholds))
     d1a = json.loads((ROOT / D1A).read_text(encoding="utf-8"))
     differing = sorted(
         {f for s in d1a["settings"].values() for f in s["differing_fields_max_rel_diff"]}
     )
     conflicts = sorted(set(differing) & set(exact))
     out = {
-        "rule": "plan model fields of params.py, and keys of thresholds dicts on the golden path",
+        "rule": "plan model fields of params.py that are not measurement output names, and keys "
+        "of thresholds dicts on the golden path",
         "modules": MODULES,
+        "measurement_output_names": sorted(measured),
+        "plan_fields_left_out": sorted(fields & measured),
         "plan_fields": sorted(fields),
         "threshold_keys": thresholds,
         "exact_keys": exact,
@@ -96,7 +140,9 @@ def main() -> int:
     }
     Path(sys.argv[1]).write_text(json.dumps(out, indent=1) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps({"exact_keys": len(exact), "plan_fields": len(fields),
-                      "threshold_keys": len(thresholds), "d1a_conflicts": conflicts}))  # fmt: skip
+                      "left_out": sorted(fields & measured), "threshold_keys": len(thresholds),
+                      "measured_and_threshold": sorted(measured & set(thresholds)),
+                      "d1a_conflicts": conflicts}))  # fmt: skip
     return 0 if not conflicts else 1
 
 
