@@ -14,6 +14,8 @@ maintainer's decision H2, #218 comment 7219469262).
   - one of the maintainer's decisions ``a`` to ``k``;
   - ``H2``, for the identification of the revision that H2 itself orders (its title, date, basis
     and record links). Such hunks are reported apart.
+  - ``J1``, the maintainer's decision J1 (#218 comment 7222879969). It is the only label of the
+    diff from revision 4 to revision 5.
 """
 
 from __future__ import annotations
@@ -27,7 +29,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[4]
-LABELS = {f"B{i}" for i in range(1, 7)} | set("abcdefghijk") | {"H2"}
+LABELS = {f"B{i}" for i in range(1, 7)} | set("abcdefghijk") | {"H2", "J1"}
 
 
 def sha(data: bytes) -> str:
