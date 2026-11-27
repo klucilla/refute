@@ -1,0 +1,120 @@
+{
+ "files": [
+  {
+   "path": "src/refute/packs/tess/a0.py",
+   "index_blob": "f126ccee3ba004dfaad6a37c4381c421c2b62ac3",
+   "blob_sha256": "cf1b47a0ad94c4102b18a9dd97ae12b14db84d57bdb722e1b0fecbb6ed1ae5f1",
+   "before": {
+    "eol": "i/lf    w/crlf  attr/text=auto eol=lf \tsrc/refute/packs/tess/a0.py",
+    "sha256": "7b62f1f516183dc3a25ad814498f673b8c58ea3c82f9a6d1dc8504398771937c",
+    "crlf_count": 424
+   },
+   "after": {
+    "eol": "i/lf    w/lf    attr/text=auto eol=lf \tsrc/refute/packs/tess/a0.py",
+    "sha256": "cf1b47a0ad94c4102b18a9dd97ae12b14db84d57bdb722e1b0fecbb6ed1ae5f1",
+    "crlf_count": 0,
+    "hash_object_no_filters": "f126ccee3ba004dfaad6a37c4381c421c2b62ac3",
+    "diff_empty": true,
+    "checks": {
+     "sha256_equals_blob": true,
+     "hash_object_equals_index_blob": true,
+     "diff_empty": true,
+     "w_lf": true
+    }
+   }
+  },
+  {
+   "path": "scripts/ci_shard.py",
+   "index_blob": "8b1f23f90b39ec5fb24e6260650e5779add821ee",
+   "blob_sha256": "227184b38ec9e392879b7464c1e978a98fc55bbd1e652df20b89450780761fd3",
+   "before": {
+    "eol": "i/lf    w/crlf  attr/text=auto eol=lf \tscripts/ci_shard.py",
+    "sha256": "355bb6b187850f424ba457ddf20abec3cda0e448c8e2e13d516955a5cc0cdb61",
+    "crlf_count": 123
+   },
+   "after": {
+    "eol": "i/lf    w/lf    attr/text=auto eol=lf \tscripts/ci_shard.py",
+    "sha256": "227184b38ec9e392879b7464c1e978a98fc55bbd1e652df20b89450780761fd3",
+    "crlf_count": 0,
+    "hash_object_no_filters": "8b1f23f90b39ec5fb24e6260650e5779add821ee",
+    "diff_empty": true,
+    "checks": {
+     "sha256_equals_blob": true,
+     "hash_object_equals_index_blob": true,
+     "diff_empty": true,
+     "w_lf": true
+    }
+   }
+  },
+  {
+   "path": "tests/test_junit_counts.py",
+   "index_blob": "e4fc09f1f32a40a1144733e23b046c55fe83b222",
+   "blob_sha256": "f29b77d2b5c12ef1d59b7c50aa2a6bdb6b51920547f29b10212063b308523de7",
+   "before": {
+    "eol": "i/lf    w/crlf  attr/text=auto eol=lf \ttests/test_junit_counts.py",
+    "sha256": "1eceb57dbed45da411eedac96ad66fdb019d5a7c1c7df9c088bc97417b4ae061",
+    "crlf_count": 157
+   },
+   "after": {
+    "eol": "i/lf    w/lf    attr/text=auto eol=lf \ttests/test_junit_counts.py",
+    "sha256": "f29b77d2b5c12ef1d59b7c50aa2a6bdb6b51920547f29b10212063b308523de7",
+    "crlf_count": 0,
+    "hash_object_no_filters": "e4fc09f1f32a40a1144733e23b046c55fe83b222",
+    "diff_empty": true,
+    "checks": {
+     "sha256_equals_blob": true,
+     "hash_object_equals_index_blob": true,
+     "diff_empty": true,
+     "w_lf": true
+    }
+   }
+  },
+  {
+   "path": "tests/test_v051_a0.py",
+   "index_blob": "b1ce136017ed4cf06db06df3d48c8da2a5d4f2b5",
+   "blob_sha256": "7574e0fdda476539a6f90b9bc29f549a188ecd9217b5ad745ee1bb7387186691",
+   "before": {
+    "eol": "i/lf    w/crlf  attr/text=auto eol=lf \ttests/test_v051_a0.py",
+    "sha256": "b25f5b6f23b92970b5e7e01e7d0d84a568907d1005d1e38408eb912af2e10ce9",
+    "crlf_count": 186
+   },
+   "after": {
+    "eol": "i/lf    w/lf    attr/text=auto eol=lf \ttests/test_v051_a0.py",
+    "sha256": "7574e0fdda476539a6f90b9bc29f549a188ecd9217b5ad745ee1bb7387186691",
+    "crlf_count": 0,
+    "hash_object_no_filters": "b1ce136017ed4cf06db06df3d48c8da2a5d4f2b5",
+    "diff_empty": true,
+    "checks": {
+     "sha256_equals_blob": true,
+     "hash_object_equals_index_blob": true,
+     "diff_empty": true,
+     "w_lf": true
+    }
+   }
+  },
+  {
+   "path": "tests/test_v051_wp2.py",
+   "index_blob": "5ebf0113b3964f56c3555dbd7001cc8e88d0ce9d",
+   "blob_sha256": "c1bcd79743067ce7a803e0ab07dff06b7a0621a433730b8688f6c020e76c611e",
+   "before": {
+    "eol": "i/lf    w/crlf  attr/text=auto eol=lf \ttests/test_v051_wp2.py",
+    "sha256": "c90d2671c3df34c8b9dacba977c9ee2166f3705b27baf6a8aae86f6b6c000bb1",
+    "crlf_count": 107
+   },
+   "after": {
+    "eol": "i/lf    w/lf    attr/text=auto eol=lf \ttests/test_v051_wp2.py",
+    "sha256": "c1bcd79743067ce7a803e0ab07dff06b7a0621a433730b8688f6c020e76c611e",
+    "crlf_count": 0,
+    "hash_object_no_filters": "5ebf0113b3964f56c3555dbd7001cc8e88d0ce9d",
+    "diff_empty": true,
+    "checks": {
+     "sha256_equals_blob": true,
+     "hash_object_equals_index_blob": true,
+     "diff_empty": true,
+     "w_lf": true
+    }
+   }
+  }
+ ],
+ "all_ok": true
+}

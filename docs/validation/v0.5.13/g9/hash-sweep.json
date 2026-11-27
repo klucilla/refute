@@ -1,0 +1,1500 @@
+{
+ "head": "3dbb713c7fa40960d8f7941826e0a9c91a4b1b74",
+ "files_scanned": 181,
+ "pairs": 268,
+ "matched_head": 146,
+ "divergences": 122,
+ "by_kind": {
+  "no-match": 76,
+  "earlier-version": 34,
+  "crlf-of-head": 12
+ },
+ "not_paired": 1544,
+ "list": [
+  {
+   "recorded_in": "docs/plans/v0.5.13-charter-prep/exposure-check.json",
+   "where": [
+    "$.inputs.census-kepler-targets.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.10/cleanup/manifest.json",
+   "recorded_sha256": "227cc26d3ec32692c406a2d61e26a81d161941596c4aa1a573934b2437955350",
+   "head_sha256": "6f771305965920da8cf6b93dd0ffb86e54a3e38ba1764af25f201bfb5db665c1",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/plans/v0.5.13-charter-prep/exposure-check.json",
+   "where": [
+    "$.inputs.census-d1-targets.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.10/cleanup/manifest.json",
+   "recorded_sha256": "f7d89ce7e1affe8d3b4e0899a1b88a80398b76acb66ccb6572ec915040739a0f",
+   "head_sha256": "6f771305965920da8cf6b93dd0ffb86e54a3e38ba1764af25f201bfb5db665c1",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/g1/g1-prepare.json",
+   "where": [
+    "$.copies[3].source_sha256",
+    "$.copies[3].destination_sha256"
+   ],
+   "occurrences": 2,
+   "file": "tests/test_pypi_readme.py",
+   "recorded_sha256": "b9b2793ca127a997e0022fb053fbf246c64ee3f6a416354945315c4dc16fd2fc",
+   "head_sha256": "1aecd897415d201b29423c74f99e76391d3edb765172546bba852c4054fdf2d8",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/g7/g7-prepare.json",
+   "where": [
+    "$.copies[3].source_sha256",
+    "$.copies[3].destination_sha256"
+   ],
+   "occurrences": 2,
+   "file": "tests/test_pypi_readme.py",
+   "recorded_sha256": "b9b2793ca127a997e0022fb053fbf246c64ee3f6a416354945315c4dc16fd2fc",
+   "head_sha256": "1aecd897415d201b29423c74f99e76391d3edb765172546bba852c4054fdf2d8",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 270.extra_files_sha256..zenodo.json"
+   ],
+   "occurrences": 1,
+   "file": ".zenodo.json",
+   "recorded_sha256": "2f3bea4111d14c3c06df15a47e9ea7400692fe2ea5d0f41b128fe279a6292af3",
+   "head_sha256": "84dfe961aadce039fbd5554bd2ed86c0a8bb9d2792a697a0c64a4c08f8be4410",
+   "kind": "earlier-version",
+   "earlier_commit": "3a5eba51a649d187ca53dc32761d521d54001fbb"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 142.extra_files_sha256.ROADMAP.md"
+   ],
+   "occurrences": 1,
+   "file": "ROADMAP.md",
+   "recorded_sha256": "678887774d39c0fb21b485c1bf64c9d82f7e219cfe41d64e0526eecb9e2a219f",
+   "head_sha256": "c74aecd2ab6fc769a0b9586fb21a489b989a7c4cda89931b70d908a11719488e",
+   "kind": "earlier-version",
+   "earlier_commit": "20e4c8d912a5c8deb9fdda84c789645e14677daf"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 16.extra_files_sha256.ROADMAP.md"
+   ],
+   "occurrences": 1,
+   "file": "ROADMAP.md",
+   "recorded_sha256": "77a319c162509708a125c487c1a9113f2d2ef47b7e97cad5d787828a3f7dfa65",
+   "head_sha256": "c74aecd2ab6fc769a0b9586fb21a489b989a7c4cda89931b70d908a11719488e",
+   "kind": "earlier-version",
+   "earlier_commit": "61055e1b3d246eb7513e649b393a0012c4090a05"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 242.extra_files_sha256.docs/plans/v0.5.13-amendment-2/README.md"
+   ],
+   "occurrences": 1,
+   "file": "docs/plans/v0.5.13-amendment-2/README.md",
+   "recorded_sha256": "d24ae435d7b8447bdc93e16b753e99c81ada218ee5db1f358131c96b99247c06",
+   "head_sha256": "7b7d11e12c839463990e7e2cd6634e66983a7ac4818b232754d5495db622a725",
+   "kind": "earlier-version",
+   "earlier_commit": "89784ceb196a3da09796d3cc6362ae815a7378ba"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 230.extra_files_sha256.docs/plans/v0.5.13-amendment-2/r2-test_runner_blas_pin.patch"
+   ],
+   "occurrences": 1,
+   "file": "docs/plans/v0.5.13-amendment-2/r2-test_runner_blas_pin.patch",
+   "recorded_sha256": "b5ed4d3431224a2c17025dddcf35081649a3a83d7f0e2d59389f952ba72051ae",
+   "head_sha256": "006bfbf96d1537a3b435b73ba33f21406cc274721669f47c3f5ba0417b495dc6",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 102.extra_files_sha256.docs/validation/v0.5.13/caps-ledger.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/caps-ledger.json",
+   "recorded_sha256": "013d9f8afe16ac865e0e3dd6ca02027f21e75f158697f693e8b8d35e9ba73ad7",
+   "head_sha256": "f00211e5a91c5ba427be1cc3976fd1ee3893b3eba7f4fc4a71b4bf564f83107b",
+   "kind": "earlier-version",
+   "earlier_commit": "b4e1fa7c2af366ad925ec4667a12293305a7ff05"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 142.extra_files_sha256.docs/validation/v0.5.13/caps-ledger.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/caps-ledger.json",
+   "recorded_sha256": "01cefff680cecd584263b56e556d9429e4c760c179c9515a87359f490b79376f",
+   "head_sha256": "f00211e5a91c5ba427be1cc3976fd1ee3893b3eba7f4fc4a71b4bf564f83107b",
+   "kind": "earlier-version",
+   "earlier_commit": "20e4c8d912a5c8deb9fdda84c789645e14677daf"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 402.extra_files_sha256.docs/validation/v0.5.13/caps-ledger.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/caps-ledger.json",
+   "recorded_sha256": "104975e2a971d4e99e563656192f019208f4775df7aa8c56e8f4ae89702e7d45",
+   "head_sha256": "f00211e5a91c5ba427be1cc3976fd1ee3893b3eba7f4fc4a71b4bf564f83107b",
+   "kind": "earlier-version",
+   "earlier_commit": "903c220dc065f4359b240619c510016c539a0c77"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 362.extra_files_sha256.docs/validation/v0.5.13/caps-ledger.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/caps-ledger.json",
+   "recorded_sha256": "286752ed748255b4332dcdfae798d1f9aeeb55bccbab151d7a61a5cc2af8a37c",
+   "head_sha256": "f00211e5a91c5ba427be1cc3976fd1ee3893b3eba7f4fc4a71b4bf564f83107b",
+   "kind": "earlier-version",
+   "earlier_commit": "d09ab40c68e9a3ac8ac944401a3e3997ba0dbf40"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 376.extra_files_sha256.docs/validation/v0.5.13/caps-ledger.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/caps-ledger.json",
+   "recorded_sha256": "3861c3b0b08f6155d310fb8de6b41aa3f9ff2bf597ef40a74818ed4ccc995020",
+   "head_sha256": "f00211e5a91c5ba427be1cc3976fd1ee3893b3eba7f4fc4a71b4bf564f83107b",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 246.extra_files_sha256.docs/validation/v0.5.13/caps-ledger.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/caps-ledger.json",
+   "recorded_sha256": "56586adc5c774255be8126bcad58e8a34eb00591b7d222a6b8c50131617cbc87",
+   "head_sha256": "f00211e5a91c5ba427be1cc3976fd1ee3893b3eba7f4fc4a71b4bf564f83107b",
+   "kind": "earlier-version",
+   "earlier_commit": "d94ee9ecaba868085f434f7e699e158ff1888925"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 266.extra_files_sha256.docs/validation/v0.5.13/caps-ledger.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/caps-ledger.json",
+   "recorded_sha256": "58c64123fece356acc5baa147c340d9d61355b10061a6b707384e666dd749e38",
+   "head_sha256": "f00211e5a91c5ba427be1cc3976fd1ee3893b3eba7f4fc4a71b4bf564f83107b",
+   "kind": "earlier-version",
+   "earlier_commit": "9400b615d0dc49adb3f14d1ed31de5ae55160d25"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 382.extra_files_sha256.docs/validation/v0.5.13/caps-ledger.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/caps-ledger.json",
+   "recorded_sha256": "6007f2eace0ff3d61de4f035a3276c38770f1c11a40250d199ab329d203bd193",
+   "head_sha256": "f00211e5a91c5ba427be1cc3976fd1ee3893b3eba7f4fc4a71b4bf564f83107b",
+   "kind": "earlier-version",
+   "earlier_commit": "6b7caf59415e29c90df5f52abbad642b8f3ad75b"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 454.extra_files_sha256.docs/validation/v0.5.13/caps-ledger.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/caps-ledger.json",
+   "recorded_sha256": "6ef4b1e89e462bdf40f2ef36b527ab2c0c47d6c8c84c8cdd3a10c4246fbe3ffb",
+   "head_sha256": "f00211e5a91c5ba427be1cc3976fd1ee3893b3eba7f4fc4a71b4bf564f83107b",
+   "kind": "earlier-version",
+   "earlier_commit": "54012109740d5b19671b2f5f4ce813636caed695"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 342.extra_files_sha256.docs/validation/v0.5.13/caps-ledger.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/caps-ledger.json",
+   "recorded_sha256": "7fb9bf430636f8d37b29e0ecf19305bcf64090384cd8dae8c10464bdddcdb616",
+   "head_sha256": "f00211e5a91c5ba427be1cc3976fd1ee3893b3eba7f4fc4a71b4bf564f83107b",
+   "kind": "earlier-version",
+   "earlier_commit": "73f80f8410b3c6690411a79c74caf5b811c99ad5"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 474.extra_files_sha256.docs/validation/v0.5.13/caps-ledger.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/caps-ledger.json",
+   "recorded_sha256": "8d55a9a8ff3ad4a4c30182f83827f12f4395eff4b27f78b1d03d2cc146c3b0b9",
+   "head_sha256": "f00211e5a91c5ba427be1cc3976fd1ee3893b3eba7f4fc4a71b4bf564f83107b",
+   "kind": "earlier-version",
+   "earlier_commit": "c2ef11bc158b32f2db28dbfb4963c6e803c5415a"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 242.extra_files_sha256.docs/validation/v0.5.13/caps-ledger.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/caps-ledger.json",
+   "recorded_sha256": "9f1d5963106c932560aeafe4491488ad42dbf94600eb94c553d59c98b4817371",
+   "head_sha256": "f00211e5a91c5ba427be1cc3976fd1ee3893b3eba7f4fc4a71b4bf564f83107b",
+   "kind": "earlier-version",
+   "earlier_commit": "89784ceb196a3da09796d3cc6362ae815a7378ba"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 356.extra_files_sha256.docs/validation/v0.5.13/caps-ledger.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/caps-ledger.json",
+   "recorded_sha256": "b4e97f6246ba8eaed14313b628dae5d19c5fdcc4191a22f2898d97a1ddf58bd2",
+   "head_sha256": "f00211e5a91c5ba427be1cc3976fd1ee3893b3eba7f4fc4a71b4bf564f83107b",
+   "kind": "earlier-version",
+   "earlier_commit": "26fe01a8ee7eeda7d21cf13093e727e931f2857b"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 122.extra_files_sha256.docs/validation/v0.5.13/caps-ledger.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/caps-ledger.json",
+   "recorded_sha256": "c190c03d66c891055c2cb286b3beee13de3b0ee197096379733806bb212f96aa",
+   "head_sha256": "f00211e5a91c5ba427be1cc3976fd1ee3893b3eba7f4fc4a71b4bf564f83107b",
+   "kind": "earlier-version",
+   "earlier_commit": "576156490c40a745dd1a85f0270f957cc92ab128"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 300.extra_files_sha256.docs/validation/v0.5.13/caps-ledger.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/caps-ledger.json",
+   "recorded_sha256": "cf227cf31b3c40e25d41b1d1f5b09086168eca1bddb94fdd4401e837539c196d",
+   "head_sha256": "f00211e5a91c5ba427be1cc3976fd1ee3893b3eba7f4fc4a71b4bf564f83107b",
+   "kind": "earlier-version",
+   "earlier_commit": "c92ff9777824d6facc65d6ddc781c6492b4b9387"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 424.extra_files_sha256.docs/validation/v0.5.13/caps-ledger.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/caps-ledger.json",
+   "recorded_sha256": "e765f2dfeebadb9c4f1a1704eba8c4753c18c3e82f58530d6abffe05a28408a9",
+   "head_sha256": "f00211e5a91c5ba427be1cc3976fd1ee3893b3eba7f4fc4a71b4bf564f83107b",
+   "kind": "earlier-version",
+   "earlier_commit": "882547369b00b80fa62830ba5b68a0ef86dab104"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 324.extra_files_sha256.docs/validation/v0.5.13/caps-ledger.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/caps-ledger.json",
+   "recorded_sha256": "ea4c4ba1ccf199973038d59c18fbc2e1e392d131f8c9d8ed350ad4073a72a477",
+   "head_sha256": "f00211e5a91c5ba427be1cc3976fd1ee3893b3eba7f4fc4a71b4bf564f83107b",
+   "kind": "earlier-version",
+   "earlier_commit": "8d843049d666283d1299aedd14be0930cad228a5"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 202.extra_files_sha256.docs/validation/v0.5.13/caps-ledger.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/caps-ledger.json",
+   "recorded_sha256": "ed6609f077e528f31f6713ce038e9e4713712efd03d50b5d1ec01ada66782472",
+   "head_sha256": "f00211e5a91c5ba427be1cc3976fd1ee3893b3eba7f4fc4a71b4bf564f83107b",
+   "kind": "earlier-version",
+   "earlier_commit": "24bf505c41ece20d81705166f84d886e727c4251"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 70.extra_files_sha256.docs/validation/v0.5.13/caps-ledger.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/caps-ledger.json",
+   "recorded_sha256": "f78f7225528a7cc492132507f34dcb1232c38125775522a1e84fc396520c2e58",
+   "head_sha256": "f00211e5a91c5ba427be1cc3976fd1ee3893b3eba7f4fc4a71b4bf564f83107b",
+   "kind": "earlier-version",
+   "earlier_commit": "3b4f976a95b242a89ebcdf303391d99fb3587a23"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 42.extra_files_sha256.docs/validation/v0.5.13/caps-ledger.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/caps-ledger.json",
+   "recorded_sha256": "fb3dc67a1d10cc65206d611d4d2b6e7a0757aadd94faa0b9d11207d2e68966f3",
+   "head_sha256": "f00211e5a91c5ba427be1cc3976fd1ee3893b3eba7f4fc4a71b4bf564f83107b",
+   "kind": "earlier-version",
+   "earlier_commit": "a150096de04e4caae9ef0042e6ae4c458823ac9e"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 135.outputs_sha256.docs/validation/v0.5.13/d4/check-m45-files.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/d4/check-m45-files.json",
+   "recorded_sha256": "24a9d93dbe099fd92476c398d88d83b1d5890a098d39425d0419eecb75d0b52d",
+   "head_sha256": "f7feb285f531945b5264253a14a0192253c4d68bed5c190a2dd99a23bd19f9da",
+   "kind": "crlf-of-head",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 139.outputs_sha256.docs/validation/v0.5.13/d4/check-m45-uvlock.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/d4/check-m45-uvlock.json",
+   "recorded_sha256": "7f2505890530ed51a02340c5c911f49d1aa661d103579dfd1753fb4eabe04cb3",
+   "head_sha256": "7efa63a16d03f24b6a25655ece370c694857892c2c1c86d5cc4a10ce9159c671",
+   "kind": "crlf-of-head",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 321.outputs_sha256.docs/validation/v0.5.13/d5/testpypi-fetch.json",
+    "line 424.extra_files_sha256.docs/validation/v0.5.13/d5/testpypi-fetch.json"
+   ],
+   "occurrences": 2,
+   "file": "docs/validation/v0.5.13/d5/testpypi-fetch.json",
+   "recorded_sha256": "c41f95a16e74bc314ce374ecf476631a68a5a41bc0cbbf2f8f60fc412b5fe5ec",
+   "head_sha256": "bca15afc39e3b0abe632f87a22c0b0a1d46f49e72c301840a910c9c950ca18d9",
+   "kind": "crlf-of-head",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 324.extra_files_sha256.docs/validation/v0.5.13/e5/testpypi-fetch.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/e5/testpypi-fetch.json",
+   "recorded_sha256": "c41f95a16e74bc314ce374ecf476631a68a5a41bc0cbbf2f8f60fc412b5fe5ec",
+   "head_sha256": "bca15afc39e3b0abe632f87a22c0b0a1d46f49e72c301840a910c9c950ca18d9",
+   "kind": "crlf-of-head",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 126.extra_files_sha256.docs/validation/v0.5.13/errata.md"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/errata.md",
+   "recorded_sha256": "29ff1d2e35aacfe6a9fa5801640da8a633c34e73200885333021a54251a76fa3",
+   "head_sha256": "3141b5e1aa2b81a96b086db4d7d9909bab2c1c978e87918f136a5485a88975d2",
+   "kind": "earlier-version",
+   "earlier_commit": "74823ebf3dc8fb0fc25bec0d203d895e2a84569b"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 402.extra_files_sha256.docs/validation/v0.5.13/exceptions.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/exceptions.jsonl",
+   "recorded_sha256": "1df4ade11f9da33ba611d1a8c8cf22164657b9a59de2f0e904a487375f82c475",
+   "head_sha256": "95ce894cdf09e2bc0c221c5e11611ae5fe280f76d8fdf25d179fc3b4625aed1a",
+   "kind": "earlier-version",
+   "earlier_commit": "903c220dc065f4359b240619c510016c539a0c77"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 70.extra_files_sha256.docs/validation/v0.5.13/exceptions.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/exceptions.jsonl",
+   "recorded_sha256": "4c62326e6a71f5c43f4532f786f425ad63cff95f23cdd7bff9da5cde9c67d42d",
+   "head_sha256": "95ce894cdf09e2bc0c221c5e11611ae5fe280f76d8fdf25d179fc3b4625aed1a",
+   "kind": "earlier-version",
+   "earlier_commit": "3b4f976a95b242a89ebcdf303391d99fb3587a23"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 246.extra_files_sha256.docs/validation/v0.5.13/exceptions.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/exceptions.jsonl",
+   "recorded_sha256": "4d727181adae95b59056f578028e31b993a306c7d5a27f957c103a7b4ee7157c",
+   "head_sha256": "95ce894cdf09e2bc0c221c5e11611ae5fe280f76d8fdf25d179fc3b4625aed1a",
+   "kind": "earlier-version",
+   "earlier_commit": "d94ee9ecaba868085f434f7e699e158ff1888925"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 16.extra_files_sha256.docs/validation/v0.5.13/exceptions.jsonl",
+    "line 42.extra_files_sha256.docs/validation/v0.5.13/exceptions.jsonl"
+   ],
+   "occurrences": 2,
+   "file": "docs/validation/v0.5.13/exceptions.jsonl",
+   "recorded_sha256": "8596d37f0c964c14535f1124e5eb69ecc4d24948aae1ccb4760f728e0c8bbd67",
+   "head_sha256": "95ce894cdf09e2bc0c221c5e11611ae5fe280f76d8fdf25d179fc3b4625aed1a",
+   "kind": "earlier-version",
+   "earlier_commit": "61055e1b3d246eb7513e649b393a0012c4090a05"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 102.extra_files_sha256.docs/validation/v0.5.13/exceptions.jsonl",
+    "line 122.extra_files_sha256.docs/validation/v0.5.13/exceptions.jsonl",
+    "line 142.extra_files_sha256.docs/validation/v0.5.13/exceptions.jsonl",
+    "line 202.extra_files_sha256.docs/validation/v0.5.13/exceptions.jsonl"
+   ],
+   "occurrences": 4,
+   "file": "docs/validation/v0.5.13/exceptions.jsonl",
+   "recorded_sha256": "8e1b342ea4a0d948076620b2fcb2de1b6c4de83021621e9e24d148c6a5b2b882",
+   "head_sha256": "95ce894cdf09e2bc0c221c5e11611ae5fe280f76d8fdf25d179fc3b4625aed1a",
+   "kind": "earlier-version",
+   "earlier_commit": "b4e1fa7c2af366ad925ec4667a12293305a7ff05"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 242.extra_files_sha256.docs/validation/v0.5.13/exceptions.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/exceptions.jsonl",
+   "recorded_sha256": "ef4fdf2f127d2d16ceec3516c78f640784f7db5fb7318ae9f3d89cb5174f7350",
+   "head_sha256": "95ce894cdf09e2bc0c221c5e11611ae5fe280f76d8fdf25d179fc3b4625aed1a",
+   "kind": "earlier-version",
+   "earlier_commit": "89784ceb196a3da09796d3cc6362ae815a7378ba"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 324.extra_files_sha256.docs/validation/v0.5.13/exceptions.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/exceptions.jsonl",
+   "recorded_sha256": "ff8e1a63836ab93253fb87721accae7d5e1c2c64079914624ece746b1924eb5c",
+   "head_sha256": "95ce894cdf09e2bc0c221c5e11611ae5fe280f76d8fdf25d179fc3b4625aed1a",
+   "kind": "earlier-version",
+   "earlier_commit": "8d843049d666283d1299aedd14be0930cad228a5"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 402.extra_files_sha256.docs/validation/v0.5.13/f2/check-f2.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/f2/check-f2.json",
+   "recorded_sha256": "d6f7895b8908345ac85262726c2360e578af1f6b025b0e51f267abd01d40255c",
+   "head_sha256": "de0501b2a691df627758dccb3c9180b123e905bf85f9b4de6c811639cb25c627",
+   "kind": "crlf-of-head",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 454.extra_files_sha256.docs/validation/v0.5.13/g1/g1-prepare.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/g1/g1-prepare.json",
+   "recorded_sha256": "80b5ca05a8137944080c958d227161fbef9a921f354b4a04e0138bfa729be96e",
+   "head_sha256": "c1186077621c05bcaf685cdcf6c4e8cb8032b4b9c774d6bcb4948e627590fe4c",
+   "kind": "crlf-of-head",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 454.extra_files_sha256.docs/validation/v0.5.13/g2/g2-normalize.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/g2/g2-normalize.json",
+   "recorded_sha256": "facbef0603aefb85c6ab3933cb788de05f88daa29bb56374edd9fe5817b7a41f",
+   "head_sha256": "9dd78eff59473ab89d08625bbb888760f718146bf4f9e10a2cfc7d94e65f2b89",
+   "kind": "crlf-of-head",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 485.outputs_sha256.docs/validation/v0.5.13/g7/check-f2-g7.json",
+    "line 500.extra_files_sha256.docs/validation/v0.5.13/g7/check-f2-g7.json"
+   ],
+   "occurrences": 2,
+   "file": "docs/validation/v0.5.13/g7/check-f2-g7.json",
+   "recorded_sha256": "7b6cbd57ec098e30dc5e2948780a954b56f9ba615358e405bd3bb035899d8649",
+   "head_sha256": "3b4746bd8519193b1b3d0c4a663a7964104c8a772de7e335961d310c0ea9a3c8",
+   "kind": "crlf-of-head",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 362.extra_files_sha256.docs/validation/v0.5.13/log.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/log.jsonl",
+   "recorded_sha256": "02209e9df8b93433039a7d9b8d916f5b6f4bf0cc14108297d64e948bff6fbe5e",
+   "head_sha256": "8f67c37dddb193552ac6ad9cf59a5446db57b088f3e21a5eb4e43b003ee575a2",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 376.extra_files_sha256.docs/validation/v0.5.13/log.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/log.jsonl",
+   "recorded_sha256": "2fb19b092b2e900e9e46b08e201e6cbbbb9ce8cf17a5a9664d7b02d4fef81113",
+   "head_sha256": "8f67c37dddb193552ac6ad9cf59a5446db57b088f3e21a5eb4e43b003ee575a2",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 242.extra_files_sha256.docs/validation/v0.5.13/log.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/log.jsonl",
+   "recorded_sha256": "363abd16f0f0684c8290c343031c0284b7d0d6a398411534e179973bab12c9f8",
+   "head_sha256": "8f67c37dddb193552ac6ad9cf59a5446db57b088f3e21a5eb4e43b003ee575a2",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 500.extra_files_sha256.docs/validation/v0.5.13/log.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/log.jsonl",
+   "recorded_sha256": "44ec78e9d01c6722d94a6af7c69c34172ac399c3e398005a183b832784b0a6b1",
+   "head_sha256": "8f67c37dddb193552ac6ad9cf59a5446db57b088f3e21a5eb4e43b003ee575a2",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 266.extra_files_sha256.docs/validation/v0.5.13/log.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/log.jsonl",
+   "recorded_sha256": "5d64ed560104e8bd6bdc94292202d36adf8ac828e46b8d74da27a85ebbdd6513",
+   "head_sha256": "8f67c37dddb193552ac6ad9cf59a5446db57b088f3e21a5eb4e43b003ee575a2",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 102.extra_files_sha256.docs/validation/v0.5.13/log.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/log.jsonl",
+   "recorded_sha256": "6f52f0c0f6aec6f898d7d4d008ee27cc2b274f10d89431c4d8f0ed097681ecfc",
+   "head_sha256": "8f67c37dddb193552ac6ad9cf59a5446db57b088f3e21a5eb4e43b003ee575a2",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 342.extra_files_sha256.docs/validation/v0.5.13/log.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/log.jsonl",
+   "recorded_sha256": "6f65fbab8da5180c5f11791f02ca8792cc1bf1616174d0a4aecd8aafcf81d297",
+   "head_sha256": "8f67c37dddb193552ac6ad9cf59a5446db57b088f3e21a5eb4e43b003ee575a2",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 324.extra_files_sha256.docs/validation/v0.5.13/log.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/log.jsonl",
+   "recorded_sha256": "752426ac85ed69750145d6cb751f6cff800a0d94bcbbd7f9d41d9643e086c077",
+   "head_sha256": "8f67c37dddb193552ac6ad9cf59a5446db57b088f3e21a5eb4e43b003ee575a2",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 42.extra_files_sha256.docs/validation/v0.5.13/log.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/log.jsonl",
+   "recorded_sha256": "7cf09573b946b16bdcdd58a3a1f4635f55594461889ee41a6bde8935ad45c034",
+   "head_sha256": "8f67c37dddb193552ac6ad9cf59a5446db57b088f3e21a5eb4e43b003ee575a2",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 202.extra_files_sha256.docs/validation/v0.5.13/log.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/log.jsonl",
+   "recorded_sha256": "9f8a8b4b2b7a0961b72cd8288f123f5d878f7280690583bd2998918937c83a76",
+   "head_sha256": "8f67c37dddb193552ac6ad9cf59a5446db57b088f3e21a5eb4e43b003ee575a2",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 70.extra_files_sha256.docs/validation/v0.5.13/log.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/log.jsonl",
+   "recorded_sha256": "a1283f29ff69da6dddc5d9965b2344845ea8ccad626285e0f1e81c668be62e83",
+   "head_sha256": "8f67c37dddb193552ac6ad9cf59a5446db57b088f3e21a5eb4e43b003ee575a2",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 142.extra_files_sha256.docs/validation/v0.5.13/log.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/log.jsonl",
+   "recorded_sha256": "afefe1a4f48ecf98231974ce689360bb65f7d8eb64a1691db83415b9c727ba24",
+   "head_sha256": "8f67c37dddb193552ac6ad9cf59a5446db57b088f3e21a5eb4e43b003ee575a2",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 424.extra_files_sha256.docs/validation/v0.5.13/log.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/log.jsonl",
+   "recorded_sha256": "b519f7db10214d0cad4c2c1290bc6c18aca2151b503d1856ca9c0b48b4145492",
+   "head_sha256": "8f67c37dddb193552ac6ad9cf59a5446db57b088f3e21a5eb4e43b003ee575a2",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 474.extra_files_sha256.docs/validation/v0.5.13/log.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/log.jsonl",
+   "recorded_sha256": "bb46ed865285c4dcd0b8c1bd53a9acff28290195e87962b70653a4d46c843042",
+   "head_sha256": "8f67c37dddb193552ac6ad9cf59a5446db57b088f3e21a5eb4e43b003ee575a2",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 454.extra_files_sha256.docs/validation/v0.5.13/log.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/log.jsonl",
+   "recorded_sha256": "c25a6d1409fcf12880f3db4394baa4e930f34c31a5dce27e3b618f5eb9ec368b",
+   "head_sha256": "8f67c37dddb193552ac6ad9cf59a5446db57b088f3e21a5eb4e43b003ee575a2",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 356.extra_files_sha256.docs/validation/v0.5.13/log.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/log.jsonl",
+   "recorded_sha256": "c5b15000a0d5cb24da5726c74c1a36c3c72fed2a48a8b381ec17439911fd5640",
+   "head_sha256": "8f67c37dddb193552ac6ad9cf59a5446db57b088f3e21a5eb4e43b003ee575a2",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 300.extra_files_sha256.docs/validation/v0.5.13/log.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/log.jsonl",
+   "recorded_sha256": "d66a559de542e4d005b7b5b068b3efa8979562631380bd70da551592561220ee",
+   "head_sha256": "8f67c37dddb193552ac6ad9cf59a5446db57b088f3e21a5eb4e43b003ee575a2",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 122.extra_files_sha256.docs/validation/v0.5.13/log.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/log.jsonl",
+   "recorded_sha256": "d7784ea8c9233078e6b92eb895b48ba12103d561408ce9a7c6a3b27e19cfc673",
+   "head_sha256": "8f67c37dddb193552ac6ad9cf59a5446db57b088f3e21a5eb4e43b003ee575a2",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 246.extra_files_sha256.docs/validation/v0.5.13/log.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/log.jsonl",
+   "recorded_sha256": "e1a819fd5266d5575c77d8b0217e7347490c1dde63f2bfa6b7e539d2372e545c",
+   "head_sha256": "8f67c37dddb193552ac6ad9cf59a5446db57b088f3e21a5eb4e43b003ee575a2",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 402.extra_files_sha256.docs/validation/v0.5.13/log.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/log.jsonl",
+   "recorded_sha256": "f5c5d70b117ecb2f277f5d6f31b9ecaf48ed53c9641298faf0c587d536956eca",
+   "head_sha256": "8f67c37dddb193552ac6ad9cf59a5446db57b088f3e21a5eb4e43b003ee575a2",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 382.extra_files_sha256.docs/validation/v0.5.13/log.jsonl"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/log.jsonl",
+   "recorded_sha256": "f72fa503f5e11031bc7d92e7526243a49f266caae1ebde1a81903e06c9cae6d8",
+   "head_sha256": "8f67c37dddb193552ac6ad9cf59a5446db57b088f3e21a5eb4e43b003ee575a2",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 13.outputs_sha256.docs/validation/v0.5.13/step0/demo-check.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/step0/demo-check.json",
+   "recorded_sha256": "da2eae840d9768c30392f550a86a1d579d66b6e7dc349a0508f1b4a06e679021",
+   "head_sha256": "6dd33cf0609582de390677b72dd822f31b9d3cff0673bf683cf4d526a85c1d16",
+   "kind": "crlf-of-head",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 101.outputs_sha256.docs/validation/v0.5.13/step1/comparison-nr-a1.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/step1/comparison-nr-a1.json",
+   "recorded_sha256": "f9b0cbea8ebae5f47b22678dc88700d3fa8d0c2e83dc155f7587f07bd4e213c6",
+   "head_sha256": "be824c2cdc6a79f82539daa75f5c765ddd34c236057ae609d3d469a841b76ecd",
+   "kind": "crlf-of-head",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 131.outputs_sha256.docs/validation/v0.5.13/step1/diag-golden-diff.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/step1/diag-golden-diff.json",
+   "recorded_sha256": "d62082deb2217b55b34d5b4b517bf5d5447569e8d88e6f8cb1ffc9f24e44fff6",
+   "head_sha256": "d0f3ded6d6cb6b8ef7000281765abd8880c4dd1c5ca57a5171ad826f2d1a8826",
+   "kind": "crlf-of-head",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 338.extra_files_sha256.docs/validation/v0.5.13/tools/blind_pack.py",
+    "line 340.extra_files_sha256.docs/validation/v0.5.13/tools/blind_pack.py",
+    "line 342.extra_files_sha256.docs/validation/v0.5.13/tools/blind_pack.py",
+    "line 346.identity_sha256.docs/validation/v0.5.13/tools/blind_pack.py"
+   ],
+   "occurrences": 4,
+   "file": "docs/validation/v0.5.13/tools/blind_pack.py",
+   "recorded_sha256": "2424884f023a012cd291e2e3d0e6f04f1ece2688e30ecf8ef68f1c9e3ea6c721",
+   "head_sha256": "12dde27aba1dbb5220e1eb20a8d1f4bbb0ed5ec312be75ab5fc0fcfc4e6d7bdc",
+   "kind": "earlier-version",
+   "earlier_commit": "73f80f8410b3c6690411a79c74caf5b811c99ad5"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 370.extra_files_sha256.docs/validation/v0.5.13/tools/check_f2.py"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/tools/check_f2.py",
+   "recorded_sha256": "c28b3db19e74c382245a158b5356a6efdf70e46959a65da4e6516e96705ab8a5",
+   "head_sha256": "50b540d38d966373fefefecc5dea3413ddf16f2b979e38e8d5e88e557b4a76bf",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 62.extra_files_sha256.docs/validation/v0.5.13/tools/compare_identity.py",
+    "line 64.extra_files_sha256.docs/validation/v0.5.13/tools/compare_identity.py"
+   ],
+   "occurrences": 2,
+   "file": "docs/validation/v0.5.13/tools/compare_identity.py",
+   "recorded_sha256": "f2a8a3581394a641ddce6b3332217c7c824cfa26b33cac3a63319dc10a49a87c",
+   "head_sha256": "d20abdc9861737a5f41aa58402ed74077c2e012d2f605622b4c76684d2194b5b",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 116.extra_files_sha256.docs/validation/v0.5.13/tools/diag_golden_diff.py"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/tools/diag_golden_diff.py",
+   "recorded_sha256": "2780f7c80ae1e214465c58ea577d0598a3f62c6648c0ad7346d2bbbd6f65c14e",
+   "head_sha256": "1153ec67ca717e43bc081ad36f4e56d5f17b8f945a669017bcda1ba8d89ab54d",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 114.extra_files_sha256.docs/validation/v0.5.13/tools/diag_golden_diff.py"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/tools/diag_golden_diff.py",
+   "recorded_sha256": "4997dd5eb8c641185e57cb8a01914555329c1e8faccdd4e66e63454d260a531d",
+   "head_sha256": "1153ec67ca717e43bc081ad36f4e56d5f17b8f945a669017bcda1ba8d89ab54d",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 416.extra_files_sha256.docs/validation/v0.5.13/tools/g2_normalize.py",
+    "line 418.extra_files_sha256.docs/validation/v0.5.13/tools/g2_normalize.py"
+   ],
+   "occurrences": 2,
+   "file": "docs/validation/v0.5.13/tools/g2_normalize.py",
+   "recorded_sha256": "2b7309c000c49b3671e0bf79d28bb6f71939c037f0fcebec7d2aa50a5bcc52d4",
+   "head_sha256": "6b96e2bbb1df4c2154b43454c9efe0108d766e1d04221c16209124d298e3e232",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 466.extra_files_sha256.docs/validation/v0.5.13/tools/g7_prepare.py",
+    "line 468.extra_files_sha256.docs/validation/v0.5.13/tools/g7_prepare.py"
+   ],
+   "occurrences": 2,
+   "file": "docs/validation/v0.5.13/tools/g7_prepare.py",
+   "recorded_sha256": "73aff2fecc38814713326742c9a59670cea35ba6662b1fc47cd731c344c6e4a6",
+   "head_sha256": "33ec19153d08cfb009b75a65369c326226dd6f266a2552aa4cbdca38013729f2",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 194.extra_files_sha256.docs/validation/v0.5.13/tools/make_patch.py"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/tools/make_patch.py",
+   "recorded_sha256": "4f56845ca152bb2a32a4fb22c45775733abca6d7d4747339263a27ffdc1d9928",
+   "head_sha256": "39faa49193b7ef545f5bed681848c5b316d5fbd9ffb081ecb29f24cc8deacd3f",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 466.extra_files_sha256.docs/validation/v0.5.13/tools/rev_diff.py",
+    "line 468.extra_files_sha256.docs/validation/v0.5.13/tools/rev_diff.py"
+   ],
+   "occurrences": 2,
+   "file": "docs/validation/v0.5.13/tools/rev_diff.py",
+   "recorded_sha256": "289f82fcdb2393327fac1df2c321f796688ea6d8ebfd1c255de3abb9c28614fb",
+   "head_sha256": "588125c8a56f01746e42be8cb1c3edb5ea968593764159a28af58ec199d46b6e",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 32.identity_sha256.docs/validation/v0.5.13/units/ruff.json"
+   ],
+   "occurrences": 1,
+   "file": "docs/validation/v0.5.13/units/ruff.json",
+   "recorded_sha256": "75a614aadeb748b270b85f673116bd76ad7e718e4e9d551d72204a56375821cf",
+   "head_sha256": "e31bd3e1ca7239e4e2b22ed3ed3d4697f00f313cd96d9bcb0886378f3a89483a",
+   "kind": "earlier-version",
+   "earlier_commit": "61055e1b3d246eb7513e649b393a0012c4090a05"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 146.extra_files_sha256.pyproject.toml",
+    "line 380.extra_files_sha256.pyproject.toml"
+   ],
+   "occurrences": 2,
+   "file": "pyproject.toml",
+   "recorded_sha256": "3e145aee8b5f7890cc2e5dc6a2e3821523344dc53036843517d4da1c3e50b643",
+   "head_sha256": "d320e50b135277faddf66fc74014b5a39445334c18d5964add68f93b088a00e9",
+   "kind": "earlier-version",
+   "earlier_commit": "124bdd92a2be870ca16d53e280a1d84ac07986f9"
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 394.extra_files_sha256.src/refute/packs/tess/a0.py",
+    "line 396.extra_files_sha256.src/refute/packs/tess/a0.py"
+   ],
+   "occurrences": 2,
+   "file": "src/refute/packs/tess/a0.py",
+   "recorded_sha256": "7b62f1f516183dc3a25ad814498f673b8c58ea3c82f9a6d1dc8504398771937c",
+   "head_sha256": "cf1b47a0ad94c4102b18a9dd97ae12b14db84d57bdb722e1b0fecbb6ed1ae5f1",
+   "kind": "crlf-of-head",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/log.jsonl",
+   "where": [
+    "line 370.extra_files_sha256.tests/test_pypi_readme.py",
+    "line 372.extra_files_sha256.tests/test_pypi_readme.py",
+    "line 374.extra_files_sha256.tests/test_pypi_readme.py",
+    "line 488.extra_files_sha256.tests/test_pypi_readme.py",
+    "line 490.extra_files_sha256.tests/test_pypi_readme.py"
+   ],
+   "occurrences": 5,
+   "file": "tests/test_pypi_readme.py",
+   "recorded_sha256": "b9b2793ca127a997e0022fb053fbf246c64ee3f6a416354945315c4dc16fd2fc",
+   "head_sha256": "1aecd897415d201b29423c74f99e76391d3edb765172546bba852c4054fdf2d8",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step0/claim-hashes-before.json",
+   "where": [
+    "$.payload.claims.calibration/self_claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/self_claim.yaml",
+   "recorded_sha256": "f88521edaa2bb645f2aa890dc3a0c23bcbd405611582444e983b485be13232dc",
+   "head_sha256": "a212ce07413721deb080f8e6dfcf1739caf9c319b92b0531d24d0e7f4c911c9a",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step0/claim-hashes-before.json",
+   "where": [
+    "$.payload.claims.calibration/v0.2/self_claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.2/self_claim.yaml",
+   "recorded_sha256": "3bfa36a392089040385c187155cae5bc1a41dece42e928a8b38654f7c37a5514",
+   "head_sha256": "80a48356a3e00d4a4f79f9be778a35ef0500cca536cf5d6202a72d52aab02282",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step0/claim-hashes-before.json",
+   "where": [
+    "$.payload.claims.calibration/v0.3/main/claims/2302.12465/claim/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.3/main/claims/2302.12465/claim/claim.yaml",
+   "recorded_sha256": "cb7720a2fd3dc4d95315bc2ea04829c10060992f1f3c6739d30ce24e614cd6c6",
+   "head_sha256": "473e28d9976f2d87721b6b8ef8184073941acd4f38839b755d78016b65ffd3b6",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step0/claim-hashes-before.json",
+   "where": [
+    "$.payload.claims.calibration/v0.3/main/claims/2305.19518/claim/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.3/main/claims/2305.19518/claim/claim.yaml",
+   "recorded_sha256": "ff1ac0933507882c63178a9fa7e7d5b0c82279a7ee758b9ac6bdbec9e8403424",
+   "head_sha256": "dd82226d83e849c191543df92bd1714868e28132cda4422c01bde1657e9f91c5",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step0/claim-hashes-before.json",
+   "where": [
+    "$.payload.claims.calibration/v0.3/main/claims/2309.15704/claim/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.3/main/claims/2309.15704/claim/claim.yaml",
+   "recorded_sha256": "598543893374b9c4742d44f25bbaf7fa89cbc3f2faf7f4e857c2359a91b34957",
+   "head_sha256": "c926bbf4f89e3387a362304177c1ee4ee685491a07fcb4654bdb9b736c80aef3",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step0/claim-hashes-before.json",
+   "where": [
+    "$.payload.claims.calibration/v0.3/main/claims/2407.11735/claim/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.3/main/claims/2407.11735/claim/claim.yaml",
+   "recorded_sha256": "dcea7ed105a99f336a124db706d1683d058b12fb8b1a2979bc838ede9a25a34f",
+   "head_sha256": "99ae3efe5c418502e2957292cf5789bfb9e29f7af91c61e57c0c9e955473dcbe",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step0/claim-hashes-before.json",
+   "where": [
+    "$.payload.claims.calibration/v0.3/main/claims/2502.16782/claim/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.3/main/claims/2502.16782/claim/claim.yaml",
+   "recorded_sha256": "3e59b8353da037e57d03b68817c7b01c947e06ef113555c8b79f4ec842b857ab",
+   "head_sha256": "d89c754e1a254471509e8d00ad01e38b888f9ddf2a757f6bde83ea1b49b7ad0c",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step0/claim-hashes-before.json",
+   "where": [
+    "$.payload.claims.calibration/v0.4/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.4/claim.yaml",
+   "recorded_sha256": "d2ce83808eb026189fa76b83533aeca8b98e81ad5dff92b17e4cfa7a83eb61d5",
+   "head_sha256": "95acddf2667f8f225d16511f187ca45f317294bf298340678b98b9eb03172cf3",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step0/claim-hashes-before.json",
+   "where": [
+    "$.payload.claims.calibration/v0.5.6/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.5.6/claim.yaml",
+   "recorded_sha256": "d451e995eae3f12afda0e5d807f5c5516c16c8bc1094b6d72c1623e5528b749f",
+   "head_sha256": "1df48b1bfd80166804d945ac0923773f00e7b1dae28c2006bf300d6885f64af1",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step0/claim-hashes-before.json",
+   "where": [
+    "$.payload.claims.calibration/v0.5/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.5/claim.yaml",
+   "recorded_sha256": "48acfe245a7231c35353319212324574d408be493c3c53d062ea02adfbd00210",
+   "head_sha256": "70065377c10ad7b5fe5a5a199f99d577e29efaff187a44ed4c6115cd9fb7ddad",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-default.json",
+   "where": [
+    "$.payload.claims.calibration/self_claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/self_claim.yaml",
+   "recorded_sha256": "f88521edaa2bb645f2aa890dc3a0c23bcbd405611582444e983b485be13232dc",
+   "head_sha256": "a212ce07413721deb080f8e6dfcf1739caf9c319b92b0531d24d0e7f4c911c9a",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-default.json",
+   "where": [
+    "$.payload.claims.calibration/v0.2/self_claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.2/self_claim.yaml",
+   "recorded_sha256": "3bfa36a392089040385c187155cae5bc1a41dece42e928a8b38654f7c37a5514",
+   "head_sha256": "80a48356a3e00d4a4f79f9be778a35ef0500cca536cf5d6202a72d52aab02282",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-default.json",
+   "where": [
+    "$.payload.claims.calibration/v0.3/main/claims/2302.12465/claim/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.3/main/claims/2302.12465/claim/claim.yaml",
+   "recorded_sha256": "cb7720a2fd3dc4d95315bc2ea04829c10060992f1f3c6739d30ce24e614cd6c6",
+   "head_sha256": "473e28d9976f2d87721b6b8ef8184073941acd4f38839b755d78016b65ffd3b6",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-default.json",
+   "where": [
+    "$.payload.claims.calibration/v0.3/main/claims/2305.19518/claim/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.3/main/claims/2305.19518/claim/claim.yaml",
+   "recorded_sha256": "ff1ac0933507882c63178a9fa7e7d5b0c82279a7ee758b9ac6bdbec9e8403424",
+   "head_sha256": "dd82226d83e849c191543df92bd1714868e28132cda4422c01bde1657e9f91c5",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-default.json",
+   "where": [
+    "$.payload.claims.calibration/v0.3/main/claims/2309.15704/claim/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.3/main/claims/2309.15704/claim/claim.yaml",
+   "recorded_sha256": "598543893374b9c4742d44f25bbaf7fa89cbc3f2faf7f4e857c2359a91b34957",
+   "head_sha256": "c926bbf4f89e3387a362304177c1ee4ee685491a07fcb4654bdb9b736c80aef3",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-default.json",
+   "where": [
+    "$.payload.claims.calibration/v0.3/main/claims/2407.11735/claim/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.3/main/claims/2407.11735/claim/claim.yaml",
+   "recorded_sha256": "dcea7ed105a99f336a124db706d1683d058b12fb8b1a2979bc838ede9a25a34f",
+   "head_sha256": "99ae3efe5c418502e2957292cf5789bfb9e29f7af91c61e57c0c9e955473dcbe",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-default.json",
+   "where": [
+    "$.payload.claims.calibration/v0.3/main/claims/2502.16782/claim/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.3/main/claims/2502.16782/claim/claim.yaml",
+   "recorded_sha256": "3e59b8353da037e57d03b68817c7b01c947e06ef113555c8b79f4ec842b857ab",
+   "head_sha256": "d89c754e1a254471509e8d00ad01e38b888f9ddf2a757f6bde83ea1b49b7ad0c",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-default.json",
+   "where": [
+    "$.payload.claims.calibration/v0.4/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.4/claim.yaml",
+   "recorded_sha256": "d2ce83808eb026189fa76b83533aeca8b98e81ad5dff92b17e4cfa7a83eb61d5",
+   "head_sha256": "95acddf2667f8f225d16511f187ca45f317294bf298340678b98b9eb03172cf3",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-default.json",
+   "where": [
+    "$.payload.claims.calibration/v0.5.6/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.5.6/claim.yaml",
+   "recorded_sha256": "d451e995eae3f12afda0e5d807f5c5516c16c8bc1094b6d72c1623e5528b749f",
+   "head_sha256": "1df48b1bfd80166804d945ac0923773f00e7b1dae28c2006bf300d6885f64af1",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-default.json",
+   "where": [
+    "$.payload.claims.calibration/v0.5/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.5/claim.yaml",
+   "recorded_sha256": "48acfe245a7231c35353319212324574d408be493c3c53d062ea02adfbd00210",
+   "head_sha256": "70065377c10ad7b5fe5a5a199f99d577e29efaff187a44ed4c6115cd9fb7ddad",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t1.json",
+   "where": [
+    "$.payload.claims.calibration/self_claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/self_claim.yaml",
+   "recorded_sha256": "f88521edaa2bb645f2aa890dc3a0c23bcbd405611582444e983b485be13232dc",
+   "head_sha256": "a212ce07413721deb080f8e6dfcf1739caf9c319b92b0531d24d0e7f4c911c9a",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t1.json",
+   "where": [
+    "$.payload.claims.calibration/v0.2/self_claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.2/self_claim.yaml",
+   "recorded_sha256": "3bfa36a392089040385c187155cae5bc1a41dece42e928a8b38654f7c37a5514",
+   "head_sha256": "80a48356a3e00d4a4f79f9be778a35ef0500cca536cf5d6202a72d52aab02282",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t1.json",
+   "where": [
+    "$.payload.claims.calibration/v0.3/main/claims/2302.12465/claim/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.3/main/claims/2302.12465/claim/claim.yaml",
+   "recorded_sha256": "cb7720a2fd3dc4d95315bc2ea04829c10060992f1f3c6739d30ce24e614cd6c6",
+   "head_sha256": "473e28d9976f2d87721b6b8ef8184073941acd4f38839b755d78016b65ffd3b6",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t1.json",
+   "where": [
+    "$.payload.claims.calibration/v0.3/main/claims/2305.19518/claim/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.3/main/claims/2305.19518/claim/claim.yaml",
+   "recorded_sha256": "ff1ac0933507882c63178a9fa7e7d5b0c82279a7ee758b9ac6bdbec9e8403424",
+   "head_sha256": "dd82226d83e849c191543df92bd1714868e28132cda4422c01bde1657e9f91c5",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t1.json",
+   "where": [
+    "$.payload.claims.calibration/v0.3/main/claims/2309.15704/claim/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.3/main/claims/2309.15704/claim/claim.yaml",
+   "recorded_sha256": "598543893374b9c4742d44f25bbaf7fa89cbc3f2faf7f4e857c2359a91b34957",
+   "head_sha256": "c926bbf4f89e3387a362304177c1ee4ee685491a07fcb4654bdb9b736c80aef3",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t1.json",
+   "where": [
+    "$.payload.claims.calibration/v0.3/main/claims/2407.11735/claim/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.3/main/claims/2407.11735/claim/claim.yaml",
+   "recorded_sha256": "dcea7ed105a99f336a124db706d1683d058b12fb8b1a2979bc838ede9a25a34f",
+   "head_sha256": "99ae3efe5c418502e2957292cf5789bfb9e29f7af91c61e57c0c9e955473dcbe",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t1.json",
+   "where": [
+    "$.payload.claims.calibration/v0.3/main/claims/2502.16782/claim/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.3/main/claims/2502.16782/claim/claim.yaml",
+   "recorded_sha256": "3e59b8353da037e57d03b68817c7b01c947e06ef113555c8b79f4ec842b857ab",
+   "head_sha256": "d89c754e1a254471509e8d00ad01e38b888f9ddf2a757f6bde83ea1b49b7ad0c",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t1.json",
+   "where": [
+    "$.payload.claims.calibration/v0.4/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.4/claim.yaml",
+   "recorded_sha256": "d2ce83808eb026189fa76b83533aeca8b98e81ad5dff92b17e4cfa7a83eb61d5",
+   "head_sha256": "95acddf2667f8f225d16511f187ca45f317294bf298340678b98b9eb03172cf3",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t1.json",
+   "where": [
+    "$.payload.claims.calibration/v0.5.6/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.5.6/claim.yaml",
+   "recorded_sha256": "d451e995eae3f12afda0e5d807f5c5516c16c8bc1094b6d72c1623e5528b749f",
+   "head_sha256": "1df48b1bfd80166804d945ac0923773f00e7b1dae28c2006bf300d6885f64af1",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t1.json",
+   "where": [
+    "$.payload.claims.calibration/v0.5/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.5/claim.yaml",
+   "recorded_sha256": "48acfe245a7231c35353319212324574d408be493c3c53d062ea02adfbd00210",
+   "head_sha256": "70065377c10ad7b5fe5a5a199f99d577e29efaff187a44ed4c6115cd9fb7ddad",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t4.json",
+   "where": [
+    "$.payload.claims.calibration/self_claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/self_claim.yaml",
+   "recorded_sha256": "f88521edaa2bb645f2aa890dc3a0c23bcbd405611582444e983b485be13232dc",
+   "head_sha256": "a212ce07413721deb080f8e6dfcf1739caf9c319b92b0531d24d0e7f4c911c9a",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t4.json",
+   "where": [
+    "$.payload.claims.calibration/v0.2/self_claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.2/self_claim.yaml",
+   "recorded_sha256": "3bfa36a392089040385c187155cae5bc1a41dece42e928a8b38654f7c37a5514",
+   "head_sha256": "80a48356a3e00d4a4f79f9be778a35ef0500cca536cf5d6202a72d52aab02282",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t4.json",
+   "where": [
+    "$.payload.claims.calibration/v0.3/main/claims/2302.12465/claim/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.3/main/claims/2302.12465/claim/claim.yaml",
+   "recorded_sha256": "cb7720a2fd3dc4d95315bc2ea04829c10060992f1f3c6739d30ce24e614cd6c6",
+   "head_sha256": "473e28d9976f2d87721b6b8ef8184073941acd4f38839b755d78016b65ffd3b6",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t4.json",
+   "where": [
+    "$.payload.claims.calibration/v0.3/main/claims/2305.19518/claim/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.3/main/claims/2305.19518/claim/claim.yaml",
+   "recorded_sha256": "ff1ac0933507882c63178a9fa7e7d5b0c82279a7ee758b9ac6bdbec9e8403424",
+   "head_sha256": "dd82226d83e849c191543df92bd1714868e28132cda4422c01bde1657e9f91c5",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t4.json",
+   "where": [
+    "$.payload.claims.calibration/v0.3/main/claims/2309.15704/claim/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.3/main/claims/2309.15704/claim/claim.yaml",
+   "recorded_sha256": "598543893374b9c4742d44f25bbaf7fa89cbc3f2faf7f4e857c2359a91b34957",
+   "head_sha256": "c926bbf4f89e3387a362304177c1ee4ee685491a07fcb4654bdb9b736c80aef3",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t4.json",
+   "where": [
+    "$.payload.claims.calibration/v0.3/main/claims/2407.11735/claim/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.3/main/claims/2407.11735/claim/claim.yaml",
+   "recorded_sha256": "dcea7ed105a99f336a124db706d1683d058b12fb8b1a2979bc838ede9a25a34f",
+   "head_sha256": "99ae3efe5c418502e2957292cf5789bfb9e29f7af91c61e57c0c9e955473dcbe",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t4.json",
+   "where": [
+    "$.payload.claims.calibration/v0.3/main/claims/2502.16782/claim/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.3/main/claims/2502.16782/claim/claim.yaml",
+   "recorded_sha256": "3e59b8353da037e57d03b68817c7b01c947e06ef113555c8b79f4ec842b857ab",
+   "head_sha256": "d89c754e1a254471509e8d00ad01e38b888f9ddf2a757f6bde83ea1b49b7ad0c",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t4.json",
+   "where": [
+    "$.payload.claims.calibration/v0.4/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.4/claim.yaml",
+   "recorded_sha256": "d2ce83808eb026189fa76b83533aeca8b98e81ad5dff92b17e4cfa7a83eb61d5",
+   "head_sha256": "95acddf2667f8f225d16511f187ca45f317294bf298340678b98b9eb03172cf3",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t4.json",
+   "where": [
+    "$.payload.claims.calibration/v0.5.6/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.5.6/claim.yaml",
+   "recorded_sha256": "d451e995eae3f12afda0e5d807f5c5516c16c8bc1094b6d72c1623e5528b749f",
+   "head_sha256": "1df48b1bfd80166804d945ac0923773f00e7b1dae28c2006bf300d6885f64af1",
+   "kind": "no-match",
+   "earlier_commit": null
+  },
+  {
+   "recorded_in": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t4.json",
+   "where": [
+    "$.payload.claims.calibration/v0.5/claim.yaml"
+   ],
+   "occurrences": 1,
+   "file": "calibration/v0.5/claim.yaml",
+   "recorded_sha256": "48acfe245a7231c35353319212324574d408be493c3c53d062ea02adfbd00210",
+   "head_sha256": "70065377c10ad7b5fe5a5a199f99d577e29efaff187a44ed4c6115cd9fb7ddad",
+   "kind": "no-match",
+   "earlier_commit": null
+  }
+ ]
+}
