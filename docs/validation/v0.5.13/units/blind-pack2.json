@@ -1,0 +1,11 @@
+{
+ "name": "blind-pack2",
+ "question": "J1 (#218 comment 7222879969): build the package of the second blind review of amendment 2, revision 5, in docs/plans/v0.5.13-amendment-2-blind-review-2/: byte-for-byte copies from git objects at named commits, exact line excerpts, a MANIFEST.md with each file's SHA-256. Nothing of the sessions or of Codex.",
+ "choices": "docs/validation/v0.5.13/tools/blind_pack2.py, no arguments; the file list and line ranges are literals in the script; the named texts are checked against their known SHA-256. Offline. The folder must hold only PROMPT.md before it runs.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/blind_pack2.py"],
+ "identity": ["docs/validation/v0.5.13/tools/blind_pack2.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 60, "disk_bytes": 30000000},
+ "network": false,
+ "retry_class": "checker"
+}
