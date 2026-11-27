@@ -1,0 +1,24 @@
+{
+ "manifest": "NR-A1",
+ "charter": "docs/plans/v0.5.13-charter.md at 04402e7a (SHA-256 2832dc4870b0fb094e724a3ff6d6fb6c5710f2da5827791b8fa102c06230c813), step 1 (#226), Codex r1 item 1 and Codex r2 item 3",
+ "trigger": "step 1 of Part A, once, after step 0 passed (ID-BEFORE recorded, src/ unchanged since 04402e7a, the meter demonstrated)",
+ "reason": "decide #226 before any lock: can the BLAS thread count be pinned without changing any byte of versions 1 to 4?",
+ "settings": {
+  "nr-a1-default": "the inherited default: no thread variable set by the unit",
+  "nr-a1-t1": "OMP_NUM_THREADS=1, OPENBLAS_NUM_THREADS=1, MKL_NUM_THREADS=1, set in the unit's environment before the process starts (so before any numerical import); inherited by the fresh subprocess that computes the outputs (tests/baseline_code_v0511.py, _subprocess_outputs, env={**os.environ, ...})",
+  "nr-a1-t4": "the same three variables set to 4"
+ },
+ "units": [
+  {"unit": "docs/validation/v0.5.13/units/nr-a1-default-golden.json", "command": "{python} -I -B docs/validation/v0.5.13/tools/identity.py golden nr-a1-default", "outputs": [".cache/v0513/golden/nr-a1-default/*", "docs/validation/v0.5.13/step1/golden-nr-a1-default.json"]},
+  {"unit": "docs/validation/v0.5.13/units/nr-a1-default-claims.json", "command": "{python} -I -B docs/validation/v0.5.13/tools/identity.py claims nr-a1-default", "outputs": ["docs/validation/v0.5.13/step1/claim-hashes-nr-a1-default.json"]},
+  {"unit": "docs/validation/v0.5.13/units/nr-a1-t1-golden.json", "command": "{python} -I -B docs/validation/v0.5.13/tools/identity.py golden nr-a1-t1", "outputs": [".cache/v0513/golden/nr-a1-t1/*", "docs/validation/v0.5.13/step1/golden-nr-a1-t1.json"]},
+  {"unit": "docs/validation/v0.5.13/units/nr-a1-t1-claims.json", "command": "{python} -I -B docs/validation/v0.5.13/tools/identity.py claims nr-a1-t1", "outputs": ["docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t1.json"]},
+  {"unit": "docs/validation/v0.5.13/units/nr-a1-t4-golden.json", "command": "{python} -I -B docs/validation/v0.5.13/tools/identity.py golden nr-a1-t4", "outputs": [".cache/v0513/golden/nr-a1-t4/*", "docs/validation/v0.5.13/step1/golden-nr-a1-t4.json"]},
+  {"unit": "docs/validation/v0.5.13/units/nr-a1-t4-claims.json", "command": "{python} -I -B docs/validation/v0.5.13/tools/identity.py claims nr-a1-t4", "outputs": ["docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t4.json"]}
+ ],
+ "inputs": "tests/baseline_code_v0511.py (the synthetic fixtures of versions 1 to 4); src/ unchanged since 04402e7a; every tracked YAML claim",
+ "recorded": "each golden record's provenance holds the thread variables and, from a fresh child process with the same environment (numpy, scipy.linalg and threadpoolctl imported), the loaded BLAS libraries and their effective thread counts",
+ "comparison": "docs/validation/v0.5.13/tools/compare_identity.py nr-a1: every protected output byte (golden files_sha256 and error_outputs; claim hashes) against ID-BEFORE (step0/golden-before.json, step0/claim-hashes-before.json); provenance compared separately; for t1 and t4 the pin is verified only if every BLAS library reports that thread count",
+ "rule": "A byte mismatch, missing output or unverified pin stops Part A; the evidence is preserved. A pin may be proposed only after all comparisons pass, and its exact diff requires approval before commit (charter, step 1).",
+ "labels": ["exploratory", "method_status: not_validated"]
+}
