@@ -86,6 +86,14 @@ how later work is done.
   [docs/plans/v0.5.13-charter-amendment-3-extension.md](docs/plans/v0.5.13-charter-amendment-3-extension.md).
   It is the charter's one extension. A short progress report against J2's estimate is due in #218
   on 2026-12-11.
+- **The checkpoints** are re-dated by amendment 4, approved as it stands (#218, comment
+  7224251159, item M1), at `ac58d685` (SHA-256
+  `28fc69d532f4e51455d720b7a8f1ff802adb0df9454e7a2f2b51dc16c5d75078`):
+  [docs/plans/v0.5.13-charter-amendment-4-checkpoints.md](docs/plans/v0.5.13-charter-amendment-4-checkpoints.md).
+  - Step 0 by day 2 (met), step 1 by 2026-12-03, step 2 by 2026-12-05, step 3 by 2026-12-11, and
+    step 4 and the seal by 2026-12-17.
+  - A dated checkpoint is met by the end of its day, 23:59:59 UTC. A missed checkpoint is reported
+    in #218 the same day.
 - **The scope.** This phase is the charter's Part A: the preconditions #226, #227 and #224, the
   reason map, and the meter of #228. Part B (v0.5.14) needs its own charter.
 - **Amendment 1 is approved** (#218, comment 7207651312, item D2), at `69de5f9f` (SHA-256
