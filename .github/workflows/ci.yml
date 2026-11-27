@@ -90,7 +90,7 @@ jobs:
         # The suite is split into shards that run in parallel (scripts/ci_shard.py):
         # every test still runs on every pair of the run's matrix; tests/test_ci_shard.py
         # checks that each test file is in exactly one shard.
-        shard: [heavy-a, heavy-b, heavy-c, heavy-d, heavy-e, heavy-f, rest]
+        shard: [heavy-a, heavy-b, heavy-c, heavy-d, heavy-e, heavy-f, heavy-g, rest]
     steps:
       # The pairs come from scripts/ci_plan.py; the workflow keeps its own allowlist, so a
       # changed planner cannot run tests on any other runner label or Python version.

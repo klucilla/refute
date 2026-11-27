@@ -1,0 +1,21 @@
+{
+ "full_tests": 5284,
+ "full_sha256": "9f59555420f50364783474caf167499bf09093afe76884ae37ab7d337943f931",
+ "shards": {
+  "heavy-a": 98,
+  "heavy-d": 198,
+  "heavy-b": 191,
+  "heavy-c": 431,
+  "heavy-e": 84,
+  "heavy-f": 146,
+  "heavy-g": 42,
+  "rest": 4094
+ },
+ "sum_of_shards": 5284,
+ "union": 5284,
+ "union_equals_full": true,
+ "no_repetition": true,
+ "missing_from_shards": [],
+ "extra_in_shards": [],
+ "all_ok": true
+}

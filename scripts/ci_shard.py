@@ -4,7 +4,7 @@ The test suite is split into shards that run as parallel CI jobs, on every OS an
 Python of the matrix, so that each test still runs once per matrix entry while the
 wall-clock time of a run falls (the end-to-end fixtures below take most of it).
 
-- ``heavy-a`` to ``heavy-f``: fixed lists of slow test files;
+- ``heavy-a`` to ``heavy-g``: fixed lists of slow test files;
 - ``rest``: every other test, with ``--ignore`` for each listed file.
 
 Every listed file must exist (a renamed file fails the run instead of silently moving
@@ -17,7 +17,7 @@ Limits to review if the configuration changes (issue #59; Codex review of PR #73
 also run in the heavy shards; and the CI splits the printed arguments on spaces, so a
 test path with spaces or glob characters would need structured arguments.
 
-Usage: uv run python scripts/ci_shard.py heavy-a|...|heavy-f|rest|check
+Usage: uv run python scripts/ci_shard.py heavy-a|...|heavy-g|rest|check
 """
 
 from __future__ import annotations
@@ -93,6 +93,15 @@ HEAVY = {
         "tests/test_holdout_capacity.py",
         "tests/test_v05_centroid.py",
         "tests/test_v05_battery.py",
+    ],
+    # v0.5.13 (#218, the maintainer's decision I4, comment 7222329150): rest is split in two. In
+    # run 46007761301 (https://github.com/klucilla/refute/actions/runs/46007761301, job
+    # 140536872495, windows-2025 / Python 3.12, read 2026-11-27), rest took 3598 s. Its 25 slowest
+    # durations put these two files at about 1068 s and 920 s, about 55 % of it. The heavy shards
+    # took 10 to 25 min.
+    "heavy-g": [
+        "tests/test_v0511_identity.py",
+        "tests/v055/test_r1_glue.py",
     ],
 }
 

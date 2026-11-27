@@ -278,7 +278,9 @@ def test_evidence_needs_every_expected_job_on_the_exact_sha():
     sha = "c" * 40
     full = ci_evidence.expected_jobs("full")
     fast = ci_evidence.expected_jobs("fast")
-    assert len(full) == 28 and len(fast) == 16
+    # eight shards since 2026-11-27 (heavy-g, #218 item I4): 4 pairs x 8 in full, and 2 x 8 plus
+    # the 2 recorded-value jobs in fast
+    assert len(full) == 32 and len(fast) == 18
     run_ = {"id": 1, "head_sha": sha, "path": ".github/workflows/ci.yml", "status": "completed"}
     assert ci_evidence.evaluate(sha, [run_], lambda i: _jobs(full), "full")[0]
     assert ci_evidence.evaluate(sha, [run_], lambda i: _jobs(fast), "fast")[0]

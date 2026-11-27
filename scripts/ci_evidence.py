@@ -4,8 +4,10 @@ docs/plans/ci-two-level-consensus/). A run's green status alone is never evidenc
 
 The evidence holds when one completed run of ``.github/workflows/ci.yml`` for the exact SHA has
 every expected test job with conclusion ``success``:
-- ``full``: the 28 jobs ``<os> / Python <version> / <shard>`` of the four pairs and seven shards;
-- ``fast``: the 14 jobs of the fast matrix and the recorded-value jobs of the two other pairs.
+- ``full``: the jobs ``<os> / Python <version> / <shard>`` of the four pairs and every shard of
+  ``scripts/ci_shard.py`` (32 jobs with its eight shards since 2026-11-27; 28 with seven before);
+- ``fast``: the jobs of the fast matrix (16 since 2026-11-27; 14 before) and the recorded-value
+  jobs of the two other pairs.
 Where a rule names a four-pair gate (a lock, a tag, a release, a dependency change, an acceptance
 that names four green jobs), the level is ``full``, and the run must be on that commit before the
 gated step: a run after a tag never satisfies a gate before the tag.
