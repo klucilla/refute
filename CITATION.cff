@@ -6,8 +6,8 @@ authors:
   - family-names: Lucilla
     given-names: Klauber
     orcid: "https://orcid.org/0009-0002-4519-5457"
-version: 0.5.0
-date-released: 2026-11-20
+version: 0.5.12
+date-released: 2026-11-27
 doi: 10.5281/zenodo.23301000
 identifiers:
   - type: doi
