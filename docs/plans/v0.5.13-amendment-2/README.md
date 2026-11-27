@@ -7,10 +7,30 @@ maintainer's adviser proposes.
 
 Labels: `exploratory`, `method_status: not_validated`.
 
-**State: NOT ready for blind review.** Codex rounds 1 and 2 returned `NOT_APPROVABLE`. Round 3
-was not used: round 2's item 4 needs the maintainer's decision on sequencing first. The text of
-the amendment adopts round 2's replacements; the patches below are revision 2's, as round 2
-reviewed them, and do not yet meet round 2's items 1 to 4.
+## Revision 3 (current proposal)
+
+[../v0.5.13-charter-amendment-2-rev3.md](../v0.5.13-charter-amendment-2-rev3.md) is written under
+the maintainer's decision E1 (#218, comment 7216128796). Its direction:
+- no thread pin;
+- no synthetic v5 verification in Step 1;
+- decision identity as the reproducibility criterion.
+
+What it drops and keeps:
+- It removes the pinned worker, the `src/` patches and the `blas-pin` extra. The §12 exception was
+  denied (E2).
+- Revisions 1 and 2 and their patches below stay as the record.
+
+Codex round 3, the last, returned `NOT_APPROVABLE` with four implementation items, none of which
+reopens the direction.
+- Their replacement texts are adopted as written in revision 3.
+- Item 4 (the survey) is a correction comment on #231.
+- **The text revised after round 3 has had no further Codex review.**
+
+## Revisions 1 and 2 (the record)
+
+**State of revision 2: superseded by revision 3.** Codex rounds 1 and 2 returned
+`NOT_APPROVABLE`. The patches below are revision 2's, as round 2 reviewed them, and are not part
+of revision 3.
 
 ## The current package (revision 2): exact patches, not applied
 
@@ -40,10 +60,11 @@ prompts and answers are stored byte for byte by the unit `store-file`.
 | --- | --- | --- | --- | --- |
 | 1 | [round-1-prompt.md](round-1-prompt.md) (`ab316a5e…93e8edb1`) | [round-1-answer.md](round-1-answer.md) (`5b6bbbb6…61dcc5a`) | `NOT_APPROVABLE`, 6 blocking items | 1,244,184 / 1,145,216 / 11,723 |
 | 2 | [round-2-prompt.md](round-2-prompt.md) (`e722d18a…badf5689`) | [round-2-answer.md](round-2-answer.md) (`ee6d1e34…b31a0d90`) | `NOT_APPROVABLE`, 5 blocking items | 630,176 / 605,312 / 7,745 |
+| 3 (revision 3) | [round-3-prompt.md](round-3-prompt.md) (`0c58d163…1b8d6e9b`) | [round-3-answer.md](round-3-answer.md) (`4c72836a…721e5671`) | `NOT_APPROVABLE`, 4 implementation items | 2,023,068 / 1,853,952 / 9,404 |
 
-A resumed thread reports cumulative usage; round 2's own usage is its cumulative figure
-(1,874,360 / 1,750,528 / 19,468) minus round 1's. The total of both rounds is that cumulative
-figure.
+A resumed thread reports cumulative usage; each round's own usage is its cumulative figure minus
+the previous round's. The total of the three rounds is round 3's cumulative figure: 3,897,428
+input (3,604,480 cached) and 28,872 output.
 
 **The package round 1 reviewed** (the first draft's design, kept as reviewed):
 [round-1-runner.patch](round-1-runner.patch) (`257b77c87bce99b5527822e09143244410b962ec261f7eccba0665baad11536e`)
