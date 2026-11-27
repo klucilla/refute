@@ -10,9 +10,9 @@
   "disk_bytes": 5000000000
  },
  "charged": {
-  "cpu_s": 2046.189,
-  "download_bytes": 414643377,
-  "disk_peak_bytes": 812414747
+  "cpu_s": 2099.799,
+  "download_bytes": 416643377,
+  "disk_peak_bytes": 1199241106
  },
  "within_caps_so_far": true,
  "telemetry_complete": false,
@@ -4525,6 +4525,253 @@
    "download_bytes": 0,
    "write_bytes": 1454,
    "disk_bound_bytes": 423009063,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "9a83d76539664a86805be142d70c0ff7",
+   "start": "2026-11-27T13:28:17Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.875,
+   "download_bytes": 0,
+   "write_bytes": 941515,
+   "disk_bound_bytes": 423951740,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "04510813b11a41c0a23d944b436a0d20",
+   "start": "2026-11-27T13:28:19Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 4.266,
+   "download_bytes": 0,
+   "write_bytes": 1741898,
+   "disk_bound_bytes": 424908946,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "push",
+   "label": null,
+   "attempt": "4bded6a9c4a0481f8504883e7dc8baab",
+   "start": "2026-11-27T13:28:24Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 10000000,
+    "download_bytes": 2000000
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 2.609,
+   "download_bytes": 2000000,
+   "write_bytes": 40493,
+   "disk_bound_bytes": 423218274,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "g7-prepare",
+   "label": null,
+   "attempt": "0998441b21e44ad294650c25c261c90d",
+   "start": "2026-11-27T13:28:33Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 3000000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 17.219,
+   "download_bytes": 0,
+   "write_bytes": 776059600,
+   "disk_bound_bytes": 1199241106,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "g7-build",
+   "label": null,
+   "attempt": "d97ff59f08d74ce2be25d3e691e3dd0a",
+   "start": "2026-11-27T13:29:23Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 300000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 4.625,
+   "download_bytes": 0,
+   "write_bytes": 8605539,
+   "disk_bound_bytes": 431942923,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "check-f2-g7",
+   "label": null,
+   "attempt": "59435cfdec354428a73aaf2c7d4e6a62",
+   "start": "2026-11-27T13:29:28Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 5000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.984,
+   "download_bytes": 0,
+   "write_bytes": 12511,
+   "disk_bound_bytes": 425321111,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "store-file",
+   "label": null,
+   "attempt": "9e7fee0e8fc44647b872e9777a3977cf",
+   "start": "2026-11-27T13:29:41Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 20000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.766,
+   "download_bytes": 0,
+   "write_bytes": 4275,
+   "disk_bound_bytes": 425325900,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "ruff",
+   "label": null,
+   "attempt": "f1dfc203ac9e43ce8ba51fe60224e52b",
+   "start": "2026-11-27T13:29:50Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.891,
+   "download_bytes": 0,
+   "write_bytes": 19,
+   "disk_bound_bytes": 425329372,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "ruff",
+   "label": null,
+   "attempt": "368dbc38455f453e8f1ba02eff7382f1",
+   "start": "2026-11-27T13:29:52Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.797,
+   "download_bytes": 0,
+   "write_bytes": 26,
+   "disk_bound_bytes": 425332848,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "pytest",
+   "label": null,
+   "attempt": "529a0e95c99a4e7b9b7cc04ee4b97a2a",
+   "start": "2026-11-27T13:29:54Z",
+   "reserve": {
+    "cpu_s": 1200,
+    "disk_bytes": 200000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "failed",
+   "cpu_s": 4.109,
+   "download_bytes": 0,
+   "write_bytes": 3271,
+   "disk_bound_bytes": 425339127,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "ruff",
+   "label": null,
+   "attempt": "98aab6d541654417954b64882fd765b4",
+   "start": "2026-11-27T13:30:19Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.891,
+   "download_bytes": 0,
+   "write_bytes": 11239,
+   "disk_bound_bytes": 425351639,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "ruff",
+   "label": null,
+   "attempt": "c6064bfd27ab41a3bf847e087aaab5cc",
+   "start": "2026-11-27T13:30:22Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.906,
+   "download_bytes": 0,
+   "write_bytes": 11246,
+   "disk_bound_bytes": 425355109,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "pytest",
+   "label": null,
+   "attempt": "49e631c5c19e4c098a6ba315bfad6436",
+   "start": "2026-11-27T13:30:24Z",
+   "reserve": {
+    "cpu_s": 1200,
+    "disk_bytes": 200000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 7.672,
+   "download_bytes": 0,
+   "write_bytes": 194154,
+   "disk_bound_bytes": 425541499,
    "case_outputs": 0,
    "telemetry_complete": true
   }

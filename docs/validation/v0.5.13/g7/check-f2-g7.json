@@ -1,0 +1,116 @@
+{
+ "readme_unchanged": {
+  "ok": true,
+  "readme_sha256": "c63218bf45fc978aa5497542b7b8654a133c3dcc7bc91ffa8848539466f013d7",
+  "head_sha256": "c63218bf45fc978aa5497542b7b8654a133c3dcc7bc91ffa8848539466f013d7"
+ },
+ "links_only": {
+  "ok": true,
+  "masked_texts_equal": true,
+  "targets": 32,
+  "changed_targets": 20,
+  "changed": [
+   [
+    "docs/assets/banner-dark.svg",
+    "https://raw.githubusercontent.com/klucilla/refute/main/docs/assets/banner-dark.svg"
+   ],
+   [
+    "docs/assets/banner-light.svg",
+    "https://raw.githubusercontent.com/klucilla/refute/main/docs/assets/banner-light.svg"
+   ],
+   [
+    "docs/assets/banner-light.svg",
+    "https://raw.githubusercontent.com/klucilla/refute/main/docs/assets/banner-light.svg"
+   ],
+   [
+    "LICENSE",
+    "https://github.com/klucilla/refute/blob/main/LICENSE"
+   ],
+   [
+    "pyproject.toml",
+    "https://github.com/klucilla/refute/blob/main/pyproject.toml"
+   ],
+   [
+    "docs/STATUS.md",
+    "https://github.com/klucilla/refute/blob/main/docs/STATUS.md"
+   ],
+   [
+    "docs/STATUS.md",
+    "https://github.com/klucilla/refute/blob/main/docs/STATUS.md"
+   ],
+   [
+    "ROADMAP.md",
+    "https://github.com/klucilla/refute/blob/main/ROADMAP.md"
+   ],
+   [
+    "docs/claim-spec.md",
+    "https://github.com/klucilla/refute/blob/main/docs/claim-spec.md"
+   ],
+   [
+    "docs/lock-format.md",
+    "https://github.com/klucilla/refute/blob/main/docs/lock-format.md"
+   ],
+   [
+    "docs/verdicts.md",
+    "https://github.com/klucilla/refute/blob/main/docs/verdicts.md"
+   ],
+   [
+    "docs/cli.md",
+    "https://github.com/klucilla/refute/blob/main/docs/cli.md"
+   ],
+   [
+    "ROADMAP.md",
+    "https://github.com/klucilla/refute/blob/main/ROADMAP.md"
+   ],
+   [
+    "docs/STATUS.md",
+    "https://github.com/klucilla/refute/blob/main/docs/STATUS.md"
+   ],
+   [
+    "SECURITY.md",
+    "https://github.com/klucilla/refute/blob/main/SECURITY.md"
+   ],
+   [
+    "CONTRIBUTING.md",
+    "https://github.com/klucilla/refute/blob/main/CONTRIBUTING.md"
+   ],
+   [
+    "CODE_OF_CONDUCT.md",
+    "https://github.com/klucilla/refute/blob/main/CODE_OF_CONDUCT.md"
+   ],
+   [
+    "CITATION.cff",
+    "https://github.com/klucilla/refute/blob/main/CITATION.cff"
+   ],
+   [
+    "docs/STATUS.md",
+    "https://github.com/klucilla/refute/blob/main/docs/STATUS.md"
+   ],
+   [
+    "LICENSE",
+    "https://github.com/klucilla/refute/blob/main/LICENSE"
+   ]
+  ]
+ },
+ "up_to_date": {
+  "ok": true
+ },
+ "wheel_diff": {
+  "ok": true,
+  "new": {
+   "file": "refute-0.5.12-py3-none-any.whl",
+   "sha256": "29b5a90740dfcbbddfd291e2e4404488c37951dc712835410a8de3f14e5f0012"
+  },
+  "reference": {
+   "file": "refute-0.5.12-py3-none-any.whl",
+   "sha256": "2d211437a6dd31a12df6b8954b5c294a250b74c2760298a4b568f1e6dc3de23f"
+  },
+  "same_entry_names": true,
+  "entries": 131,
+  "differing_entries": [
+   "refute-0.5.12.dist-info/METADATA",
+   "refute-0.5.12.dist-info/RECORD"
+  ]
+ },
+ "all_ok": true
+}

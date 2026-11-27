@@ -1,0 +1,62 @@
+{
+ "steps": {
+  "tip_matches_origin": true,
+  "copies_byte_for_byte": true,
+  "no_crlf_outside_exemptions": true
+ },
+ "old_copy": {
+  "path": ".cache/v0513/g1",
+  "deleted": true
+ },
+ "main": "c2ef11bc158b32f2db28dbfb4963c6e803c5415a",
+ "origin_main": "c2ef11bc158b32f2db28dbfb4963c6e803c5415a",
+ "archive_sha256": "ae76435b46f7aa8026b8a90ac559ed370310d0584aa8127833bfa3ccc27e0554",
+ "copies": [
+  {
+   "destination": "pyproject.toml",
+   "source": ".cache/v0513/f2/pyproject.f2.toml",
+   "bytes": 4165,
+   "source_sha256": "d320e50b135277faddf66fc74014b5a39445334c18d5964add68f93b088a00e9",
+   "destination_sha256": "d320e50b135277faddf66fc74014b5a39445334c18d5964add68f93b088a00e9",
+   "equal": true
+  },
+  {
+   "destination": "scripts/make_pypi_readme.py",
+   "source": "scripts/make_pypi_readme.py",
+   "bytes": 2285,
+   "source_sha256": "766b8914cc77d360f7bd7b56fd30ad2e2d2aa0691f0feace04581a2778babe0d",
+   "destination_sha256": "766b8914cc77d360f7bd7b56fd30ad2e2d2aa0691f0feace04581a2778babe0d",
+   "equal": true
+  },
+  {
+   "destination": "README-pypi.md",
+   "source": "README-pypi.md",
+   "bytes": 10293,
+   "source_sha256": "62ed43d55b50f84cd7cacf24c453a0e8c783b0162c654c7f311536262afca361",
+   "destination_sha256": "62ed43d55b50f84cd7cacf24c453a0e8c783b0162c654c7f311536262afca361",
+   "equal": true
+  },
+  {
+   "destination": "tests/test_pypi_readme.py",
+   "source": "tests/test_pypi_readme.py",
+   "bytes": 1683,
+   "source_sha256": "b9b2793ca127a997e0022fb053fbf246c64ee3f6a416354945315c4dc16fd2fc",
+   "destination_sha256": "b9b2793ca127a997e0022fb053fbf246c64ee3f6a416354945315c4dc16fd2fc",
+   "equal": true
+  }
+ ],
+ "files": 5320,
+ "crlf_files": 59,
+ "exempt_by_index_binary": [
+  {
+   "path": "calibration/v0.5/reviews/criterion6/attempt-01/step-06.log",
+   "reason": "git ls-files --eol: i/-text"
+  },
+  {
+   "path": "tests/fixtures/tensorboard/tf2/events.out.tfevents.1792343505.27d2db5d88cb.1.0.v2",
+   "reason": "git ls-files --eol: i/-text"
+  }
+ ],
+ "crlf_outside": [],
+ "all_ok": true
+}

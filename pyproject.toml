@@ -2,7 +2,7 @@
 name = "refute"
 version = "0.5.12"
 description = "Find signals. Try to kill them. Keep what survives."
-readme = "README.md"
+readme = "README-pypi.md"
 requires-python = ">=3.12"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
@@ -76,6 +76,7 @@ include = [
   "/tests",
   "/LICENSE",
   "/README.md",
+  "/README-pypi.md",
   "/CITATION.cff",
   "/pyproject.toml",
 ]
