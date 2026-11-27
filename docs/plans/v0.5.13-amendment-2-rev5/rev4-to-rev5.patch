@@ -1,0 +1,59 @@
+--- a/docs/plans/v0.5.13-charter-amendment-2-rev4.md
++++ b/docs/plans/v0.5.13-charter-amendment-2-rev5.md
+@@ -1,5 +1,16 @@
+-# v0.5.13 charter: amendment 2, revision 4 (proposed): decision identity as the reproducibility criterion
+-
++# v0.5.13 charter: amendment 2, revision 5 (proposed): decision identity as the reproducibility criterion
++
++> **PROPOSED, not approved.** Revision 5 was written on 2026-11-27 under the maintainer's decision
++> J1 (#218, comment 7222879969). It replaces revision 4 ([v0.5.13-charter-amendment-2-rev4.md](v0.5.13-charter-amendment-2-rev4.md),
++> commit `288d5785053ea139d23d2c5eced5ad7d1329a85b`, SHA-256
++> `7d96726de18157ccd4d20f494a9efcef076107efda9337179b1f5f67870d8d4e`, adopted in #218, comment
++> 7222329150, item I1), which stays unchanged as the record.
++> - **What changed from revision 4:** only the first paragraph of section 4, which defines what the
++>   margin manifest covers, replaced by the maintainer's text. Two statements are added: this
++>   header, and what was known when revision 5 was written (end of section 1). The committed diff
++>   from revision 4 ties each hunk to decision J1.
++> - Revision 4's own header follows, unchanged.
++>
+ > **PROPOSED, not approved.** Written on 2026-11-27 under the maintainer's decision H2 (#218,
+ > comment 7219469262). The direction is still that of decision E1 (#218, comment 7216128796).
+ > - It replaces revision 3 ([v0.5.13-charter-amendment-2-rev3.md](v0.5.13-charter-amendment-2-rev3.md),
+@@ -76,6 +87,22 @@
+ **Also known:** v0.5.12's F-1 found the thread count to be a sufficient factor for these digits,
+ on one machine. The mechanism of the historical CI difference stays its declared limit.
+ 
++**Also known when revision 5 was written** (decision J1(a)):
++- **The inventory of I2(c)** (`docs/validation/v0.5.13/i2/predicate-inventory.json`, source only):
++  - 73 modules on the golden path;
++  - 2,746 comparison and selection sites (2,103 comparisons, 643 calls);
++  - 0 of them resolved as manifest rows when I2 stopped before the freeze
++    (`docs/validation/v0.5.13/i2/README.md`).
++- **A view of golden values.** During H2, before I2, the agent read part of an ID-BEFORE verdict
++  golden: lines 65 to 124 of `verdict-v4.txt`, with the list of tests, their roles and the start of
++  `global_ephemeris`. Since I2 started, no `chain-`, `verdict-` or `error-` golden has been opened.
++- **The count of decision-layer predicates** (decision J1(b), `docs/validation/v0.5.13/j1/`):
++  - it is made from source only, by a stated mechanical rule, over module groups by version;
++  - the numbers are 102 for version 1, 130 for version 2, 157 for version 3 and 173 for version 4,
++    each cumulative;
++  - it is a feasibility count. Its rule finds only decisions set directly in a branch, so it is a
++    floor; the manifest attributes each row to its fixture.
++
+ ## 2. (a) Versions 1 to 4: no change
+ 
+ Blind review, item 5, as written:
+@@ -172,13 +199,7 @@
+ 
+ ## 4. (c) The margin check: only the operands present in the existing goldens
+ 
+-> The margin manifest covers each golden fixture, stage, test and subcheck. It enumerates every
+-> operative numeric predicate that can determine a test status, eligibility for that status, or
+-> the aggregate verdict, traced from the frozen source and resolved plan, regardless of which
+-> fields D1a found changed. This includes:
+-> - numeric coverage and count cutoffs;
+-> - compound predicates;
+-> - intermediate cutoffs that select the model used by a decision.
++> The margin manifest covers the decision layer of each golden fixture: every predicate whose outcome is serialized in the goldens as a test status, a test class, an eligibility flag, a reason code or the aggregate verdict, traced to its source location, including the compound predicates and the numeric coverage and count cutoffs that set those outputs directly. Internal comparisons that only select data, cadences, peaks or models are not enumerated. A flip in any of them that changes a serialized number beyond the budget of §3.2, or any serialized non-numeric byte, already fails §3.1; a flip that changes neither leaves the goldens unchanged at that setting. That internal selections were not assessed for margin is a declared limit of #226, carried with its label.
+ >
+ > Before the comparator of §3.1 or the margin check reads a golden file, the following are frozen, hashed, committed and pushed in one order-proof commit under the charter's section 8:
+ > - the fixture list;

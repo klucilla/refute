@@ -1,0 +1,1103 @@
+{
+ "rule": "see the tool's docstring",
+ "groups": {
+  "v1": [
+   "src/refute/packs/tess/pipeline.py",
+   "src/refute/packs/tess/battery.py",
+   "src/refute/packs/tess/gauntlet.py",
+   "src/refute/core/verdict.py",
+   "src/refute/packs/tess/ebcatalog.py",
+   "src/refute/packs/tess/holdout.py"
+  ],
+  "v2": [
+   "src/refute/packs/tess/battery_v5.py",
+   "src/refute/packs/tess/power.py",
+   "src/refute/core/sensitivity.py",
+   "src/refute/packs/tess/centroid_v5.py"
+  ],
+  "v3": [
+   "src/refute/packs/tess/battery_v51.py",
+   "src/refute/packs/tess/battery_v51_diff.py",
+   "src/refute/packs/tess/a0.py",
+   "src/refute/core/inconclusive.py",
+   "src/refute/packs/tess/duration.py"
+  ],
+  "v4": [
+   "src/refute/packs/tess/pipeline_v52.py",
+   "src/refute/packs/tess/battery_v52.py",
+   "src/refute/packs/tess/a0_v4.py"
+  ]
+ },
+ "per_module": {
+  "src/refute/packs/tess/pipeline.py": 20,
+  "src/refute/packs/tess/battery.py": 29,
+  "src/refute/packs/tess/gauntlet.py": 18,
+  "src/refute/core/verdict.py": 4,
+  "src/refute/packs/tess/ebcatalog.py": 10,
+  "src/refute/packs/tess/holdout.py": 21,
+  "src/refute/packs/tess/battery_v5.py": 19,
+  "src/refute/packs/tess/power.py": 0,
+  "src/refute/core/sensitivity.py": 3,
+  "src/refute/packs/tess/centroid_v5.py": 6,
+  "src/refute/packs/tess/battery_v51.py": 8,
+  "src/refute/packs/tess/battery_v51_diff.py": 12,
+  "src/refute/packs/tess/a0.py": 0,
+  "src/refute/core/inconclusive.py": 0,
+  "src/refute/packs/tess/duration.py": 7,
+  "src/refute/packs/tess/pipeline_v52.py": 7,
+  "src/refute/packs/tess/battery_v52.py": 9,
+  "src/refute/packs/tess/a0_v4.py": 0
+ },
+ "new_in_version": {
+  "v1": 102,
+  "v2": 28,
+  "v3": 27,
+  "v4": 16
+ },
+ "cumulative_by_version": {
+  "v1": 102,
+  "v2": 130,
+  "v3": 157,
+  "v4": 173
+ },
+ "rows": [
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/pipeline.py",
+   "line": 213,
+   "atom": "candidate is None"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/pipeline.py",
+   "line": 371,
+   "atom": "plan.is_v051"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/pipeline.py",
+   "line": 515,
+   "atom": "why is not None"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/pipeline.py",
+   "line": 646,
+   "atom": "plan.is_v051"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/pipeline.py",
+   "line": 221,
+   "atom": "catalogs is not None"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/pipeline.py",
+   "line": 223,
+   "atom": "plan.v05"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/pipeline.py",
+   "line": 385,
+   "atom": "test.name == \"odd_even\""
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/pipeline.py",
+   "line": 385,
+   "atom": "plan.is_v051"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/pipeline.py",
+   "line": 390,
+   "atom": "test.name == \"odd_even\""
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/pipeline.py",
+   "line": 395,
+   "atom": "test.name == \"secondary_eclipse\""
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/pipeline.py",
+   "line": 397,
+   "atom": "test.name == \"plausibility\""
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/pipeline.py",
+   "line": 399,
+   "atom": "test.name == \"centroid_shift\""
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/pipeline.py",
+   "line": 409,
+   "atom": "test.name == \"aperture_depth\""
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/pipeline.py",
+   "line": 409,
+   "atom": "plan.is_v051"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/pipeline.py",
+   "line": 415,
+   "atom": "test.name == \"systematics\""
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/pipeline.py",
+   "line": 415,
+   "atom": "plan.is_v051"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/pipeline.py",
+   "line": 421,
+   "atom": "test.name == \"aperture_depth\""
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/pipeline.py",
+   "line": 425,
+   "atom": "test.name == \"systematics\""
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/pipeline.py",
+   "line": 430,
+   "atom": "test.name == \"period_alias\""
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/pipeline.py",
+   "line": 430,
+   "atom": "plan.is_v051"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 268,
+   "atom": "len(used) < params.min_sectors"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 307,
+   "atom": "sigma >= params.max_sigma"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 307,
+   "atom": "distance >= params.min_offset_pixels"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 362,
+   "atom": "series[\"time\"]"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 377,
+   "atom": "g_core is None"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 377,
+   "atom": "g_large is None"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 402,
+   "atom": "max(core_snr, large_snr) < params.max_sigma"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 415,
+   "atom": "diff_sigma >= params.max_sigma"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 415,
+   "atom": "ratio >= params.min_depth_ratio"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 466,
+   "atom": "neighbors is None"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 476,
+   "atom": "star is None"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 476,
+   "atom": "star.tmag is None"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 526,
+   "atom": "problems"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 537,
+   "atom": "crowd is None"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 623,
+   "atom": "math.isfinite(d_box)"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 623,
+   "atom": "d_box <= 0"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 625,
+   "atom": "all(math.isfinite(v) for v in (z_f, f, g, d_box, d_box_err))"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 627,
+   "atom": "g >= g_star"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 629,
+   "atom": "z_f >= z_star"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 629,
+   "atom": "f >= f_star"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 774,
+   "atom": "status is TestStatus.FAIL"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 780,
+   "atom": "near"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 835,
+   "atom": "n_box < needed"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 835,
+   "atom": "y.size - n_box < 10"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 865,
+   "atom": "gain < params.min_box_delta_bic"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 877,
+   "atom": "near"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 931,
+   "atom": "aux"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 1027,
+   "atom": "problems"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/battery.py",
+   "line": 1038,
+   "atom": "not_run"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/gauntlet.py",
+   "line": 39,
+   "atom": "candidate is None"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/gauntlet.py",
+   "line": 72,
+   "atom": "len(even) < params.min_transits_each"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/gauntlet.py",
+   "line": 72,
+   "atom": "len(odd) < params.min_transits_each"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/gauntlet.py",
+   "line": 112,
+   "atom": "len(secondary) == 0"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/gauntlet.py",
+   "line": 112,
+   "atom": "len(primary) == 0"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/gauntlet.py",
+   "line": 133,
+   "atom": "significance < params.max_sigma"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/gauntlet.py",
+   "line": 213,
+   "atom": "star is not None"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/gauntlet.py",
+   "line": 213,
+   "atom": "star.disposition"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/gauntlet.py",
+   "line": 213,
+   "atom": "star.disposition.upper() in unreliable"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/gauntlet.py",
+   "line": 224,
+   "atom": "star is None"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/gauntlet.py",
+   "line": 224,
+   "atom": "_valid(star.radius_rsun)"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/gauntlet.py",
+   "line": 233,
+   "atom": "_valid(star.radius_err_rsun)"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/gauntlet.py",
+   "line": 243,
+   "atom": "rel_err > params.max_stellar_radius_rel_err"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/gauntlet.py",
+   "line": 262,
+   "atom": "companion_rjup > params.max_companion_radius_rjup"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/gauntlet.py",
+   "line": 279,
+   "atom": "mass is None"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/gauntlet.py",
+   "line": 294,
+   "atom": "ratio > params.max_duration_ratio"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/gauntlet.py",
+   "line": 57,
+   "atom": "passed"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/gauntlet.py",
+   "line": 96,
+   "atom": "passed"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/core/verdict.py",
+   "line": 126,
+   "atom": "result.status is TestStatus.PASS"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/core/verdict.py",
+   "line": 127,
+   "atom": "result.coverage is not None"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/core/verdict.py",
+   "line": 127,
+   "atom": "result.coverage > 0"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/core/verdict.py",
+   "line": 166,
+   "atom": "needed > stage"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/ebcatalog.py",
+   "line": 253,
+   "atom": "star is None"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/ebcatalog.py",
+   "line": 253,
+   "atom": "star.ra_deg is None"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/ebcatalog.py",
+   "line": 253,
+   "atom": "star.dec_deg is None"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/ebcatalog.py",
+   "line": 255,
+   "atom": "scan"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/ebcatalog.py",
+   "line": 255,
+   "atom": "scan.get(\"snapshots\")"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/ebcatalog.py",
+   "line": 257,
+   "atom": "target_key not in (scan.get(\"per_target\") or {})"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/ebcatalog.py",
+   "line": 262,
+   "atom": "float(scan.get(\"radius_arcsec\", 0)) < params.match_radius_arcsec"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/ebcatalog.py",
+   "line": 309,
+   "atom": "other"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/ebcatalog.py",
+   "line": 322,
+   "atom": "downgraded"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/ebcatalog.py",
+   "line": 337,
+   "atom": "matches"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 815,
+   "atom": "barrier is not None"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 923,
+   "atom": "len(train_raw) == 0"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 951,
+   "atom": "train is None"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 951,
+   "atom": "train.depth > 0"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 962,
+   "atom": "corrections_on"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 1012,
+   "atom": "validity[\"reasons\"]"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 1012,
+   "atom": "params.require_valid_train"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 1062,
+   "atom": "len(times) < params.min_train_transits"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 1084,
+   "atom": "max_sigma_t > params.max_timing_sigma_durations * train.duration"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 1109,
+   "atom": "validity[\"reasons\"]"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 1109,
+   "atom": "params.require_valid_train"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 1219,
+   "atom": "math.isfinite(snr)"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 1219,
+   "atom": "snr >= params.min_snr"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 1667,
+   "atom": "reason is not None"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 1911,
+   "atom": "len(years) < 2"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 1933,
+   "atom": "TestStatus.FAIL in statuses"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 1974,
+   "atom": "status is TestStatus.FAIL"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 998,
+   "atom": "gate.status is TestStatus.INCONCLUSIVE"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 1014,
+   "atom": "corrections_on"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 1115,
+   "atom": "corrections_on"
+  },
+  {
+   "version_group": "v1",
+   "file": "src/refute/packs/tess/holdout.py",
+   "line": 1939,
+   "atom": "TestStatus.PASS in statuses"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/battery_v5.py",
+   "line": 63,
+   "atom": "len(secondary) == 0"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/battery_v5.py",
+   "line": 63,
+   "atom": "len(primary) == 0"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/battery_v5.py",
+   "line": 98,
+   "atom": "sig >= params.max_sigma"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/battery_v5.py",
+   "line": 101,
+   "atom": "-sig >= params.max_sigma"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/battery_v5.py",
+   "line": 101,
+   "atom": "-g_sec.mean >= floor"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/battery_v5.py",
+   "line": 127,
+   "atom": "n < sp.min_measured_events"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/battery_v5.py",
+   "line": 131,
+   "atom": "total > 0"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/battery_v5.py",
+   "line": 193,
+   "atom": "n < sp.min_measured_events"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/battery_v5.py",
+   "line": 265,
+   "atom": "n == 0"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/battery_v5.py",
+   "line": 278,
+   "atom": "fraction < sp.edge_min_fraction"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/battery_v5.py",
+   "line": 289,
+   "atom": "len(others) == 0"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/battery_v5.py",
+   "line": 295,
+   "atom": "g_other.mean / g_other.error >= min_snr"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/battery_v5.py",
+   "line": 384,
+   "atom": "candidate.period >= sp.sinusoid_max_period_days"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/battery_v5.py",
+   "line": 403,
+   "atom": "keep.sum() < 100"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/battery_v5.py",
+   "line": 446,
+   "atom": "flagged"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/battery_v5.py",
+   "line": 175,
+   "atom": "passed"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/battery_v5.py",
+   "line": 220,
+   "atom": "passed"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/battery_v5.py",
+   "line": 322,
+   "atom": "passed"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/battery_v5.py",
+   "line": 526,
+   "atom": "passed"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/core/sensitivity.py",
+   "line": 188,
+   "atom": "result.status is TestStatus.PASS"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/core/sensitivity.py",
+   "line": 188,
+   "atom": "result.severity is not Severity.GATE"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/core/sensitivity.py",
+   "line": 190,
+   "atom": "why is not None"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/centroid_v5.py",
+   "line": 313,
+   "atom": "pixels"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/centroid_v5.py",
+   "line": 315,
+   "atom": "len(skipped) >= sp.centroid_max_unqualified_fraction * len(pixels)"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/centroid_v5.py",
+   "line": 318,
+   "atom": "len(rows) < sp.centroid_min_sectors"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/centroid_v5.py",
+   "line": 345,
+   "atom": "p_het < sp.chi2_alpha"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/centroid_v5.py",
+   "line": 353,
+   "atom": "sigma >= max_sigma"
+  },
+  {
+   "version_group": "v2",
+   "file": "src/refute/packs/tess/centroid_v5.py",
+   "line": 353,
+   "atom": "distance >= min_arcsec"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/battery_v51.py",
+   "line": 103,
+   "atom": "(\"P/2\", 0.5) not in applicable"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/battery_v51.py",
+   "line": 124,
+   "atom": "keep.sum() < 100"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/battery_v51.py",
+   "line": 579,
+   "atom": "excess >= DURATION_MAX_SIGMA"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/battery_v51.py",
+   "line": 182,
+   "atom": "significance > sp.sinusoid_min_significance"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/battery_v51.py",
+   "line": 182,
+   "atom": "amp >= ( sp.sinusoid_min_amplitude_ratio * depth )"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/battery_v51.py",
+   "line": 187,
+   "atom": "(label, factor) not in applicable"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/battery_v51.py",
+   "line": 397,
+   "atom": "zscore >= params.max_sigma"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/battery_v51.py",
+   "line": 211,
+   "atom": "flagged"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/battery_v51_diff.py",
+   "line": 209,
+   "atom": "series[\"time\"]"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/battery_v51_diff.py",
+   "line": 227,
+   "atom": "g_core is None"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/battery_v51_diff.py",
+   "line": 227,
+   "atom": "g_large is None"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/battery_v51_diff.py",
+   "line": 227,
+   "atom": "g_diff is None"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/battery_v51_diff.py",
+   "line": 265,
+   "atom": "max(core_snr, large_snr) < params.max_sigma"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/battery_v51_diff.py",
+   "line": 279,
+   "atom": "diff_sigma >= params.max_sigma"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/battery_v51_diff.py",
+   "line": 279,
+   "atom": "ratio >= params.min_depth_ratio"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/battery_v51_diff.py",
+   "line": 400,
+   "atom": "aux"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/battery_v51_diff.py",
+   "line": 457,
+   "atom": "a0_refused is not None"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/battery_v51_diff.py",
+   "line": 557,
+   "atom": "problems"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/battery_v51_diff.py",
+   "line": 459,
+   "atom": "usable"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/battery_v51_diff.py",
+   "line": 559,
+   "atom": "not_run"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/duration.py",
+   "line": 64,
+   "atom": "period > 0"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/duration.py",
+   "line": 64,
+   "atom": "duration_bls > 0"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/duration.py",
+   "line": 70,
+   "atom": "window.sum() < 5"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/duration.py",
+   "line": 94,
+   "atom": "fit.status <= 0"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/duration.py",
+   "line": 107,
+   "atom": "math.isfinite(var)"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/duration.py",
+   "line": 107,
+   "atom": "var > 0"
+  },
+  {
+   "version_group": "v3",
+   "file": "src/refute/packs/tess/duration.py",
+   "line": 132,
+   "atom": "ok"
+  },
+  {
+   "version_group": "v4",
+   "file": "src/refute/packs/tess/pipeline_v52.py",
+   "line": 97,
+   "atom": "test.name == \"odd_even\""
+  },
+  {
+   "version_group": "v4",
+   "file": "src/refute/packs/tess/pipeline_v52.py",
+   "line": 113,
+   "atom": "test.name == \"secondary_eclipse\""
+  },
+  {
+   "version_group": "v4",
+   "file": "src/refute/packs/tess/pipeline_v52.py",
+   "line": 115,
+   "atom": "test.name == \"plausibility\""
+  },
+  {
+   "version_group": "v4",
+   "file": "src/refute/packs/tess/pipeline_v52.py",
+   "line": 117,
+   "atom": "test.name == \"centroid_shift\""
+  },
+  {
+   "version_group": "v4",
+   "file": "src/refute/packs/tess/pipeline_v52.py",
+   "line": 127,
+   "atom": "test.name == \"aperture_depth\""
+  },
+  {
+   "version_group": "v4",
+   "file": "src/refute/packs/tess/pipeline_v52.py",
+   "line": 140,
+   "atom": "test.name == \"systematics\""
+  },
+  {
+   "version_group": "v4",
+   "file": "src/refute/packs/tess/pipeline_v52.py",
+   "line": 158,
+   "atom": "test.name == \"period_alias\""
+  },
+  {
+   "version_group": "v4",
+   "file": "src/refute/packs/tess/battery_v52.py",
+   "line": 279,
+   "atom": "(\"P/2\", 0.5) not in applicable"
+  },
+  {
+   "version_group": "v4",
+   "file": "src/refute/packs/tess/battery_v52.py",
+   "line": 300,
+   "atom": "keep.sum() < 100"
+  },
+  {
+   "version_group": "v4",
+   "file": "src/refute/packs/tess/battery_v52.py",
+   "line": 401,
+   "atom": "flagged"
+  },
+  {
+   "version_group": "v4",
+   "file": "src/refute/packs/tess/battery_v52.py",
+   "line": 411,
+   "atom": "can_fail"
+  },
+  {
+   "version_group": "v4",
+   "file": "src/refute/packs/tess/battery_v52.py",
+   "line": 411,
+   "atom": "attenuated"
+  },
+  {
+   "version_group": "v4",
+   "file": "src/refute/packs/tess/battery_v52.py",
+   "line": 176,
+   "atom": "zscore >= params.max_sigma"
+  },
+  {
+   "version_group": "v4",
+   "file": "src/refute/packs/tess/battery_v52.py",
+   "line": 373,
+   "atom": "significance > sp.sinusoid_min_significance"
+  },
+  {
+   "version_group": "v4",
+   "file": "src/refute/packs/tess/battery_v52.py",
+   "line": 373,
+   "atom": "amp >= ( sp.sinusoid_min_amplitude_ratio * depth )"
+  },
+  {
+   "version_group": "v4",
+   "file": "src/refute/packs/tess/battery_v52.py",
+   "line": 378,
+   "atom": "(label, factor) not in applicable"
+  }
+ ]
+}
