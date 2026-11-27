@@ -28,6 +28,11 @@ in ``pipeline.build_result`` (with ``t_ref_bjd``, which ``build_result`` adds to
 Those are what the search and the ephemeris fit measure; a plan field of the same name (a
 published or injected value) is a different quantity. Only rule 1 leaves them out.
 
+4. An **exact subtree key** is ``thresholds`` itself, or the key of a dict literal entry whose
+   value is a name that the same function also puts in a ``thresholds`` mapping (for example
+   ``"thresholds_m4": m4`` beside ``thresholds = {..., "m4": m4}``). The comparator compares
+   everything under such a key exactly.
+
 The rules over-include on purpose: a measurement key that shares a name with a configuration
 value becomes exact, which can only make the comparator fail, never pass. The tool also reports
 which of the fields D1a found to differ (``step1/diag-golden-diff.json``, already exposed) are
@@ -116,10 +121,11 @@ def _entries(node: ast.AST) -> list[tuple[str, ast.AST, int]]:
 def _mappings(tree: ast.AST, names: set[str]):
     """Every (container name, key, value, line) written to a mapping called by one of ``names``,
     and every argument of that name that is not a literal mapping (``unresolved``)."""
-    found, unresolved, resolved = [], [], set()
+    found, unresolved, resolved, subtrees = [], [], set(), set()
     for func in [
         n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef | ast.AsyncFunctionDef)
     ] + [tree]:
+        _rule4(func, subtrees)
         local = {}
         params = set()
         if isinstance(func, ast.FunctionDef | ast.AsyncFunctionDef):
@@ -176,7 +182,32 @@ def _mappings(tree: ast.AST, names: set[str]):
         if u[1] not in resolved or "model_dump(" in u[2] or u[2].startswith("parameter ")
     ]
     unresolved = [u for u in unresolved if not (u[1] in resolved and u[2] == "thresholds")]
-    return found, unresolved
+    return found, unresolved, subtrees
+
+
+def _rule4(func: ast.AST, subtrees: set) -> None:
+    """Rule 4: in one function, a name that is a value of a ``thresholds`` mapping (a dict literal
+    assigned to ``thresholds`` or given as its argument) is a mapping of thresholds. Any dict
+    literal entry of the same function whose value is that name makes its key an exact subtree
+    key: everything under it compares exactly."""
+    names = set()
+    for node in ast.walk(func):
+        value = None
+        if isinstance(node, ast.Assign) and any(
+            isinstance(t, ast.Name) and t.id == "thresholds" for t in node.targets
+        ):
+            value = node.value
+        if isinstance(node, ast.keyword) and node.arg == "thresholds":
+            value = node.value
+        for _, v, _ in _entries(value) if value is not None else []:
+            if isinstance(v, ast.Name):
+                names.add(v.id)
+    if not names:
+        return
+    for node in ast.walk(func):
+        for key, v, line in _entries(node):
+            if isinstance(v, ast.Name) and v.id in names:
+                subtrees.add((key, line, v.id))
 
 
 def echoes_config(value: ast.AST, fields: set[str]) -> bool:
@@ -199,11 +230,14 @@ def main() -> int:
     fields = plan_fields()
     thresholds: dict[str, set[str]] = {}
     echoes: dict[str, set[str]] = {}
+    subtree_keys: dict[str, set[str]] = {}
     unresolved = []
     seen = set()
     for rel in mods:
         tree = ast.parse((ROOT / rel).read_text(encoding="utf-8"))
-        found, missed = _mappings(tree, {"thresholds"} | CONTAINERS)
+        found, missed, trees = _mappings(tree, {"thresholds"} | CONTAINERS)
+        for key, line, name in trees:
+            subtree_keys.setdefault(key, set()).add(f"{rel}:{line} value {name}")
         for container, key, value, line in found:
             if (rel, container, key, line) in seen:
                 continue
@@ -242,6 +276,8 @@ def main() -> int:
         "unresolved_thresholds_arguments": sorted(unresolved, key=lambda u: (u["file"], u["line"])),
         "config_echo_keys": {k: sorted(v) for k, v in sorted(echoes.items())},
         "exact_keys": exact,
+        "exact_subtree_keys": sorted({"thresholds"} | set(subtree_keys)),
+        "exact_subtree_sources": {k: sorted(v) for k, v in sorted(subtree_keys.items())},
         "d1a_differing_fields": differing,
         "d1a_conflicts": conflicts,
     }

@@ -21,7 +21,8 @@ writes one JSON result to stdout, and exits 0 only when the setting meets sectio
    - both tokens are in float form (they hold ``.``, ``e`` or ``E``; an integer token is an
      integer count and compares exactly);
    - its path matches a measurement pattern of the schema and no exact pattern;
-   - its last key is not one of the schema's exact keys (thresholds and configuration);
+   - its last key is not one of the schema's exact keys (thresholds and configuration), and no
+     key of its path is one of the schema's exact subtree keys (a mapping of thresholds);
    - and ``abs(a - b) <= 0.000001 * max(abs(a), abs(b))``, in exact rational arithmetic from the
      decimal tokens. Zero equals only zero.
    ``dumps_json`` writes a nonfinite float as ``null``, so a nonfinite value is accepted only
@@ -149,6 +150,11 @@ def _pattern(glob: str) -> re.Pattern:
     return re.compile("".join(out) + r"\Z")
 
 
+def key_segments(path: str) -> list[str]:
+    """Every key of a path, without the list indices."""
+    return [p for p in re.split(r"[.\[]", path) if p and not p.rstrip("]").isdigit()]
+
+
 def last_key(path: str) -> str:
     """The nearest key of a path, skipping list indices: ``a.b[2][0]`` gives ``b``."""
     keys = [p for p in re.split(r"[.\[]", path) if p and not p.rstrip("]").isdigit()]
@@ -163,6 +169,7 @@ def compare_json(a: str, b: str, kind: str, schema: dict) -> list[str]:
     measure = [_pattern(p) for p in schema["json"][kind]["measurement"]]
     exact = [_pattern(p) for p in schema["json"][kind].get("exact", [])]
     exact_keys = set(schema["exact_keys"])
+    subtrees = set(schema.get("exact_subtree_keys", []))
     for i, ((ka, ra, pa), (kb, rb, pb)) in enumerate(zip(ta, tb, strict=True)):
         if ka != kb or pa != pb:
             problems.append(f"{kind}: token {i} differs in kind or location ({pa!r})")
@@ -174,7 +181,11 @@ def compare_json(a: str, b: str, kind: str, schema: dict) -> list[str]:
             continue
         if not (is_float_form(ra) and is_float_form(rb)):
             problems.append(f"{kind}: integer token at {pa!r} differs")
-        elif last_key(pa) in exact_keys or any(p.match(pa) for p in exact):
+        elif (
+            last_key(pa) in exact_keys
+            or subtrees & set(key_segments(pa))
+            or any(p.match(pa) for p in exact)
+        ):
             problems.append(f"{kind}: exact number at {pa!r} differs")
         elif not any(p.match(pa) for p in measure):
             problems.append(f"{kind}: number at {pa!r} is not a schema measurement and differs")

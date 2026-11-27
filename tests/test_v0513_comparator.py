@@ -94,6 +94,14 @@ def test_list_under_an_exact_key_compares_exactly():
     assert jcmp(a, a.replace("1.0", "1.0000001"))
 
 
+def test_exact_subtree_key_covers_its_whole_subtree():
+    a = '{\n  "candidate": {\n    "thresholds_m4": {\n      "x": 1.0\n    }\n  }\n}\n'
+    b = a.replace("1.0", "1.0000001")
+    assert jcmp(a, b) == []
+    schema = {**SCHEMA, "exact_subtree_keys": ["thresholds_m4"]}
+    assert comp.compare_json(a, b, "verdict", schema)
+
+
 def test_null_against_number_fails():
     assert jcmp(verdict("1.5"), verdict("null"))
     assert jcmp(verdict("null"), verdict("null")) == []
