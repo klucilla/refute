@@ -1,0 +1,90 @@
+{
+  "candidate": {
+    "period_days": 1.7999996903117232,
+    "snr": 307.3926240315272,
+    "t0_btjd": 1325.6994791666666
+  },
+  "catalog_test": false,
+  "deferred": [
+    "centroid_shift",
+    "aperture_depth"
+  ],
+  "gate_passed": true,
+  "stage_tests": [
+    "snr",
+    "odd_even",
+    "secondary_eclipse",
+    "plausibility",
+    "nearby_contamination",
+    "period_alias",
+    "systematics",
+    "single_event",
+    "event_consistency",
+    "edge_events",
+    "sinusoid",
+    "duty_cycle"
+  ],
+  "stage_verdict": "REFUTED",
+  "stage_verdict_reason": "fatal failure in: odd_even, event_consistency",
+  "survived_stage_tests": false,
+  "tests": {
+    "aperture_depth": {
+      "severity": "fatal",
+      "status": "INCONCLUSIVE"
+    },
+    "centroid_shift": {
+      "severity": "fatal",
+      "status": "INCONCLUSIVE"
+    },
+    "duty_cycle": {
+      "severity": "fatal",
+      "status": "PASS"
+    },
+    "edge_events": {
+      "severity": "warning",
+      "status": "PASS"
+    },
+    "event_consistency": {
+      "severity": "fatal",
+      "status": "FAIL"
+    },
+    "nearby_contamination": {
+      "severity": "warning",
+      "status": "PASS"
+    },
+    "odd_even": {
+      "severity": "fatal",
+      "status": "FAIL"
+    },
+    "period_alias": {
+      "severity": "fatal",
+      "status": "PASS"
+    },
+    "plausibility": {
+      "severity": "fatal",
+      "status": "PASS"
+    },
+    "secondary_eclipse": {
+      "severity": "warning",
+      "status": "PASS"
+    },
+    "single_event": {
+      "severity": "fatal",
+      "status": "PASS"
+    },
+    "sinusoid": {
+      "severity": "warning",
+      "status": "PASS"
+    },
+    "snr": {
+      "severity": "gate",
+      "status": "PASS"
+    },
+    "systematics": {
+      "severity": "warning",
+      "status": "PASS"
+    }
+  },
+  "verdict": "REFUTED",
+  "verdict_reason": "fatal failure in: odd_even, event_consistency"
+}

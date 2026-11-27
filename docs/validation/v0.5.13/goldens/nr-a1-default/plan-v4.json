@@ -1,0 +1,239 @@
+{
+  "data": {
+    "author": "SPOC",
+    "exptime_seconds": 120,
+    "flux_column": "pdcsap_flux",
+    "mission": "TESS",
+    "neighbor_radius_arcsec": 120.0,
+    "quality_bitmask": "default",
+    "target_pixel_files": true
+  },
+  "detrend": {
+    "clip_iterations": 2,
+    "clip_sigma": 3.0,
+    "knot_spacing_days": 0.1,
+    "method": "robust-local-quadratic",
+    "min_points_per_knot": 30,
+    "segment_gap_days": 0.5,
+    "transit_mask_half_width_durations": 1.0,
+    "upper_clip_sigma": 5.0,
+    "window_days": 1.0
+  },
+  "discovery": {
+    "decisive": [
+      "snr",
+      "odd_even",
+      "secondary_eclipse",
+      "plausibility",
+      "centroid_shift",
+      "aperture_depth",
+      "nearby_contamination",
+      "period_alias",
+      "systematics",
+      "eb_catalog",
+      "single_event",
+      "event_consistency",
+      "edge_events",
+      "sinusoid",
+      "duty_cycle"
+    ],
+    "diagnostic": [
+      "holdout_by_year",
+      "duration_excess"
+    ],
+    "inputs": {},
+    "max_sector": null,
+    "method_status": "not_validated",
+    "method_status_reference": "docs/validation/v0.2.1/closing-2026-10-27.md",
+    "required_diagnostics": [
+      "holdout_by_year"
+    ],
+    "stages": {
+      "aperture_depth": 2,
+      "centroid_shift": 2
+    },
+    "survived_meaning": "the signal survived the declared decisive battery; temporal confirmation was not required; the method is not validated",
+    "version": 4
+  },
+  "gauntlet": {
+    "aperture_depth": {
+      "core_radius_pixels": 1.5,
+      "dilation_pixels": 1,
+      "max_sigma": 3.0,
+      "min_depth_ratio": 1.2
+    },
+    "centroid_shift": {
+      "max_sigma": 3.0,
+      "min_offset_pixels": 0.5,
+      "min_sectors": 1
+    },
+    "corrections": {
+      "alias_f": 0.5,
+      "alias_z_f": 18.47,
+      "b_min": 20,
+      "capacity_b": 0.0,
+      "capacity_s": 0.0,
+      "enabled": false,
+      "fap_max": 0.0001,
+      "gap_split": 5.0,
+      "h_min": 0.9,
+      "k_clip": 2.5,
+      "m_beta": 1.2,
+      "max_components": 3,
+      "r_min": 20,
+      "version": 1
+    },
+    "eb_catalog": {
+      "match_radius_arcsec": 21.0,
+      "period_factors": [
+        1.0,
+        2.0,
+        0.5
+      ],
+      "period_tolerance": 0.01,
+      "same_photometry_catalogs": [
+        "TESS-EB"
+      ]
+    },
+    "events": {
+      "baseline_gap_durations": 0.25,
+      "baseline_outer_durations": 1.5,
+      "min_coverage": 0.5
+    },
+    "holdout_by_year": {
+      "baseline_gap_durations": 0.25,
+      "baseline_outer_durations": 1.5,
+      "hidden_detrend_window_factor": 3.0,
+      "max_hidden_window_fraction": 0.5,
+      "max_timing_sigma_durations": 1.0,
+      "max_train_duration_period_ratio": 0.2,
+      "min_predicted_transits": 2,
+      "min_snr": 5.0,
+      "min_train_transits": 3,
+      "min_window_coverage": 0.5,
+      "require_valid_train": true,
+      "timing_scan_half_width_durations": 0.5,
+      "timing_sigma": 3.0,
+      "timing_step_minutes": 1.0
+    },
+    "nearby_contamination": {
+      "ignored_dispositions": [
+        "SPLIT",
+        "DUPLICATE",
+        "ARTIFACT"
+      ],
+      "max_eclipse_depth": 1.0,
+      "max_separation_arcsec": 21.0,
+      "min_crowdsap": 0.8
+    },
+    "odd_even": {
+      "max_sigma": 3.0,
+      "min_transits_each": 2
+    },
+    "period_alias": {
+      "detrend_window_periods": 3.0,
+      "min_box_delta_bic": 10.0,
+      "sine_harmonics": 2,
+      "systematic_periods_days": [
+        13.7,
+        6.85,
+        4.566666666666666,
+        3.425,
+        1.0
+      ],
+      "systematic_tolerance": 0.01
+    },
+    "plausibility": {
+      "max_companion_radius_rjup": 2.5,
+      "max_duration_ratio": 1.5,
+      "max_stellar_radius_rel_err": 0.3,
+      "max_tmag_mismatch": 1.0,
+      "unreliable_tic_dispositions": [
+        "SPLIT",
+        "DUPLICATE",
+        "ARTIFACT"
+      ]
+    },
+    "secondary_eclipse": {
+      "fatal_depth_ratio": 0.1,
+      "max_sigma": 3.0
+    },
+    "snr": {
+      "min_snr": 7.1
+    },
+    "systematics": {
+      "dump_margin_hours": 1.0,
+      "max_background_fraction": 0.5,
+      "max_background_sigma": 3.0,
+      "max_dump_fraction": 0.5,
+      "max_sap_rel_diff": 0.5,
+      "max_sap_sigma": 3.0,
+      "min_events_for_dumps": 3
+    }
+  },
+  "search": {
+    "bin_minutes": 10.0,
+    "block_gap_days": 10.0,
+    "cluster_tolerance": 0.01,
+    "durations_hours": [
+      1.0,
+      2.0,
+      3.0,
+      4.0
+    ],
+    "final_duration_steps": 21,
+    "final_oversample": 20,
+    "frequency_factor": 1.0,
+    "max_clusters": 5,
+    "method": "bls-two-stage",
+    "objective": "likelihood",
+    "peaks_per_sector": 5,
+    "period_max_days": 6.0,
+    "period_min_days": 0.5,
+    "refine_samples_per_width": 6.0,
+    "refine_width_factor": 1.5
+  },
+  "stronger": {
+    "aperture_alternative_ratio_increment": 0.3,
+    "background_alternative_increment": 0.3,
+    "brightening_min_depth_ratio": 0.1,
+    "centroid_alternative_offset_factor": 2.0,
+    "centroid_control_epochs": 20,
+    "centroid_max_unqualified_fraction": 0.5,
+    "centroid_min_controls": 10,
+    "centroid_min_sectors": 2,
+    "centroid_qualification_sigma": 3.0,
+    "chi2_alpha": 0.00135,
+    "depth_stability_alternative_fraction": 0.5,
+    "edge_alternative_depth_fraction": 0.5,
+    "edge_gap_days": 0.3,
+    "edge_min_fraction": 0.5,
+    "edge_reach_durations": 2.0,
+    "max_duty_cycle": 0.5,
+    "min_measured_events": 3,
+    "odd_even_alternative_depth_fraction": 1.0,
+    "period_alias_realizations": 50,
+    "period_alias_required_failures": 45,
+    "sap_alternative_increment": 0.3,
+    "secondary_alternative_depth_fraction": 1.0,
+    "shape_alternative_ingress_fraction": 0.5,
+    "shape_max_ingress_fraction": 0.45,
+    "single_event_max_ratio": 0.88,
+    "sinusoid_mask_durations": 1.0,
+    "sinusoid_max_period_days": 10.0,
+    "sinusoid_min_amplitude_ratio": 0.5,
+    "sinusoid_min_significance": 15.0
+  },
+  "v051": {
+    "period_alias_harmonics": 4,
+    "period_alias_realizations": 100,
+    "period_alias_required_lower_bound": 0.9,
+    "sinusoid_extra_frequencies": 3,
+    "sinusoid_extra_min_snr": 4.0,
+    "sinusoid_harmonic_max_period_days": 20.0
+  },
+  "v052": {
+    "selector_certified": false,
+    "sinusoid_fail_allowed": true
+  }
+}

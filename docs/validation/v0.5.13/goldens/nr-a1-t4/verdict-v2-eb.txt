@@ -1,0 +1,2253 @@
+{
+  "candidate": {
+    "depth": 0.004994933830645879,
+    "depth_err": 1.624936137092731e-05,
+    "depth_ppm": 4994.933830645879,
+    "duration": 0.07083333333333333,
+    "duration_hours": 1.7,
+    "log_likelihood": 49118.54431257097,
+    "n_transits": 28,
+    "period": 1.7999996903117232,
+    "sde": 16.279628611635875,
+    "snr": 307.3926240315272,
+    "t0": 1325.6994791666666,
+    "t0_bjd": 2458325.699479167
+  },
+  "data_quality_warnings": [],
+  "data_summary": {
+    "n_cadences": 37440,
+    "product": {
+      "author": "synthetic",
+      "exptime_seconds": 120,
+      "flux_column": "flux",
+      "product": "synthetic light curve (refute.packs.tess.synthetic)",
+      "quality_bitmask": "none",
+      "quality_bitmask_value": null,
+      "reader": "numpy.load"
+    },
+    "sectors": [
+      1,
+      2
+    ],
+    "star": {
+      "logg_cgs": 4.44,
+      "mass_msun": 1.0,
+      "radius_err_rsun": 0.05,
+      "radius_rsun": 1.0,
+      "retrieved_utc": null,
+      "stellar_parameters_source": "synthetic (refute.packs.tess.synthetic)",
+      "tic_disposition": null,
+      "tic_duplicate_id": null,
+      "tic_version": "synthetic",
+      "tmag": 10.0
+    },
+    "years": [
+      2018,
+      2020
+    ]
+  },
+  "discovery": {
+    "decisive_tests": [
+      "snr",
+      "odd_even",
+      "secondary_eclipse",
+      "plausibility",
+      "centroid_shift",
+      "aperture_depth",
+      "nearby_contamination",
+      "period_alias",
+      "systematics",
+      "single_event",
+      "event_consistency",
+      "edge_events",
+      "sinusoid",
+      "duty_cycle"
+    ],
+    "deferred_tests": [],
+    "diagnostic_tests": [
+      "holdout_by_year"
+    ],
+    "diagnostics_complete": true,
+    "last_stage": 2,
+    "missing_diagnostics": [],
+    "required_diagnostics": [
+      "holdout_by_year"
+    ],
+    "roles": {
+      "aperture_depth": "decisive",
+      "centroid_shift": "decisive",
+      "duty_cycle": "decisive",
+      "edge_events": "decisive",
+      "event_consistency": "decisive",
+      "holdout_by_year": "diagnostic",
+      "nearby_contamination": "decisive",
+      "odd_even": "decisive",
+      "period_alias": "decisive",
+      "plausibility": "decisive",
+      "secondary_eclipse": "decisive",
+      "single_event": "decisive",
+      "sinusoid": "decisive",
+      "snr": "decisive",
+      "systematics": "decisive"
+    },
+    "stage": 2,
+    "survived_meaning": "the signal survived the declared decisive battery; temporal confirmation was not required; the method is not validated"
+  },
+  "eb_catalog_configured": false,
+  "error": null,
+  "expected_tests": [
+    "snr",
+    "odd_even",
+    "secondary_eclipse",
+    "plausibility",
+    "centroid_shift",
+    "aperture_depth",
+    "nearby_contamination",
+    "period_alias",
+    "systematics",
+    "single_event",
+    "event_consistency",
+    "edge_events",
+    "sinusoid",
+    "duty_cycle"
+  ],
+  "global_ephemeris": {
+    "chi2_reduced": 1.9025614534432753,
+    "n_ref": 216,
+    "n_transits": 28,
+    "period": 1.8000004066005078,
+    "period_err": 8.938858985815618e-07,
+    "t_ref": 1714.4995643829566,
+    "t_ref_bjd": 2458714.499564383,
+    "t_ref_err": 0.00018284389597513702
+  },
+  "holdout_rounds": [
+    {
+      "access_log": [
+        {
+          "kind": "transit-window",
+          "t_hi": 1325.8008470071377,
+          "t_lo": 1325.5565690162853
+        },
+        {
+          "excluded_half_width": 0.13984732875963674,
+          "kind": "transit-baseline",
+          "t_hi": 1325.9070970071377,
+          "t_lo": 1325.4503190162852
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 1327.600690337765,
+          "t_lo": 1327.356829232948
+        },
+        {
+          "excluded_half_width": 0.13963888574187985,
+          "kind": "transit-baseline",
+          "t_hi": 1327.706940337765,
+          "t_lo": 1327.250579232948
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 1329.4005336684506,
+          "t_lo": 1329.1570894495524
+        },
+        {
+          "excluded_half_width": 0.13943044278244401,
+          "kind": "transit-baseline",
+          "t_hi": 1329.5067836684507,
+          "t_lo": 1329.0508394495523
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 1331.2003769991952,
+          "t_lo": 1330.9573496660983
+        },
+        {
+          "excluded_half_width": 0.1392219998817528,
+          "kind": "transit-baseline",
+          "t_hi": 1331.3066269991953,
+          "t_lo": 1330.8510996660982
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 1333.0002203299987,
+          "t_lo": 1332.7576098825848
+        },
+        {
+          "excluded_half_width": 0.13901355704023385,
+          "kind": "transit-baseline",
+          "t_hi": 1333.1064703299987,
+          "t_lo": 1332.6513598825848
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 1334.800063660862,
+          "t_lo": 1334.557870099012
+        },
+        {
+          "excluded_half_width": 0.1388051142583191,
+          "kind": "transit-baseline",
+          "t_hi": 1334.906313660862,
+          "t_lo": 1334.451620099012
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 1336.599906991785,
+          "t_lo": 1336.358130315379
+        },
+        {
+          "excluded_half_width": 0.1385966715364446,
+          "kind": "transit-baseline",
+          "t_hi": 1336.706156991785,
+          "t_lo": 1336.251880315379
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 1338.3997503227688,
+          "t_lo": 1338.1583905316852
+        },
+        {
+          "excluded_half_width": 0.13838822887505067,
+          "kind": "transit-baseline",
+          "t_hi": 1338.5060003227686,
+          "t_lo": 1338.0521405316854
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 1340.1995936538133,
+          "t_lo": 1339.9586507479307
+        },
+        {
+          "excluded_half_width": 0.138179786274582,
+          "kind": "transit-baseline",
+          "t_hi": 1340.3058436538133,
+          "t_lo": 1339.8524007479307
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 1341.9994369849192,
+          "t_lo": 1341.7589109641149
+        },
+        {
+          "excluded_half_width": 0.1379713437354876,
+          "kind": "transit-baseline",
+          "t_hi": 1342.1056869849192,
+          "t_lo": 1341.6526609641148
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 1343.7992803160869,
+          "t_lo": 1343.5591711802372
+        },
+        {
+          "excluded_half_width": 0.13776290125822094,
+          "kind": "transit-baseline",
+          "t_hi": 1343.905530316087,
+          "t_lo": 1343.4529211802371
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 1345.599123647317,
+          "t_lo": 1345.3594313962972
+        },
+        {
+          "excluded_half_width": 0.1375544588432399,
+          "kind": "transit-baseline",
+          "t_hi": 1345.705373647317,
+          "t_lo": 1345.2531813962971
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 1347.39896697861,
+          "t_lo": 1347.1596916122946
+        },
+        {
+          "excluded_half_width": 0.137346016491007,
+          "kind": "transit-baseline",
+          "t_hi": 1347.50521697861,
+          "t_lo": 1347.0534416122946
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 1349.198810309966,
+          "t_lo": 1348.9599518282287
+        },
+        {
+          "excluded_half_width": 0.13713757420198924,
+          "kind": "transit-baseline",
+          "t_hi": 1349.305060309966,
+          "t_lo": 1348.8537018282286
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 1350.9986536413855,
+          "t_lo": 1350.760212044099
+        },
+        {
+          "excluded_half_width": 0.13692913197665832,
+          "kind": "transit-baseline",
+          "t_hi": 1351.1049036413856,
+          "t_lo": 1350.653962044099
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 1326.7008728939602,
+          "t_lo": 1326.4565949031078
+        },
+        {
+          "excluded_half_width": 0.13984732875963674,
+          "kind": "control-baseline",
+          "t_hi": 1326.8071228939602,
+          "t_lo": 1326.3503449031077
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 1328.5007162245874,
+          "t_lo": 1328.2568551197705
+        },
+        {
+          "excluded_half_width": 0.13963888574187985,
+          "kind": "control-baseline",
+          "t_hi": 1328.6069662245875,
+          "t_lo": 1328.1506051197705
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 1330.3005595552731,
+          "t_lo": 1330.0571153363749
+        },
+        {
+          "excluded_half_width": 0.13943044278244401,
+          "kind": "control-baseline",
+          "t_hi": 1330.4068095552732,
+          "t_lo": 1329.9508653363748
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 1332.1004028860177,
+          "t_lo": 1331.8573755529208
+        },
+        {
+          "excluded_half_width": 0.1392219998817528,
+          "kind": "control-baseline",
+          "t_hi": 1332.2066528860178,
+          "t_lo": 1331.7511255529207
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 1333.9002462168212,
+          "t_lo": 1333.6576357694073
+        },
+        {
+          "excluded_half_width": 0.13901355704023385,
+          "kind": "control-baseline",
+          "t_hi": 1334.0064962168212,
+          "t_lo": 1333.5513857694073
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 1335.7000895476845,
+          "t_lo": 1335.4578959858345
+        },
+        {
+          "excluded_half_width": 0.1388051142583191,
+          "kind": "control-baseline",
+          "t_hi": 1335.8063395476845,
+          "t_lo": 1335.3516459858345
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 1337.4999328786075,
+          "t_lo": 1337.2581562022015
+        },
+        {
+          "excluded_half_width": 0.1385966715364446,
+          "kind": "control-baseline",
+          "t_hi": 1337.6061828786076,
+          "t_lo": 1337.1519062022014
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 1339.2997762095913,
+          "t_lo": 1339.0584164185077
+        },
+        {
+          "excluded_half_width": 0.13838822887505067,
+          "kind": "control-baseline",
+          "t_hi": 1339.4060262095911,
+          "t_lo": 1338.9521664185079
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 1341.0996195406358,
+          "t_lo": 1340.8586766347532
+        },
+        {
+          "excluded_half_width": 0.138179786274582,
+          "kind": "control-baseline",
+          "t_hi": 1341.2058695406358,
+          "t_lo": 1340.7524266347532
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 1342.8994628717417,
+          "t_lo": 1342.6589368509374
+        },
+        {
+          "excluded_half_width": 0.1379713437354876,
+          "kind": "control-baseline",
+          "t_hi": 1343.0057128717417,
+          "t_lo": 1342.5526868509373
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 1344.6993062029094,
+          "t_lo": 1344.4591970670597
+        },
+        {
+          "excluded_half_width": 0.13776290125822094,
+          "kind": "control-baseline",
+          "t_hi": 1344.8055562029094,
+          "t_lo": 1344.3529470670596
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 1346.4991495341394,
+          "t_lo": 1346.2594572831197
+        },
+        {
+          "excluded_half_width": 0.1375544588432399,
+          "kind": "control-baseline",
+          "t_hi": 1346.6053995341395,
+          "t_lo": 1346.1532072831196
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 1348.2989928654324,
+          "t_lo": 1348.0597174991171
+        },
+        {
+          "excluded_half_width": 0.137346016491007,
+          "kind": "control-baseline",
+          "t_hi": 1348.4052428654325,
+          "t_lo": 1347.953467499117
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 1350.0988361967884,
+          "t_lo": 1349.8599777150512
+        },
+        {
+          "excluded_half_width": 0.13713757420198924,
+          "kind": "control-baseline",
+          "t_hi": 1350.2050861967884,
+          "t_lo": 1349.7537277150511
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 1351.898679528208,
+          "t_lo": 1351.6602379309215
+        },
+        {
+          "excluded_half_width": 0.13692913197665832,
+          "kind": "control-baseline",
+          "t_hi": 1352.004929528208,
+          "t_lo": 1351.5539879309215
+        }
+      ],
+      "hidden_year": 2018,
+      "message": "transits found at 14 predicted windows, SNR 27.8",
+      "metrics": {
+        "best_period_correction_days": 4.16910182522657e-05,
+        "control_phase05_depth_ppm": 29.394502247506672,
+        "control_phase05_snr": 1.2296627027816815,
+        "depth_consistency_sigma": 40.53445201918413,
+        "hidden_depth_err_ppm": 68.97352873523907,
+        "hidden_depth_ppm": 1917.968714488488,
+        "hidden_detrend_window_days": 1.0,
+        "hidden_scatter_err_ppm": 68.97352873523907,
+        "hidden_snr": 27.80731607702397,
+        "hidden_white_err_ppm": 29.33238764278803,
+        "max_timing_sigma_days": 0.02890744291987891,
+        "n_predicted_transits": 15,
+        "n_scan_steps": 21,
+        "n_transit_times": 14,
+        "n_windows_unmeasurable": 0,
+        "n_windows_with_data": 14,
+        "period_correction_scan_days": 0.00020845509126132827,
+        "train_candidate": {
+          "depth": 0.004878703895364507,
+          "depth_err": 2.4038511171992138e-05,
+          "depth_ppm": 4878.703895364507,
+          "duration": 0.07083333333333333,
+          "duration_hours": 1.7,
+          "log_likelihood": 21411.761194822564,
+          "n_transits": 14,
+          "period": 1.7999996903117232,
+          "sde": 16.279628611635875,
+          "snr": 202.95366299759885,
+          "t0": 2061.9,
+          "t0_bjd": 2459061.9
+        },
+        "train_depth_ppm": 4878.703895364507,
+        "train_validity": {
+          "applied": true,
+          "duration_period_ratio": 0.03935185862230145,
+          "hidden_window_fraction": 0.13409567138247144,
+          "max_duration_period_ratio": 0.2,
+          "max_hidden_window_fraction": 0.5,
+          "min_train_snr": 7.1,
+          "reasons": [],
+          "train_snr": 202.95366299759885
+        }
+      },
+      "status": "PASS",
+      "train_ephemeris": {
+        "chi2_reduced": 2.8032738094944545,
+        "n_ref": 7,
+        "n_transits": 14,
+        "period": 1.800051773645056,
+        "period_err": 6.948503042044275e-05,
+        "t_ref": 2074.500245848055,
+        "t_ref_err": 0.00031074650287750156
+      },
+      "windows": [
+        {
+          "epoch": -409,
+          "half_width": 0.1221389954263034,
+          "kind": "transit",
+          "t_pred": 1325.6787080117115
+        },
+        {
+          "epoch": -408,
+          "half_width": 0.12193055240854653,
+          "kind": "transit",
+          "t_pred": 1327.4787597853565
+        },
+        {
+          "epoch": -407,
+          "half_width": 0.12172210944911069,
+          "kind": "transit",
+          "t_pred": 1329.2788115590015
+        },
+        {
+          "epoch": -406,
+          "half_width": 0.12151366654841946,
+          "kind": "transit",
+          "t_pred": 1331.0788633326467
+        },
+        {
+          "epoch": -405,
+          "half_width": 0.12130522370690051,
+          "kind": "transit",
+          "t_pred": 1332.8789151062917
+        },
+        {
+          "epoch": -404,
+          "half_width": 0.12109678092498577,
+          "kind": "transit",
+          "t_pred": 1334.678966879937
+        },
+        {
+          "epoch": -403,
+          "half_width": 0.12088833820311126,
+          "kind": "transit",
+          "t_pred": 1336.479018653582
+        },
+        {
+          "epoch": -402,
+          "half_width": 0.12067989554171735,
+          "kind": "transit",
+          "t_pred": 1338.279070427227
+        },
+        {
+          "epoch": -401,
+          "half_width": 0.12047145294124867,
+          "kind": "transit",
+          "t_pred": 1340.079122200872
+        },
+        {
+          "epoch": -400,
+          "half_width": 0.12026301040215427,
+          "kind": "transit",
+          "t_pred": 1341.879173974517
+        },
+        {
+          "epoch": -399,
+          "half_width": 0.1200545679248876,
+          "kind": "transit",
+          "t_pred": 1343.679225748162
+        },
+        {
+          "epoch": -398,
+          "half_width": 0.11984612550990657,
+          "kind": "transit",
+          "t_pred": 1345.479277521807
+        },
+        {
+          "epoch": -397,
+          "half_width": 0.11963768315767366,
+          "kind": "transit",
+          "t_pred": 1347.2793292954523
+        },
+        {
+          "epoch": -396,
+          "half_width": 0.1194292408686559,
+          "kind": "transit",
+          "t_pred": 1349.0793810690973
+        },
+        {
+          "epoch": -395,
+          "half_width": 0.119220798643325,
+          "kind": "transit",
+          "t_pred": 1350.8794328427423
+        }
+      ]
+    },
+    {
+      "access_log": [
+        {
+          "kind": "transit-window",
+          "t_hi": 2061.965581706751,
+          "t_lo": 2061.783618506613
+        },
+        {
+          "excluded_half_width": 0.10868993340251573,
+          "kind": "transit-baseline",
+          "t_hi": 2062.0718317067513,
+          "t_lo": 2061.6773685066128
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 2063.7656568449015,
+          "t_lo": 2063.58341729439
+        },
+        {
+          "excluded_half_width": 0.1088281085889263,
+          "kind": "transit-baseline",
+          "t_hi": 2063.8719068449013,
+          "t_lo": 2063.4771672943903
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 2065.5657319830952,
+          "t_lo": 2065.383216082124
+        },
+        {
+          "excluded_half_width": 0.10896628381890877,
+          "kind": "transit-baseline",
+          "t_hi": 2065.671981983095,
+          "t_lo": 2065.276966082124
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 2067.365807121332,
+          "t_lo": 2067.1830148698145
+        },
+        {
+          "excluded_half_width": 0.10910445909214045,
+          "kind": "transit-baseline",
+          "t_hi": 2067.472057121332,
+          "t_lo": 2067.0767648698147
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 2069.1658822596123,
+          "t_lo": 2068.982813657462
+        },
+        {
+          "excluded_half_width": 0.10924263440830193,
+          "kind": "transit-baseline",
+          "t_hi": 2069.272132259612,
+          "t_lo": 2068.876563657462
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 2070.965957397935,
+          "t_lo": 2070.7826124450676
+        },
+        {
+          "excluded_half_width": 0.10938080976707681,
+          "kind": "transit-baseline",
+          "t_hi": 2071.072207397935,
+          "t_lo": 2070.6763624450678
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 2072.7660325363,
+          "t_lo": 2072.5824112326304
+        },
+        {
+          "excluded_half_width": 0.10951898516815192,
+          "kind": "transit-baseline",
+          "t_hi": 2072.8722825363,
+          "t_lo": 2072.47616123263
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 2074.566107674707,
+          "t_lo": 2074.382210020151
+        },
+        {
+          "excluded_half_width": 0.10965716061121705,
+          "kind": "transit-baseline",
+          "t_hi": 2074.6723576747067,
+          "t_lo": 2074.275960020151
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 2076.3661828131553,
+          "t_lo": 2076.18200880763
+        },
+        {
+          "excluded_half_width": 0.10979533609596509,
+          "kind": "transit-baseline",
+          "t_hi": 2076.4724328131556,
+          "t_lo": 2076.07575880763
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 2078.166257951645,
+          "t_lo": 2077.981807595068
+        },
+        {
+          "excluded_half_width": 0.10993351162209183,
+          "kind": "transit-baseline",
+          "t_hi": 2078.2725079516454,
+          "t_lo": 2077.8755575950677
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 2079.9663330901767,
+          "t_lo": 2079.781606382465
+        },
+        {
+          "excluded_half_width": 0.11007168718929611,
+          "kind": "transit-baseline",
+          "t_hi": 2080.0725830901765,
+          "t_lo": 2079.675356382465
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 2081.7664082287483,
+          "t_lo": 2081.5814051698208
+        },
+        {
+          "excluded_half_width": 0.11020986279727962,
+          "kind": "transit-baseline",
+          "t_hi": 2081.8726582287486,
+          "t_lo": 2081.4751551698205
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 2083.566483367361,
+          "t_lo": 2083.3812039571358
+        },
+        {
+          "excluded_half_width": 0.11034803844574698,
+          "kind": "transit-baseline",
+          "t_hi": 2083.6727333673607,
+          "t_lo": 2083.274953957136
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 2085.366558506013,
+          "t_lo": 2085.181002744411
+        },
+        {
+          "excluded_half_width": 0.11048621413440562,
+          "kind": "transit-baseline",
+          "t_hi": 2085.4728085060133,
+          "t_lo": 2085.074752744411
+        },
+        {
+          "kind": "transit-window",
+          "t_hi": 2087.1666336447056,
+          "t_lo": 2086.980801531646
+        },
+        {
+          "excluded_half_width": 0.11062438986296577,
+          "kind": "transit-baseline",
+          "t_hi": 2087.2728836447054,
+          "t_lo": 2086.8745515316464
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 2062.865550188233,
+          "t_lo": 2062.683586988095
+        },
+        {
+          "excluded_half_width": 0.10868993340251573,
+          "kind": "control-baseline",
+          "t_hi": 2062.9718001882334,
+          "t_lo": 2062.577336988095
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 2064.6656253263836,
+          "t_lo": 2064.483385775872
+        },
+        {
+          "excluded_half_width": 0.1088281085889263,
+          "kind": "control-baseline",
+          "t_hi": 2064.7718753263835,
+          "t_lo": 2064.3771357758724
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 2066.4657004645774,
+          "t_lo": 2066.283184563606
+        },
+        {
+          "excluded_half_width": 0.10896628381890877,
+          "kind": "control-baseline",
+          "t_hi": 2066.571950464577,
+          "t_lo": 2066.176934563606
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 2068.2657756028143,
+          "t_lo": 2068.0829833512967
+        },
+        {
+          "excluded_half_width": 0.10910445909214045,
+          "kind": "control-baseline",
+          "t_hi": 2068.372025602814,
+          "t_lo": 2067.976733351297
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 2070.0658507410944,
+          "t_lo": 2069.882782138944
+        },
+        {
+          "excluded_half_width": 0.10924263440830193,
+          "kind": "control-baseline",
+          "t_hi": 2070.1721007410943,
+          "t_lo": 2069.7765321389443
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 2071.8659258794173,
+          "t_lo": 2071.6825809265497
+        },
+        {
+          "excluded_half_width": 0.10938080976707681,
+          "kind": "control-baseline",
+          "t_hi": 2071.972175879417,
+          "t_lo": 2071.57633092655
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 2073.666001017782,
+          "t_lo": 2073.4823797141125
+        },
+        {
+          "excluded_half_width": 0.10951898516815192,
+          "kind": "control-baseline",
+          "t_hi": 2073.7722510177823,
+          "t_lo": 2073.3761297141123
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 2075.466076156189,
+          "t_lo": 2075.282178501633
+        },
+        {
+          "excluded_half_width": 0.10965716061121705,
+          "kind": "control-baseline",
+          "t_hi": 2075.572326156189,
+          "t_lo": 2075.1759285016333
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 2077.2661512946374,
+          "t_lo": 2077.0819772891123
+        },
+        {
+          "excluded_half_width": 0.10979533609596509,
+          "kind": "control-baseline",
+          "t_hi": 2077.3724012946377,
+          "t_lo": 2076.975727289112
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 2079.066226433127,
+          "t_lo": 2078.88177607655
+        },
+        {
+          "excluded_half_width": 0.10993351162209183,
+          "kind": "control-baseline",
+          "t_hi": 2079.1724764331275,
+          "t_lo": 2078.77552607655
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 2080.866301571659,
+          "t_lo": 2080.681574863947
+        },
+        {
+          "excluded_half_width": 0.11007168718929611,
+          "kind": "control-baseline",
+          "t_hi": 2080.9725515716586,
+          "t_lo": 2080.575324863947
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 2082.6663767102305,
+          "t_lo": 2082.481373651303
+        },
+        {
+          "excluded_half_width": 0.11020986279727962,
+          "kind": "control-baseline",
+          "t_hi": 2082.7726267102307,
+          "t_lo": 2082.3751236513026
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 2084.466451848843,
+          "t_lo": 2084.281172438618
+        },
+        {
+          "excluded_half_width": 0.11034803844574698,
+          "kind": "control-baseline",
+          "t_hi": 2084.572701848843,
+          "t_lo": 2084.174922438618
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 2086.266526987495,
+          "t_lo": 2086.0809712258933
+        },
+        {
+          "excluded_half_width": 0.11048621413440562,
+          "kind": "control-baseline",
+          "t_hi": 2086.3727769874954,
+          "t_lo": 2085.974721225893
+        },
+        {
+          "kind": "control-window",
+          "t_hi": 2088.0666021261877,
+          "t_lo": 2087.8807700131283
+        },
+        {
+          "excluded_half_width": 0.11062438986296577,
+          "kind": "control-baseline",
+          "t_hi": 2088.1728521261875,
+          "t_lo": 2087.7745200131285
+        }
+      ],
+      "hidden_year": 2020,
+      "message": "transits found at 14 predicted windows, SNR 25.8",
+      "metrics": {
+        "best_period_correction_days": 7.440676415251612e-05,
+        "control_phase05_depth_ppm": 0.9609546660447308,
+        "control_phase05_snr": 0.03034561166650395,
+        "depth_consistency_sigma": 1.7712949091765928,
+        "hidden_depth_err_ppm": 184.29903853235922,
+        "hidden_depth_ppm": 4748.178566224419,
+        "hidden_detrend_window_days": 1.0,
+        "hidden_scatter_err_ppm": 184.29903853235922,
+        "hidden_snr": 25.76344729758715,
+        "hidden_white_err_ppm": 25.505312271021438,
+        "max_timing_sigma_days": 0.019166463287655255,
+        "n_predicted_transits": 15,
+        "n_scan_steps": 14,
+        "n_transit_times": 14,
+        "n_windows_unmeasurable": 0,
+        "n_windows_with_data": 14,
+        "period_correction_scan_days": 0.0001381839905689585,
+        "train_candidate": {
+          "depth": 0.005077417192651932,
+          "depth_err": 2.4149720744890194e-05,
+          "depth_ppm": 5077.417192651932,
+          "duration": 0.07083333333333333,
+          "duration_hours": 1.7,
+          "log_likelihood": 22978.415338381434,
+          "n_transits": 14,
+          "period": 1.7999996903117232,
+          "sde": 15.525542938912393,
+          "snr": 210.24744949592244,
+          "t0": 1325.7,
+          "t0_bjd": 2458325.7
+        },
+        "train_depth_ppm": 5077.417192651932,
+        "train_validity": {
+          "applied": true,
+          "duration_period_ratio": 0.03935185862230145,
+          "hidden_window_fraction": 0.10217061976547259,
+          "max_duration_period_ratio": 0.2,
+          "max_hidden_window_fraction": 0.5,
+          "min_train_snr": 7.1,
+          "reasons": [],
+          "train_snr": 210.24744949592244
+        }
+      },
+      "status": "PASS",
+      "train_ephemeris": {
+        "chi2_reduced": 1.221664186492309,
+        "n_ref": 7,
+        "n_transits": 14,
+        "period": 1.7999369629638569,
+        "period_err": 4.606133018965284e-05,
+        "t_ref": 1338.2999409952115,
+        "t_ref_err": 0.00020936968268024019
+      },
+      "windows": [
+        {
+          "epoch": 409,
+          "half_width": 0.0909816000691824,
+          "kind": "transit",
+          "t_pred": 2061.874600106682
+        },
+        {
+          "epoch": 410,
+          "half_width": 0.09111977525559298,
+          "kind": "transit",
+          "t_pred": 2063.674537069646
+        },
+        {
+          "epoch": 411,
+          "half_width": 0.09125795048557545,
+          "kind": "transit",
+          "t_pred": 2065.4744740326096
+        },
+        {
+          "epoch": 412,
+          "half_width": 0.09139612575880712,
+          "kind": "transit",
+          "t_pred": 2067.2744109955734
+        },
+        {
+          "epoch": 413,
+          "half_width": 0.0915343010749686,
+          "kind": "transit",
+          "t_pred": 2069.074347958537
+        },
+        {
+          "epoch": 414,
+          "half_width": 0.09167247643374349,
+          "kind": "transit",
+          "t_pred": 2070.8742849215014
+        },
+        {
+          "epoch": 415,
+          "half_width": 0.0918106518348186,
+          "kind": "transit",
+          "t_pred": 2072.674221884465
+        },
+        {
+          "epoch": 416,
+          "half_width": 0.09194882727788373,
+          "kind": "transit",
+          "t_pred": 2074.474158847429
+        },
+        {
+          "epoch": 417,
+          "half_width": 0.09208700276263175,
+          "kind": "transit",
+          "t_pred": 2076.2740958103927
+        },
+        {
+          "epoch": 418,
+          "half_width": 0.0922251782887585,
+          "kind": "transit",
+          "t_pred": 2078.0740327733565
+        },
+        {
+          "epoch": 419,
+          "half_width": 0.09236335385596278,
+          "kind": "transit",
+          "t_pred": 2079.8739697363208
+        },
+        {
+          "epoch": 420,
+          "half_width": 0.0925015294639463,
+          "kind": "transit",
+          "t_pred": 2081.6739066992845
+        },
+        {
+          "epoch": 421,
+          "half_width": 0.09263970511241365,
+          "kind": "transit",
+          "t_pred": 2083.4738436622483
+        },
+        {
+          "epoch": 422,
+          "half_width": 0.09277788080107228,
+          "kind": "transit",
+          "t_pred": 2085.273780625212
+        },
+        {
+          "epoch": 423,
+          "half_width": 0.09291605652963243,
+          "kind": "transit",
+          "t_pred": 2087.073717588176
+        }
+      ]
+    }
+  ],
+  "key_values": {
+    "depth": 0.004994933830645879,
+    "duration_days": 0.07083333333333333,
+    "holdout_2018_snr": 27.80731607702397,
+    "holdout_2020_snr": 25.76344729758715,
+    "period_days": 1.7999996903117232,
+    "snr": 307.3926240315272,
+    "t0_btjd": 1325.6994791666666
+  },
+  "method_status": "not_validated",
+  "method_status_reference": "docs/validation/v0.2.1/closing-2026-10-27.md",
+  "period_comparison": {
+    "alias": null,
+    "found_period_days": 1.7999996903117232,
+    "published_period_days": null,
+    "relative_error": null,
+    "tolerance": null,
+    "within_tolerance": null
+  },
+  "provenance": {
+    "claim_id": "synthetic-v2-eb",
+    "claim_sha256": null,
+    "code_sha256": null,
+    "lock_git_commit": null,
+    "pack": null,
+    "refute_version": null,
+    "run_git_commit": null,
+    "run_id": null
+  },
+  "published": {},
+  "required_diagnostics": [
+    "holdout_by_year"
+  ],
+  "schema": "refute-tess-verdict-1",
+  "search_diagnostics": {
+    "clusters": [
+      {
+        "n_members": 2,
+        "period": 1.7999996903117232,
+        "score": 31.805171550548266
+      },
+      {
+        "n_members": 2,
+        "period": 3.6011105483984256,
+        "score": 19.7041962313398
+      },
+      {
+        "n_members": 2,
+        "period": 0.9001852709688706,
+        "score": 15.066335382429301
+      },
+      {
+        "n_members": 2,
+        "period": 5.3988850455043345,
+        "score": 10.293792927004919
+      },
+      {
+        "n_members": 2,
+        "period": 0.5998353434963325,
+        "score": 9.926772880297559
+      }
+    ],
+    "refined": [
+      {
+        "duration": 0.08333333333333333,
+        "factor": 1.0,
+        "log_likelihood": 41164.90326374387,
+        "period": 1.7999996903117232,
+        "seed_period": 1.7999996903117232
+      },
+      {
+        "duration": 0.08333333333333333,
+        "factor": 2.0,
+        "log_likelihood": 25947.835108819534,
+        "period": 3.5999993806234465,
+        "seed_period": 1.7999996903117232
+      },
+      {
+        "duration": 0.08333333333333333,
+        "factor": 0.5,
+        "log_likelihood": 19798.092203318916,
+        "period": 0.9000039714245526,
+        "seed_period": 1.7999996903117232
+      },
+      {
+        "duration": 0.08333333333333333,
+        "factor": 1.0,
+        "log_likelihood": 25925.84785503825,
+        "period": 3.599996171004522,
+        "seed_period": 3.6011105483984256
+      },
+      {
+        "duration": 0.08333333333333333,
+        "factor": 0.5,
+        "log_likelihood": 40931.06195634363,
+        "period": 1.799989172709194,
+        "seed_period": 3.6011105483984256
+      },
+      {
+        "duration": 0.08333333333333333,
+        "factor": 1.0,
+        "log_likelihood": 19709.16295977479,
+        "period": 0.9000050225324194,
+        "seed_period": 0.9001852709688706
+      },
+      {
+        "duration": 0.08333333333333333,
+        "factor": 2.0,
+        "log_likelihood": 41164.90326374387,
+        "period": 1.800001032010663,
+        "seed_period": 0.9001852709688706
+      },
+      {
+        "duration": 0.08333333333333333,
+        "factor": 1.0,
+        "log_likelihood": 13769.459522703235,
+        "period": 5.399966090284132,
+        "seed_period": 5.3988850455043345
+      },
+      {
+        "duration": 0.08333333333333333,
+        "factor": 0.5,
+        "log_likelihood": 6540.658848472046,
+        "period": 2.6999956995124075,
+        "seed_period": 5.3988850455043345
+      },
+      {
+        "duration": 0.08333333333333333,
+        "factor": 1.0,
+        "log_likelihood": 13363.090003198558,
+        "period": 0.599999127027063,
+        "seed_period": 0.5998353434963325
+      },
+      {
+        "duration": 0.08333333333333333,
+        "factor": 2.0,
+        "log_likelihood": 7751.975850305187,
+        "period": 1.199998254054126,
+        "seed_period": 0.5998353434963325
+      }
+    ],
+    "stage1": [
+      {
+        "duration": 0.08333333333333333,
+        "period": 1.7999996903117232,
+        "sde": 15.525542938912393,
+        "sector": 1
+      },
+      {
+        "duration": 0.08333333333333333,
+        "period": 3.6011105483984256,
+        "sde": 10.769296517621411,
+        "sector": 1
+      },
+      {
+        "duration": 0.08333333333333333,
+        "period": 0.8999999523556442,
+        "sde": 7.379940966561279,
+        "sector": 1
+      },
+      {
+        "duration": 0.08333333333333333,
+        "period": 5.400552396087013,
+        "sde": 5.0777905270363055,
+        "sector": 1
+      },
+      {
+        "duration": 0.08333333333333333,
+        "period": 0.5999999920592737,
+        "sde": 4.7722450845771025,
+        "sector": 1
+      },
+      {
+        "duration": 0.08333333333333333,
+        "period": 1.7999996903117232,
+        "sde": 16.279628611635875,
+        "sector": 2
+      },
+      {
+        "duration": 0.08333333333333333,
+        "period": 3.5996280005051156,
+        "sde": 8.93489971371839,
+        "sector": 2
+      },
+      {
+        "duration": 0.08333333333333333,
+        "period": 0.9001852709688706,
+        "sde": 7.686394415868022,
+        "sector": 2
+      },
+      {
+        "duration": 0.08333333333333333,
+        "period": 5.3988850455043345,
+        "sde": 5.216002399968613,
+        "sector": 2
+      },
+      {
+        "duration": 0.08333333333333333,
+        "period": 0.5998353434963325,
+        "sde": 5.1545277957204565,
+        "sector": 2
+      }
+    ]
+  },
+  "status": "OK",
+  "target_key": "TIC-1",
+  "target_kind": "exploration",
+  "target_name": "synthetic",
+  "temporal_diagnostic": {
+    "aggregation_rule": "legacy rule of holdout_by_year: any hidden year FAIL gives FAIL; otherwise any PASS gives PASS, even with inconclusive years; otherwise INCONCLUSIVE (refute.packs.tess.holdout)",
+    "inability_reasons": [],
+    "message": "PASS refused: no sensitivity rule or category registered (predictions confirmed in 2 of 2 hidden years)",
+    "per_year": [
+      {
+        "hidden_year": 2018,
+        "reason": null,
+        "status": "PASS"
+      },
+      {
+        "hidden_year": 2020,
+        "reason": null,
+        "status": "PASS"
+      }
+    ],
+    "role": "diagnostic",
+    "state": "inconclusive",
+    "test": "holdout_by_year"
+  },
+  "test_plan": {
+    "data": {
+      "author": "SPOC",
+      "exptime_seconds": 120,
+      "flux_column": "pdcsap_flux",
+      "mission": "TESS",
+      "neighbor_radius_arcsec": 120.0,
+      "quality_bitmask": "default",
+      "target_pixel_files": true
+    },
+    "detrend": {
+      "clip_iterations": 2,
+      "clip_sigma": 3.0,
+      "knot_spacing_days": 0.1,
+      "method": "robust-local-quadratic",
+      "min_points_per_knot": 30,
+      "segment_gap_days": 0.5,
+      "transit_mask_half_width_durations": 1.0,
+      "upper_clip_sigma": 5.0,
+      "window_days": 1.0
+    },
+    "discovery": {
+      "decisive": [
+        "snr",
+        "odd_even",
+        "secondary_eclipse",
+        "plausibility",
+        "centroid_shift",
+        "aperture_depth",
+        "nearby_contamination",
+        "period_alias",
+        "systematics",
+        "single_event",
+        "event_consistency",
+        "edge_events",
+        "sinusoid",
+        "duty_cycle"
+      ],
+      "diagnostic": [
+        "holdout_by_year"
+      ],
+      "inputs": {},
+      "max_sector": null,
+      "method_status": "not_validated",
+      "method_status_reference": "docs/validation/v0.2.1/closing-2026-10-27.md",
+      "required_diagnostics": [
+        "holdout_by_year"
+      ],
+      "stages": {
+        "aperture_depth": 2,
+        "centroid_shift": 2
+      },
+      "survived_meaning": "the signal survived the declared decisive battery; temporal confirmation was not required; the method is not validated",
+      "version": 2
+    },
+    "gauntlet": {
+      "aperture_depth": {
+        "core_radius_pixels": 1.5,
+        "dilation_pixels": 1,
+        "max_sigma": 3.0,
+        "min_depth_ratio": 1.2
+      },
+      "centroid_shift": {
+        "max_sigma": 3.0,
+        "min_offset_pixels": 0.5,
+        "min_sectors": 1
+      },
+      "corrections": {
+        "alias_f": 0.5,
+        "alias_z_f": 18.47,
+        "b_min": 20,
+        "capacity_b": 0.0,
+        "capacity_s": 0.0,
+        "enabled": false,
+        "fap_max": 0.0001,
+        "gap_split": 5.0,
+        "h_min": 0.9,
+        "k_clip": 2.5,
+        "m_beta": 1.2,
+        "max_components": 3,
+        "r_min": 20,
+        "version": 1
+      },
+      "eb_catalog": {
+        "match_radius_arcsec": 21.0,
+        "period_factors": [
+          1.0,
+          2.0,
+          0.5
+        ],
+        "period_tolerance": 0.01,
+        "same_photometry_catalogs": [
+          "TESS-EB"
+        ]
+      },
+      "events": {
+        "baseline_gap_durations": 0.25,
+        "baseline_outer_durations": 1.5,
+        "min_coverage": 0.5
+      },
+      "holdout_by_year": {
+        "baseline_gap_durations": 0.25,
+        "baseline_outer_durations": 1.5,
+        "hidden_detrend_window_factor": 3.0,
+        "max_hidden_window_fraction": 0.5,
+        "max_timing_sigma_durations": 1.0,
+        "max_train_duration_period_ratio": 0.2,
+        "min_predicted_transits": 2,
+        "min_snr": 5.0,
+        "min_train_transits": 3,
+        "min_window_coverage": 0.5,
+        "require_valid_train": true,
+        "timing_scan_half_width_durations": 0.5,
+        "timing_sigma": 3.0,
+        "timing_step_minutes": 1.0
+      },
+      "nearby_contamination": {
+        "ignored_dispositions": [
+          "SPLIT",
+          "DUPLICATE",
+          "ARTIFACT"
+        ],
+        "max_eclipse_depth": 1.0,
+        "max_separation_arcsec": 21.0,
+        "min_crowdsap": 0.8
+      },
+      "odd_even": {
+        "max_sigma": 3.0,
+        "min_transits_each": 2
+      },
+      "period_alias": {
+        "detrend_window_periods": 3.0,
+        "min_box_delta_bic": 10.0,
+        "sine_harmonics": 2,
+        "systematic_periods_days": [
+          13.7,
+          6.85,
+          4.566666666666666,
+          3.425,
+          1.0
+        ],
+        "systematic_tolerance": 0.01
+      },
+      "plausibility": {
+        "max_companion_radius_rjup": 2.5,
+        "max_duration_ratio": 1.5,
+        "max_stellar_radius_rel_err": 0.3,
+        "max_tmag_mismatch": 1.0,
+        "unreliable_tic_dispositions": [
+          "SPLIT",
+          "DUPLICATE",
+          "ARTIFACT"
+        ]
+      },
+      "secondary_eclipse": {
+        "fatal_depth_ratio": 0.1,
+        "max_sigma": 3.0
+      },
+      "snr": {
+        "min_snr": 7.1
+      },
+      "systematics": {
+        "dump_margin_hours": 1.0,
+        "max_background_fraction": 0.5,
+        "max_background_sigma": 3.0,
+        "max_dump_fraction": 0.5,
+        "max_sap_rel_diff": 0.5,
+        "max_sap_sigma": 3.0,
+        "min_events_for_dumps": 3
+      }
+    },
+    "search": {
+      "bin_minutes": 10.0,
+      "block_gap_days": 10.0,
+      "cluster_tolerance": 0.01,
+      "durations_hours": [
+        1.0,
+        2.0,
+        3.0,
+        4.0
+      ],
+      "final_duration_steps": 21,
+      "final_oversample": 20,
+      "frequency_factor": 1.0,
+      "max_clusters": 5,
+      "method": "bls-two-stage",
+      "objective": "likelihood",
+      "peaks_per_sector": 5,
+      "period_max_days": 6.0,
+      "period_min_days": 0.5,
+      "refine_samples_per_width": 6.0,
+      "refine_width_factor": 1.5
+    },
+    "stronger": {
+      "aperture_alternative_ratio_increment": 0.3,
+      "background_alternative_increment": 0.3,
+      "brightening_min_depth_ratio": 0.1,
+      "centroid_alternative_offset_factor": 2.0,
+      "centroid_control_epochs": 20,
+      "centroid_max_unqualified_fraction": 0.5,
+      "centroid_min_controls": 10,
+      "centroid_min_sectors": 2,
+      "centroid_qualification_sigma": 3.0,
+      "chi2_alpha": 0.00135,
+      "depth_stability_alternative_fraction": 0.5,
+      "edge_alternative_depth_fraction": 0.5,
+      "edge_gap_days": 0.3,
+      "edge_min_fraction": 0.5,
+      "edge_reach_durations": 2.0,
+      "max_duty_cycle": 0.5,
+      "min_measured_events": 3,
+      "odd_even_alternative_depth_fraction": 1.0,
+      "period_alias_realizations": 50,
+      "period_alias_required_failures": 45,
+      "sap_alternative_increment": 0.3,
+      "secondary_alternative_depth_fraction": 1.0,
+      "shape_alternative_ingress_fraction": 0.5,
+      "shape_max_ingress_fraction": 0.45,
+      "single_event_max_ratio": 0.88,
+      "sinusoid_mask_durations": 1.0,
+      "sinusoid_max_period_days": 10.0,
+      "sinusoid_min_amplitude_ratio": 0.5,
+      "sinusoid_min_significance": 15.0
+    }
+  },
+  "tests": [
+    {
+      "coverage": 28,
+      "coverage_unit": "transits with data",
+      "inputs": {},
+      "message": "SNR 307.4 >= 7.1",
+      "metrics": {
+        "depth_err_ppm": 16.24936137092731,
+        "depth_ppm": 4994.933830645879,
+        "n_transits_with_data": 28,
+        "sde_stage1": 16.279628611635875,
+        "snr": 307.3926240315272
+      },
+      "name": "snr",
+      "severity": "gate",
+      "status": "PASS",
+      "thresholds": {
+        "min_snr": 7.1
+      }
+    },
+    {
+      "coverage": 28,
+      "coverage_unit": "transits measured",
+      "inputs": {},
+      "message": "odd/even depth difference 33.39 sigma (> 3.0)",
+      "metrics": {
+        "depth_even_err_ppm": 26.67530814320679,
+        "depth_even_ppm": 5720.940247295916,
+        "depth_odd_err_ppm": 33.11833220170239,
+        "depth_odd_ppm": 4300.878506115702,
+        "difference_sigma": 33.39338610977577,
+        "n_even": 14,
+        "n_odd": 14
+      },
+      "name": "odd_even",
+      "sensitivity": {
+        "main": {
+          "alternative": 4994.933830645879,
+          "detectable": true,
+          "effect": "odd/even depth difference",
+          "probability": 1.0,
+          "required_probability": 0.95,
+          "rule_id": "gaussian-1",
+          "unit": "ppm"
+        }
+      },
+      "severity": "fatal",
+      "status": "FAIL",
+      "thresholds": {
+        "max_sigma": 3.0,
+        "min_transits_each": 2
+      }
+    },
+    {
+      "coverage": 30,
+      "coverage_unit": "phase-0.5 windows measured",
+      "inputs": {},
+      "message": "no significant dip or brightening at phase 0.5 (0.57 sigma)",
+      "metrics": {
+        "depth_ratio": 0.0022292347798096544,
+        "n_secondary_events": 30,
+        "primary_depth_ppm": 5009.616315197757,
+        "secondary_depth_err_ppm": 19.46461004240256,
+        "secondary_depth_ppm": 11.167610923340725,
+        "secondary_sigma": 0.5737392580181525
+      },
+      "name": "secondary_eclipse",
+      "sensitivity": {
+        "brightening": {
+          "alternative": 5009.616315197757,
+          "detectable": true,
+          "effect": "brightening at phase 0.5",
+          "probability": 1.0,
+          "required_probability": 0.95,
+          "rule_id": "compound-sim-1",
+          "unit": "ppm"
+        },
+        "dip": {
+          "alternative": 5009.616315197757,
+          "detectable": true,
+          "effect": "secondary dip",
+          "probability": 1.0,
+          "required_probability": 0.95,
+          "rule_id": "gaussian-1",
+          "unit": "ppm"
+        }
+      },
+      "severity": "warning",
+      "status": "PASS",
+      "thresholds": {
+        "brightening_min_depth_ratio": 0.1,
+        "max_sigma": 3.0
+      }
+    },
+    {
+      "coverage": 1,
+      "coverage_unit": "TIC stellar parameter set",
+      "inputs": {
+        "logg_cgs": 4.44,
+        "mass_msun": 1.0,
+        "radius_err_rsun": 0.05,
+        "radius_rsun": 1.0,
+        "retrieved_utc": null,
+        "stellar_parameters_source": "synthetic (refute.packs.tess.synthetic)",
+        "tic_disposition": null,
+        "tic_duplicate_id": null,
+        "tic_version": "synthetic",
+        "tmag": 10.0
+      },
+      "message": "companion radius 0.69 R_Jup and duration ratio 0.72 are plausible",
+      "metrics": {
+        "companion_radius_rjup": 0.6877481428954348,
+        "duration_hours": 1.7,
+        "duration_ratio": 0.7154515113160071,
+        "max_duration_hours": 2.3761218938136093,
+        "radius_ratio": 0.0706748458126785,
+        "stellar_mass_msun": 1.0,
+        "stellar_mass_source": "TIC mass",
+        "stellar_radius_rel_err": 0.05
+      },
+      "name": "plausibility",
+      "sensitivity": {
+        "duration": {
+          "category": "deterministic-bound",
+          "reason": "duration against the circular-orbit maximum for the TIC star"
+        },
+        "radius": {
+          "category": "deterministic-bound",
+          "reason": "companion radius from the depth and the TIC radius"
+        }
+      },
+      "severity": "fatal",
+      "status": "PASS",
+      "thresholds": {
+        "max_companion_radius_rjup": 2.5,
+        "max_duration_ratio": 1.5,
+        "max_stellar_radius_rel_err": 0.3,
+        "unreliable_tic_dispositions": [
+          "SPLIT",
+          "DUPLICATE",
+          "ARTIFACT"
+        ]
+      }
+    },
+    {
+      "coverage": 0,
+      "coverage_unit": "pixel-file cadences",
+      "inputs": {},
+      "message": "qualification failed: 2 of 2 sector(s) do not qualify",
+      "metrics": {
+        "not_qualified": {
+          "1": "no pixel-to-sky transform (WCS)",
+          "2": "no pixel-to-sky transform (WCS)"
+        },
+        "not_qualified_offsets": {},
+        "qualified_sectors": {}
+      },
+      "name": "centroid_shift",
+      "severity": "fatal",
+      "status": "INCONCLUSIVE",
+      "thresholds": {
+        "control_epochs": 20,
+        "heterogeneity_alpha": 0.00135,
+        "max_sigma": 3.0,
+        "max_unqualified_fraction": 0.5,
+        "min_controls": 10,
+        "min_offset_pixels": 0.5,
+        "min_sectors": 2,
+        "qualification_sigma": 3.0
+      }
+    },
+    {
+      "coverage": 37440,
+      "coverage_unit": "pixel-file cadences",
+      "inputs": {},
+      "message": "depth does not grow with the aperture (ratio 1.00, 0.0 sigma; transit detected at 35.9 sigma)",
+      "metrics": {
+        "depth_core_err_ppm": 139.6000735949073,
+        "depth_core_ppm": 5007.331819324515,
+        "depth_large_err_ppm": 140.14743224317215,
+        "depth_large_ppm": 5010.935721953377,
+        "depth_ratio_large_to_core": 1.0007197251468245,
+        "detection_sigma_core": 35.869120197277496,
+        "detection_sigma_large": 35.7547451405233,
+        "difference_sigma": 0.018218851331730426,
+        "n_sectors": 2
+      },
+      "name": "aperture_depth",
+      "sensitivity": {
+        "main": {
+          "alternative": 1.5,
+          "detectable": true,
+          "effect": "large-to-core depth ratio",
+          "probability": 1.0,
+          "required_probability": 0.95,
+          "rule_id": "compound-sim-1",
+          "unit": "ratio"
+        }
+      },
+      "severity": "fatal",
+      "status": "PASS",
+      "thresholds": {
+        "core_radius_pixels": 1.5,
+        "dilation_pixels": 1,
+        "max_sigma": 3.0,
+        "min_depth_ratio": 1.2
+      }
+    },
+    {
+      "coverage": 1,
+      "coverage_unit": "TIC cone queries examined",
+      "inputs": {},
+      "message": "TIC cone query of 120 arcsec returned 0 source(s): 0 within 21 arcsec, none could produce the signal; median CROWDSAP 1.00",
+      "metrics": {
+        "depth_ppm": 4994.933830645879,
+        "median_crowdsap": 1.0,
+        "n_sources_returned": 0,
+        "neighbors_within_radius": [],
+        "query": "TIC cone query of 120 arcsec returned 0 source(s)",
+        "target_tmag": 10.0,
+        "viable_neighbors": []
+      },
+      "name": "nearby_contamination",
+      "sensitivity": {
+        "main": {
+          "category": "catalog-lookup",
+          "reason": "neighbors within the radius; coverage = 1 TIC cone queries examined"
+        }
+      },
+      "severity": "warning",
+      "status": "PASS",
+      "thresholds": {
+        "ignored_dispositions": [
+          "SPLIT",
+          "DUPLICATE",
+          "ARTIFACT"
+        ],
+        "max_eclipse_depth": 1.0,
+        "max_separation_arcsec": 21.0,
+        "min_crowdsap": 0.8
+      }
+    },
+    {
+      "coverage": 1428,
+      "coverage_unit": "in-transit cadences",
+      "inputs": {},
+      "message": "the dip needs a transit on top of a sinusoid (BIC gain 36364, 1428 in-transit cadences); not near a known systematic period",
+      "metrics": {
+        "bic_box": -546398.7981221796,
+        "bic_sine": -510039.5999299564,
+        "bic_sine_plus_box": -546403.1633050205,
+        "box_delta_bic": 36363.563375064114,
+        "detrend_window_days": 5.39999907093517,
+        "n_in_transit_cadences": 1428,
+        "near_systematic_periods_days": [],
+        "period_days": 1.7999996903117232
+      },
+      "name": "period_alias",
+      "sensitivity": {
+        "main": {
+          "alternative": 4994.933830645879,
+          "detectable": true,
+          "effect": "sinusoid at the candidate's period, peak to trough = depth",
+          "failures": 50,
+          "probability": 1.0,
+          "realizations": 50,
+          "required_probability": 0.9,
+          "rule_id": "alias-sim-1",
+          "unit": "ppm"
+        }
+      },
+      "severity": "fatal",
+      "status": "PASS",
+      "thresholds": {
+        "detrend_window_periods": 3.0,
+        "min_box_delta_bic": 10.0,
+        "sine_harmonics": 2,
+        "systematic_periods_days": [
+          13.7,
+          6.85,
+          4.566666666666666,
+          3.425,
+          1.0
+        ],
+        "systematic_tolerance": 0.01
+      }
+    },
+    {
+      "coverage": 3,
+      "coverage_unit": "sub-checks run",
+      "inputs": {},
+      "message": "no problem in 3 sub-checks: momentum dumps (16 in the quality column), SAP versus PDCSAP, background",
+      "metrics": {
+        "background_rise_fraction_of_depth": 2.2978573523254593e-05,
+        "background_rise_in_transit": 1.1511500109256173e-07,
+        "background_rise_sigma": 0.18394577277624888,
+        "depth_pdcsap_ppm": 5009.6669828553095,
+        "depth_sap_ppm": 5009.6669828553095,
+        "expected_sap_depth_ppm": 5009.6669828553095,
+        "fraction_near_dumps": 0.0,
+        "median_crowdsap": 1.0,
+        "n_momentum_dumps": 16,
+        "n_transits_near_dumps": 0,
+        "n_transits_with_data": 28,
+        "sap_difference_sigma": 0.0,
+        "sap_relative_difference": 0.0,
+        "sub_checks_not_run": {},
+        "sub_checks_run": [
+          "momentum dumps (16 in the quality column)",
+          "SAP versus PDCSAP",
+          "background"
+        ]
+      },
+      "name": "systematics",
+      "sensitivity": {
+        "background": {
+          "alternative": 0.8,
+          "detectable": true,
+          "effect": "background rise in transit",
+          "probability": 1.0,
+          "required_probability": 0.95,
+          "rule_id": "compound-sim-1",
+          "unit": "fraction of the depth"
+        },
+        "dumps": {
+          "category": "fraction",
+          "reason": "fraction of the transits near momentum dumps, against 0.5"
+        },
+        "sap": {
+          "alternative": 0.8,
+          "detectable": true,
+          "effect": "SAP relative depth difference",
+          "probability": 1.0,
+          "required_probability": 0.95,
+          "rule_id": "compound-sim-1",
+          "unit": "fraction"
+        }
+      },
+      "severity": "warning",
+      "status": "PASS",
+      "thresholds": {
+        "dump_margin_hours": 1.0,
+        "max_background_fraction": 0.5,
+        "max_background_sigma": 3.0,
+        "max_dump_fraction": 0.5,
+        "max_sap_rel_diff": 0.5,
+        "max_sap_sigma": 3.0,
+        "min_events_for_dumps": 3
+      }
+    },
+    {
+      "coverage": 28,
+      "coverage_unit": "measured events",
+      "inputs": {},
+      "message": "largest single-event SNR 0.22 of the total (<= 0.88)",
+      "metrics": {
+        "max_event_snr": 58.64349590899012,
+        "n_events": 28,
+        "ratio": 0.22060432345455008,
+        "total_snr": 265.8311269274472
+      },
+      "name": "single_event",
+      "sensitivity": {
+        "main": {
+          "alternative": 265.8311269274472,
+          "detectable": true,
+          "effect": "one event holds the whole signal",
+          "probability": 1.0,
+          "required_probability": 0.95,
+          "rule_id": "single-event-sim-1",
+          "unit": "total SNR",
+          "worst_event": 0
+        }
+      },
+      "severity": "fatal",
+      "status": "PASS",
+      "thresholds": {
+        "max_ratio": 0.88,
+        "min_events": 3
+      }
+    },
+    {
+      "coverage": 28,
+      "coverage_unit": "measured events",
+      "inputs": {},
+      "message": "per-event depths: chi2 1448.9 for 27 dof, p = 8e-289",
+      "metrics": {
+        "chi2": 1448.8914728219563,
+        "common_depth_ppm": 5009.616315197757,
+        "dof": 27,
+        "p_value": 7.974473636173113e-289
+      },
+      "name": "event_consistency",
+      "sensitivity": {
+        "main": {
+          "alternative": 5009.616315197757,
+          "detectable": true,
+          "effect": "one event off the common depth by a full depth",
+          "probability": 0.9999999999988499,
+          "required_probability": 0.95,
+          "rule_id": "ncx2-1",
+          "unit": "ppm",
+          "worst_event": 0
+        }
+      },
+      "severity": "fatal",
+      "status": "FAIL",
+      "thresholds": {
+        "alpha": 0.00135,
+        "min_events": 3
+      }
+    },
+    {
+      "coverage": 28,
+      "coverage_unit": "measured events",
+      "inputs": {},
+      "message": "0 of 28 events near a segment edge (0%)",
+      "metrics": {
+        "fraction_near_edges": 0.0,
+        "n_events": 28,
+        "n_near_edges": 0
+      },
+      "name": "edge_events",
+      "sensitivity": {
+        "comparison": {
+          "applicable": false,
+          "reason": "fewer than the minimum fraction of events near an edge"
+        },
+        "proximity": {
+          "category": "fraction",
+          "reason": "fraction of events near an edge, against 0.5"
+        }
+      },
+      "severity": "warning",
+      "status": "PASS",
+      "thresholds": {
+        "gap_days": 0.3,
+        "max_sigma": 3.0,
+        "min_fraction": 0.5,
+        "reach_durations": 2.0
+      }
+    },
+    {
+      "coverage": 33156,
+      "coverage_unit": "out-of-transit cadences",
+      "inputs": {},
+      "message": "no significant sinusoid at P/2, P or 2P",
+      "metrics": {
+        "fits": {
+          "2P": {
+            "beta": 6.534329138715087,
+            "semi_amplitude_err_ppm": 33.065380848682295,
+            "semi_amplitude_ppm": 89.98570949503059,
+            "significance": 2.7214478462181892
+          },
+          "P": {
+            "beta": 6.536257897785446,
+            "semi_amplitude_err_ppm": 31.401159605343366,
+            "semi_amplitude_ppm": 4.836297428485911,
+            "significance": 0.15401652325167456
+          },
+          "P/2": {
+            "beta": 6.535945597713606,
+            "semi_amplitude_err_ppm": 32.346966973882864,
+            "semi_amplitude_ppm": 31.56654591541639,
+            "significance": 0.9758734394140696
+          }
+        },
+        "n_cadences": 33156
+      },
+      "name": "sinusoid",
+      "sensitivity": {
+        "main": {
+          "alternative": 4994.933830645879,
+          "detectable": true,
+          "effect": "sinusoid semi-amplitude",
+          "probability": 1.0,
+          "required_probability": 0.95,
+          "rule_id": "compound-sim-1",
+          "unit": "ppm",
+          "worst_period": "P/2"
+        }
+      },
+      "severity": "warning",
+      "status": "PASS",
+      "thresholds": {
+        "mask_durations": 1.0,
+        "max_period_days": 10.0,
+        "min_amplitude_ratio": 0.5,
+        "min_significance": 15.0
+      }
+    },
+    {
+      "coverage": 1,
+      "coverage_unit": "candidate duration",
+      "inputs": {},
+      "message": "duration over period 0.039 (<= 0.5)",
+      "metrics": {
+        "duty_cycle": 0.03935185862230145
+      },
+      "name": "duty_cycle",
+      "sensitivity": {
+        "main": {
+          "category": "deterministic-bound",
+          "reason": "duration over period against a fixed bound"
+        }
+      },
+      "severity": "fatal",
+      "status": "PASS",
+      "thresholds": {
+        "max_duty_cycle": 0.5
+      }
+    },
+    {
+      "coverage": 28,
+      "coverage_unit": "hidden-year windows measured in conclusive rounds",
+      "inputs": {},
+      "message": "PASS refused: no sensitivity rule or category registered (predictions confirmed in 2 of 2 hidden years)",
+      "metrics": {
+        "n_fail": 0,
+        "n_inconclusive": 0,
+        "n_pass": 2,
+        "rounds": {
+          "2018": "PASS",
+          "2020": "PASS"
+        },
+        "years": [
+          2018,
+          2020
+        ]
+      },
+      "name": "holdout_by_year",
+      "severity": "fatal",
+      "status": "INCONCLUSIVE",
+      "thresholds": {
+        "baseline_gap_durations": 0.25,
+        "baseline_outer_durations": 1.5,
+        "hidden_detrend_window_factor": 3.0,
+        "max_hidden_window_fraction": 0.5,
+        "max_timing_sigma_durations": 1.0,
+        "max_train_duration_period_ratio": 0.2,
+        "min_predicted_transits": 2,
+        "min_snr": 5.0,
+        "min_train_transits": 3,
+        "min_window_coverage": 0.5,
+        "require_valid_train": true,
+        "timing_scan_half_width_durations": 0.5,
+        "timing_sigma": 3.0,
+        "timing_step_minutes": 1.0
+      }
+    }
+  ],
+  "tic_id": 1,
+  "v05": {
+    "cadences_per_sector": {
+      "1": {
+        "cadences_in_span": 19439,
+        "cadences_used": 18720,
+        "fraction_used": 0.9630125006430372
+      },
+      "2": {
+        "cadences_in_span": 19439,
+        "cadences_used": 18720,
+        "fraction_used": 0.9630125006430372
+      }
+    },
+    "discovery_version": 2,
+    "holdout_rounds": [
+      {
+        "depth_consistency_sigma": 40.53445201918413,
+        "hidden_year": 2018,
+        "train_matches_candidate": true,
+        "train_period_days": 1.7999996903117232
+      },
+      {
+        "depth_consistency_sigma": 1.7712949091765928,
+        "hidden_year": 2020,
+        "train_matches_candidate": true,
+        "train_period_days": 1.7999996903117232
+      }
+    ],
+    "parameters": {
+      "epoch_bjd_tdb": 2458714.499564383,
+      "epoch_err_days": 0.00018284389597513702,
+      "period_days": 1.8000004066005078,
+      "period_err_days": 8.938858985815618e-07,
+      "source": "linear ephemeris fit of the transit times (one fit)"
+    },
+    "sde_kept_peak": {
+      "max": 16.279628611635875,
+      "per_sector": {
+        "1": 15.525542938912393,
+        "2": 16.279628611635875
+      },
+      "reference": "each sector's stage-1 BLS likelihood periodogram (search_period's grid and normalization), at the kept period"
+    },
+    "sde_note": "the candidate's `sde` is the stage-1 SDE of the per-sector peak that seeded it (with a kept period at a multiple of the seed's, not the SDE of the kept peak); `sde_kept_peak` is the SDE of the kept period itself, computed for this report after the selection (#186)",
+    "sensitivity_rule": "refute.core.sensitivity.enforce_sensitivity (#185)"
+  },
+  "verdict": "REFUTED",
+  "verdict_reason": "fatal failure in: odd_even, event_consistency"
+}
+
+---report---
+# TIC-1: REFUTED
+
+**Verdict: `REFUTED`.** fatal failure in: odd_even, event_consistency
+
+> A verdict is about a claim, never about its authors. Refute produces candidates and verdicts only: nothing here is a confirmed discovery, and nothing has been submitted to any scientific body.
+
+> **Method status: `not_validated`.** No discovery method of Refute is validated: the v0.1 and v0.2 calibrations failed, and v0.2.1 ended as not approved (docs/validation/v0.2.1/closing-2026-10-27.md). A verdict here is the deterministic outcome of the declared tests, not a validated measurement.
+
+## Roles and stage
+
+- Meaning of SURVIVED in this claim: the signal survived the declared decisive battery; temporal confirmation was not required; the method is not validated
+- Stage of this run: 2 of 2
+- Decisive tests (the verdict aggregates only these): snr, odd_even, secondary_eclipse, plausibility, centroid_shift, aperture_depth, nearby_contamination, period_alias, systematics, single_event, event_consistency, edge_events, sinusoid, duty_cycle
+- Diagnostic tests (reported, never part of the verdict): holdout_by_year
+- Temporal diagnostic (`holdout_by_year`): **inconclusive**. It never changes the verdict; a `pass` is not a signal confirmed in time, and a `fail` is not evidence against the signal, because the holdout is not validated.
+
+## Claim
+
+- Claim: `synthetic-v2-eb` (discover)
+- Hypothesis: h
+- Target: synthetic (TIC 1, calibration role: exploration)
+
+## Signal
+
+| Quantity | Found | Published |
+|---|---|---|
+| Period (d) | 1.7999997 | n/a |
+| Epoch (BJD_TDB) | 2458325.699479167 | n/a |
+| Duration (h) | 1.700 | n/a |
+| Depth (ppm) | 4994.9 | n/a |
+| SNR | 307.4 | |
+
+- Relative period error: n/a (tolerance n/a, within: n/a, alias: none)
+
+## Gauntlet
+
+| Test | Status | Severity | Result |
+|---|---|---|---|
+| snr | PASS | gate | SNR 307.4 >= 7.1 |
+| odd_even | FAIL | fatal | odd/even depth difference 33.39 sigma (> 3.0) |
+| secondary_eclipse | PASS | warning | no significant dip or brightening at phase 0.5 (0.57 sigma) |
+| plausibility | PASS | fatal | companion radius 0.69 R_Jup and duration ratio 0.72 are plausible |
+| centroid_shift | INCONCLUSIVE | fatal | qualification failed: 2 of 2 sector(s) do not qualify |
+| aperture_depth | PASS | fatal | depth does not grow with the aperture (ratio 1.00, 0.0 sigma; transit detected at 35.9 sigma) |
+| nearby_contamination | PASS | warning | TIC cone query of 120 arcsec returned 0 source(s): 0 within 21 arcsec, none could produce the signal; median CROWDSAP 1.00 |
+| period_alias | PASS | fatal | the dip needs a transit on top of a sinusoid (BIC gain 36364, 1428 in-transit cadences); not near a known systematic period |
+| systematics | PASS | warning | no problem in 3 sub-checks: momentum dumps (16 in the quality column), SAP versus PDCSAP, background |
+| single_event | PASS | fatal | largest single-event SNR 0.22 of the total (<= 0.88) |
+| event_consistency | FAIL | fatal | per-event depths: chi2 1448.9 for 27 dof, p = 8e-289 |
+| edge_events | PASS | warning | 0 of 28 events near a segment edge (0%) |
+| sinusoid | PASS | warning | no significant sinusoid at P/2, P or 2P |
+| duty_cycle | PASS | fatal | duration over period 0.039 (<= 0.5) |
+| holdout_by_year | INCONCLUSIVE | diagnostic | PASS refused: no sensitivity rule or category registered (predictions confirmed in 2 of 2 hidden years) |
+
+## v0.5 rules
+
+- Sensitivity rule (#185): a fatal or warning test PASSes only when it could have detected its declared alternative; otherwise it is INCONCLUSIVE, with the reason. A PASS means no failure was detected with the declared sensitivity, never that an effect is absent. Each test's sensitivity is in `verdict.json` (`tests[].sensitivity`).
+- SDE: the candidate's `sde` is the stage-1 SDE of the per-sector peak that seeded it (with a kept period at a multiple of the seed's, not the SDE of the kept peak); `sde_kept_peak` is the SDE of the kept period itself, computed for this report after the selection (#186). SDE of the kept peak (largest over sectors): 16.28.
+- `secondary_eclipse` limits: eccentric secondaries away from phase 0.5 are not covered; a secondary alone does not classify an eclipsing binary; a planet's occultation is not modelled (#181).
+- Period 1.8000004066005078 d (error 8.938858985815618e-07) and epoch 2458714.499564383 BJD_TDB (error 0.00018284389597513702), from: linear ephemeris fit of the transit times (one fit).
+- A PASS of the pixel tests (`centroid_shift`, `aperture_depth`) does not exclude unresolved blends closer than the minimum offset of `centroid_shift` (see its thresholds).
+
+### Cadences used per sector
+
+| Sector | Used | In span | Fraction |
+|---|---|---|---|
+| 1 | 18720 | 19439 | 0.963 |
+| 2 | 18720 | 19439 | 0.963 |
+
+The `eb_catalog` test is not part of this gauntlet: the claim attaches no eclipsing-binary catalog.
+
+## Blind holdout by year
+
+Each year is hidden in turn, and the ephemeris is fitted on the other years only. In each round that reaches the measurement, the whole hidden year is detrended once before any logged read, with each predicted window masked out to the inner edge of its baseline band; that step is not logged, and its outlier clipping can drop hidden cadences. After it, the test reads only the predicted transit windows, the phase-0.5 control windows and their baseline bands, and every such read is logged.
+
+| Hidden year | Status | Windows with data | Hidden SNR | Control SNR (phase 0.5) |
+|---|---|---|---|---|
+| 2018 | PASS | 14 | 27.8 | 1.2 |
+| 2020 | PASS | 14 | 25.8 | 0.0 |
+
+| Hidden year | Train ephemeris matches the candidate | Depth consistency (sigma) |
+|---|---|---|
+| 2018 | yes | 40.53 |
+| 2020 | yes | 1.77 |
+
+## Data
+
+- Product: synthetic light curve (refute.packs.tess.synthetic), flux column `flux`, quality bitmask `none` (value None), read with numpy.load
+- Sectors: [1, 2]; observing years: [2018, 2020]; cadences used: 37440
+- Stellar parameters: synthetic (refute.packs.tess.synthetic), TIC version synthetic, retrieved None: R = 1.000 +- 0.050 Rsun, M = 1.000 Msun
+- File hashes and source URLs: `data/manifest.json`
+
+## Independent review
+
+Reports by fresh, read-only reviewer sessions are attached after the verdict, in
+`review/` (index: [review/index.md](review/index.md)), following
+`docs/reviewer-protocol.md`. Reviewers raise objections; they never change the
+verdict. `refute check-dossier` verifies that the analysis and `verdict.json` are
+unchanged since the reviews were attached. No `review/` folder means no review.
+
+## Provenance
+
+- Claim SHA-256: `None`
+- Code SHA-256: `None`
+- Lock commit: `None`; run commit: `None`
+- Run: `None`, Refute None
+- Reproduce: see `REPRODUCE.md`. Integrity: `MANIFEST.sha256`.
