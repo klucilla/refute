@@ -1,0 +1,28 @@
+{
+ "name": "nr-a1-default-claims",
+ "question": "NR-A1 (charter, step 1; #226): the claims identity record of versions 1 to 4 at the inherited default, in a fresh process, set before any numerical import. The named verification approved by the charter, run once.",
+ "choices": "identity.py claims nr-a1-default; the thread variables come from this spec's env; record copied to step1/claim-hashes-nr-a1-default.json. Named unit, not a retry class.",
+ "argv": [
+  "{python}",
+  "-I",
+  "-B",
+  "docs/validation/v0.5.13/tools/identity.py",
+  "claims",
+  "nr-a1-default"
+ ],
+ "identity": [
+  "docs/validation/v0.5.13/tools/identity.py"
+ ],
+ "key": "data",
+ "reserve": {
+  "cpu_s": 120,
+  "disk_bytes": 20000000
+ },
+ "network": false,
+ "emits_case_values": true,
+ "env": {},
+ "order_proof": "docs/validation/v0.5.13/manifests/nr-a1.json",
+ "outputs": {
+  "claim-hashes-nr-a1-default.json": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-default.json"
+ }
+}

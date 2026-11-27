@@ -1,0 +1,25 @@
+{
+ "name": "compare-identity",
+ "question": "Compare identity records with ID-BEFORE: NR-A1's three settings (step 1) or ID-AFTER (step 5); byte for byte on the payload, provenance apart, pins verified.",
+ "choices": "compare_identity.py <set>; reads committed records only; result copied to step1/ or step5/.",
+ "argv": [
+  "{python}",
+  "-I",
+  "-B",
+  "docs/validation/v0.5.13/tools/compare_identity.py"
+ ],
+ "identity": [
+  "docs/validation/v0.5.13/tools/compare_identity.py"
+ ],
+ "key": "tree",
+ "reserve": {
+  "cpu_s": 60,
+  "disk_bytes": 10000000
+ },
+ "network": false,
+ "retry_class": "checker",
+ "outputs": {
+  "comparison-nr-a1.json": "docs/validation/v0.5.13/step1/comparison-nr-a1.json",
+  "comparison-after.json": "docs/validation/v0.5.13/step5/comparison-after.json"
+ }
+}

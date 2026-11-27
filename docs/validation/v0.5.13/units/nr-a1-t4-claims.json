@@ -1,0 +1,32 @@
+{
+ "name": "nr-a1-t4-claims",
+ "question": "NR-A1 (charter, step 1; #226): the claims identity record of versions 1 to 4 at 4 thread(s), in a fresh process, set before any numerical import. The named verification approved by the charter, run once.",
+ "choices": "identity.py claims nr-a1-t4; the thread variables come from this spec's env; record copied to step1/claim-hashes-nr-a1-t4.json. Named unit, not a retry class.",
+ "argv": [
+  "{python}",
+  "-I",
+  "-B",
+  "docs/validation/v0.5.13/tools/identity.py",
+  "claims",
+  "nr-a1-t4"
+ ],
+ "identity": [
+  "docs/validation/v0.5.13/tools/identity.py"
+ ],
+ "key": "data",
+ "reserve": {
+  "cpu_s": 120,
+  "disk_bytes": 20000000
+ },
+ "network": false,
+ "emits_case_values": true,
+ "env": {
+  "OMP_NUM_THREADS": "4",
+  "OPENBLAS_NUM_THREADS": "4",
+  "MKL_NUM_THREADS": "4"
+ },
+ "order_proof": "docs/validation/v0.5.13/manifests/nr-a1.json",
+ "outputs": {
+  "claim-hashes-nr-a1-t4.json": "docs/validation/v0.5.13/step1/claim-hashes-nr-a1-t4.json"
+ }
+}

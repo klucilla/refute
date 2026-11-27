@@ -1,0 +1,40 @@
+{
+ "schema": "refute-v0513-order-proof-2",
+ "utc": "2026-11-27T00:21:26Z",
+ "manifest": "docs/validation/v0.5.13/manifests/id-before.json",
+ "manifest_sha256": "da4bec38b14f0cea40bfbb783ac2223469c1527e1170fcd43b4b2231a5e1bfc3",
+ "evidence_commit": "a1ab0d63844acf2d2eceeb2acffa70f5eba62afe",
+ "evidence_files": [
+  "docs/validation/v0.5.13/manifests/id-before.json"
+ ],
+ "ci_run_id": 45915683762,
+ "ci_run_created_at": "2026-11-27T00:15:36Z",
+ "ci_jobs": [
+  {
+   "conclusion": "success",
+   "name": "plan",
+   "status": "completed"
+  },
+  {
+   "conclusion": "skipped",
+   "name": "${{ matrix.pair.os }} / Python ${{ matrix.pair.python }} / ${{ matrix.shard }}",
+   "status": "completed"
+  },
+  {
+   "conclusion": "skipped",
+   "name": "${{ matrix.pair.os }} / Python ${{ matrix.pair.python }} / recorded-values",
+   "status": "completed"
+  }
+ ],
+ "checks": {
+  "one_parent": true,
+  "trailer": true,
+  "only_manifests": true,
+  "pushed_to_origin_main": true,
+  "ci_push_run_found_before_now": true,
+  "ci_run_completed": true,
+  "plan_job_succeeded": true,
+  "record_only_other_jobs_all_skipped": true
+ },
+ "passed": true
+}

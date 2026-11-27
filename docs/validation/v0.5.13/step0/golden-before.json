@@ -1,0 +1,64 @@
+{
+ "labels": [
+  "exploratory",
+  "method_status: not_validated"
+ ],
+ "payload": {
+  "files_sha256": {
+   "chain-v1.json": "79330897e64b5443c6b397e2def804d34d765ac964cec65ef800ab52496dee6c",
+   "chain-v2-eb.json": "55247db4bb20ab4ab9e265e0b832b8c5a57a9d0d06de13cddb1b99de5e1f8c71",
+   "chain-v2.json": "31736cef2942cee4913777bb933a915c76772493928148f2b993f6fa6ac28f38",
+   "chain-v3.json": "8bb01069ac21a2173dab3fc337e72049e77efff34726756562207a52b9e7ba52",
+   "chain-v4.json": "f2549ace3c3fa75e781d8ca69593df0f63b3c8a1ff041287ac0bea83c0147ed3",
+   "error-v1.json": "80cbfe88e69149476db057f0075e8802d1bf9e8734fafb689b54a4a6a076f928",
+   "error-v2-eb.json": "6b31e2a1b49fe4cafeaa28aa65e583e19492dc0cc1c77f60db293e686cb6dd02",
+   "error-v2.json": "5c3e3e1a31022d9d03fed49b365fa4cc65bee4ae3bc3b9913259a151fa89a416",
+   "error-v3.json": "eefb2a8c874dacfab4017e97809def7fc1e7fd79ca38fcf74dc99cfeaa1bea53",
+   "error-v4.json": "5558d558db171fd7c6c312416b734463ea4feb1db87d43532905b925b1c42de1",
+   "plan-v1.json": "e64ea7807b452a26c68133cfafe4d5f6d1c79d65cae06b768f42d9615abb4d3d",
+   "plan-v2-eb.json": "0793c8235e61915320c7226dd9aced5d298f8a0cdd3a385e99f4ce45d248045e",
+   "plan-v2.json": "0793c8235e61915320c7226dd9aced5d298f8a0cdd3a385e99f4ce45d248045e",
+   "plan-v3.json": "d17ba5306fac7408ee72e33ca5de85af3d93f5c3cdf237cdcf780b639c3322c5",
+   "plan-v4.json": "4fd8402bc46d4f99a71cb46cc11f7e4e7ee53eb4808b19792bd30e3d76260994",
+   "verdict-v1.txt": "6e4e387bb29a44f1fc0b22958a9ed1ba399b9e8ad1afd68cf76baa0db454c355",
+   "verdict-v2-eb.txt": "e5c43936686062054adcdbb9f394d7188050287bf36275eeb08cea8b7e8fc117",
+   "verdict-v2.txt": "60bdc3f4cb50512691387ab16bb1146f421ca3d2cdc6f3603039f28894af94e6",
+   "verdict-v3.txt": "41f8042e0690ac69d5a065d895eea9c4e2b5fb428daaa65f2117bd9032ca682c",
+   "verdict-v4.txt": "103bcca492c48fe15aa66f9730500cdbc09f25edd36310b9797bc03efd6bcdf9"
+  },
+  "error_outputs": []
+ },
+ "provenance": {
+  "head": "a150096de04e4caae9ef0042e6ae4c458823ac9e",
+  "python": "3.13.16",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "system": "Windows",
+  "script_sha256": "3109ed581c8dfc8db58461dd9bd8ae8371f093f23a5915e40de0678074d29450",
+  "blas": {
+   "thread_env": {
+    "OMP_NUM_THREADS": null,
+    "OPENBLAS_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+   },
+   "child_threadpool_info": [
+    {
+     "user_api": "blas",
+     "internal_api": "openblas",
+     "prefix": "libscipy_openblas",
+     "version": "0.3.34.106.0",
+     "num_threads": 24,
+     "threading_layer": "pthreads"
+    },
+    {
+     "user_api": "blas",
+     "internal_api": "openblas",
+     "prefix": "libscipy_openblas",
+     "version": "0.3.31.dev",
+     "num_threads": 24,
+     "threading_layer": "pthreads"
+    }
+   ]
+  }
+ }
+}
