@@ -1,0 +1,41 @@
+{
+ "schema": "refute-v0513-order-proof-2",
+ "utc": "2026-11-27T20:50:06Z",
+ "manifest": "docs/validation/v0.5.13/manifests/freeze-226-s5r3/freeze.json",
+ "manifest_sha256": "7d1c851bebb8d385bf6d90f6228770b59e97fc107012e8714a5812f07f39dd1c",
+ "evidence_commit": "2e86f48442f2a8c009075e5f346e48776c783696",
+ "evidence_files": [
+  "docs/validation/v0.5.13/manifests/freeze-226-s5r3/comparator-schema.json",
+  "docs/validation/v0.5.13/manifests/freeze-226-s5r3/freeze.json"
+ ],
+ "ci_run_id": 46064425961,
+ "ci_run_created_at": "2026-11-27T20:33:21Z",
+ "ci_jobs": [
+  {
+   "conclusion": "success",
+   "name": "plan",
+   "status": "completed"
+  },
+  {
+   "conclusion": "skipped",
+   "name": "${{ matrix.pair.os }} / Python ${{ matrix.pair.python }} / ${{ matrix.shard }}",
+   "status": "completed"
+  },
+  {
+   "conclusion": "skipped",
+   "name": "${{ matrix.pair.os }} / Python ${{ matrix.pair.python }} / recorded-values",
+   "status": "completed"
+  }
+ ],
+ "checks": {
+  "one_parent": true,
+  "trailer": true,
+  "only_manifests": true,
+  "pushed_to_origin_main": true,
+  "ci_push_run_found_before_now": true,
+  "ci_run_completed": true,
+  "plan_job_succeeded": true,
+  "record_only_other_jobs_all_skipped": true
+ },
+ "passed": true
+}

@@ -1,0 +1,11 @@
+{
+ "name": "count-keys",
+ "question": "T2(1) (#218 comment 7227882370): from source only, the explicit list of exact integer keys (counts, IDs, versions, indices, integer flags) of the comparator's schema, with each key's sources, and the conflicts with measurement output names. It opens no golden file.",
+ "choices": "docs/validation/v0.5.13/tools/count_keys.py <out.json>. Offline. It reads the modules listed in l4/schema-keys.json.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/count_keys.py"],
+ "identity": ["docs/validation/v0.5.13/tools/count_keys.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 60, "disk_bytes": 5000000},
+ "network": false,
+ "retry_class": "checker"
+}
