@@ -220,6 +220,25 @@ def test_draft_schema_templates_compile_and_match_once():
             comp._pattern(p)
 
 
+def test_frozen_schema_loads_and_compiles():
+    import re
+
+    import pytest
+
+    path = ROOT / "docs/validation/v0.5.13/l4/comparator-schema.json"
+    if not path.is_file():
+        pytest.skip("the schema is committed by the freeze commit, after this test")
+    schema = json.loads(path.read_text("utf-8"))
+    assert schema["exact_keys"] and "thresholds" in schema["exact_subtree_keys"]
+    for t in schema["report"]:
+        assert set(re.compile(t["regex"]).groupindex) == set(t["groups"])
+    for kind in ("verdict", "chain"):
+        for p in schema["json"][kind]["measurement"] + schema["json"][kind]["exact"]:
+            comp._pattern(p)
+    v = verdict("1.5") + comp.SEPARATOR + "| SNR | 1.0 | |"
+    assert comp.compare_file("verdict-v1.txt", v.encode(), v.encode(), schema) == []
+
+
 def test_claims():
     a = {"payload": {"claims": {"c.yaml": "ab", "d.yaml": "ERROR ClaimError: x"}}}
     assert comp.compare_claims(a, json.loads(json.dumps(a))) == []

@@ -32,6 +32,14 @@
    "v4"
   ],
   "plan.discovery is None": [],
+  "discovery is not None": [
+   "v1",
+   "v2",
+   "v2-eb",
+   "v3",
+   "v4"
+  ],
+  "discovery is None": [],
   "plan is None": [],
   "plan is not None": [
    "v1",
@@ -906,6 +914,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -926,6 +935,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "65: result.status is not TestStatus.INCONCLUSIVE"
@@ -948,6 +958,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "65: result.status is not TestStatus.INCONCLUSIVE",
@@ -971,6 +982,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "65: result.status is not TestStatus.INCONCLUSIVE",
@@ -995,6 +1007,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "65: result.status is not TestStatus.INCONCLUSIVE",
@@ -1020,6 +1033,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "65: result.status is not TestStatus.INCONCLUSIVE",
@@ -1046,6 +1060,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 42,
    "guards": [],
    "early_exits_before": [
     "65: result.status is not TestStatus.INCONCLUSIVE",
@@ -1072,6 +1087,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -1092,6 +1108,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -1118,6 +1135,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 48,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -1144,6 +1162,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 15,
    "guards": [
     "result.status is TestStatus.PASS and result.severity is not Severity.GATE"
    ],
@@ -1172,6 +1191,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -1200,6 +1220,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 12,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -1228,6 +1249,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 44,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -1256,6 +1278,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -1284,6 +1307,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -1307,6 +1331,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -1335,6 +1360,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "252: not gates"
@@ -1365,6 +1391,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "252: not gates",
@@ -1396,6 +1423,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "252: not gates",
@@ -1428,6 +1456,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "252: not gates",
@@ -1461,6 +1490,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "252: not gates",
@@ -1495,6 +1525,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -1523,6 +1554,7 @@
    "contexts": [
     "sink argument"
    ],
+   "col": 19,
    "guards": [
     "len(used) < params.min_sectors"
    ],
@@ -1553,6 +1585,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "268: len(used) < params.min_sectors"
@@ -1583,6 +1616,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 37,
    "guards": [],
    "early_exits_before": [
     "268: len(used) < params.min_sectors"
@@ -1613,6 +1647,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -1641,6 +1676,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -1669,6 +1705,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "362: not series[\"time\"]"
@@ -1699,6 +1736,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 25,
    "guards": [],
    "early_exits_before": [
     "362: not series[\"time\"]"
@@ -1729,6 +1767,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "362: not series[\"time\"]",
@@ -1760,6 +1799,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "362: not series[\"time\"]",
@@ -1792,6 +1832,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 42,
    "guards": [],
    "early_exits_before": [
     "362: not series[\"time\"]",
@@ -1824,6 +1865,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -1852,6 +1894,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "466: neighbors is None"
@@ -1882,6 +1925,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 23,
    "guards": [],
    "early_exits_before": [
     "466: neighbors is None"
@@ -1912,6 +1956,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "466: neighbors is None",
@@ -1943,6 +1988,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "466: neighbors is None",
@@ -1974,6 +2020,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 29,
    "guards": [],
    "early_exits_before": [
     "466: neighbors is None",
@@ -2005,6 +2052,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "466: neighbors is None",
@@ -2036,6 +2084,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 31,
    "guards": [],
    "early_exits_before": [
     "466: neighbors is None",
@@ -2067,6 +2116,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "466: neighbors is None",
@@ -2098,6 +2148,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "466: neighbors is None",
@@ -2129,6 +2180,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 29,
    "guards": [],
    "early_exits_before": [
     "466: neighbors is None",
@@ -2160,6 +2212,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "466: neighbors is None",
@@ -2191,6 +2244,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "466: neighbors is None",
@@ -2223,6 +2277,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -2240,6 +2295,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 32,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -2257,6 +2313,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 15,
    "guards": [],
    "early_exits_before": [
     "623: math.isfinite(d_box) and d_box <= 0"
@@ -2276,6 +2333,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "623: math.isfinite(d_box) and d_box <= 0",
@@ -2296,6 +2354,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "623: math.isfinite(d_box) and d_box <= 0",
@@ -2317,6 +2376,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 25,
    "guards": [],
    "early_exits_before": [
     "623: math.isfinite(d_box) and d_box <= 0",
@@ -2338,6 +2398,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -2355,6 +2416,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 19,
    "guards": [],
    "early_exits_before": [
     "685: not used"
@@ -2374,6 +2436,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 46,
    "guards": [],
    "early_exits_before": [
     "685: not used"
@@ -2393,6 +2456,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 57,
    "guards": [],
    "early_exits_before": [
     "685: not used"
@@ -2412,6 +2476,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 85,
    "guards": [],
    "early_exits_before": [
     "685: not used"
@@ -2431,6 +2496,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "685: not used",
@@ -2451,6 +2517,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 25,
    "guards": [],
    "early_exits_before": [
     "685: not used",
@@ -2471,6 +2538,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "685: not used",
@@ -2492,6 +2560,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "685: not used",
@@ -2514,6 +2583,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "685: not used",
@@ -2537,6 +2607,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -2565,6 +2636,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "811: plan.gauntlet.corrections.active"
@@ -2595,6 +2667,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 25,
    "guards": [],
    "early_exits_before": [
     "811: plan.gauntlet.corrections.active"
@@ -2625,6 +2698,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "811: plan.gauntlet.corrections.active",
@@ -2656,6 +2730,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "811: plan.gauntlet.corrections.active",
@@ -2688,6 +2763,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -2716,6 +2792,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "931: not aux"
@@ -2746,6 +2823,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [
     "len(centers) >= params.min_events_for_dumps"
    ],
@@ -2778,6 +2856,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "931: not aux"
@@ -2808,6 +2887,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 9,
    "guards": [
     "not (not crowds)"
    ],
@@ -2840,6 +2920,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 26,
    "guards": [
     "not (not crowds)"
    ],
@@ -2872,6 +2953,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 14,
    "guards": [
     "not (not crowds)",
     "not (g_pdc is None or g_sap is None)"
@@ -2905,6 +2987,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [
     "not (not crowds)",
     "not (g_pdc is None or g_sap is None)",
@@ -2939,6 +3022,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 45,
    "guards": [
     "not (not crowds)",
     "not (g_pdc is None or g_sap is None)",
@@ -2973,6 +3057,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "931: not aux"
@@ -3003,6 +3088,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 24,
    "guards": [],
    "early_exits_before": [
     "931: not aux"
@@ -3033,6 +3119,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 14,
    "guards": [
     "not (g_bkg is None or g_sap is None)"
    ],
@@ -3065,6 +3152,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 14,
    "guards": [
     "not (g_bkg is None or g_sap is None)",
     "not (not (g_sap.mean > 0))"
@@ -3098,6 +3186,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [
     "not (g_bkg is None or g_sap is None)",
     "not (not (g_sap.mean > 0))",
@@ -3132,6 +3221,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 52,
    "guards": [
     "not (g_bkg is None or g_sap is None)",
     "not (not (g_sap.mean > 0))",
@@ -3166,6 +3256,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "931: not aux"
@@ -3196,6 +3287,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "931: not aux",
@@ -3227,6 +3319,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -3253,6 +3346,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 30,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -3279,6 +3373,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "63: len(secondary) == 0 or len(primary) == 0"
@@ -3307,6 +3402,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "63: len(secondary) == 0 or len(primary) == 0",
@@ -3336,6 +3432,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 36,
    "guards": [],
    "early_exits_before": [
     "63: len(secondary) == 0 or len(primary) == 0",
@@ -3365,6 +3462,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -3391,6 +3489,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "127: n < sp.min_measured_events"
@@ -3419,6 +3518,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 13,
    "guards": [],
    "early_exits_before": [
     "127: n < sp.min_measured_events",
@@ -3448,6 +3548,7 @@
    "contexts": [
     "conditional expression"
    ],
+   "col": 27,
    "guards": [],
    "early_exits_before": [
     "127: n < sp.min_measured_events",
@@ -3477,6 +3578,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -3503,6 +3605,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 13,
    "guards": [],
    "early_exits_before": [
     "193: n < sp.min_measured_events"
@@ -3531,6 +3634,7 @@
    "contexts": [
     "conditional expression"
    ],
+   "col": 27,
    "guards": [],
    "early_exits_before": [
     "193: n < sp.min_measured_events"
@@ -3559,6 +3663,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -3585,6 +3690,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "265: n == 0"
@@ -3613,6 +3719,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "265: n == 0",
@@ -3642,6 +3749,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "265: n == 0",
@@ -3672,6 +3780,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 13,
    "guards": [],
    "early_exits_before": [
     "265: n == 0",
@@ -3703,6 +3812,7 @@
    "contexts": [
     "conditional expression"
    ],
+   "col": 27,
    "guards": [],
    "early_exits_before": [
     "265: n == 0",
@@ -3734,6 +3844,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -3756,6 +3867,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "384: candidate.period >= sp.sinusoid_max_period_days"
@@ -3781,6 +3893,7 @@
     "assignment to a decision variable",
     "conditional expression"
    ],
+   "col": 32,
    "guards": [],
    "early_exits_before": [
     "384: candidate.period >= sp.sinusoid_max_period_days",
@@ -3806,6 +3919,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 13,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -3832,6 +3946,7 @@
    "contexts": [
     "conditional expression"
    ],
+   "col": 27,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -3858,6 +3973,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -3878,6 +3994,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "103: (\"P/2\", 0.5) not in applicable"
@@ -3900,6 +4017,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "103: (\"P/2\", 0.5) not in applicable",
@@ -3923,6 +4041,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 27,
    "guards": [],
    "early_exits_before": [
     "103: (\"P/2\", 0.5) not in applicable",
@@ -3946,6 +4065,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "103: (\"P/2\", 0.5) not in applicable",
@@ -3969,6 +4089,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 59,
    "guards": [],
    "early_exits_before": [
     "103: (\"P/2\", 0.5) not in applicable",
@@ -3992,6 +4113,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "103: (\"P/2\", 0.5) not in applicable",
@@ -4015,6 +4137,7 @@
    "contexts": [
     "conditional expression"
    ],
+   "col": 27,
    "guards": [],
    "early_exits_before": [
     "103: (\"P/2\", 0.5) not in applicable",
@@ -4038,6 +4161,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -4058,6 +4182,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -4078,6 +4203,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -4098,6 +4224,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -4118,6 +4245,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 46,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -4138,6 +4266,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "338: len(odd) < params.min_transits_each or len(even) < params.min_transits_each"
@@ -4160,6 +4289,7 @@
    "contexts": [
     "serialized flag"
    ],
+   "col": 44,
    "guards": [],
    "early_exits_before": [
     "338: len(odd) < params.min_transits_each or len(even) < params.min_transits_each",
@@ -4184,6 +4314,7 @@
     "assignment to a decision variable",
     "conditional expression"
    ],
+   "col": 32,
    "guards": [],
    "early_exits_before": [
     "338: len(odd) < params.min_transits_each or len(even) < params.min_transits_each",
@@ -4207,6 +4338,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -4229,6 +4361,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 28,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -4251,6 +4384,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 48,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -4273,6 +4407,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "498: any(v is None or not math.isfinite(v) or v <= 0 for v in values)"
@@ -4297,6 +4432,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 12,
    "guards": [],
    "early_exits_before": [
     "498: any(v is None or not math.isfinite(v) or v <= 0 for v in values)",
@@ -4322,6 +4458,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 37,
    "guards": [],
    "early_exits_before": [
     "498: any(v is None or not math.isfinite(v) or v <= 0 for v in values)",
@@ -4347,6 +4484,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "498: any(v is None or not math.isfinite(v) or v <= 0 for v in values)",
@@ -4373,6 +4511,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -4395,6 +4534,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -4417,6 +4557,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "209: not series[\"time\"]"
@@ -4441,6 +4582,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 25,
    "guards": [],
    "early_exits_before": [
     "209: not series[\"time\"]"
@@ -4465,6 +4607,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 44,
    "guards": [],
    "early_exits_before": [
     "209: not series[\"time\"]"
@@ -4489,6 +4632,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "209: not series[\"time\"]",
@@ -4514,6 +4658,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "209: not series[\"time\"]",
@@ -4540,6 +4685,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 42,
    "guards": [],
    "early_exits_before": [
     "209: not series[\"time\"]",
@@ -4566,6 +4712,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -4588,6 +4735,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "400: not aux"
@@ -4612,6 +4760,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [
     "len(centers) >= params.min_events_for_dumps"
    ],
@@ -4638,6 +4787,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "400: not aux"
@@ -4662,6 +4812,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "400: not aux"
@@ -4686,6 +4837,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 13,
    "guards": [
     "not (a0_refused is not None)"
    ],
@@ -4712,6 +4864,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 13,
    "guards": [
     "not (a0_refused is not None)",
     "not (not usable)"
@@ -4739,6 +4892,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [
     "not (a0_refused is not None)",
     "not (not usable)",
@@ -4767,6 +4921,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 18,
    "guards": [
     "not (a0_refused is not None)",
     "not (not usable)",
@@ -4796,6 +4951,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 13,
    "guards": [
     "not (a0_refused is not None)",
     "not (not usable)",
@@ -4826,6 +4982,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 33,
    "guards": [
     "not (a0_refused is not None)",
     "not (not usable)",
@@ -4856,6 +5013,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 13,
    "guards": [
     "not (a0_refused is not None)",
     "not (not usable)",
@@ -4887,6 +5045,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 38,
    "guards": [
     "not (a0_refused is not None)",
     "not (not usable)",
@@ -4918,6 +5077,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 15,
    "guards": [
     "not (a0_refused is not None)",
     "not (not usable)",
@@ -4950,6 +5110,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 49,
    "guards": [
     "not (a0_refused is not None)",
     "not (not usable)",
@@ -4982,6 +5143,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "400: not aux"
@@ -5006,6 +5168,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 9,
    "guards": [
     "not (a0_refused is not None)"
    ],
@@ -5032,6 +5195,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 26,
    "guards": [
     "not (a0_refused is not None)"
    ],
@@ -5058,6 +5222,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 14,
    "guards": [
     "not (a0_refused is not None)",
     "not (g_bkg is None or g_sap is None)"
@@ -5085,6 +5250,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 14,
    "guards": [
     "not (a0_refused is not None)",
     "not (g_bkg is None or g_sap is None)",
@@ -5113,6 +5279,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [
     "not (a0_refused is not None)",
     "not (g_bkg is None or g_sap is None)",
@@ -5142,6 +5309,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 52,
    "guards": [
     "not (a0_refused is not None)",
     "not (g_bkg is None or g_sap is None)",
@@ -5171,6 +5339,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "400: not aux"
@@ -5195,6 +5364,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 9,
    "guards": [
     "not (problems)"
    ],
@@ -5221,6 +5391,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -5241,6 +5412,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 46,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -5261,6 +5433,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "118: len(odd) < params.min_transits_each or len(even) < params.min_transits_each"
@@ -5283,6 +5456,7 @@
    "contexts": [
     "serialized flag"
    ],
+   "col": 44,
    "guards": [],
    "early_exits_before": [
     "118: len(odd) < params.min_transits_each or len(even) < params.min_transits_each",
@@ -5307,6 +5481,7 @@
     "assignment to a decision variable",
     "conditional expression"
    ],
+   "col": 32,
    "guards": [],
    "early_exits_before": [
     "118: len(odd) < params.min_transits_each or len(even) < params.min_transits_each",
@@ -5330,6 +5505,7 @@
    "contexts": [
     "returned decision"
    ],
+   "col": 8,
    "guards": [],
    "early_exits_before": [
     "222: not inside.any()"
@@ -5352,6 +5528,7 @@
    "contexts": [
     "returned decision"
    ],
+   "col": 12,
    "guards": [],
    "early_exits_before": [
     "222: not inside.any()"
@@ -5374,6 +5551,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -5394,6 +5572,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable"
@@ -5416,6 +5595,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
@@ -5439,6 +5619,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 27,
    "guards": [],
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
@@ -5462,6 +5643,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 15,
    "guards": [],
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
@@ -5485,6 +5667,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 32,
    "guards": [],
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
@@ -5508,6 +5691,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 17,
    "guards": [],
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
@@ -5531,6 +5715,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 44,
    "guards": [],
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
@@ -5554,6 +5739,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
@@ -5577,6 +5763,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 59,
    "guards": [],
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
@@ -5600,6 +5787,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
@@ -5623,6 +5811,7 @@
    "contexts": [
     "serialized flag"
    ],
+   "col": 56,
    "guards": [],
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
@@ -5646,6 +5835,7 @@
    "contexts": [
     "serialized flag"
    ],
+   "col": 58,
    "guards": [],
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
@@ -5669,6 +5859,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
@@ -5692,6 +5883,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
@@ -5716,6 +5908,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 20,
    "guards": [],
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
@@ -5740,6 +5933,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -5766,6 +5960,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "313: not pixels"
@@ -5794,6 +5989,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "313: not pixels",
@@ -5823,6 +6019,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "313: not pixels",
@@ -5853,6 +6050,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "313: not pixels",
@@ -5884,6 +6082,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 30,
    "guards": [],
    "early_exits_before": [
     "313: not pixels",
@@ -5915,6 +6114,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -5938,6 +6138,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -5955,6 +6156,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 23,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -5972,6 +6174,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 46,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -5989,6 +6192,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "253: star is None or star.ra_deg is None or star.dec_deg is None"
@@ -6008,6 +6212,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 23,
    "guards": [],
    "early_exits_before": [
     "253: star is None or star.ra_deg is None or star.dec_deg is None"
@@ -6027,6 +6232,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "253: star is None or star.ra_deg is None or star.dec_deg is None",
@@ -6047,6 +6253,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "253: star is None or star.ra_deg is None or star.dec_deg is None",
@@ -6068,6 +6275,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "253: star is None or star.ra_deg is None or star.dec_deg is None",
@@ -6090,6 +6298,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 16,
    "guards": [],
    "early_exits_before": [
     "253: star is None or star.ra_deg is None or star.dec_deg is None",
@@ -6113,6 +6322,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 45,
    "guards": [],
    "early_exits_before": [
     "253: star is None or star.ra_deg is None or star.dec_deg is None",
@@ -6136,6 +6346,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 15,
    "guards": [],
    "early_exits_before": [
     "253: star is None or star.ra_deg is None or star.dec_deg is None",
@@ -6159,6 +6370,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 25,
    "guards": [],
    "early_exits_before": [
     "253: star is None or star.ra_deg is None or star.dec_deg is None",
@@ -6182,6 +6394,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "253: star is None or star.ra_deg is None or star.dec_deg is None",
@@ -6205,6 +6418,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 19,
    "guards": [
     "entry.period_days"
    ],
@@ -6230,6 +6444,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 22,
    "guards": [],
    "early_exits_before": [
     "253: star is None or star.ra_deg is None or star.dec_deg is None",
@@ -6253,6 +6468,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 35,
    "guards": [],
    "early_exits_before": [
     "253: star is None or star.ra_deg is None or star.dec_deg is None",
@@ -6276,6 +6492,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "253: star is None or star.ra_deg is None or star.dec_deg is None",
@@ -6299,6 +6516,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "253: star is None or star.ra_deg is None or star.dec_deg is None",
@@ -6323,6 +6541,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "253: star is None or star.ra_deg is None or star.dec_deg is None",
@@ -6348,6 +6567,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -6376,6 +6596,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 13,
    "guards": [],
    "early_exits_before": [
     "39: candidate is None"
@@ -6406,6 +6627,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 46,
    "guards": [],
    "early_exits_before": [
     "39: candidate is None"
@@ -6436,6 +6658,7 @@
    "contexts": [
     "conditional expression"
    ],
+   "col": 27,
    "guards": [],
    "early_exits_before": [
     "39: candidate is None"
@@ -6466,6 +6689,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -6494,6 +6718,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 47,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -6522,6 +6747,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 13,
    "guards": [],
    "early_exits_before": [
     "72: len(even) < params.min_transits_each or len(odd) < params.min_transits_each"
@@ -6552,6 +6778,7 @@
    "contexts": [
     "conditional expression"
    ],
+   "col": 27,
    "guards": [],
    "early_exits_before": [
     "72: len(even) < params.min_transits_each or len(odd) < params.min_transits_each"
@@ -6582,6 +6809,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -6610,6 +6838,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 30,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -6638,6 +6867,7 @@
    "contexts": [
     "sink argument"
    ],
+   "col": 42,
    "guards": [
     "len(secondary) == 0 or len(primary) == 0"
    ],
@@ -6668,6 +6898,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "112: len(secondary) == 0 or len(primary) == 0"
@@ -6698,6 +6929,7 @@
    "contexts": [
     "returned decision"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -6726,6 +6958,7 @@
    "contexts": [
     "returned decision"
    ],
+   "col": 33,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -6754,6 +6987,7 @@
    "contexts": [
     "returned decision"
    ],
+   "col": 58,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -6782,6 +7016,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -6810,6 +7045,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 28,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -6838,6 +7074,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 49,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -6866,6 +7103,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "213: star is not None and star.disposition and star.disposition.upper() in unreliable"
@@ -6896,6 +7134,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 27,
    "guards": [],
    "early_exits_before": [
     "213: star is not None and star.disposition and star.disposition.upper() in unreliable"
@@ -6926,6 +7165,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "213: star is not None and star.disposition and star.disposition.upper() in unreliable",
@@ -6957,6 +7197,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "213: star is not None and star.disposition and star.disposition.upper() in unreliable",
@@ -6989,6 +7230,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "213: star is not None and star.disposition and star.disposition.upper() in unreliable",
@@ -7022,6 +7264,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "213: star is not None and star.disposition and star.disposition.upper() in unreliable",
@@ -7056,6 +7299,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "213: star is not None and star.disposition and star.disposition.upper() in unreliable",
@@ -7091,6 +7335,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -7114,6 +7359,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -7137,6 +7383,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -7160,6 +7407,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 15,
    "guards": [],
    "early_exits_before": [
     "259: not eligible"
@@ -7185,6 +7433,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 15,
    "guards": [],
    "early_exits_before": [
     "259: not eligible"
@@ -7210,6 +7459,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 16,
    "guards": [],
    "early_exits_before": [
     "259: not eligible"
@@ -7235,6 +7485,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "259: not eligible"
@@ -7260,6 +7511,7 @@
    "contexts": [
     "returned decision"
    ],
+   "col": 15,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -7277,6 +7529,7 @@
    "contexts": [
     "returned decision"
    ],
+   "col": 28,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -7294,6 +7547,7 @@
    "contexts": [
     "returned decision"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -7311,6 +7565,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 19,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -7328,6 +7583,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 36,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -7345,6 +7601,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 19,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -7362,6 +7619,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 25,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -7379,6 +7637,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 43,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -7396,6 +7655,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 65,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -7413,6 +7673,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -7430,6 +7691,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 32,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -7447,6 +7709,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 44,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -7464,6 +7727,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -7481,6 +7745,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 29,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -7498,6 +7763,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -7515,6 +7781,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 37,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -7532,6 +7799,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 15,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -7549,6 +7817,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -7566,6 +7835,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -7583,6 +7853,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "813: stats.status != \"ok\""
@@ -7602,6 +7873,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [
     "barrier is not None"
    ],
@@ -7623,6 +7895,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -7646,6 +7919,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "923: len(train_raw) == 0"
@@ -7671,6 +7945,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 29,
    "guards": [],
    "early_exits_before": [
     "923: len(train_raw) == 0"
@@ -7696,6 +7971,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "923: len(train_raw) == 0",
@@ -7722,6 +7998,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [
     "corrections_on"
    ],
@@ -7750,6 +8027,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "923: len(train_raw) == 0",
@@ -7778,6 +8056,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 31,
    "guards": [],
    "early_exits_before": [
     "923: len(train_raw) == 0",
@@ -7806,6 +8085,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [
     "validity[\"reasons\"] and params.require_valid_train"
    ],
@@ -7836,6 +8116,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "923: len(train_raw) == 0",
@@ -7865,6 +8146,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "923: len(train_raw) == 0",
@@ -7895,6 +8177,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "923: len(train_raw) == 0",
@@ -7926,6 +8209,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 31,
    "guards": [],
    "early_exits_before": [
     "923: len(train_raw) == 0",
@@ -7957,6 +8241,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [
     "validity[\"reasons\"] and params.require_valid_train"
    ],
@@ -7990,6 +8275,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "923: len(train_raw) == 0",
@@ -8022,6 +8308,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -8045,6 +8332,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "1156: prepared.decided is not None"
@@ -8070,6 +8358,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "1156: prepared.decided is not None",
@@ -8096,6 +8385,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "1156: prepared.decided is not None",
@@ -8123,6 +8413,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 30,
    "guards": [],
    "early_exits_before": [
     "1156: prepared.decided is not None",
@@ -8150,6 +8441,7 @@
    "contexts": [
     "returned decision"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -8167,6 +8459,7 @@
    "contexts": [
     "returned decision"
    ],
+   "col": 35,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -8184,6 +8477,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -8201,6 +8495,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "1520: n_pred == 0"
@@ -8220,6 +8515,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "1520: n_pred == 0",
@@ -8240,6 +8536,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 32,
    "guards": [],
    "early_exits_before": [
     "1520: n_pred == 0",
@@ -8260,6 +8557,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 15,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -8277,6 +8575,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 43,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -8294,6 +8593,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -8311,6 +8611,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 36,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -8328,6 +8629,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "1520: n_pred == 0",
@@ -8349,6 +8651,7 @@
    "contexts": [
     "serialized flag"
    ],
+   "col": 20,
    "guards": [
     "control"
    ],
@@ -8373,6 +8676,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "1520: n_pred == 0",
@@ -8395,6 +8699,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -8418,6 +8723,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "1892: aggregation not in (AGGREGATION_LEGACY, AGGREGATION_SPEC_B)"
@@ -8443,6 +8749,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 8,
    "guards": [],
    "early_exits_before": [
     "1892: aggregation not in (AGGREGATION_LEGACY, AGGREGATION_SPEC_B)"
@@ -8468,6 +8775,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 43,
    "guards": [],
    "early_exits_before": [
     "1892: aggregation not in (AGGREGATION_LEGACY, AGGREGATION_SPEC_B)"
@@ -8493,6 +8801,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "1892: aggregation not in (AGGREGATION_LEGACY, AGGREGATION_SPEC_B)",
@@ -8519,6 +8828,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "1892: aggregation not in (AGGREGATION_LEGACY, AGGREGATION_SPEC_B)",
@@ -8546,6 +8856,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "1892: aggregation not in (AGGREGATION_LEGACY, AGGREGATION_SPEC_B)",
@@ -8574,6 +8885,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "1892: aggregation not in (AGGREGATION_LEGACY, AGGREGATION_SPEC_B)",
@@ -8603,6 +8915,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "1892: aggregation not in (AGGREGATION_LEGACY, AGGREGATION_SPEC_B)",
@@ -8633,6 +8946,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "1892: aggregation not in (AGGREGATION_LEGACY, AGGREGATION_SPEC_B)",
@@ -8664,6 +8978,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "1892: aggregation not in (AGGREGATION_LEGACY, AGGREGATION_SPEC_B)",
@@ -8696,6 +9011,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 9,
    "guards": [
     "not (TestStatus.FAIL in statuses)"
    ],
@@ -8730,6 +9046,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -8753,6 +9070,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -8781,6 +9099,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [
     "candidate is None"
    ],
@@ -8811,6 +9130,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [
     "candidate is None"
    ],
@@ -8841,6 +9161,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -8865,6 +9186,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -8889,6 +9211,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 39,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -8913,6 +9236,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 13,
    "guards": [
     "not (test.name == \"odd_even\" and plan.is_v051)"
    ],
@@ -8939,6 +9263,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 13,
    "guards": [
     "not (test.name == \"odd_even\" and plan.is_v051)",
     "not (test.name == \"odd_even\")"
@@ -8966,6 +9291,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 13,
    "guards": [
     "not (test.name == \"odd_even\" and plan.is_v051)",
     "not (test.name == \"odd_even\")",
@@ -8994,6 +9320,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 13,
    "guards": [
     "not (test.name == \"odd_even\" and plan.is_v051)",
     "not (test.name == \"odd_even\")",
@@ -9023,6 +9350,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 13,
    "guards": [
     "not (test.name == \"odd_even\" and plan.is_v051)",
     "not (test.name == \"odd_even\")",
@@ -9053,6 +9381,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 47,
    "guards": [
     "not (test.name == \"odd_even\" and plan.is_v051)",
     "not (test.name == \"odd_even\")",
@@ -9083,6 +9412,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 13,
    "guards": [
     "not (test.name == \"odd_even\" and plan.is_v051)",
     "not (test.name == \"odd_even\")",
@@ -9114,6 +9444,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 44,
    "guards": [
     "not (test.name == \"odd_even\" and plan.is_v051)",
     "not (test.name == \"odd_even\")",
@@ -9145,6 +9476,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 13,
    "guards": [
     "not (test.name == \"odd_even\" and plan.is_v051)",
     "not (test.name == \"odd_even\")",
@@ -9177,6 +9509,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 13,
    "guards": [
     "not (test.name == \"odd_even\" and plan.is_v051)",
     "not (test.name == \"odd_even\")",
@@ -9210,6 +9543,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 13,
    "guards": [
     "not (test.name == \"odd_even\" and plan.is_v051)",
     "not (test.name == \"odd_even\")",
@@ -9244,6 +9578,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 45,
    "guards": [
     "not (test.name == \"odd_even\" and plan.is_v051)",
     "not (test.name == \"odd_even\")",
@@ -9278,6 +9613,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -9302,6 +9638,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -9328,6 +9665,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 23,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -9354,6 +9692,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -9382,6 +9721,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 15,
    "guards": [
     "not (not sum(w_in.values()) > 0)"
    ],
@@ -9412,6 +9752,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 30,
    "guards": [
     "not (not sum(w_in.values()) > 0)"
    ],
@@ -9442,6 +9783,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 19,
    "guards": [
     "not (not sum(w_in.values()) > 0)",
     "w_in[s] > 0 or w_out[s] > 0"
@@ -9473,6 +9815,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 39,
    "guards": [
     "not (not sum(w_in.values()) > 0)",
     "w_in[s] > 0 or w_out[s] > 0"
@@ -9504,6 +9847,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -9532,6 +9876,7 @@
    "contexts": [
     "serialized flag"
    ],
+   "col": 23,
    "guards": [],
    "early_exits_before": [
     "515: why is not None"
@@ -9562,6 +9907,7 @@
    "contexts": [
     "serialized flag"
    ],
+   "col": 32,
    "guards": [],
    "early_exits_before": [
     "515: why is not None"
@@ -9592,6 +9938,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -9620,6 +9967,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -9643,6 +9991,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 23,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -9666,6 +10015,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "634: plan is None or plan.discovery is None"
@@ -9691,6 +10041,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 42,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -9711,6 +10062,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -9731,6 +10083,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 13,
    "guards": [
     "not (test.name == \"odd_even\")"
    ],
@@ -9753,6 +10106,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 13,
    "guards": [
     "not (test.name == \"odd_even\")",
     "not (test.name == \"secondary_eclipse\")"
@@ -9776,6 +10130,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 13,
    "guards": [
     "not (test.name == \"odd_even\")",
     "not (test.name == \"secondary_eclipse\")",
@@ -9800,6 +10155,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 13,
    "guards": [
     "not (test.name == \"odd_even\")",
     "not (test.name == \"secondary_eclipse\")",
@@ -9825,6 +10181,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 13,
    "guards": [
     "not (test.name == \"odd_even\")",
     "not (test.name == \"secondary_eclipse\")",
@@ -9851,6 +10208,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 13,
    "guards": [
     "not (test.name == \"odd_even\")",
     "not (test.name == \"secondary_eclipse\")",
@@ -9878,6 +10236,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -9904,6 +10263,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -9932,6 +10292,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "178: not used"
@@ -9962,6 +10323,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "178: not used",
@@ -9993,6 +10355,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 22,
    "guards": [],
    "early_exits_before": [
     "178: not used",
@@ -10025,6 +10388,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 19,
    "guards": [],
    "early_exits_before": [
     "178: not used",
@@ -10057,6 +10421,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 40,
    "guards": [],
    "early_exits_before": [
     "178: not used",
@@ -10089,6 +10454,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "178: not used",
@@ -10121,6 +10487,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "178: not used",
@@ -10153,6 +10520,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -10181,6 +10549,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 33,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -10209,6 +10578,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 57,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -10237,6 +10607,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 35,
    "guards": [
     "n_bins < b_min or not np.isfinite(sigma_w) or sigma_w <= 0"
    ],
@@ -10267,6 +10638,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -10287,6 +10659,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 33,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -10307,6 +10680,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 57,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -10327,6 +10701,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 35,
    "guards": [
     "n_bins < b_min or not np.isfinite(sigma_w) or sigma_w <= 0"
    ],
@@ -10349,6 +10724,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 71,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -10372,6 +10748,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -10395,6 +10772,7 @@
    "contexts": [
     "returned decision"
    ],
+   "col": 15,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -10412,6 +10790,7 @@
    "contexts": [
     "returned decision"
    ],
+   "col": 33,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -10429,6 +10808,7 @@
    "contexts": [
     "returned decision"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -10446,6 +10826,7 @@
    "contexts": [
     "returned decision"
    ],
+   "col": 45,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -10463,6 +10844,7 @@
    "contexts": [
     "returned decision"
    ],
+   "col": 60,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -10480,6 +10862,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -10497,6 +10880,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "260: not _candidate_ok(period, t0, duration)"
@@ -10516,6 +10900,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "260: not _candidate_ok(period, t0, duration)",
@@ -10536,6 +10921,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "260: not _candidate_ok(period, t0, duration)",
@@ -10557,6 +10943,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "260: not _candidate_ok(period, t0, duration)",
@@ -10579,6 +10966,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 33,
    "guards": [],
    "early_exits_before": [
     "260: not _candidate_ok(period, t0, duration)",
@@ -10601,6 +10989,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "260: not _candidate_ok(period, t0, duration)",
@@ -10624,6 +11013,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 31,
    "guards": [],
    "early_exits_before": [
     "260: not _candidate_ok(period, t0, duration)",
@@ -10647,6 +11037,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "260: not _candidate_ok(period, t0, duration)",
@@ -10671,6 +11062,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 35,
    "guards": [],
    "early_exits_before": [
     "260: not _candidate_ok(period, t0, duration)",
@@ -10695,6 +11087,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "260: not _candidate_ok(period, t0, duration)",
@@ -10720,6 +11113,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "260: not _candidate_ok(period, t0, duration)",
@@ -10746,6 +11140,7 @@
    "contexts": [
     "assignment to a decision variable"
    ],
+   "col": 22,
    "guards": [],
    "early_exits_before": [
     "260: not _candidate_ok(period, t0, duration)",
@@ -10773,6 +11168,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": []
@@ -10790,6 +11186,7 @@
    "contexts": [
     "serialized flag"
    ],
+   "col": 34,
    "guards": [
     "name == \"F2\""
    ],
@@ -10809,6 +11206,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [],
    "fixtures": [
@@ -10837,6 +11235,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "278: len(binned) < 10"
@@ -10867,6 +11266,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 51,
    "guards": [],
    "early_exits_before": [
     "278: len(binned) < 10"
@@ -10897,6 +11297,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "278: len(binned) < 10"
@@ -10927,6 +11328,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 11,
    "guards": [],
    "early_exits_before": [
     "278: len(binned) < 10"
@@ -10957,6 +11359,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 16,
    "guards": [],
    "early_exits_before": [
     "278: len(binned) < 10",
@@ -10989,6 +11392,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 19,
    "guards": [],
    "early_exits_before": [
     "278: len(binned) < 10",
@@ -11020,6 +11424,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 15,
    "guards": [],
    "early_exits_before": [
     "278: len(binned) < 10",
@@ -11051,6 +11456,7 @@
    "contexts": [
     "branch test"
    ],
+   "col": 7,
    "guards": [],
    "early_exits_before": [
     "278: len(binned) < 10",

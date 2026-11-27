@@ -182,29 +182,88 @@ two executions. `chain` runs detrending, search and the gauntlet again, in its o
 3. **The freeze commit and Codex's round,** which also asks whether N1 or N2 changes a rule of
    revision 6 (N3).
 
-## What does not exist yet
+## Under block O (#218, the decisions of 2026-11-27 (11)): the reach rule, the operands, the manifest
 
-- **(a) The manifest of the decision layer.** It follows section 4's first paragraph, and the plan
-  is:
-  1. A committed tool finds the predicates mechanically from source. A predicate qualifies when it
-     reaches a serialized status, class, eligibility flag, reason code or verdict only through
-     branch tests, assignments, returns, arguments and boolean operators. This covers:
-     - J1's direct sites;
-     - a comparison that sets a named boolean a later branch tests (`attenuated`);
-     - functions whose returned value carries the decision (`power`, `a0`, `a0_v4`,
-       `core/inconclusive`).
-  2. Every J1 atom is either a row or listed with a reason class.
-  3. Each row is attributed to its fixtures by version dispatch, never by an outcome.
-  4. Each numeric row gets its operands' locations in the serialized outputs, or a reconstruction
-     formula, from source, the plan and the schema only. The plan comes from source too:
-     `synthetic.discovery_*_plan_dict` and the `params` defaults. The `plan-` goldens stay
-     unopened.
-  5. Each row states why its formula is monotone in each measurement.
-- **(c) The freeze commit.** The tools and their tests go in earlier ordinary commits. The freeze
-  commit holds data only: the fixture list, the code digest, the comparator's SHA-256, the frozen
-  schema, the manifest and the raw goldens' hashes. It is pushed alone, with the trailer
-  `CI: order-proof`.
-- **(d) Codex's round.** One round, in a new conversation, read only. It checks the manifest and
-  the span mapping for completeness against the frozen source. The declared inputs are the view of
-  `verdict-v4.txt` and the search for `refute_version`. Codex is forbidden to open the golden
-  folders.
+**The reach rule of N1** ([`../tools/reach.py`](../tools/reach.py), unit `reach`, from source
+only; [reach-table.json](reach-table.json)). It classes each row of each fixture as reached-if or
+reach unknown; the docstring states it in full.
+- **Reached-if.** A row is reached-if when:
+  - its function is proven executed from the fixture's entries, through calls with a single
+    target at unconditional positions, with configuration guards evaluated by the table;
+  - the row sits at an unconditional position.
+
+  Its evidence conditions are read after the freeze, only from the fixture's serialized
+  non-numeric output: `output-ok` (the file is not an `ERROR` text), and `candidate-present` or
+  `candidate-null` (the serialized `candidate` field is an object or `null`).
+- **Not reached** only when the output proves every alternative false. Anything else is reach
+  unknown, with its reason.
+- **The loop rule (O1).** A row inside a loop body, a comprehension or a generator is reach
+  unknown in every fixture, and counts once per fixture among the declared limits. Its instances
+  cannot be told apart by a serialized status or code.
+- **The rule's own changes,** each committed before the run that used it:
+  - `discovery is None` added to the guard table, because `chain` binds `discovery = plan.discovery`;
+  - the condition on `and`/`or` removed;
+  - `check_snr` added to `CANDIDATE_FUNCS`;
+  - a guard on `noise` scoped to `attack_candidate`.
+- **What was known when those changes were made.** The second run had left the SNR gate's rows
+  reach unknown, and with them every chain fixture without a row whose operands are present, so
+  zero coverage there. The reasons for the changes stand on their own:
+  - the `and`/`or` condition was the rule's own addition, against section 4, which splits a
+    conjunction into rows; its example `attenuated` is a second conjunct;
+  - the other changes are configuration facts taken from source.
+
+**The operand map** ([operand-map.json](operand-map.json), written from source). It covers the 17
+numeric and finiteness rows that are reached-if in some fixture. For each fixture it names:
+- the call whose result is serialized, since `v05_tests` and `v052_tests` replace `odd_even`,
+  `secondary_eclipse`, `centroid_shift` and `period_alias`;
+- each operand's location, or a formula, with its monotonicity statement; or the reason the
+  operand is absent.
+
+The instance whose result is serialized may be a call inside the loop of `v05_tests` or
+`v052_tests`. Then the row is reach unknown in that fixture, under the loop rule, although the
+reach table proves another instance ran:
+- `odd_even` in v2 and v2-eb;
+- `period_alias` in v3 and v4.
+
+Some locations are conditional (`if_key`). They are present only when the branch that writes the
+key ran, and otherwise absent, for the reason given.
+
+**The manifest** ([manifest.json](manifest.json), unit `manifest`, from source and records only)
+and the freeze list ([freeze.json](freeze.json)):
+
+| Fixture | Rows | Non-numeric | Reach unknown | Absent | Assessable (integer or configuration; conditional) |
+| --- | --- | --- | --- | --- | --- |
+| v1 | 159 | 92 | 58 | 1 | 8 (5; 2) |
+| v2 | 210 | 120 | 76 | 5 | 9 (4; 3) |
+| v2-eb | 210 | 120 | 76 | 5 | 9 (4; 3) |
+| v3 | 271 | 155 | 102 | 7 | 7 (4; 3) |
+| v4 | 273 | 147 | 114 | 7 | 5 (2; 2) |
+| chain-v1 | 115 | 59 | 46 | 8 | 2 (0; 0) |
+| chain-v2 | 166 | 87 | 62 | 14 | 3 (0; 0) |
+| chain-v2-eb | 166 | 87 | 62 | 14 | 3 (0; 0) |
+| chain-v3 | 218 | 113 | 89 | 14 | 2 (0; 0) |
+| chain-v4 | 220 | 105 | 101 | 12 | 2 (0; 0) |
+
+- **What the columns mean:**
+  - non-numeric rows are listed with a reason class; they are not assessed and are not limits;
+  - reach-unknown and absent rows are declared limits;
+  - an assessable row is assessed after the freeze when its reach conditions hold on the output.
+    It is not reached when they fail, and it becomes absent when a conditional location's key is
+    missing.
+- **Declared limits:** N = 874, counted per fixture and row. The first is that internal
+  selections were not assessed for margin.
+- **Not reached and assessed** are known only after the freeze, from the frozen rule and the
+  output. No count of them can be given now.
+- **Every fixture has at least two assessable rows.** In each chain fixture they are the SNR
+  gate's: `math.isfinite(candidate.snr)` and `candidate.snr >= params.min_snr`, with
+  `chain:candidate.snr` and the plan's `min_snr`.
+
+## Still to do
+
+- **(c) The freeze commit:** data only and alone, with the trailer `CI: order-proof`. It holds the
+  manifest, the comparator's schema, the freeze list, the reach table, the operand map, the
+  candidate list and the exact keys. The comparator and the tools are in earlier commits.
+- **(d) Codex's round:** one round, a new conversation, read only, with N3's question.
+  - It checks the manifest and the span mapping for completeness against the frozen source.
+  - Its declared inputs are the view of `verdict-v4.txt` and the search for `refute_version`.
+  - Codex is forbidden to open the golden folders.

@@ -1,0 +1,206 @@
+{
+ "labels": ["exploratory", "method_status: not_validated"],
+ "reach_override": "A fixture entry 'reach_unknown' replaces the reach table's reached-if for that row and fixture: the reach table proves that some instance of the row ran, while the entry shows from source that the instance whose result is serialized is one the reach rule leaves unknown.",
+ "about": "The operands of every numeric and finiteness row that the reach rule leaves reached-if in some fixture (l4/reach-table.json), written from source only; no golden file was opened. A location is 'verdict:<path>' (the JSON part of verdict-<v>.txt), 'chain:<path>' (chain-<v>.json), 'plan:<path>' (plan-<v>.json, the resolved plan of the same version) or 'const:<value>'. A path 'tests[name=X]' selects the element of 'tests' whose 'name' is X. A location with 'if_key' is present only when that key is in the serialized output (the branch that writes it ran), and absent otherwise, for the reason given. A fixture missing from a row's 'fixtures' takes 'chain_default' for a chain fixture. Each present row names the call whose result is serialized (the producer); an instance of the row in any other call is not assessed (it does not reach the output). Integer-or-configuration rows are compared for an identical outcome only (decision H2(d)) and count as assessed (decision K2(f)).",
+ "chain_default": {"absent": "N2: the chain file serializes only statuses and the candidate's period_days, t0_btjd and snr; this row's operands are none of them, and no source proof makes the chain call and the verdict call the same call with the same inputs (tests/baseline_code_v0511.py:47-50)."},
+ "rows": {
+  "src/refute/packs/tess/gauntlet.py:54:13": {
+   "expression": "math.isfinite(candidate.snr)",
+   "class": "finiteness",
+   "fixtures": {
+    "v1": {"producer": "pipeline.py:271 check_snr(final, gp.snr), noise is None", "x": "verdict:candidate.snr"},
+    "v2": {"producer": "pipeline.py:271", "x": "verdict:candidate.snr"},
+    "v2-eb": {"producer": "pipeline.py:271", "x": "verdict:candidate.snr"},
+    "v3": {"producer": "pipeline.py:271", "x": "verdict:candidate.snr"},
+    "v4": {"producer": "pipeline.py:271", "x": "verdict:candidate.snr"},
+    "chain-v1": {"producer": "pipeline.py:271 within discover/measure.py:53", "x": "chain:candidate.snr"},
+    "chain-v2": {"producer": "pipeline.py:271 within discover/measure.py:53", "x": "chain:candidate.snr"},
+    "chain-v2-eb": {"producer": "pipeline.py:271 within discover/measure.py:53", "x": "chain:candidate.snr"},
+    "chain-v3": {"producer": "pipeline.py:271 within discover/measure.py:53", "x": "chain:candidate.snr"},
+    "chain-v4": {"producer": "pipeline.py:271 within discover/measure.py:53", "x": "chain:candidate.snr"}
+   },
+   "note": "The candidate passed to check_snr is the gauntlet's final candidate, which build_result (pipeline.py:996) and chain (discover/measure.py:67) serialize. A nonfinite value is serialized as null (core/io.py:32)."
+  },
+  "src/refute/packs/tess/gauntlet.py:54:46": {
+   "expression": "candidate.snr >= params.min_snr",
+   "class": "measurement",
+   "monotone": "x is the measurement itself (the identity); t is configuration and is not varied",
+   "fixtures": {
+    "v1": {"producer": "pipeline.py:271", "x": "verdict:candidate.snr", "t": "verdict:tests[name=snr].thresholds.min_snr"},
+    "v2": {"producer": "pipeline.py:271", "x": "verdict:candidate.snr", "t": "verdict:tests[name=snr].thresholds.min_snr"},
+    "v2-eb": {"producer": "pipeline.py:271", "x": "verdict:candidate.snr", "t": "verdict:tests[name=snr].thresholds.min_snr"},
+    "v3": {"producer": "pipeline.py:271", "x": "verdict:candidate.snr", "t": "verdict:tests[name=snr].thresholds.min_snr"},
+    "v4": {"producer": "pipeline.py:271", "x": "verdict:candidate.snr", "t": "verdict:tests[name=snr].thresholds.min_snr"},
+    "chain-v1": {"producer": "pipeline.py:271 within discover/measure.py:53", "x": "chain:candidate.snr", "t": "plan:gauntlet.snr.min_snr"},
+    "chain-v2": {"producer": "pipeline.py:271 within discover/measure.py:53", "x": "chain:candidate.snr", "t": "plan:gauntlet.snr.min_snr"},
+    "chain-v2-eb": {"producer": "pipeline.py:271 within discover/measure.py:53", "x": "chain:candidate.snr", "t": "plan:gauntlet.snr.min_snr"},
+    "chain-v3": {"producer": "pipeline.py:271 within discover/measure.py:53", "x": "chain:candidate.snr", "t": "plan:gauntlet.snr.min_snr"},
+    "chain-v4": {"producer": "pipeline.py:271 within discover/measure.py:53", "x": "chain:candidate.snr", "t": "plan:gauntlet.snr.min_snr"}
+   }
+  },
+  "src/refute/packs/tess/gauntlet.py:72:7": {
+   "expression": "len(even) < params.min_transits_each",
+   "class": "integer-or-configuration",
+   "fixtures": {
+    "v1": {"producer": "pipeline.py:277 check_odd_even(primary, gp.odd_even)", "x": "verdict:tests[name=odd_even].metrics.n_even", "t": "verdict:tests[name=odd_even].thresholds.min_transits_each"},
+    "v2": {"reach_unknown": "the serialized odd_even is the call inside the loop of v05_tests (pipeline.py:384, 390-394): the loop rule; the instance at pipeline.py:277 does not reach the output"},
+    "v2-eb": {"reach_unknown": "the serialized odd_even is the call inside the loop of v05_tests (pipeline.py:384, 390-394): the loop rule; the instance at pipeline.py:277 does not reach the output"},
+    "v3": {"absent": "the serialized odd_even is battery_v51.check_odd_even's (pipeline.py:385-389); this row's instance does not reach the output"},
+    "v4": {"absent": "the serialized odd_even is battery_v52.check_odd_even's or a refusal (pipeline_v52.py:97-112); this row's instance does not reach the output"}
+   },
+   "note": "n_even is g_even.n = depths.size = len(even) on the PASS/FAIL branch (events.py:66-67, 174-184) and len(even) on the INCONCLUSIVE branch (gauntlet.py:78)."
+  },
+  "src/refute/packs/tess/gauntlet.py:72:47": {
+   "expression": "len(odd) < params.min_transits_each",
+   "class": "integer-or-configuration",
+   "fixtures": {
+    "v1": {"producer": "pipeline.py:277", "x": "verdict:tests[name=odd_even].metrics.n_odd", "t": "verdict:tests[name=odd_even].thresholds.min_transits_each"},
+    "v2": {"reach_unknown": "the serialized odd_even is the call inside the loop of v05_tests (pipeline.py:384, 390-394): the loop rule"},
+    "v2-eb": {"reach_unknown": "the serialized odd_even is the call inside the loop of v05_tests (pipeline.py:384, 390-394): the loop rule"},
+    "v3": {"absent": "the serialized odd_even is battery_v51.check_odd_even's (pipeline.py:385-389)"},
+    "v4": {"absent": "the serialized odd_even is battery_v52.check_odd_even's or a refusal (pipeline_v52.py:97-112)"}
+   }
+  },
+  "src/refute/packs/tess/gauntlet.py:112:7": {
+   "expression": "len(secondary) == 0",
+   "class": "integer-or-configuration",
+   "fixtures": {
+    "v1": {"producer": "pipeline.py:278 check_secondary_eclipse(primary, secondary, ...)", "x": "verdict:tests[name=secondary_eclipse].metrics.n_secondary_events", "t": "const:0"},
+    "v2": {"absent": "the serialized secondary_eclipse is battery_v5.check_secondary_two_sided's (pipeline.py:367-369, 395-396)"},
+    "v2-eb": {"absent": "the serialized secondary_eclipse is battery_v5.check_secondary_two_sided's (pipeline.py:367-369, 395-396)"},
+    "v3": {"absent": "the serialized secondary_eclipse is battery_v5.check_secondary_two_sided's (pipeline.py:367-369, 395-396)"},
+    "v4": {"absent": "the serialized secondary_eclipse is battery_v5.check_secondary_two_sided's (pipeline_v52.py:51-53, 113-114)"}
+   },
+   "note": "n_secondary_events is len(secondary) on the INCONCLUSIVE branch (gauntlet.py:118) and g_sec.n = len(secondary) on the others (gauntlet.py:131)."
+  },
+  "src/refute/packs/tess/gauntlet.py:112:30": {
+   "expression": "len(primary) == 0",
+   "class": "integer-or-configuration",
+   "fixtures": {
+    "v1": {"producer": "pipeline.py:278", "x": {"if_key": "verdict:tests[name=secondary_eclipse].metrics.n_primary_events", "else": "absent: only the INCONCLUSIVE branch serializes len(primary) (gauntlet.py:118); the PASS and FAIL metrics do not (gauntlet.py:125-132)"}, "t": "const:0"},
+    "v2": {"absent": "the serialized secondary_eclipse is battery_v5.check_secondary_two_sided's"},
+    "v2-eb": {"absent": "the serialized secondary_eclipse is battery_v5.check_secondary_two_sided's"},
+    "v3": {"absent": "the serialized secondary_eclipse is battery_v5.check_secondary_two_sided's"},
+    "v4": {"absent": "the serialized secondary_eclipse is battery_v5.check_secondary_two_sided's"}
+   }
+  },
+  "src/refute/packs/tess/battery.py:268:7": {
+   "expression": "len(used) < params.min_sectors",
+   "class": "integer-or-configuration",
+   "fixtures": {
+    "v1": {"producer": "pipeline.py:156 check_centroid_shift(pixels, candidate, plan)", "x": {"if_key": "verdict:tests[name=centroid_shift].metrics.offset_dof", "formula": "offset_dof / 2", "else": "absent: the INCONCLUSIVE branch serializes only skipped_sectors (battery.py:276), from which len(used) cannot be formed without the number of pixel files"}, "t": "verdict:tests[name=centroid_shift].thresholds.min_sectors"},
+    "v2": {"absent": "the serialized centroid_shift is centroid_v5.check_centroid_v5's (pipeline.py:399-408)"},
+    "v2-eb": {"absent": "the serialized centroid_shift is centroid_v5.check_centroid_v5's (pipeline.py:399-408)"},
+    "v3": {"absent": "the serialized centroid_shift is centroid_v5.check_centroid_v5's (pipeline.py:399-408)"},
+    "v4": {"absent": "the serialized centroid_shift is centroid_v5.check_centroid_v5's (pipeline_v52.py:117-126)"}
+   },
+   "note": "offset_dof is 2 * len(used) (battery.py:288)."
+  },
+  "src/refute/packs/tess/battery.py:835:7": {
+   "expression": "n_box < needed",
+   "class": "measurement",
+   "monotone": "x = n_box is an integer count (not varied); t = needed = min_coverage * duration / (exptime_seconds / 86400) is increasing in the measurement duration, since min_coverage > 0 (params.py:181) and exptime_seconds = 120 (params.py:28)",
+   "fixtures": {
+    "v1": {"producer": "pipeline.py:166 check_period_alias(data.lc, final, plan)", "x": "verdict:tests[name=period_alias].metrics.n_in_transit_cadences", "t": {"formula": "min_coverage * duration / (exptime_seconds / 86400)", "terms": {"min_coverage": "verdict:test_plan.gauntlet.events.min_coverage", "duration": "verdict:candidate.duration", "exptime_seconds": "verdict:test_plan.data.exptime_seconds"}}},
+    "v2": {"producer": "pipeline.py:166, passed through the loop of v05_tests unchanged or with power.attach, which keeps metrics (pipeline.py:440-444, power.py:76-78)", "x": "verdict:tests[name=period_alias].metrics.n_in_transit_cadences", "t": {"formula": "min_coverage * duration / (exptime_seconds / 86400)", "terms": {"min_coverage": "verdict:test_plan.gauntlet.events.min_coverage", "duration": "verdict:candidate.duration", "exptime_seconds": "verdict:test_plan.data.exptime_seconds"}}},
+    "v2-eb": {"producer": "pipeline.py:166", "x": "verdict:tests[name=period_alias].metrics.n_in_transit_cadences", "t": {"formula": "min_coverage * duration / (exptime_seconds / 86400)", "terms": {"min_coverage": "verdict:test_plan.gauntlet.events.min_coverage", "duration": "verdict:candidate.duration", "exptime_seconds": "verdict:test_plan.data.exptime_seconds"}}},
+    "v3": {"reach_unknown": "the serialized period_alias is the second call, with alias_plan, inside the loop of v05_tests (pipeline.py:384, 430-434): the loop rule; the instance at pipeline.py:166 does not reach the output"},
+    "v4": {"reach_unknown": "the serialized period_alias is the second call, with alias_plan, inside the loop of v052_tests (pipeline_v52.py:96, 158-160): the loop rule; the instance at pipeline.py:166 does not reach the output"}
+   },
+   "note": "n_in_transit_cadences = n_box on every branch (battery.py:842, 861). The candidate is the final one, serialized by build_result (pipeline.py:996, 1026)."
+  },
+  "src/refute/packs/tess/battery.py:835:25": {
+   "expression": "y.size - n_box < 10",
+   "class": "integer-or-configuration",
+   "fixtures": {
+    "v1": {"absent": "y.size is the length of the series detrended again inside the check (battery.py:820-821); no serialized field gives it"},
+    "v2": {"absent": "y.size is the length of the series detrended again inside the check (battery.py:820-821); no serialized field gives it"},
+    "v2-eb": {"absent": "y.size is the length of the series detrended again inside the check (battery.py:820-821); no serialized field gives it"},
+    "v3": {"absent": "y.size is the length of the series detrended again inside the check (battery.py:820-821); no serialized field gives it"},
+    "v4": {"absent": "y.size is the length of the series detrended again inside the check (battery.py:820-821); no serialized field gives it"}
+   }
+  },
+  "src/refute/packs/tess/search.py:278:7": {
+   "expression": "len(binned) < 10",
+   "class": "integer-or-configuration",
+   "fixtures": {},
+   "note": "Reached only in chain fixtures, where chain_default applies (len(binned) is not serialized)."
+  },
+  "src/refute/packs/tess/battery_v5.py:63:7": {
+   "expression": "len(secondary) == 0",
+   "class": "integer-or-configuration",
+   "fixtures": {
+    "v2": {"producer": "pipeline.py:367-369, 395-396", "x": {"if_key": "verdict:tests[name=secondary_eclipse].metrics.n_secondary_events", "else": "absent: the INCONCLUSIVE exit writes no metric (battery_v5.py:63-65, 41-42)"}, "t": "const:0"},
+    "v2-eb": {"producer": "pipeline.py:367-369, 395-396", "x": {"if_key": "verdict:tests[name=secondary_eclipse].metrics.n_secondary_events", "else": "absent: the INCONCLUSIVE exit writes no metric (battery_v5.py:63-65, 41-42)"}, "t": "const:0"},
+    "v3": {"producer": "pipeline.py:367-369, 395-396", "x": {"if_key": "verdict:tests[name=secondary_eclipse].metrics.n_secondary_events", "else": "absent: the INCONCLUSIVE exit writes no metric (battery_v5.py:63-65, 41-42)"}, "t": "const:0"},
+    "v4": {"producer": "pipeline_v52.py:51-53, 113-114", "x": {"if_key": "verdict:tests[name=secondary_eclipse].metrics.n_secondary_events", "else": "absent: the INCONCLUSIVE exit writes no metric (battery_v5.py:63-65, 41-42)"}, "t": "const:0"}
+   },
+   "note": "n_secondary_events = g_sec.n = len(secondary) (battery_v5.py:66, 76; events.py:174-184)."
+  },
+  "src/refute/packs/tess/battery_v5.py:63:30": {
+   "expression": "len(primary) == 0",
+   "class": "integer-or-configuration",
+   "fixtures": {
+    "v2": {"absent": "no branch of check_secondary_two_sided serializes len(primary) (battery_v5.py:63-77)"},
+    "v2-eb": {"absent": "no branch of check_secondary_two_sided serializes len(primary) (battery_v5.py:63-77)"},
+    "v3": {"absent": "no branch of check_secondary_two_sided serializes len(primary) (battery_v5.py:63-77)"},
+    "v4": {"absent": "no branch of check_secondary_two_sided serializes len(primary) (battery_v5.py:63-77)"}
+   }
+  },
+  "src/refute/packs/tess/battery_v5.py:127:7": {
+   "expression": "n < sp.min_measured_events",
+   "class": "integer-or-configuration",
+   "fixtures": {
+    "v2": {"producer": "pipeline.py:451 (_with_a0_note changes only the message, pipeline.py:471-478)", "x": "verdict:tests[name=single_event].metrics.n_events", "t": "verdict:test_plan.stronger.min_measured_events"},
+    "v2-eb": {"producer": "pipeline.py:451", "x": "verdict:tests[name=single_event].metrics.n_events", "t": "verdict:test_plan.stronger.min_measured_events"},
+    "v3": {"producer": "pipeline.py:451 on A0's events", "x": "verdict:tests[name=single_event].metrics.n_events", "t": "verdict:test_plan.stronger.min_measured_events"},
+    "v4": {"absent": "not reached-if in this fixture (a data guard, pipeline_v52.py:171-177)"}
+   },
+   "note": "n_events = n on every branch (battery_v5.py:128, 132, 167)."
+  },
+  "src/refute/packs/tess/battery_v5.py:193:7": {
+   "expression": "n < sp.min_measured_events",
+   "class": "integer-or-configuration",
+   "fixtures": {
+    "v2": {"producer": "pipeline.py:452", "x": {"if_key": "verdict:tests[name=event_consistency].metrics.n_events", "else": "verdict:tests[name=event_consistency].coverage"}, "t": "verdict:test_plan.stronger.min_measured_events"},
+    "v2-eb": {"producer": "pipeline.py:452", "x": {"if_key": "verdict:tests[name=event_consistency].metrics.n_events", "else": "verdict:tests[name=event_consistency].coverage"}, "t": "verdict:test_plan.stronger.min_measured_events"},
+    "v3": {"producer": "pipeline.py:452 on A0's events", "x": {"if_key": "verdict:tests[name=event_consistency].metrics.n_events", "else": "verdict:tests[name=event_consistency].coverage"}, "t": "verdict:test_plan.stronger.min_measured_events"},
+    "v4": {"absent": "not reached-if in this fixture (a data guard, pipeline_v52.py:171-181)"}
+   },
+   "note": "The INCONCLUSIVE exit writes n_events = n (battery_v5.py:194); the PASS and FAIL result has coverage = n (battery_v5.py:225), which enforce_coverage keeps."
+  },
+  "src/refute/packs/tess/battery_v5.py:265:7": {
+   "expression": "n == 0",
+   "class": "integer-or-configuration",
+   "fixtures": {
+    "v2": {"producer": "pipeline.py:453", "x": {"if_key": "verdict:tests[name=edge_events].metrics.n_events", "else": "absent: the INCONCLUSIVE exit writes no metric (battery_v5.py:265-266)"}, "t": "const:0"},
+    "v2-eb": {"producer": "pipeline.py:453", "x": {"if_key": "verdict:tests[name=edge_events].metrics.n_events", "else": "absent: the INCONCLUSIVE exit writes no metric (battery_v5.py:265-266)"}, "t": "const:0"},
+    "v3": {"producer": "pipeline.py:453", "x": {"if_key": "verdict:tests[name=edge_events].metrics.n_events", "else": "absent: the INCONCLUSIVE exit writes no metric (battery_v5.py:265-266)"}, "t": "const:0"},
+    "v4": {"producer": "pipeline_v52.py:185", "x": {"if_key": "verdict:tests[name=edge_events].metrics.n_events", "else": "absent: the INCONCLUSIVE exit writes no metric (battery_v5.py:265-266)"}, "t": "const:0"}
+   },
+   "note": "n_events = n (battery_v5.py:276)."
+  },
+  "src/refute/packs/tess/battery_v5.py:384:7": {
+   "expression": "candidate.period >= sp.sinusoid_max_period_days",
+   "class": "measurement",
+   "monotone": "x is the measurement itself (the identity); t is configuration and is not varied",
+   "fixtures": {
+    "v2": {"producer": "pipeline.py:457 v5.check_sinusoid(data.lc, final, ...)", "x": "verdict:candidate.period", "t": "verdict:test_plan.stronger.sinusoid_max_period_days"},
+    "v2-eb": {"producer": "pipeline.py:457", "x": "verdict:candidate.period", "t": "verdict:test_plan.stronger.sinusoid_max_period_days"},
+    "chain-v2": {"producer": "pipeline.py:457 within discover/measure.py:53", "x": "chain:candidate.period_days", "t": "plan:stronger.sinusoid_max_period_days"},
+    "chain-v2-eb": {"producer": "pipeline.py:457 within discover/measure.py:53", "x": "chain:candidate.period_days", "t": "plan:stronger.sinusoid_max_period_days"}
+   }
+  },
+  "src/refute/packs/tess/battery_v5.py:523:13": {
+   "expression": "q <= sp.max_duty_cycle",
+   "class": "measurement",
+   "monotone": "x = q is serialized as itself (metrics.duty_cycle, battery_v5.py:529); t is configuration and is not varied",
+   "fixtures": {
+    "v2": {"producer": "pipeline.py:459", "x": "verdict:tests[name=duty_cycle].metrics.duty_cycle", "t": "verdict:tests[name=duty_cycle].thresholds.max_duty_cycle"},
+    "v2-eb": {"producer": "pipeline.py:459", "x": "verdict:tests[name=duty_cycle].metrics.duty_cycle", "t": "verdict:tests[name=duty_cycle].thresholds.max_duty_cycle"},
+    "v3": {"producer": "pipeline.py:459", "x": "verdict:tests[name=duty_cycle].metrics.duty_cycle", "t": "verdict:tests[name=duty_cycle].thresholds.max_duty_cycle"},
+    "v4": {"producer": "pipeline_v52.py:196", "x": "verdict:tests[name=duty_cycle].metrics.duty_cycle", "t": "verdict:tests[name=duty_cycle].thresholds.max_duty_cycle"}
+   }
+  }
+ }
+}
