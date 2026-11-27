@@ -449,6 +449,22 @@ def main() -> int:
         for a in j1
         if (a["file"], a["line"]) not in lines
     ]
+    # the disposition of the other I2 sites in reachable functions: not in a decision context
+    row_sites = {(r["file"], r["line"]) for r in rows}
+    left: dict[str, int] = {}
+    for site in inv["rows"]:
+        f = where(site["file"], site["line"])
+        if "(reachable)" in f and (site["file"], site["line"]) not in row_sites:
+            left[site["file"]] = left.get(site["file"], 0) + 1
+    # the two evaluations: the rows reached from chain (stage 1) and from the verdict's entries
+    by_entry = {}
+    for label, entries in (
+        ("chain", [e for e in ENTRIES if e[1] == "chain"]),
+        ("verdict", [e for e in ENTRIES if e[1] != "chain"]),
+    ):
+        part = analyze(sources, entries)["rows"]
+        by_entry[label] = {(r["file"], r["line"], r["expression"]) for r in part}
+    both = by_entry["chain"] & by_entry["verdict"]
     named = {
         "battery_v52.py:338-340 (attenuated)": any(
             r["file"].endswith("battery_v52.py") and 338 <= r["line"] <= 340 for r in rows
@@ -477,8 +493,13 @@ def main() -> int:
             1 for m in j1_missing if "(reachable)" in m
         ),
         "named": named,
+        "i2_sites_in_reachable_functions_not_rows": sum(left.values()),
+        "rows_from_chain_entry": len(by_entry["chain"]),
+        "rows_from_verdict_entries": len(by_entry["verdict"]),
+        "rows_from_both": len(both),
         "stops": result["stops"],
     }
+    summary["i2_sites_left_per_file"] = dict(sorted(left.items()))
     out = {"rule": "see the tool's docstring", "summary": summary, "j1_missing": j1_missing,
            "rows_not_i2_sites": not_i2, **result}  # fmt: skip
     Path(sys.argv[1]).write_text(json.dumps(out, indent=1) + "\n", encoding="utf-8", newline="\n")
