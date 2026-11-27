@@ -1,0 +1,11 @@
+{
+ "name": "rev8-check",
+ "question": "Q2 (#218 comment 7226143268): the deterministic check of amendment 2, revision 8: each replacement text of the third blind review's blocking items appears in revision 8 word for word (normalizing only quote prefixes and whitespace), item 3 directly after item 1; each replaced passage of revision 7 is gone; the text the replacements cite is kept; decisions (a) to (k) hold; the committed rev7-to-rev8 patch equals a fresh diff, and every hunk is labelled with B1 to B4 or a to k only.",
+ "choices": "docs/validation/v0.5.13/tools/rev8_check.py, no arguments. Offline. It reads the committed answer, revisions 7 and 8, the patch, the map, the two READMEs and the sidecar's correction.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/rev8_check.py"],
+ "identity": ["docs/validation/v0.5.13/tools/rev8_check.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 60, "disk_bytes": 5000000},
+ "network": false,
+ "retry_class": "checker"
+}
