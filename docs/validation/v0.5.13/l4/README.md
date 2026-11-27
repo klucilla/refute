@@ -86,6 +86,47 @@ written from `dumps_json`, `build_result`, `chain` and `render_report`:
     key (with a test);
   - `comparator.main` did not compare the claim inventory, and now does.
 
+## (a) The candidate list of the decision layer (a working record, not the manifest)
+
+[decision-layer.json](decision-layer.json), the committed unit `decision-layer`
+([`../tools/decision_layer.py`](../tools/decision_layer.py), from source only; 9 tests on
+synthetic snippets, 0 failed). Its rule is stated in full in the tool's docstring. It applies
+section 4's first paragraph mechanically and includes when in doubt.
+
+| Count | Value |
+| --- | --- |
+| Functions in the 73 modules | 924 |
+| Reachable by name from the golden path's five calls | 524 |
+| Decision functions (holding a sink) / returning decision functions | 77 / 31 |
+| **Candidate rows** | **410**: 152 numeric, 20 finiteness, 238 non-numeric |
+| Rows with an enclosing `if` / behind a preceding data-dependent exit | 68 / 246 |
+| J1's 173 atoms not found | 7, all in `duration.estimate_duration`, which only `TessAnalyzer.analyze` calls (`pipeline.py:1177`), off the golden path |
+| `attenuated` (`battery_v52.py:338-340`) | a row |
+| Rows in `power` / `a0` / `a0_v4` / `core/inconclusive` | 1 / 0 / 0 / 8 |
+| I2 sites in reachable functions that are not rows | 1,443 (not in a decision context: internal selections or values) |
+| Rows reached from `chain` (stage 1) / from the verdict's entries / from both | 404 / 409 / 403 |
+
+**What the list does not settle yet** (before any operand is mapped):
+1. **Reachability is too wide.** Calls are resolved by name only, so modules off the golden
+   path appear reachable, among them `calib05`, `screen_d5` and `discover/pilot`. A cited table of
+   configuration dispatch, evaluated on each fixture's plan taken from source, must prune it and
+   attribute each row to its fixtures.
+2. **`a0` and `a0_v4` give no row.** Their comparisons choose data: the stratum and its error, the
+   pooled variance (`shortcut`), the events kept (`event_meta`). Under section 4's first paragraph
+   these are internal selections, which fall under the declared limit. This needs Codex's check.
+3. **Rows behind a data-dependent exit (246).** Revision 6 has no rule for a predicate that a
+   fixture may not reach. Whether its operands are "present" cannot be classified from source when
+   a metric is written on one path only. This is a question for the maintainer.
+4. **Two evaluations per fixture.** `chain` (stage 1) evaluates almost the same predicates again
+   and serializes statuses with no operands. Whether that is a second case for the margin check
+   changes N. Count it both ways; the decision is the maintainer's.
+5. **The earlier runs:** four runs, each after a committed change to the rule, were replaced; none
+   of their outputs was committed:
+   - the first lacked bare flags and references;
+   - the second lacked mutated lists;
+   - the third lacked the location of J1's misses;
+   - the fourth lacked the counts of the last two rows of the table.
+
 ## What does not exist yet
 
 - **(a) The manifest of the decision layer.** It follows section 4's first paragraph, and the plan
