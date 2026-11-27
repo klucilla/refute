@@ -77,7 +77,7 @@ how later work is done.
 2026-11-27T00:13:24Z.
 - **The opening.** It opened with the record of the maintainer's approval (#218, comment
   7206278853) of the charter at `04402e7a`:
-  [docs/plans/v0.5.13-charter.md](docs/plans/v0.5.13-charter.md), SHA-256 `2832dc48…c230c813`.
+  [docs/plans/v0.5.13-charter.md](docs/plans/v0.5.13-charter.md), SHA-256 `2832dc48…6230c813`.
   The decision is comment 7204660147, item 5.
 - **The time box** runs to 2026-12-04T00:13:24Z.
 - **The scope.** This phase is the charter's Part A: the preconditions #226, #227 and #224, the

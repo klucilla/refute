@@ -16,3 +16,16 @@ impact. It follows Process diet 2, item 5.
   comment 7204660147, item M2); only their targets changed."
 - **Impact:** a statement about the file's links. No moved line, link target, result or record
   changes.
+
+## 2026-11-27: ROADMAP.md, the abbreviation of the charter's SHA-256
+
+- **Source:** `ROADMAP.md`, line 80, written when the phase opened (`61055e1b`). It abbreviated
+  the charter's SHA-256 as `2832dc48…c230c813`.
+- **Why it was wrong:** the full SHA-256, cited in the maintainer's approval (#218, comment
+  7204660147, item 5), is `2832dc4870b0fb094e724a3ff6d6fb6c5710f2da5827791b8fa102c06230c813`.
+  Its abbreviation is `2832dc48…6230c813`; one character was mistyped.
+- **The correction,** under the maintainer's decision G3 (#218, comment 7219180143): the line now
+  reads `2832dc48…6230c813`. The approved and hashed records that carry the same error are not
+  edited. They are listed in
+  [correction-2026-11-27-charter-sha-abbreviation.md](correction-2026-11-27-charter-sha-abbreviation.md).
+- **Impact:** a typed abbreviation. No file, hash, approval or result changes.
