@@ -8,9 +8,12 @@ maintainer's decision H2, #218 comment 7219469262).
   working-tree ``<new>``, written to ``<out>``. Hunks are numbered from 1. It prints each hunk's
   number and header, and the SHA-256 of both files and of the patch.
 - ``check``: reads the patch and the map (JSON: ``{"<hunk number>": ["B1", ..., "a", ...]}``).
-  It requires that every hunk has at least one label, that every label is a blocking item
-  ``B1`` to ``B6`` of the blind review or one of the maintainer's decisions ``a`` to ``k``, and
-  that the map names no hunk the patch does not have.
+  It requires that every hunk has at least one label, and that the map names no hunk the patch
+  does not have. Each label must be one of:
+  - a blocking item ``B1`` to ``B6`` of the blind review;
+  - one of the maintainer's decisions ``a`` to ``k``;
+  - ``H2``, for the identification of the revision that H2 itself orders (its title, date, basis
+    and record links). Such hunks are reported apart.
 """
 
 from __future__ import annotations
@@ -24,7 +27,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[4]
-LABELS = {f"B{i}" for i in range(1, 7)} | set("abcdefghijk")
+LABELS = {f"B{i}" for i in range(1, 7)} | set("abcdefghijk") | {"H2"}
 
 
 def sha(data: bytes) -> str:
@@ -63,8 +66,10 @@ def main() -> int:
             problems += [f"hunk {i}: unknown label {x!r}" for x in labels if x not in LABELS]
         problems += [f"the map names hunk {k}, which the patch does not have"
                      for k in mapping if not k.isdigit() or not 1 <= int(k) <= n]  # fmt: skip
+        header_only = [i for i in range(1, n + 1) if mapping.get(str(i)) == ["H2"]]
         print(json.dumps({"hunks": n, "labelled": sum(1 for i in range(1, n + 1)
-                          if mapping.get(str(i))), "problems": problems}))  # fmt: skip
+                          if mapping.get(str(i))), "h2_only_hunks": header_only,
+                          "problems": problems}))  # fmt: skip
         return 0 if not problems else 1
     raise SystemExit("mode must be diff or check")
 
