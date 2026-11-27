@@ -1,0 +1,12 @@
+{
+ "name": "cleanup-i5",
+ "question": "I5 (#218 comment 7222329150): delete, inside .cache and by literal path, G7's export (about 0.78 GB) and the working copies G7, F2 and F3 have used; list what went.",
+ "choices": "docs/validation/v0.5.13/tools/cleanup_i5.py, no arguments; the paths are literals in the script, each guarded to resolve inside .cache and outside the meter's runs folder. Offline. It writes out/cleanup-i5.json.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/cleanup_i5.py"],
+ "identity": ["docs/validation/v0.5.13/tools/cleanup_i5.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 120, "disk_bytes": 1000000},
+ "network": false,
+ "retry_class": "checker",
+ "outputs": {"cleanup-i5.json": "docs/validation/v0.5.13/i5/cleanup-i5.json"}
+}

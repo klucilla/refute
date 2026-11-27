@@ -10,7 +10,7 @@
   "disk_bytes": 5000000000
  },
  "charged": {
-  "cpu_s": 2363.693,
+  "cpu_s": 2372.115,
   "download_bytes": 512624858,
   "disk_peak_bytes": 1199241106
  },
@@ -6054,6 +6054,82 @@
    "download_bytes": 0,
    "write_bytes": 928899,
    "disk_bound_bytes": 431036884,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "stage",
+   "label": null,
+   "attempt": "2ccc3aedcc26489fa024d3ff47c87f89",
+   "start": "2026-11-27T15:47:58Z",
+   "reserve": {
+    "cpu_s": 60,
+    "disk_bytes": 50000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.844,
+   "download_bytes": 0,
+   "write_bytes": 985821,
+   "disk_bound_bytes": 431110080,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "commit-check",
+   "label": null,
+   "attempt": "9f9c35ceec8d4d809854c156ec17c50b",
+   "start": "2026-11-27T15:48:00Z",
+   "reserve": {
+    "cpu_s": 300,
+    "disk_bytes": 100000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 2.422,
+   "download_bytes": 0,
+   "write_bytes": 1956399,
+   "disk_bound_bytes": 432276568,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "ruff",
+   "label": null,
+   "attempt": "1c5d26b3ac5748d5a6a2ff94bdf7ad22",
+   "start": "2026-11-27T15:48:26Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 2.172,
+   "download_bytes": 0,
+   "write_bytes": 1591,
+   "disk_bound_bytes": 430332872,
+   "case_outputs": 0,
+   "telemetry_complete": true
+  },
+  {
+   "unit": "ruff",
+   "label": null,
+   "attempt": "867bc8af4e5e4cff87f6db391e92d2ca",
+   "start": "2026-11-27T15:48:29Z",
+   "reserve": {
+    "cpu_s": 120,
+    "disk_bytes": 20000000,
+    "download_bytes": 0
+   },
+   "retry": null,
+   "status": "ok",
+   "cpu_s": 1.984,
+   "download_bytes": 0,
+   "write_bytes": 1597,
+   "disk_bound_bytes": 430336257,
    "case_outputs": 0,
    "telemetry_complete": true
   }
