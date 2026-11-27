@@ -162,6 +162,45 @@ def test_setting_inventory_and_hashes(tmp_path):
     )
 
 
+EXAMPLES = {
+    "period-row": "| Period (d) | 3.1234567 | n/a |",
+    "epoch-row": "| Epoch (BJD_TDB) | 2459001.2345678 | n/a |",
+    "duration-row": "| Duration (h) | 2.500 | n/a |",
+    "depth-row": "| Depth (ppm) | 1200.0 | n/a |",
+    "snr-row": "| SNR | 25.3 | |",
+    "relative-period-error": (
+        "- Relative period error: n/a (tolerance n/a, within: n/a, alias: none)"
+    ),
+    "sde-line": (
+        "- SDE: the largest SDE over sectors. SDE of the kept peak (largest over sectors): 12.34."
+    ),
+    "parameters-line": (
+        "- Period 3.1234 d (error 1e-05) and epoch 2459001.2 BJD_TDB (error 0.0002), from: fit."
+    ),
+    "cadence-row": "| 1 | 18000 | 19000 | 0.947 |",
+    "holdout-row": "| 2019 | PASS | 4 | 12.1 | 0.3 |",
+    "holdout-v05-row": "| 2019 | yes | 0.85 |",
+}
+
+
+def test_draft_schema_templates_compile_and_match_once():
+    import re
+
+    parts = json.loads(
+        (ROOT / "docs/validation/v0.5.13/l4/comparator-schema-parts.json").read_text("utf-8")
+    )
+    names = [t["name"] for t in parts["report"]]
+    assert sorted(names) == sorted(EXAMPLES)
+    for name, line in EXAMPLES.items():
+        matched = [t["name"] for t in parts["report"] if re.fullmatch(t["regex"], line)]
+        assert matched == [name], (name, matched)
+    for t in parts["report"]:
+        assert set(re.compile(t["regex"]).groupindex) == set(t["groups"])
+    for kind in ("verdict", "chain"):
+        for p in parts["json"][kind]["measurement"] + parts["json"][kind]["exact"]:
+            comp._pattern(p)
+
+
 def test_claims():
     a = {"payload": {"claims": {"c.yaml": "ab", "d.yaml": "ERROR ClaimError: x"}}}
     assert comp.compare_claims(a, json.loads(json.dumps(a))) == []

@@ -1,0 +1,49 @@
+{
+ "labels": ["exploratory", "method_status: not_validated"],
+ "status": "DRAFT, not frozen. Written from source only (src/refute/core/io.py dumps_json, src/refute/packs/tess/pipeline.py build_result, src/refute/packs/tess/discover/measure.py chain, src/refute/packs/tess/report.py render_report). No golden file was opened. The frozen schema adds exact_keys from schema-keys.json.",
+ "json": {
+  "verdict": {
+   "measurement": [
+    "candidate.**",
+    "global_ephemeris.**",
+    "key_values.**",
+    "period_comparison.relative_error",
+    "tests[*].metrics.**",
+    "tests[*].inputs.**",
+    "tests[*].sensitivity.**",
+    "holdout_rounds[*].**",
+    "search_diagnostics.**",
+    "v05.**",
+    "v051.**",
+    "temporal_diagnostic.**"
+   ],
+   "exact": [
+    "test_plan.**",
+    "tests[*].thresholds.**",
+    "data_summary.**",
+    "published.**",
+    "provenance.**"
+   ]
+  },
+  "chain": {
+   "measurement": ["candidate.**"],
+   "exact": []
+  }
+ },
+ "report": [
+  {"name": "period-row", "source": "report.py:217-218", "regex": "\\| Period \\(d\\) \\| (?P<found>[^|]+) \\| (?P<published>[^|]+) \\|", "groups": {"found": "measurement", "published": "exact"}},
+  {"name": "epoch-row", "source": "report.py:209-213", "regex": "\\| Epoch \\(BJD_TDB\\) \\| (?P<found>[^|]+) \\| (?P<published>[^|]+) \\|", "groups": {"found": "measurement", "published": "exact"}},
+  {"name": "duration-row", "source": "report.py:220-221", "regex": "\\| Duration \\(h\\) \\| (?P<found>[^|]+) \\| (?P<published>[^|]+) \\|", "groups": {"found": "measurement", "published": "exact"}},
+  {"name": "depth-row", "source": "report.py:222-223", "regex": "\\| Depth \\(ppm\\) \\| (?P<found>[^|]+) \\| (?P<published>[^|]+) \\|", "groups": {"found": "measurement", "published": "exact"}},
+  {"name": "snr-row", "source": "report.py:224", "regex": "\\| SNR \\| (?P<found>[^|]+) \\| \\|", "groups": {"found": "measurement"}},
+  {"name": "relative-period-error", "source": "report.py:226-229", "regex": "- Relative period error: (?P<rel>\\S+) \\(tolerance (?P<tol>\\S+), within: (?P<within>\\S+), alias: (?P<alias>.*)\\)", "groups": {"rel": "measurement", "tol": "exact", "within": "exact", "alias": "exact"}},
+  {"name": "sde-line", "source": "report.py:137-138", "regex": "- SDE: (?P<note>.*)\\. SDE of the kept peak \\(largest over sectors\\): (?P<sde>\\S+)\\.", "groups": {"note": "exact", "sde": "measurement"}},
+  {"name": "parameters-line", "source": "report.py:146-148", "regex": "- Period (?P<period>\\S+) d \\(error (?P<period_err>\\S+)\\) and epoch (?P<epoch>\\S+) BJD_TDB \\(error (?P<epoch_err>\\S+)\\), from: (?P<source>.*)\\.", "groups": {"period": "measurement", "period_err": "measurement", "epoch": "measurement", "epoch_err": "measurement", "source": "exact"}},
+  {"name": "cadence-row", "source": "report.py:156-159", "regex": "\\| (?P<sector>[0-9]+) \\| (?P<used>[0-9]+) \\| (?P<in_span>[0-9]+) \\| (?P<fraction>[0-9]+\\.[0-9]{3}) \\|", "groups": {"sector": "exact", "used": "exact", "in_span": "exact", "fraction": "measurement"}},
+  {"name": "holdout-row", "source": "report.py:282-285", "regex": "\\| (?P<year>[0-9]+) \\| (?P<status>[A-Z_]+) \\| (?P<windows>[^|]+) \\| (?P<hidden_snr>[^|]+) \\| (?P<control_snr>[^|]+) \\|", "groups": {"year": "exact", "status": "exact", "windows": "exact", "hidden_snr": "measurement", "control_snr": "measurement"}},
+  {"name": "holdout-v05-row", "source": "report.py:296-299", "regex": "\\| (?P<year>[0-9]+) \\| (?P<matches>yes|no|n/a) \\| (?P<sigma>[^|]+) \\|", "groups": {"year": "exact", "matches": "exact", "sigma": "measurement"}}
+ ],
+ "not_mapped": [
+  "Every other report line compares byte for byte, among them: the Gauntlet table (each test's message is also a JSON string in the same file, compared exactly); the stellar parameters line (star inputs, not computed); the blend caveat's offset (a configured threshold); the provenance lines."
+ ]
+}
