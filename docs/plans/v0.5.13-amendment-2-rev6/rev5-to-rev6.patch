@@ -1,0 +1,231 @@
+--- a/docs/plans/v0.5.13-charter-amendment-2-rev5.md
++++ b/docs/plans/v0.5.13-charter-amendment-2-rev6.md
+@@ -1,37 +1,42 @@
+-# v0.5.13 charter: amendment 2, revision 5 (proposed): decision identity as the reproducibility criterion
+-
+-> **PROPOSED, not approved.** Revision 5 was written on 2026-11-27 under the maintainer's decision
+-> J1 (#218, comment 7222879969). It replaces revision 4 ([v0.5.13-charter-amendment-2-rev4.md](v0.5.13-charter-amendment-2-rev4.md),
+-> commit `288d5785053ea139d23d2c5eced5ad7d1329a85b`, SHA-256
+-> `7d96726de18157ccd4d20f494a9efcef076107efda9337179b1f5f67870d8d4e`, adopted in #218, comment
+-> 7222329150, item I1), which stays unchanged as the record.
+-> - **What changed from revision 4:** only the first paragraph of section 4, which defines what the
+->   margin manifest covers, replaced by the maintainer's text. Two statements are added: this
+->   header, and what was known when revision 5 was written (end of section 1). The committed diff
+->   from revision 4 ties each hunk to decision J1.
+-> - Revision 4's own header follows, unchanged.
+->
+-> **PROPOSED, not approved.** Written on 2026-11-27 under the maintainer's decision H2 (#218,
+-> comment 7219469262). The direction is still that of decision E1 (#218, comment 7216128796).
+-> - It replaces revision 3 ([v0.5.13-charter-amendment-2-rev3.md](v0.5.13-charter-amendment-2-rev3.md),
+->   commit `c92ff9777824d6facc65d6ddc781c6492b4b9387`, SHA-256
+->   `f5598f0050ada236e3944b623ee42b46888e0f1bc8c9b564ab67b529fffcdc38`), which stays unchanged as the
+->   record, as do revisions 1 and 2 ([v0.5.13-charter-amendment-2.md](v0.5.13-charter-amendment-2.md)).
+-> - It applies the six blocking items of revision 3's blind review
+->   ([v0.5.13-amendment-2-blind-review-result/](v0.5.13-amendment-2-blind-review-result/README.md))
+->   with their replacement texts exactly as written (marked "blind review, item N"). It also applies
+->   the maintainer's decisions (a) to (k) of H2, taken before any result (marked "decision H2(x)").
+->   The committed diff from revision 3 ties each changed hunk to its item or decision.
+-> - It changes an acceptance rule (Part A's Step 1 rule and exit criterion 1). The maintainer's
+->   adviser checks it, and the maintainer adopts it by its SHA-256. No Codex round: the three
+->   rounds were used.
+-> - It amends the charter approved at `04402e7a4cae71fd7bab8a7157dd38a36a4d2e60` (SHA-256
++# v0.5.13 charter: amendment 2, revision 6 (proposed): decision identity as the reproducibility criterion
++
++> **PROPOSED, not approved.** Revision 6 was written on 2026-11-27 under the maintainer's decision
++> K2 (#218, comment 7223240289). This is its only header (decision K2(d)).
++> - **How it is adopted:** by the maintainer's approval of its SHA-256 in #218, with no third blind
++>   review. The maintainer's reason (decision K2(d)): the new texts are the reviewer's own, and
++>   their application is checked by a script. Only the four replacement texts of the blocking
++>   items are the reviewer's; the other changes are the agent's wording of the maintainer's
++>   decisions, listed below.
++> - **What it replaces:** revision 5 ([v0.5.13-charter-amendment-2-rev5.md](v0.5.13-charter-amendment-2-rev5.md),
++>   commit `86f1f289ce0327168f9bc7437080ca2752e56a1a`, SHA-256
++>   `c69b23e9074477bb481638f39577ac98eaed549e9e00271478900d944235518b`), which stays unchanged as the
++>   record, as do revisions 1 to 4. Revision 4 (commit `288d5785053ea139d23d2c5eced5ad7d1329a85b`,
++>   SHA-256 `7d96726de18157ccd4d20f494a9efcef076107efda9337179b1f5f67870d8d4e`) was adopted in
++>   #218, comment 7222329150, item I1.
++> - **What was known when it was written:** the second blind review, of revision 5
++>   ([v0.5.13-amendment-2-blind-review-2-result/](v0.5.13-amendment-2-blind-review-2-result/README.md),
++>   `answer.md` SHA-256 `7f71b206d7efbc1afef2ce62d14cb8483365b2ac04ed12752007c1f63f70114a`),
++>   returned **`NOT_APPROVABLE`**, with four blocking items and eight non-blocking items. No check
++>   of this amendment has run, so no margin or decision-identity result is known.
++> - **What changed from revision 5:**
++>   - the four blocking items of that review, with their replacement texts exactly as written
++>     (marked "blind review 2, item N"): the first paragraph of section 4 (item 1), the examples
++>     of section 4 (item 2), the label and item (c) of section 6 (item 3), and the open items of
++>     section 7 (item 4);
++>   - the maintainer's decisions K2(b), K2(c), K2(e), K2(f) and K2(g) on the non-blocking items,
++>     taken before any result (marked "decision K2(x)"), and this header (K2(d)). Decision K2(a)
++>     is the committed map, K2(h) changes nothing, and under K2(i) every SHA-256 here is written
++>     in full.
++>   - The committed diff from revision 5 ties each hunk to its item or decision
++>     ([v0.5.13-amendment-2-rev6/](v0.5.13-amendment-2-rev6/README.md)).
++> - **What it amends:** the charter approved at `04402e7a4cae71fd7bab8a7157dd38a36a4d2e60` (SHA-256
+ >   `2832dc4870b0fb094e724a3ff6d6fb6c5710f2da5827791b8fa102c06230c813`), together with amendment 1
+ >   (`69de5f9f5df0ea621dc6bc7d036f3f1b02448199`, SHA-256
+ >   `cd2a689231688b5e22c3e6c9602a706fbbca37b7de16ea087417227d5cdbaefc`), which the maintainer
+->   approved in #218, comment 7207651312, item D2. Neither file is edited.
+->
+-> **The direction (E1), not reopened with Codex:**
++>   approved in #218, comment 7207651312, item D2. Neither file is edited. It changes an acceptance
++>   rule (Part A's Step 1 rule and exit criterion 1).
++>
++> **The direction (E1, #218 comment 7216128796), not reopened:**
+ > - no synthetic v5 verification in Step 1;
+ > - no thread pin;
+ > - the object of reproducibility is the **decision**, not the last digits.
+@@ -40,14 +45,13 @@
+ > - the pinned worker, the patches of `src/` and the `blas-pin` extra;
+ > - the request for an exception to §12, which the maintainer denied (E2).
+ >
+-> **Codex round 3** ran in the same conversation and checked only this revision's implementation
+-> of that direction ([review record](v0.5.13-amendment-2/README.md)).
+-> - Its verdict was **`NOT_APPROVABLE`**, with four blocking items, none of which reopens the
+->   direction.
+-> - Their replacement texts are adopted below as written (marked "Codex round 3, item N"). Item 4,
+->   on the survey, is applied as a correction comment on #231.
+-> - Round 3 was the last round, so **this text, as revised after round 3, has not been reviewed
+->   again by Codex**. Whether it goes to blind review is the maintainer's adviser's proposal.
++> **Marks in the text:**
++> - "blind review, item N" is the first blind review, of revision 3;
++> - "blind review 2, item N" is the second, of revision 5;
++> - "Codex round 3, item N" is Codex's last round ([review record](v0.5.13-amendment-2/README.md)).
++>   No text written after that round has been reviewed by Codex. Its item 4, on the survey, was
++>   applied as a correction comment on #231;
++> - "decision H2(x)", "J1(x)" and "K2(x)" are the maintainer's decisions in #218.
+ >
+ > **No change to `src/`, `tests/`, `pyproject.toml` or `uv.lock`.**
+ >
+@@ -96,12 +100,20 @@
+ - **A view of golden values.** During H2, before I2, the agent read part of an ID-BEFORE verdict
+   golden: lines 65 to 124 of `verdict-v4.txt`, with the list of tests, their roles and the start of
+   `global_ephemeris`. Since I2 started, no `chain-`, `verdict-` or `error-` golden has been opened.
++  - **The `plan-` goldens** (decision K2(c)): the agent has opened none. They were listed by name,
++    and hashed and committed by scripts (I2(a)). Before H2, while the package version of decision
++    D4 was weighed, one search of the ID-BEFORE folder for `0.5.0` or `refute_version` scanned all
++    twenty files. It showed one line, `"refute_version": null`, from each `error-` and `verdict-`
++    golden, and no line of a `plan-` or `chain-` golden.
++  - This view, and that search, are inputs of Codex's completeness review of section 4 (decision
++    K2(c)).
+ - **The count of decision-layer predicates** (decision J1(b), `docs/validation/v0.5.13/j1/`):
+   - it is made from source only, by a stated mechanical rule, over module groups by version;
+   - the numbers are 102 for version 1, 130 for version 2, 157 for version 3 and 173 for version 4,
+     each cumulative;
+-  - it is a feasibility count. Its rule finds only decisions set directly in a branch, so it is a
+-    floor; the manifest attributes each row to its fixture.
++  - it is a feasibility count, not a bound on the number of manifest rows in either direction
++    (decision K2(b)). Its rule finds only decisions set directly in a branch; the manifest
++    attributes each row to its fixture.
+ 
+ ## 2. (a) Versions 1 to 4: no change
+ 
+@@ -199,7 +211,12 @@
+ 
+ ## 4. (c) The margin check: only the operands present in the existing goldens
+ 
+-> The margin manifest covers the decision layer of each golden fixture: every predicate whose outcome is serialized in the goldens as a test status, a test class, an eligibility flag, a reason code or the aggregate verdict, traced to its source location, including the compound predicates and the numeric coverage and count cutoffs that set those outputs directly. Internal comparisons that only select data, cadences, peaks or models are not enumerated. A flip in any of them that changes a serialized number beyond the budget of §3.2, or any serialized non-numeric byte, already fails §3.1; a flip that changes neither leaves the goldens unchanged at that setting. That internal selections were not assessed for margin is a declared limit of #226, carried with its label.
++The first two paragraphs below are blind review 2, item 1, as written. The rest of the quoted text
++is unchanged.
++
++> The margin manifest covers the **decision layer** of each golden fixture. A predicate belongs to the decision layer when its boolean outcome reaches an output that the goldens serialize as a test status, a test class, an eligibility flag, a reason code or the aggregate verdict, and reaches it only through branch tests, assignments, returns, arguments and boolean operators, with no arithmetic and no selection of data in between. This includes the compound predicates, the numeric coverage and count cutoffs, and a comparison that sets a named boolean which a later branch tests (for example `attenuated`, `src/refute/packs/tess/battery_v52.py:338-340`, tested at line 411). Each is traced to its source location. A numeric predicate of the decision layer gets a row under the rules below. A non-numeric predicate of the decision layer (an identity, type, string or membership test, or a bare configuration flag) is listed with its source location and a reason class; it gets no margin row, is not a declared limit and is not counted as assessed. In the rest of this amendment, "predicate", "operative predicate" and "the manifest is complete" refer to the decision layer as defined here.
++>
++> Internal comparisons whose outcome reaches the goldens only through a number or through a selection of data, cadences, peaks or models are not enumerated. At a compared setting, a flip in one of them that changes a serialized non-numeric byte, or a serialized number beyond the budget of §3.2, already fails §3.1. A flip that changes a serialized number within that budget passes §3.1, as any other difference within the budget does. A flip that changes no serialized byte is not observed. None of this shows that an internal selection is clear of its cutoff. That internal selections were not assessed for margin is a declared limit of #226: the margin record lists it first among the declared limits, N counts it, and the label of section 6 names it.
+ >
+ > Before the comparator of §3.1 or the margin check reads a golden file, the following are frozen, hashed, committed and pushed in one order-proof commit under the charter's section 8:
+ > - the fixture list;
+@@ -227,22 +244,33 @@
+ >
+ > List each absent operand by case, setting, test, predicate, source location and reason. Record the counts of assessed, failed and unassessed predicates, in total and per golden fixture, test and setting. The margin condition of #226 is satisfied only when the manifest is complete, every assessable check passes, and no coverage is zero: for each golden fixture and setting for which the manifest lists a predicate, at least one predicate is assessed. Zero assessed predicates for a fixture and setting leaves the margin condition unmet, never satisfied. Before #226 is recorded as met, the maintainer approves the list of declared limits and the three counts in #218, citing the hash of the margin record. Carry the full list of declared limits into #226 and every later result that relies on it. Make no supplemental execution to recover an operand.
+ 
+-**Examples known from the source when this was written.** They do not replace the manifest, which
+-lists every one. (Decision H2(e) corrects these against the source, cited by file and line.)
++Decision K2(f) (blind review 2, non-blocking item 6): a numeric predicate of the decision layer
++whose operands are all integers or configuration values (decision H2(d), above) counts as assessed
++for the zero-coverage rule of this section, because its identical outcome in both settings is
++checked. The margin record reports those predicates in a separate count. A non-numeric predicate,
++including a bare configuration flag, is still not counted as assessed.
++
++Decision K2(c) (blind review 2, non-blocking item 3): the earlier view of `verdict-v4.txt` and the
++earlier search of the ID-BEFORE folder, both disclosed in section 1, are inputs of Codex's
++completeness review of the manifest and the span mapping above. That review receives the
++disclosure with the frozen source and weighs it.
++
++The paragraph below and the last two sub-bullets of the extra-frequency loops are blind review 2,
++item 2, as written.
++
++**Examples known from the source when this was written.** They do not replace the manifest. Under revision 5 they show both sides of the scope set by this section's first paragraph: the extra-frequency loops are internal selections, which the manifest does not enumerate, and the v4 residual-box comparison belongs to the decision layer. (Decision H2(e) corrects these against the source, cited by file and line.)
+ - **The extra-frequency loops.**
+   - Version 3 runs `battery_v51.check_sinusoid` (`src/refute/packs/tess/pipeline.py:454-457`),
+     and version 4 runs `battery_v52.check_sinusoid` (`src/refute/packs/tess/pipeline_v52.py:186`).
+   - Each loop (`src/refute/packs/tess/battery_v51.py:134-147`;
+     `src/refute/packs/tess/battery_v52.py:309-320`) runs at most `sinusoid_extra_frequencies`
+     times. That is 3 by default (`src/refute/packs/tess/params.py:370`).
+-  - The loop stops at the first attempt whose SNR is at most `sinusoid_extra_min_snr` (4.0 by
+-    default, `params.py:371`), or whose joint fit raises `LinAlgError`. Each accepted peak's
+-    `amplitude_snr` is serialized; the attempt that stops the loop is not.
+-  - Whether each saved verdict records three peaks is not established here. The frozen manifest
+-    establishes it per case, without regard to values (blind review, item 1).
+-  - **The weighted-fit condition-number guard** (`src/refute/packs/tess/battery_v51.py:46-47`:
+-    `np.linalg.cond(normal) > 1e12` raises `LinAlgError`, in `_wls`, defined at line 41) is an
+-    example of an operand the goldens do not serialize.
++  - The loop stops at the first attempt that finds no peak (`peak is None`, decision K2(g)), or
++    whose SNR is at most `sinusoid_extra_min_snr` (4.0 by default, `params.py:371`), or whose joint fit
++    raises `LinAlgError`. Each accepted peak's `amplitude_snr` is serialized; the attempt that
++    stops the loop is not.
++  - Each loop's cutoff (`src/refute/packs/tess/battery_v51.py:140`; `src/refute/packs/tess/battery_v52.py:313`) selects peaks and the model. Under this section's first paragraph it is an internal selection: the manifest does not enumerate it, whether each saved verdict records three peaks is not established, and it falls under the declared limit stated there. Its operand `amplitude_snr` is one of the fields D1a found to differ.
++  - **The weighted-fit condition-number guard** (`src/refute/packs/tess/battery_v51.py:46-47`: `np.linalg.cond(normal) > 1e12` raises `LinAlgError`, in `_wls`, defined at line 41) is not serialized by the goldens. Where it only stops this loop, it is an internal selection under the same limit.
+ - **The v4 residual-box comparison** (`src/refute/packs/tess/battery_v52.py:338-340`):
+   `math.isfinite(sigma_r) and box_after + ATTENUATION_SIGMAS * sigma_r < (ATTENUATION_FRACTION * depth)`.
+   - `ATTENUATION_SIGMAS = 3.0` and `ATTENUATION_FRACTION = 0.5` (`battery_v52.py:36-37`).
+@@ -287,9 +315,15 @@
+ operand leaves the margin condition unmet unless that version's own approved charter declares it a
+ limit before the evidence is produced.
+ 
++Decision K2(e) (blind review 2, non-blocking item 5): this is intended. From version 5 onward, the
++decision-layer scope of section 4 and its declared limit on internal selections also apply, unless
++that version's approved charter widens the scope before the evidence exists.
++
+ (Sources: `src/refute/core/environment.py:54-104`; `src/refute/core/run.py:137` and `365`.)
+ 
+ ## 6. (f) Step 1's rule and Part A's exit criterion 1, replaced
++
++The last sentence of item (c) and the label sentence below are blind review 2, item 3, as written.
+ 
+ > **1. #226 passed** when all of the following are evidenced:
+ > - **(a)** For versions 1 to 4, the inherited-default NR-A1 golden bytes, error outputs and
+@@ -297,11 +331,11 @@
+ >   section 2 is written and maps each locked claim and tag to that record by hash.
+ > - **(b)** At 1 and 4 threads (NR-A1's existing records) and at 2 threads (NR-A2, section 3),
+ >   versions 1 to 4 meet decision identity under section 3.
+-> - **(c)** The margin check of section 4 passes on every predicate with present operands, at each of those settings, with no zero coverage as section 4 defines it. Its list of absent operands is recorded one by one as declared limits of #226 and approved by the maintainer in #218 by the hash of the margin record.
++> - **(c)** The margin check of section 4 passes on every predicate with present operands, at each of those settings, with no zero coverage as section 4 defines it. Its list of absent operands, together with the limit on internal selections of section 4, is recorded one by one as declared limits of #226 and approved by the maintainer in #218 by the hash of the margin record.
+ >
+ > The mechanism of the historical CI difference stays a declared limit of F-1.
+ >
+-> Wherever #226 is cited as met under this rule (in #226, the phase report, Part B's charter and every later result that relies on it), it carries the label **'#226 met under amendment 2 (decision identity, post hoc, on exposed records); the charter's byte-identity rule was not met at 1 and 4 threads (NR-A1: STOP); N declared limits'**, with N from the margin record. Under the charter's section 2, Part B may rely on #226 only with that label, and only if the maintainer's approval of this amendment says so explicitly.
++> Wherever #226 is cited as met under this rule (in #226, the phase report, Part B's charter and every later result that relies on it), it carries the label **'#226 met under amendment 2 (decision identity, post hoc, on exposed records); the charter's byte-identity rule was not met at 1 and 4 threads (NR-A1: STOP); N declared limits, the first being that internal selections were not assessed for margin'**, with N from the margin record. Under the charter's section 2, Part B may rely on #226 only with that label, and only if the maintainer's approval of this amendment says so explicitly.
+ 
+ Codex round 3, item 3, as written (the ID-AFTER sentences are blind review, item 5; the last
+ paragraph is changed by decisions H2(a) and H2(g)):
+@@ -331,13 +365,16 @@
+ 
+ ## 7. Open items, stated
+ 
++The first two bullets are blind review 2, item 4, as written.
++
++- Two of the items exist, made under revision 4 (decision I2, `docs/validation/v0.5.13/i2/README.md`). They stay valid under revision 5, which changes neither rule they were made under:
++  - the commit of the raw goldens of section 3.1 (decision H2(b)): 80 files, each checked against the payload recorded for its setting;
++  - the sidecar of section 2 (`docs/validation/v0.5.13/numerical-environment.md`).
+ - None of these exists yet:
+-  - the comparator of 3.1;
++  - the comparator of 3.1, with its schema and span mapping;
+   - the margin manifest and check of section 4;
+-  - the commit of the raw goldens of section 3.1 (decision H2(b)) and the freeze commit of
+-    section 4;
+-  - NR-A2 (section 3);
+-  - the sidecar of section 2.
++  - the freeze commit of section 4;
++  - NR-A2 (section 3).
+ - The list of absent operands exists only once the margin manifest is built. Section 4's examples
+   are not that list.
+ - The v5 evidence and provenance work in §5 is a Part B item and is not scheduled here.
