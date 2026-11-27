@@ -127,6 +127,61 @@ section 4's first paragraph mechanically and includes when in doubt.
    - the third lacked the location of J1's misses;
    - the fourth lacked the counts of the last two rows of the table.
 
+## Under block N (#218, comment 7224847166): fixtures and configuration pruning
+
+**What changed.** The extractor now resolves calls through each module's imports instead of by
+name alone. It runs once per fixture:
+- each version's verdict, error and report, labelled `v1`, `v2`, `v2-eb`, `v3`, `v4`;
+- each version's `chain` at stage 1, labelled `chain-v1` to `chain-v4` (N2).
+
+A call that a configuration guard keeps from running in a fixture is pruned. `GUARD_TABLE` holds
+13 guards, each with its source; a guard it does not hold keeps the call. 11 tests, 0 failed.
+
+| Fixture | Rows | Numeric | Finiteness | Fixture | Rows | Numeric | Finiteness |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| v1 | 159 | 62 | 5 | chain-v1 | 115 | 52 | 4 |
+| v2 | 210 | 85 | 5 | chain-v2 | 166 | 75 | 4 |
+| v2-eb | 210 | 85 | 5 | chain-v2-eb | 166 | 75 | 4 |
+| v3 | 271 | 109 | 7 | chain-v3 | 218 | 99 | 6 |
+| v4 | 273 | 115 | 11 | chain-v4 | 220 | 105 | 10 |
+
+- **The unpruned union:** 398 rows (151 numeric, 19 finiteness, 228 non-numeric). 89 of them are
+  on no fixture after pruning, for example the `corrections.active` paths.
+- **J1's atoms:** every one is found except the 7 in `duration.estimate_duration`, which is off the
+  golden path. `attenuated` is a row.
+- **Pruning acts on calls, not rows.** No row is itself pruned by a guard. The version-3 and
+  version-4 checks become unreachable in the earlier fixtures through the guarded calls of
+  `v05_tests`, `attack_candidate` and `conclude_analysis`.
+
+**N2, the reading it rests on.** `tests/baseline_code_v0511.py:47-50` records that CI run
+45514526728 gave version 3's floats different last digits on the same machine and code, between
+two executions. `chain` runs detrending, search and the gauntlet again, in its own call (stage
+1), apart from `analyze_data` (stage 2).
+- So no `chain` row has a source proof that it is "the same call with the same inputs" as a
+  verdict row.
+- Under N2, a `chain` row whose operands are not in the `chain` file itself has absent operands,
+  and is a declared limit.
+- The `chain` file serializes `candidate.period_days`, `t0_btjd` and `snr`
+  (`discover/measure.py:72-75`). Rows whose operands are those three fields can be present in
+  `chain` itself.
+
+**Still open before the freeze:**
+1. **The reach rule (N1(b) to N1(d)).**
+   - For each decision function, its exits with their static status and literal code.
+   - The rewrites that change a serialized status after the check returns: `enforce_coverage`,
+     `enforce_sensitivity`, `defer_tests`, `classify_v051`, `_with_a0_note`, `power.attach`
+     and `stable_consistency_label`.
+   - For each row, the output evidence of reach. It is "reach unknown" (a declared limit) unless
+     the serialized name, status and literal codes prove the branch was taken. Rows in helpers,
+     in loop bodies or with a non-literal status are "reach unknown".
+2. **The operands and monotonicity of each numeric and finiteness row, per fixture.**
+   - A verified location in the serialized output, or a formula independent of the values.
+   - Otherwise a stated reason why it is absent: no field, no formula, unit scaling, `round`, or
+     a reassignment between the comparison and the write.
+   - An instance rule for rows inside loops.
+3. **The freeze commit and Codex's round,** which also asks whether N1 or N2 changes a rule of
+   revision 6 (N3).
+
 ## What does not exist yet
 
 - **(a) The manifest of the decision layer.** It follows section 4's first paragraph, and the plan

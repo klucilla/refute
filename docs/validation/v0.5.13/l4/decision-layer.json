@@ -1,19 +1,62 @@
 {
  "rule": "see the tool's docstring",
+ "guard_table": {
+  "plan.v05": [
+   "v2",
+   "v2-eb",
+   "v3",
+   "v4"
+  ],
+  "plan.is_v051": [
+   "v3",
+   "v4"
+  ],
+  "plan.is_v052": [
+   "v4"
+  ],
+  "gp.corrections.active": [],
+  "plan.gauntlet.corrections.active": [],
+  "catalogs is not None": [],
+  "catalogs is None": [
+   "v1",
+   "v2",
+   "v2-eb",
+   "v3",
+   "v4"
+  ],
+  "plan.discovery is not None": [
+   "v1",
+   "v2",
+   "v2-eb",
+   "v3",
+   "v4"
+  ],
+  "plan.discovery is None": [],
+  "plan is None": [],
+  "plan is not None": [
+   "v1",
+   "v2",
+   "v2-eb",
+   "v3",
+   "v4"
+  ],
+  "is_v5(plan)": [],
+  "stage is None": []
+ },
  "summary": {
   "functions": 924,
-  "reachable": 524,
-  "deciding": 77,
-  "returning": 31,
-  "rows": 410,
+  "reachable": 405,
+  "deciding": 75,
+  "returning": 26,
+  "rows": 398,
   "kinds": {
-   "non-numeric": 238,
-   "finiteness": 20,
-   "numeric": 152
+   "non-numeric": 228,
+   "numeric": 151,
+   "finiteness": 19
   },
-  "rows_with_guards": 68,
-  "rows_behind_an_early_exit": 246,
-  "rows_not_i2_sites": 90,
+  "rows_with_guards": 65,
+  "rows_behind_an_early_exit": 245,
+  "rows_not_i2_sites": 83,
   "j1_atoms": 173,
   "j1_atoms_not_found": 7,
   "j1_atoms_not_found_in_reachable_functions": 0,
@@ -24,52 +67,101 @@
    "a0_v4.py": 0,
    "core/inconclusive.py": 8
   },
-  "i2_sites_in_reachable_functions_not_rows": 1443,
-  "rows_from_chain_entry": 404,
-  "rows_from_verdict_entries": 409,
-  "rows_from_both": 403,
+  "i2_sites_in_reachable_functions_not_rows": 1270,
+  "rows_from_chain_entry": 255,
+  "rows_from_verdict_entries": 308,
+  "rows_from_both": 254,
+  "rows_on_no_fixture_after_pruning": 89,
+  "per_fixture": {
+   "v1": {
+    "rows": 159,
+    "numeric": 62,
+    "finiteness": 5,
+    "pruned_by_configuration": 0
+   },
+   "chain-v1": {
+    "rows": 115,
+    "numeric": 52,
+    "finiteness": 4,
+    "pruned_by_configuration": 0
+   },
+   "v2": {
+    "rows": 210,
+    "numeric": 85,
+    "finiteness": 5,
+    "pruned_by_configuration": 0
+   },
+   "chain-v2": {
+    "rows": 166,
+    "numeric": 75,
+    "finiteness": 4,
+    "pruned_by_configuration": 0
+   },
+   "v2-eb": {
+    "rows": 210,
+    "numeric": 85,
+    "finiteness": 5,
+    "pruned_by_configuration": 0
+   },
+   "chain-v2-eb": {
+    "rows": 166,
+    "numeric": 75,
+    "finiteness": 4,
+    "pruned_by_configuration": 0
+   },
+   "v3": {
+    "rows": 271,
+    "numeric": 109,
+    "finiteness": 7,
+    "pruned_by_configuration": 0
+   },
+   "chain-v3": {
+    "rows": 218,
+    "numeric": 99,
+    "finiteness": 6,
+    "pruned_by_configuration": 0
+   },
+   "v4": {
+    "rows": 273,
+    "numeric": 115,
+    "finiteness": 11,
+    "pruned_by_configuration": 0
+   },
+   "chain-v4": {
+    "rows": 220,
+    "numeric": 105,
+    "finiteness": 10,
+    "pruned_by_configuration": 0
+   }
+  },
   "stops": {
-   "Dict": 83,
+   "Dict": 75,
    "DictComp": 4,
    "JoinedStr": 20,
-   "List": 72,
-   "Tuple": 96,
-   "arithmetic": 18,
-   "call": 710,
+   "List": 68,
+   "Tuple": 92,
+   "arithmetic": 19,
+   "call": 696,
    "subscript": 25
   },
   "i2_sites_left_per_file": {
    "src/refute/core/canonical.py": 2,
    "src/refute/core/chi2.py": 32,
-   "src/refute/core/claim.py": 2,
-   "src/refute/core/dossier.py": 9,
    "src/refute/core/inconclusive.py": 9,
-   "src/refute/core/io.py": 4,
-   "src/refute/core/reproduce.py": 23,
-   "src/refute/core/seal.py": 9,
-   "src/refute/core/sensitivity.py": 29,
-   "src/refute/core/verdict.py": 15,
+   "src/refute/core/sensitivity.py": 30,
+   "src/refute/core/verdict.py": 14,
    "src/refute/packs/tess/a0.py": 82,
    "src/refute/packs/tess/a0_v4.py": 25,
-   "src/refute/packs/tess/adapter.py": 32,
-   "src/refute/packs/tess/battery.py": 70,
+   "src/refute/packs/tess/battery.py": 69,
    "src/refute/packs/tess/battery_v5.py": 48,
    "src/refute/packs/tess/battery_v51.py": 45,
    "src/refute/packs/tess/battery_v51_diff.py": 59,
    "src/refute/packs/tess/battery_v52.py": 47,
-   "src/refute/packs/tess/calib05/c1.py": 28,
-   "src/refute/packs/tess/calibration.py": 30,
    "src/refute/packs/tess/centroid_v5.py": 45,
    "src/refute/packs/tess/detrend.py": 30,
    "src/refute/packs/tess/detrend_fast.py": 63,
-   "src/refute/packs/tess/discover/claim.py": 1,
-   "src/refute/packs/tess/discover/dedup.py": 5,
-   "src/refute/packs/tess/discover/injection.py": 5,
    "src/refute/packs/tess/discover/measure.py": 10,
-   "src/refute/packs/tess/discover/paired.py": 1,
-   "src/refute/packs/tess/discover/pilot.py": 11,
-   "src/refute/packs/tess/discover/selection.py": 5,
-   "src/refute/packs/tess/duration.py": 3,
+   "src/refute/packs/tess/discover/selection.py": 3,
    "src/refute/packs/tess/ebcatalog.py": 7,
    "src/refute/packs/tess/ephemeris.py": 17,
    "src/refute/packs/tess/events.py": 24,
@@ -84,11 +176,11 @@
    "src/refute/packs/tess/rednoise_fast.py": 11,
    "src/refute/packs/tess/report.py": 19,
    "src/refute/packs/tess/screen_d5.py": 93,
-   "src/refute/packs/tess/search.py": 61,
+   "src/refute/packs/tess/search.py": 59,
    "src/refute/packs/tess/synthetic.py": 2,
    "src/refute/packs/tess/timing.py": 49,
    "src/refute/packs/tess/types.py": 3,
-   "src/refute/selection/walk.py": 6
+   "src/refute/selection/walk.py": 1
   }
  },
  "j1_missing": [
@@ -105,8 +197,6 @@
   "src/refute/core/inconclusive.py:73",
   "src/refute/core/inconclusive.py:75",
   "src/refute/core/inconclusive.py:162",
-  "src/refute/core/sensitivity.py:90",
-  "src/refute/core/sensitivity.py:91",
   "src/refute/core/verdict.py:223",
   "src/refute/core/verdict.py:252",
   "src/refute/core/verdict.py:263",
@@ -144,11 +234,7 @@
   "src/refute/packs/tess/battery_v52.py:401",
   "src/refute/packs/tess/battery_v52.py:411",
   "src/refute/packs/tess/battery_v52.py:411",
-  "src/refute/packs/tess/calib05/c1.py:605",
-  "src/refute/packs/tess/calibration.py:80",
-  "src/refute/packs/tess/calibration.py:86",
   "src/refute/packs/tess/centroid_v5.py:313",
-  "src/refute/packs/tess/discover/pilot.py:645",
   "src/refute/packs/tess/ebcatalog.py:255",
   "src/refute/packs/tess/ebcatalog.py:255",
   "src/refute/packs/tess/ebcatalog.py:279",
@@ -189,9 +275,100 @@
   "src/refute/packs/tess/screen_d5.py:260",
   "src/refute/packs/tess/screen_d5.py:264",
   "src/refute/packs/tess/screen_d5.py:348",
-  "src/refute/packs/tess/search.py:314",
-  "src/refute/selection/walk.py:70"
+  "src/refute/packs/tess/search.py:314"
  ],
+ "rows_on_no_fixture": [
+  "src/refute/packs/tess/battery.py:623 math.isfinite(d_box)",
+  "src/refute/packs/tess/battery.py:623 d_box <= 0",
+  "src/refute/packs/tess/battery.py:625 math.isfinite(v)",
+  "src/refute/packs/tess/battery.py:627 g >= g_star",
+  "src/refute/packs/tess/battery.py:629 z_f >= z_star",
+  "src/refute/packs/tess/battery.py:629 f >= f_star",
+  "src/refute/packs/tess/battery.py:685 used",
+  "src/refute/packs/tess/battery.py:696 np.isfinite(w)",
+  "src/refute/packs/tess/battery.py:696 w > 0",
+  "src/refute/packs/tess/battery.py:696 math.isfinite(beta_bar)",
+  "src/refute/packs/tess/battery.py:696 beta_bar > 0",
+  "src/refute/packs/tess/battery.py:707 n_box < needed",
+  "src/refute/packs/tess/battery.py:707 y.size - n_box < 10",
+  "src/refute/packs/tess/battery.py:772 reason is not None",
+  "src/refute/packs/tess/battery.py:774 status is TestStatus.FAIL",
+  "src/refute/packs/tess/battery.py:780 near",
+  "src/refute/packs/tess/ebcatalog.py:253 star is None",
+  "src/refute/packs/tess/ebcatalog.py:253 star.ra_deg is None",
+  "src/refute/packs/tess/ebcatalog.py:253 star.dec_deg is None",
+  "src/refute/packs/tess/ebcatalog.py:255 scan",
+  "src/refute/packs/tess/ebcatalog.py:255 scan.get(\"snapshots\")",
+  "src/refute/packs/tess/ebcatalog.py:257 target_key not in (scan.get(\"per_target\") or {})",
+  "src/refute/packs/tess/ebcatalog.py:262 float(scan.get(\"radius_arcsec\", 0)) < params.match_radius_arcsec",
+  "src/refute/packs/tess/ebcatalog.py:270 e.is_reference",
+  "src/refute/packs/tess/ebcatalog.py:275 entry.tic_id is not None",
+  "src/refute/packs/tess/ebcatalog.py:275 entry.tic_id == star.tic_id",
+  "src/refute/packs/tess/ebcatalog.py:276 by_id",
+  "src/refute/packs/tess/ebcatalog.py:276 sep > params.match_radius_arcsec",
+  "src/refute/packs/tess/ebcatalog.py:279 entry.period_days",
+  "src/refute/packs/tess/ebcatalog.py:281 abs(entry.period_days - f * period) / (f * period) <= params.period_tolerance",
+  "src/refute/packs/tess/ebcatalog.py:299 own",
+  "src/refute/packs/tess/ebcatalog.py:299 other",
+  "src/refute/packs/tess/ebcatalog.py:309 other",
+  "src/refute/packs/tess/ebcatalog.py:322 downgraded",
+  "src/refute/packs/tess/ebcatalog.py:337 matches",
+  "src/refute/packs/tess/holdout.py:409 a0 <= b1",
+  "src/refute/packs/tess/holdout.py:409 b0 <= a1",
+  "src/refute/packs/tess/holdout.py:609 n_band >= coverage * 2.0 * (w.baseline_outer - w.baseline_inner) / cadence",
+  "src/refute/packs/tess/holdout.py:663 noise is None",
+  "src/refute/packs/tess/holdout.py:663 noise.undetermined",
+  "src/refute/packs/tess/holdout.py:669 ok",
+  "src/refute/packs/tess/holdout.py:669 sector is None",
+  "src/refute/packs/tess/holdout.py:669 sector in excluded",
+  "src/refute/packs/tess/holdout.py:669 undetermined",
+  "src/refute/packs/tess/holdout.py:688 undetermined",
+  "src/refute/packs/tess/holdout.py:688 p.n_rep < c.r_min",
+  "src/refute/packs/tess/holdout.py:693 undetermined",
+  "src/refute/packs/tess/holdout.py:717 sector is None",
+  "src/refute/packs/tess/holdout.py:717 sector in stats.excluded_sectors",
+  "src/refute/packs/tess/holdout.py:721 last_span is not None",
+  "src/refute/packs/tess/holdout.py:721 _closed_overlap(span[0], span[1], [last_span])",
+  "src/refute/packs/tess/holdout.py:725 _band_covered(w, t_b.size, cadence, params.min_window_coverage)",
+  "src/refute/packs/tess/holdout.py:764 best is None",
+  "src/refute/packs/tess/holdout.py:813 stats.status != \"ok\"",
+  "src/refute/packs/tess/holdout.py:815 barrier is not None",
+  "src/refute/packs/tess/holdout.py:817 reason is not None",
+  "src/refute/packs/tess/holdout.py:1267 len(counts) > 0",
+  "src/refute/packs/tess/holdout.py:1267 c >= r_min",
+  "src/refute/packs/tess/holdout.py:1520 n_pred == 0",
+  "src/refute/packs/tess/holdout.py:1545 replicas_enough(counts, c.r_min)",
+  "src/refute/packs/tess/holdout.py:1557 decision_1 != \"pass\"",
+  "src/refute/packs/tess/holdout.py:1557 enforce",
+  "src/refute/packs/tess/holdout.py:1577 math.isfinite(s_pred_2)",
+  "src/refute/packs/tess/holdout.py:1577 s_pred_2 >= threshold",
+  "src/refute/packs/tess/holdout.py:1582 decision_2 != \"pass\"",
+  "src/refute/packs/tess/holdout.py:1582 enforce",
+  "src/refute/packs/tess/holdout.py:1606 result[\"status\"] != \"ok\"",
+  "src/refute/packs/tess/holdout.py:1665 ctl.get(\"depth\") is None",
+  "src/refute/packs/tess/holdout.py:1667 reason is not None",
+  "src/refute/packs/tess/screen_d5.py:83 v is not None",
+  "src/refute/packs/tess/screen_d5.py:83 math.isfinite(v)",
+  "src/refute/packs/tess/screen_d5.py:148 _finite(period, t0, duration)",
+  "src/refute/packs/tess/screen_d5.py:148 period > 0",
+  "src/refute/packs/tess/screen_d5.py:148 duration > 0",
+  "src/refute/packs/tess/screen_d5.py:260 _candidate_ok(period, t0, duration)",
+  "src/refute/packs/tess/screen_d5.py:264 _sigma_in_range(time, flux, flux_err)",
+  "src/refute/packs/tess/screen_d5.py:266 t.size < MIN_VALID",
+  "src/refute/packs/tess/screen_d5.py:279 noise is None",
+  "src/refute/packs/tess/screen_d5.py:286 good_by[name] == 0",
+  "src/refute/packs/tess/screen_d5.py:286 n < MIN_IN_PER_EPOCH",
+  "src/refute/packs/tess/screen_d5.py:294 m_in is None",
+  "src/refute/packs/tess/screen_d5.py:294 _finite(var)",
+  "src/refute/packs/tess/screen_d5.py:301 math.isfinite(denom)",
+  "src/refute/packs/tess/screen_d5.py:301 denom <= 0",
+  "src/refute/packs/tess/screen_d5.py:304 var <= 0.0",
+  "src/refute/packs/tess/screen_d5.py:308 math.isfinite(oe)",
+  "src/refute/packs/tess/screen_d5.py:328 oe > F1_THRESHOLD",
+  "src/refute/packs/tess/screen_d5.py:347 name == \"F2\"",
+  "src/refute/packs/tess/screen_d5.py:348 metrics"
+ ],
+ "pruned_by_configuration": [],
  "functions": 924,
  "reachable": [
   "src/refute/core/canonical.py:_normalize",
@@ -203,64 +380,20 @@
   "src/refute/core/chi2.py:chi2_sf",
   "src/refute/core/chi2.py:gamma_q",
   "src/refute/core/chi2.py:ncx2_sf",
-  "src/refute/core/claim.py:LoadedClaim.attachment_by_role",
-  "src/refute/core/claim.py:LoadedClaim.attachment_path",
   "src/refute/core/claim.py:LoadedClaim.canonical",
-  "src/refute/core/claim.py:LoadedClaim.directory",
   "src/refute/core/claim.py:LoadedClaim.sha256",
   "src/refute/core/codehash.py:CodeHash.to_dict",
-  "src/refute/core/dossier.py:CheckResult.ok",
-  "src/refute/core/dossier.py:DossierWriter._create",
-  "src/refute/core/dossier.py:DossierWriter.path",
-  "src/refute/core/dossier.py:DossierWriter.write_bytes",
-  "src/refute/core/dossier.py:DossierWriter.write_json",
-  "src/refute/core/dossier.py:DossierWriter.write_text",
-  "src/refute/core/dossier.py:_dossier_files",
-  "src/refute/core/dossier.py:read_manifest",
-  "src/refute/core/dossier.py:verify_manifest",
   "src/refute/core/hashing.py:sha256_bytes",
-  "src/refute/core/hashing.py:sha256_file",
   "src/refute/core/inconclusive.py:_check_class",
   "src/refute/core/inconclusive.py:annotate",
   "src/refute/core/inconclusive.py:classes_of",
   "src/refute/core/inconclusive.py:classify",
   "src/refute/core/inconclusive.py:verdict_class",
   "src/refute/core/inconclusive.py:with_classes",
-  "src/refute/core/io.py:dumps_json",
-  "src/refute/core/io.py:to_jsonable",
-  "src/refute/core/io.py:write_json",
-  "src/refute/core/io.py:write_text",
   "src/refute/core/lock.py:VerifyResult.exit_code",
   "src/refute/core/lock.py:VerifyResult.to_dict",
-  "src/refute/core/pack.py:Analyzer.report",
-  "src/refute/core/pack.py:Calibrator.evaluate",
   "src/refute/core/pack.py:ClaimSchema.target_key",
-  "src/refute/core/pack.py:DataAdapter.fetch",
-  "src/refute/core/pack.py:Gauntlet.run",
-  "src/refute/core/pack.py:HoldoutStrategy.run",
-  "src/refute/core/pack.py:Search.run",
   "src/refute/core/reproduce.py:InputSpec.to_dict",
-  "src/refute/core/reproduce.py:_no_link",
-  "src/refute/core/reproduce.py:_path",
-  "src/refute/core/reproduce.py:_sha256_file",
-  "src/refute/core/reproduce.py:check",
-  "src/refute/core/reproduce.py:dest_problem",
-  "src/refute/core/reproduce.py:fetch_bytes",
-  "src/refute/core/reproduce.py:install",
-  "src/refute/core/reproduce.py:make_parents",
-  "src/refute/core/reproduce.py:prepare",
-  "src/refute/core/reproduce.py:specs_problems",
-  "src/refute/core/seal.py:SealCheck.ok",
-  "src/refute/core/seal.py:_check_reserved_spellings",
-  "src/refute/core/seal.py:_file_list",
-  "src/refute/core/seal.py:_is_link",
-  "src/refute/core/seal.py:_walk",
-  "src/refute/core/seal.py:_walk.failed",
-  "src/refute/core/seal.py:_write_json",
-  "src/refute/core/seal.py:core_archive",
-  "src/refute/core/seal.py:core_files",
-  "src/refute/core/seal.py:core_sha256",
-  "src/refute/core/seal.py:seal",
   "src/refute/core/sensitivity.py:_finite",
   "src/refute/core/sensitivity.py:_not_applicable",
   "src/refute/core/sensitivity.py:_refusal",
@@ -275,14 +408,12 @@
   "src/refute/core/sensitivity.py:seed_for",
   "src/refute/core/sensitivity.py:simulated_probability",
   "src/refute/core/verdict.py:RoleAggregate.diagnostics_complete",
-  "src/refute/core/verdict.py:TestResult.from_dict",
   "src/refute/core/verdict.py:TestResult.to_dict",
   "src/refute/core/verdict.py:aggregate",
   "src/refute/core/verdict.py:aggregate_roles",
   "src/refute/core/verdict.py:defer_tests",
   "src/refute/core/verdict.py:diagnostic_state",
   "src/refute/core/verdict.py:enforce_coverage",
-  "src/refute/drand.py:_utc_now",
   "src/refute/packs/tess/a0.py:_pairs",
   "src/refute/packs/tess/a0.py:_segments",
   "src/refute/packs/tess/a0.py:_standardized",
@@ -311,29 +442,8 @@
   "src/refute/packs/tess/a0_v4.py:empirical_events",
   "src/refute/packs/tess/a0_v4.py:grid",
   "src/refute/packs/tess/a0_v4.py:prepare",
-  "src/refute/packs/tess/adapter.py:TessAdapter.fetch",
-  "src/refute/packs/tess/adapter.py:_file_record",
-  "src/refute/packs/tess/adapter.py:_float_or_none",
-  "src/refute/packs/tess/adapter.py:_limits",
-  "src/refute/packs/tess/adapter.py:_matching",
-  "src/refute/packs/tess/adapter.py:_pkg_version",
-  "src/refute/packs/tess/adapter.py:_quality_bitmask_value",
-  "src/refute/packs/tess/adapter.py:_str_or_none",
-  "src/refute/packs/tess/adapter.py:_up_to_sector",
-  "src/refute/packs/tess/adapter.py:_utc_now",
-  "src/refute/packs/tess/adapter.py:check_fits_complete",
-  "src/refute/packs/tess/adapter.py:discard_if_incomplete",
-  "src/refute/packs/tess/adapter.py:download_checked",
-  "src/refute/packs/tess/adapter.py:fits_expected_size",
-  "src/refute/packs/tess/adapter.py:manifest_path",
-  "src/refute/packs/tess/adapter.py:product_info",
-  "src/refute/packs/tess/adapter.py:query_neighbors",
-  "src/refute/packs/tess/adapter.py:query_tic",
-  "src/refute/packs/tess/adapter.py:query_tic.col",
-  "src/refute/packs/tess/adapter.py:query_tic.text",
   "src/refute/packs/tess/battery.py:_SectorOffset.chi2",
   "src/refute/packs/tess/battery.py:_SectorOffset.distance",
-  "src/refute/packs/tess/battery.py:_SectorOffset.distance_sigma",
   "src/refute/packs/tess/battery.py:_bic",
   "src/refute/packs/tess/battery.py:_dilate",
   "src/refute/packs/tess/battery.py:_harmonics",
@@ -412,18 +522,7 @@
   "src/refute/packs/tess/battery_v52.py:choose_sectors",
   "src/refute/packs/tess/battery_v52.py:odd_even_inconclusive",
   "src/refute/packs/tess/battery_v52.py:stable_consistency_label",
-  "src/refute/packs/tess/calib05/c1.py:_rule",
   "src/refute/packs/tess/calib05/c1.py:a_over_rstar",
-  "src/refute/packs/tess/calib05/c1.py:decision_rules",
-  "src/refute/packs/tess/calib05/c1.py:durations",
-  "src/refute/packs/tess/calib05/c1.py:family_metrics",
-  "src/refute/packs/tess/calib05/c1.py:identity",
-  "src/refute/packs/tess/calib05/c1.py:metrics",
-  "src/refute/packs/tess/calib05/c1.py:wilson",
-  "src/refute/packs/tess/calibration.py:TessCalibrator.evaluate",
-  "src/refute/packs/tess/calibration.py:_recovered",
-  "src/refute/packs/tess/calibration.py:signal_recovered",
-  "src/refute/packs/tess/calibration.py:signal_verdict",
   "src/refute/packs/tess/centroid_v5.py:_detrended",
   "src/refute/packs/tess/centroid_v5.py:check_centroid_v5",
   "src/refute/packs/tess/centroid_v5.py:check_centroid_v5.result",
@@ -450,43 +549,15 @@
   "src/refute/packs/tess/detrend_fast.py:_near",
   "src/refute/packs/tess/detrend_fast.py:_trend_of",
   "src/refute/packs/tess/detrend_fast.py:_trend_of.evaluate",
-  "src/refute/packs/tess/detrend_fast.py:detrend",
-  "src/refute/packs/tess/discover/claim.py:eb_attachments.number",
-  "src/refute/packs/tess/discover/dedup.py:CatalogIndex.near",
   "src/refute/packs/tess/discover/dedup.py:CatalogResult.to_dict",
-  "src/refute/packs/tess/discover/dedup.py:separation_arcsec",
   "src/refute/packs/tess/discover/injection.py:Injection.to_dict",
-  "src/refute/packs/tess/discover/injection.py:duration_days",
-  "src/refute/packs/tess/discover/injection.py:wilson_interval",
   "src/refute/packs/tess/discover/measure.py:chain",
-  "src/refute/packs/tess/discover/paired.py:transitions",
-  "src/refute/packs/tess/discover/paired.py:verdict_counts",
-  "src/refute/packs/tess/discover/pilot.py:_AttemptLog.event",
-  "src/refute/packs/tess/discover/pilot.py:_AttemptLog.fail",
-  "src/refute/packs/tess/discover/pilot.py:_AttemptLog.get",
-  "src/refute/packs/tess/discover/pilot.py:_AttemptLog.inputs",
-  "src/refute/packs/tess/discover/pilot.py:_AttemptLog.keep",
-  "src/refute/packs/tess/discover/pilot.py:_assemble.copy",
-  "src/refute/packs/tess/discover/pilot.py:_read",
-  "src/refute/packs/tess/discover/pilot.py:catalog_indexes.rows",
-  "src/refute/packs/tess/discover/pilot.py:download",
-  "src/refute/packs/tess/discover/pilot.py:in_git",
-  "src/refute/packs/tess/discover/pilot.py:listing.rows",
-  "src/refute/packs/tess/discover/pilot.py:needed",
-  "src/refute/packs/tess/discover/pilot.py:record",
-  "src/refute/packs/tess/discover/pilot.py:spoc_sector_count.query",
   "src/refute/packs/tess/discover/selection.py:Exclusions.counts",
   "src/refute/packs/tess/discover/selection.py:Walk.accepted",
   "src/refute/packs/tess/discover/selection.py:Walk.outcome",
   "src/refute/packs/tess/discover/selection.py:Walk.to_dict",
-  "src/refute/packs/tess/discover/selection.py:policy",
-  "src/refute/packs/tess/discover/selection.py:read_csv_rows",
-  "src/refute/packs/tess/discover/selection.py:walk",
-  "src/refute/packs/tess/discover/steps.py:cache_dir",
   "src/refute/packs/tess/discover/transforms.py:Rotations.to_dict",
   "src/refute/packs/tess/discover/transforms.py:Transform.to_dict",
-  "src/refute/packs/tess/duration.py:_shape",
-  "src/refute/packs/tess/duration.py:estimate_duration.residuals",
   "src/refute/packs/tess/ebcatalog.py:EbEntry.is_reference",
   "src/refute/packs/tess/ebcatalog.py:_inconclusive",
   "src/refute/packs/tess/ebcatalog.py:check_eb_catalog",
@@ -571,10 +642,6 @@
   "src/refute/packs/tess/params.py:TessTestPlan.v05",
   "src/refute/packs/tess/pipeline.py:TessAnalyzer._error_record",
   "src/refute/packs/tess/pipeline.py:TessAnalyzer.error_result",
-  "src/refute/packs/tess/pipeline.py:TessAnalyzer.report",
-  "src/refute/packs/tess/pipeline.py:TessGauntlet.run",
-  "src/refute/packs/tess/pipeline.py:TessHoldout.run",
-  "src/refute/packs/tess/pipeline.py:TessSearch.run",
   "src/refute/packs/tess/pipeline.py:_bls_gate",
   "src/refute/packs/tess/pipeline.py:_is_v051",
   "src/refute/packs/tess/pipeline.py:_minus",
@@ -647,14 +714,12 @@
   "src/refute/packs/tess/report.py:_v05_lines",
   "src/refute/packs/tess/report.py:render_report",
   "src/refute/packs/tess/schema.py:TessClaimSchema.target_key",
-  "src/refute/packs/tess/schema.py:load_targets_file",
   "src/refute/packs/tess/screen_d5.py:_as_index",
   "src/refute/packs/tess/screen_d5.py:_candidate_ok",
   "src/refute/packs/tess/screen_d5.py:_core",
   "src/refute/packs/tess/screen_d5.py:_eligible",
   "src/refute/packs/tess/screen_d5.py:_epochs",
   "src/refute/packs/tess/screen_d5.py:_f1_box",
-  "src/refute/packs/tess/screen_d5.py:_f2_u1.both",
   "src/refute/packs/tess/screen_d5.py:_finite",
   "src/refute/packs/tess/screen_d5.py:_fit",
   "src/refute/packs/tess/screen_d5.py:_guard",
@@ -680,7 +745,6 @@
   "src/refute/packs/tess/search.py:_blocks",
   "src/refute/packs/tess/search.py:_bls",
   "src/refute/packs/tess/search.py:_levels",
-  "src/refute/packs/tess/search.py:_levels.mid",
   "src/refute/packs/tess/search.py:_refine",
   "src/refute/packs/tess/search.py:_top_peaks",
   "src/refute/packs/tess/search.py:_valid_durations",
@@ -689,8 +753,6 @@
   "src/refute/packs/tess/search.py:finalize_candidate",
   "src/refute/packs/tess/search.py:kept_peak_sde",
   "src/refute/packs/tess/search.py:search_period",
-  "src/refute/packs/tess/synthetic.py:dump_times",
-  "src/refute/packs/tess/synthetic.py:psf_image.edges",
   "src/refute/packs/tess/synthetic.py:trapezoid",
   "src/refute/packs/tess/timing.py:TemplateTimes.to_dict",
   "src/refute/packs/tess/timing.py:TimingTemplate.deficit",
@@ -713,11 +775,7 @@
   "src/refute/packs/tess/types.py:ProductInfo.to_dict",
   "src/refute/packs/tess/types.py:SectorInfo.to_dict",
   "src/refute/packs/tess/types.py:StarInfo.to_dict",
-  "src/refute/selection/walk.py:WalkLog.complete",
-  "src/refute/selection/walk.py:WalkLog.outcome",
-  "src/refute/selection/walk.py:transient_query",
-  "src/refute/selection/walk.py:walk",
-  "src/refute/selection/walk.py:with_retries"
+  "src/refute/selection/walk.py:WalkLog.outcome"
  ],
  "deciding": [
   "src/refute/core/inconclusive.py:annotate",
@@ -755,8 +813,6 @@
   "src/refute/packs/tess/battery_v52.py:check_sinusoid",
   "src/refute/packs/tess/battery_v52.py:choose_sectors",
   "src/refute/packs/tess/battery_v52.py:odd_even_inconclusive",
-  "src/refute/packs/tess/calib05/c1.py:family_metrics",
-  "src/refute/packs/tess/calibration.py:TessCalibrator.evaluate",
   "src/refute/packs/tess/centroid_v5.py:check_centroid_v5",
   "src/refute/packs/tess/centroid_v5.py:check_centroid_v5.result",
   "src/refute/packs/tess/discover/measure.py:chain",
@@ -800,7 +856,6 @@
  ],
  "returning": [
   "src/refute/core/inconclusive.py:with_classes",
-  "src/refute/core/sensitivity.py:_finite",
   "src/refute/packs/tess/battery.py:_period_alias_m4",
   "src/refute/packs/tess/battery.py:_period_alias_m4.result",
   "src/refute/packs/tess/battery.py:_period_alias_m4.undecided",
@@ -811,8 +866,6 @@
   "src/refute/packs/tess/battery_v52.py:_coverage_valid",
   "src/refute/packs/tess/battery_v52.py:odd_even_inconclusive",
   "src/refute/packs/tess/centroid_v5.py:check_centroid_v5.result",
-  "src/refute/packs/tess/discover/pilot.py:_AttemptLog.get",
-  "src/refute/packs/tess/discover/pilot.py:spoc_sector_count.query",
   "src/refute/packs/tess/ebcatalog.py:_inconclusive",
   "src/refute/packs/tess/gauntlet.py:_valid",
   "src/refute/packs/tess/holdout.py:_band_covered",
@@ -827,18 +880,16 @@
   "src/refute/packs/tess/screen_d5.py:_candidate_ok",
   "src/refute/packs/tess/screen_d5.py:_core",
   "src/refute/packs/tess/screen_d5.py:_finite",
-  "src/refute/packs/tess/screen_d5.py:_sigma_in_range",
-  "src/refute/packs/tess/screen_d5.py:_valid",
-  "src/refute/selection/walk.py:transient_query"
+  "src/refute/packs/tess/screen_d5.py:_sigma_in_range"
  ],
  "stops": {
-  "Dict": 83,
+  "Dict": 75,
   "DictComp": 4,
   "JoinedStr": 20,
-  "List": 72,
-  "Tuple": 96,
-  "arithmetic": 18,
-  "call": 710,
+  "List": 68,
+  "Tuple": 92,
+  "arithmetic": 19,
+  "call": 696,
   "subscript": 25
  },
  "rows": [
@@ -856,7 +907,11 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/core/inconclusive.py",
@@ -874,6 +929,10 @@
    "guards": [],
    "early_exits_before": [
     "65: result.status is not TestStatus.INCONCLUSIVE"
+   ],
+   "fixtures": [
+    "v3",
+    "v4"
    ]
   },
   {
@@ -893,6 +952,10 @@
    "early_exits_before": [
     "65: result.status is not TestStatus.INCONCLUSIVE",
     "67: deferred"
+   ],
+   "fixtures": [
+    "v3",
+    "v4"
    ]
   },
   {
@@ -913,6 +976,10 @@
     "65: result.status is not TestStatus.INCONCLUSIVE",
     "67: deferred",
     "70: explicit is not None"
+   ],
+   "fixtures": [
+    "v3",
+    "v4"
    ]
   },
   {
@@ -934,6 +1001,10 @@
     "67: deferred",
     "70: explicit is not None",
     "73: message.startswith(COVERAGE_PREFIX)"
+   ],
+   "fixtures": [
+    "v3",
+    "v4"
    ]
   },
   {
@@ -956,6 +1027,10 @@
     "70: explicit is not None",
     "73: message.startswith(COVERAGE_PREFIX)",
     "75: message.startswith(SENSITIVITY_PREFIX)"
+   ],
+   "fixtures": [
+    "v3",
+    "v4"
    ]
   },
   {
@@ -978,6 +1053,10 @@
     "70: explicit is not None",
     "73: message.startswith(COVERAGE_PREFIX)",
     "75: message.startswith(SENSITIVITY_PREFIX)"
+   ],
+   "fixtures": [
+    "v3",
+    "v4"
    ]
   },
   {
@@ -994,55 +1073,11 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
-  },
-  {
-   "file": "src/refute/core/sensitivity.py",
-   "line": 90,
-   "end_line": 90,
-   "function": "_finite",
-   "expression": "isinstance(value, (int, float))",
-   "operators": [
-    "call"
-   ],
-   "kind": "non-numeric",
-   "contexts": [
-    "returned decision"
-   ],
-   "guards": [],
-   "early_exits_before": []
-  },
-  {
-   "file": "src/refute/core/sensitivity.py",
-   "line": 91,
-   "end_line": 91,
-   "function": "_finite",
-   "expression": "isinstance(value, bool)",
-   "operators": [
-    "call"
-   ],
-   "kind": "non-numeric",
-   "contexts": [
-    "returned decision"
-   ],
-   "guards": [],
-   "early_exits_before": []
-  },
-  {
-   "file": "src/refute/core/sensitivity.py",
-   "line": 92,
-   "end_line": 92,
-   "function": "_finite",
-   "expression": "math.isfinite(float(value))",
-   "operators": [
-    "isfinite"
-   ],
-   "kind": "finiteness",
-   "contexts": [
-    "returned decision"
-   ],
-   "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/core/sensitivity.py",
@@ -1058,7 +1093,17 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/core/sensitivity.py",
@@ -1074,7 +1119,17 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/core/sensitivity.py",
@@ -1092,7 +1147,17 @@
    "guards": [
     "result.status is TestStatus.PASS and result.severity is not Severity.GATE"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/core/verdict.py",
@@ -1108,7 +1173,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/core/verdict.py",
@@ -1124,7 +1201,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/core/verdict.py",
@@ -1140,7 +1229,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/core/verdict.py",
@@ -1156,7 +1257,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/core/verdict.py",
@@ -1172,7 +1285,14 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/core/verdict.py",
@@ -1188,7 +1308,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/core/verdict.py",
@@ -1206,6 +1338,18 @@
    "guards": [],
    "early_exits_before": [
     "252: not gates"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1225,6 +1369,18 @@
    "early_exits_before": [
     "252: not gates",
     "255: gate.status is not TestStatus.PASS"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1245,6 +1401,18 @@
     "252: not gates",
     "255: gate.status is not TestStatus.PASS",
     "263: fatal"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1266,6 +1434,18 @@
     "255: gate.status is not TestStatus.PASS",
     "263: fatal",
     "266: missing"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1288,6 +1468,18 @@
     "263: fatal",
     "266: missing",
     "269: inconclusive"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1304,7 +1496,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -1322,7 +1526,19 @@
    "guards": [
     "len(used) < params.min_sectors"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -1340,6 +1556,18 @@
    "guards": [],
    "early_exits_before": [
     "268: len(used) < params.min_sectors"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1358,6 +1586,18 @@
    "guards": [],
    "early_exits_before": [
     "268: len(used) < params.min_sectors"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1374,7 +1614,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -1390,7 +1642,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -1408,6 +1672,18 @@
    "guards": [],
    "early_exits_before": [
     "362: not series[\"time\"]"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1426,6 +1702,18 @@
    "guards": [],
    "early_exits_before": [
     "362: not series[\"time\"]"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1445,6 +1733,18 @@
    "early_exits_before": [
     "362: not series[\"time\"]",
     "377: g_core is None or g_large is None"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1465,6 +1765,18 @@
     "362: not series[\"time\"]",
     "377: g_core is None or g_large is None",
     "402: max(core_snr, large_snr) < params.max_sigma"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1485,6 +1797,18 @@
     "362: not series[\"time\"]",
     "377: g_core is None or g_large is None",
     "402: max(core_snr, large_snr) < params.max_sigma"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1501,7 +1825,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -1519,6 +1855,18 @@
    "guards": [],
    "early_exits_before": [
     "466: neighbors is None"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1537,6 +1885,18 @@
    "guards": [],
    "early_exits_before": [
     "466: neighbors is None"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1556,6 +1916,18 @@
    "early_exits_before": [
     "466: neighbors is None",
     "476: star is None or star.tmag is None"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1575,6 +1947,18 @@
    "early_exits_before": [
     "466: neighbors is None",
     "476: star is None or star.tmag is None"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1594,6 +1978,18 @@
    "early_exits_before": [
     "466: neighbors is None",
     "476: star is None or star.tmag is None"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1613,6 +2009,18 @@
    "early_exits_before": [
     "466: neighbors is None",
     "476: star is None or star.tmag is None"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1632,6 +2040,18 @@
    "early_exits_before": [
     "466: neighbors is None",
     "476: star is None or star.tmag is None"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1651,6 +2071,18 @@
    "early_exits_before": [
     "466: neighbors is None",
     "476: star is None or star.tmag is None"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1670,6 +2102,18 @@
    "early_exits_before": [
     "466: neighbors is None",
     "476: star is None or star.tmag is None"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1689,6 +2133,18 @@
    "early_exits_before": [
     "466: neighbors is None",
     "476: star is None or star.tmag is None"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1708,6 +2164,18 @@
    "early_exits_before": [
     "466: neighbors is None",
     "476: star is None or star.tmag is None"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1728,6 +2196,18 @@
     "466: neighbors is None",
     "476: star is None or star.tmag is None",
     "526: problems"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -1744,7 +2224,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -1760,7 +2241,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -1778,7 +2260,8 @@
    "guards": [],
    "early_exits_before": [
     "623: math.isfinite(d_box) and d_box <= 0"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -1797,7 +2280,8 @@
    "early_exits_before": [
     "623: math.isfinite(d_box) and d_box <= 0",
     "625: not all(math.isfinite(v) for v in (z_f, f, g, d_box, d_box_err))"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -1817,7 +2301,8 @@
     "623: math.isfinite(d_box) and d_box <= 0",
     "625: not all(math.isfinite(v) for v in (z_f, f, g, d_box, d_box_err))",
     "627: g >= g_star"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -1837,7 +2322,8 @@
     "623: math.isfinite(d_box) and d_box <= 0",
     "625: not all(math.isfinite(v) for v in (z_f, f, g, d_box, d_box_err))",
     "627: g >= g_star"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -1853,7 +2339,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -1871,7 +2358,8 @@
    "guards": [],
    "early_exits_before": [
     "685: not used"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -1889,7 +2377,8 @@
    "guards": [],
    "early_exits_before": [
     "685: not used"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -1907,7 +2396,8 @@
    "guards": [],
    "early_exits_before": [
     "685: not used"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -1925,7 +2415,8 @@
    "guards": [],
    "early_exits_before": [
     "685: not used"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -1944,7 +2435,8 @@
    "early_exits_before": [
     "685: not used",
     "696: not (np.all(np.isfinite(w)) and np.all(w > 0) and math.isfinite(beta_bar) and beta_bar > 0)"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -1963,7 +2455,8 @@
    "early_exits_before": [
     "685: not used",
     "696: not (np.all(np.isfinite(w)) and np.all(w > 0) and math.isfinite(beta_bar) and beta_bar > 0)"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -1983,7 +2476,8 @@
     "685: not used",
     "696: not (np.all(np.isfinite(w)) and np.all(w > 0) and math.isfinite(beta_bar) and beta_bar > 0)",
     "707: n_box < needed or y.size - n_box < 10"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -2004,7 +2498,8 @@
     "696: not (np.all(np.isfinite(w)) and np.all(w > 0) and math.isfinite(beta_bar) and beta_bar > 0)",
     "707: n_box < needed or y.size - n_box < 10",
     "772: reason is not None"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -2026,7 +2521,8 @@
     "707: n_box < needed or y.size - n_box < 10",
     "772: reason is not None",
     "774: status is TestStatus.FAIL"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -2042,7 +2538,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -2060,6 +2568,18 @@
    "guards": [],
    "early_exits_before": [
     "811: plan.gauntlet.corrections.active"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2078,6 +2598,18 @@
    "guards": [],
    "early_exits_before": [
     "811: plan.gauntlet.corrections.active"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2097,6 +2629,18 @@
    "early_exits_before": [
     "811: plan.gauntlet.corrections.active",
     "835: n_box < needed or y.size - n_box < 10"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2117,6 +2661,18 @@
     "811: plan.gauntlet.corrections.active",
     "835: n_box < needed or y.size - n_box < 10",
     "865: gain < params.min_box_delta_bic"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2133,7 +2689,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery.py",
@@ -2151,6 +2719,18 @@
    "guards": [],
    "early_exits_before": [
     "931: not aux"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2171,6 +2751,18 @@
    ],
    "early_exits_before": [
     "931: not aux"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2189,6 +2781,18 @@
    "guards": [],
    "early_exits_before": [
     "931: not aux"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2209,6 +2813,18 @@
    ],
    "early_exits_before": [
     "931: not aux"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2229,6 +2845,18 @@
    ],
    "early_exits_before": [
     "931: not aux"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2250,6 +2878,18 @@
    ],
    "early_exits_before": [
     "931: not aux"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2272,6 +2912,18 @@
    ],
    "early_exits_before": [
     "931: not aux"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2294,6 +2946,18 @@
    ],
    "early_exits_before": [
     "931: not aux"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2312,6 +2976,18 @@
    "guards": [],
    "early_exits_before": [
     "931: not aux"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2330,6 +3006,18 @@
    "guards": [],
    "early_exits_before": [
     "931: not aux"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2350,6 +3038,18 @@
    ],
    "early_exits_before": [
     "931: not aux"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2371,6 +3071,18 @@
    ],
    "early_exits_before": [
     "931: not aux"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2393,6 +3105,18 @@
    ],
    "early_exits_before": [
     "931: not aux"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2415,6 +3139,18 @@
    ],
    "early_exits_before": [
     "931: not aux"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2433,6 +3169,18 @@
    "guards": [],
    "early_exits_before": [
     "931: not aux"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2452,6 +3200,18 @@
    "early_exits_before": [
     "931: not aux",
     "1027: problems"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2468,7 +3228,17 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v5.py",
@@ -2484,7 +3254,17 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v5.py",
@@ -2502,6 +3282,16 @@
    "guards": [],
    "early_exits_before": [
     "63: len(secondary) == 0 or len(primary) == 0"
+   ],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2521,6 +3311,16 @@
    "early_exits_before": [
     "63: len(secondary) == 0 or len(primary) == 0",
     "98: sig >= params.max_sigma"
+   ],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2540,6 +3340,16 @@
    "early_exits_before": [
     "63: len(secondary) == 0 or len(primary) == 0",
     "98: sig >= params.max_sigma"
+   ],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2556,7 +3366,17 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v5.py",
@@ -2574,6 +3394,16 @@
    "guards": [],
    "early_exits_before": [
     "127: n < sp.min_measured_events"
+   ],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2593,6 +3423,16 @@
    "early_exits_before": [
     "127: n < sp.min_measured_events",
     "131: not total > 0"
+   ],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2612,6 +3452,16 @@
    "early_exits_before": [
     "127: n < sp.min_measured_events",
     "131: not total > 0"
+   ],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2628,7 +3478,17 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v5.py",
@@ -2646,6 +3506,16 @@
    "guards": [],
    "early_exits_before": [
     "193: n < sp.min_measured_events"
+   ],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2664,6 +3534,16 @@
    "guards": [],
    "early_exits_before": [
     "193: n < sp.min_measured_events"
+   ],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2680,7 +3560,17 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v5.py",
@@ -2698,6 +3588,16 @@
    "guards": [],
    "early_exits_before": [
     "265: n == 0"
+   ],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2717,6 +3617,16 @@
    "early_exits_before": [
     "265: n == 0",
     "278: fraction < sp.edge_min_fraction"
+   ],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2737,6 +3647,16 @@
     "265: n == 0",
     "278: fraction < sp.edge_min_fraction",
     "289: len(others) == 0"
+   ],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2758,6 +3678,16 @@
     "278: fraction < sp.edge_min_fraction",
     "289: len(others) == 0",
     "295: not g_other.mean / g_other.error >= min_snr"
+   ],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2779,6 +3709,16 @@
     "278: fraction < sp.edge_min_fraction",
     "289: len(others) == 0",
     "295: not g_other.mean / g_other.error >= min_snr"
+   ],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -2795,7 +3735,13 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "v2",
+    "v2-eb"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v5.py",
@@ -2813,6 +3759,12 @@
    "guards": [],
    "early_exits_before": [
     "384: candidate.period >= sp.sinusoid_max_period_days"
+   ],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "v2",
+    "v2-eb"
    ]
   },
   {
@@ -2833,6 +3785,12 @@
    "early_exits_before": [
     "384: candidate.period >= sp.sinusoid_max_period_days",
     "403: keep.sum() < 100"
+   ],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "v2",
+    "v2-eb"
    ]
   },
   {
@@ -2849,7 +3807,17 @@
     "assignment to a decision variable"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v5.py",
@@ -2865,7 +3833,17 @@
     "conditional expression"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v51.py",
@@ -2881,7 +3859,11 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v3",
+    "v3"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v51.py",
@@ -2899,6 +3881,10 @@
    "guards": [],
    "early_exits_before": [
     "103: (\"P/2\", 0.5) not in applicable"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "v3"
    ]
   },
   {
@@ -2918,6 +3904,10 @@
    "early_exits_before": [
     "103: (\"P/2\", 0.5) not in applicable",
     "124: keep.sum() < 100"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "v3"
    ]
   },
   {
@@ -2937,6 +3927,10 @@
    "early_exits_before": [
     "103: (\"P/2\", 0.5) not in applicable",
     "124: keep.sum() < 100"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "v3"
    ]
   },
   {
@@ -2956,6 +3950,10 @@
    "early_exits_before": [
     "103: (\"P/2\", 0.5) not in applicable",
     "124: keep.sum() < 100"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "v3"
    ]
   },
   {
@@ -2975,6 +3973,10 @@
    "early_exits_before": [
     "103: (\"P/2\", 0.5) not in applicable",
     "124: keep.sum() < 100"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "v3"
    ]
   },
   {
@@ -2994,6 +3996,10 @@
    "early_exits_before": [
     "103: (\"P/2\", 0.5) not in applicable",
     "124: keep.sum() < 100"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "v3"
    ]
   },
   {
@@ -3013,6 +4019,10 @@
    "early_exits_before": [
     "103: (\"P/2\", 0.5) not in applicable",
     "124: keep.sum() < 100"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "v3"
    ]
   },
   {
@@ -3029,7 +4039,11 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v3",
+    "v3"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v51.py",
@@ -3045,7 +4059,11 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v3",
+    "v3"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v51.py",
@@ -3061,7 +4079,11 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v3",
+    "v3"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v51.py",
@@ -3077,7 +4099,11 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v3",
+    "v3"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v51.py",
@@ -3093,7 +4119,11 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v3",
+    "v3"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v51.py",
@@ -3111,6 +4141,10 @@
    "guards": [],
    "early_exits_before": [
     "338: len(odd) < params.min_transits_each or len(even) < params.min_transits_each"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "v3"
    ]
   },
   {
@@ -3130,6 +4164,10 @@
    "early_exits_before": [
     "338: len(odd) < params.min_transits_each or len(even) < params.min_transits_each",
     "361: var is None"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "v3"
    ]
   },
   {
@@ -3150,6 +4188,10 @@
    "early_exits_before": [
     "338: len(odd) < params.min_transits_each or len(even) < params.min_transits_each",
     "361: var is None"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "v3"
    ]
   },
   {
@@ -3166,7 +4208,13 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v51.py",
@@ -3182,7 +4230,13 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v51.py",
@@ -3198,7 +4252,13 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v51.py",
@@ -3216,6 +4276,12 @@
    "guards": [],
    "early_exits_before": [
     "498: any(v is None or not math.isfinite(v) or v <= 0 for v in values)"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3235,6 +4301,12 @@
    "early_exits_before": [
     "498: any(v is None or not math.isfinite(v) or v <= 0 for v in values)",
     "533: len(recovered) < DURATION_MIN_VALID"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3254,6 +4326,12 @@
    "early_exits_before": [
     "498: any(v is None or not math.isfinite(v) or v <= 0 for v in values)",
     "533: len(recovered) < DURATION_MIN_VALID"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3274,6 +4352,12 @@
     "498: any(v is None or not math.isfinite(v) or v <= 0 for v in values)",
     "533: len(recovered) < DURATION_MIN_VALID",
     "562: not (math.isfinite(sigma) and sigma > 0)"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3290,7 +4374,13 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v51_diff.py",
@@ -3306,7 +4396,13 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v51_diff.py",
@@ -3324,6 +4420,12 @@
    "guards": [],
    "early_exits_before": [
     "209: not series[\"time\"]"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3342,6 +4444,12 @@
    "guards": [],
    "early_exits_before": [
     "209: not series[\"time\"]"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3360,6 +4468,12 @@
    "guards": [],
    "early_exits_before": [
     "209: not series[\"time\"]"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3379,6 +4493,12 @@
    "early_exits_before": [
     "209: not series[\"time\"]",
     "227: g_core is None or g_large is None or g_diff is None"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3399,6 +4519,12 @@
     "209: not series[\"time\"]",
     "227: g_core is None or g_large is None or g_diff is None",
     "265: max(core_snr, large_snr) < params.max_sigma"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3419,6 +4545,12 @@
     "209: not series[\"time\"]",
     "227: g_core is None or g_large is None or g_diff is None",
     "265: max(core_snr, large_snr) < params.max_sigma"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3435,7 +4567,13 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v51_diff.py",
@@ -3453,6 +4591,12 @@
    "guards": [],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3473,6 +4617,12 @@
    ],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3491,6 +4641,12 @@
    "guards": [],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3509,6 +4665,12 @@
    "guards": [],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3529,6 +4691,12 @@
    ],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3550,6 +4718,12 @@
    ],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3572,6 +4746,12 @@
    ],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3595,6 +4775,12 @@
    ],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3619,6 +4805,12 @@
    ],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3643,6 +4835,12 @@
    ],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3668,6 +4866,12 @@
    ],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3693,6 +4897,12 @@
    ],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3719,6 +4929,12 @@
    ],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3745,6 +4961,12 @@
    ],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3763,6 +4985,12 @@
    "guards": [],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3783,6 +5011,12 @@
    ],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3803,6 +5037,12 @@
    ],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3824,6 +5064,12 @@
    ],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3846,6 +5092,12 @@
    ],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3869,6 +5121,12 @@
    ],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3892,6 +5150,12 @@
    ],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3910,6 +5174,12 @@
    "guards": [],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3930,6 +5200,12 @@
    ],
    "early_exits_before": [
     "400: not aux"
+   ],
+   "fixtures": [
+    "chain-v3",
+    "chain-v4",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -3946,7 +5222,11 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v4",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v52.py",
@@ -3962,7 +5242,11 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v4",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v52.py",
@@ -3980,6 +5264,10 @@
    "guards": [],
    "early_exits_before": [
     "118: len(odd) < params.min_transits_each or len(even) < params.min_transits_each"
+   ],
+   "fixtures": [
+    "chain-v4",
+    "v4"
    ]
   },
   {
@@ -3999,6 +5287,10 @@
    "early_exits_before": [
     "118: len(odd) < params.min_transits_each or len(even) < params.min_transits_each",
     "142: var is None"
+   ],
+   "fixtures": [
+    "chain-v4",
+    "v4"
    ]
   },
   {
@@ -4019,6 +5311,10 @@
    "early_exits_before": [
     "118: len(odd) < params.min_transits_each or len(even) < params.min_transits_each",
     "142: var is None"
+   ],
+   "fixtures": [
+    "chain-v4",
+    "v4"
    ]
   },
   {
@@ -4037,6 +5333,10 @@
    "guards": [],
    "early_exits_before": [
     "222: not inside.any()"
+   ],
+   "fixtures": [
+    "chain-v4",
+    "v4"
    ]
   },
   {
@@ -4055,6 +5355,10 @@
    "guards": [],
    "early_exits_before": [
     "222: not inside.any()"
+   ],
+   "fixtures": [
+    "chain-v4",
+    "v4"
    ]
   },
   {
@@ -4071,7 +5375,11 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v4",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/battery_v52.py",
@@ -4089,6 +5397,10 @@
    "guards": [],
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable"
+   ],
+   "fixtures": [
+    "chain-v4",
+    "v4"
    ]
   },
   {
@@ -4108,6 +5420,10 @@
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
     "300: keep.sum() < 100"
+   ],
+   "fixtures": [
+    "chain-v4",
+    "v4"
    ]
   },
   {
@@ -4127,6 +5443,10 @@
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
     "300: keep.sum() < 100"
+   ],
+   "fixtures": [
+    "chain-v4",
+    "v4"
    ]
   },
   {
@@ -4146,6 +5466,10 @@
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
     "300: keep.sum() < 100"
+   ],
+   "fixtures": [
+    "chain-v4",
+    "v4"
    ]
   },
   {
@@ -4165,6 +5489,10 @@
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
     "300: keep.sum() < 100"
+   ],
+   "fixtures": [
+    "chain-v4",
+    "v4"
    ]
   },
   {
@@ -4184,6 +5512,10 @@
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
     "300: keep.sum() < 100"
+   ],
+   "fixtures": [
+    "chain-v4",
+    "v4"
    ]
   },
   {
@@ -4203,6 +5535,10 @@
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
     "300: keep.sum() < 100"
+   ],
+   "fixtures": [
+    "chain-v4",
+    "v4"
    ]
   },
   {
@@ -4222,6 +5558,10 @@
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
     "300: keep.sum() < 100"
+   ],
+   "fixtures": [
+    "chain-v4",
+    "v4"
    ]
   },
   {
@@ -4241,6 +5581,10 @@
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
     "300: keep.sum() < 100"
+   ],
+   "fixtures": [
+    "chain-v4",
+    "v4"
    ]
   },
   {
@@ -4260,6 +5604,10 @@
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
     "300: keep.sum() < 100"
+   ],
+   "fixtures": [
+    "chain-v4",
+    "v4"
    ]
   },
   {
@@ -4279,6 +5627,10 @@
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
     "300: keep.sum() < 100"
+   ],
+   "fixtures": [
+    "chain-v4",
+    "v4"
    ]
   },
   {
@@ -4298,6 +5650,10 @@
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
     "300: keep.sum() < 100"
+   ],
+   "fixtures": [
+    "chain-v4",
+    "v4"
    ]
   },
   {
@@ -4317,6 +5673,10 @@
    "early_exits_before": [
     "279: (\"P/2\", 0.5) not in applicable",
     "300: keep.sum() < 100"
+   ],
+   "fixtures": [
+    "chain-v4",
+    "v4"
    ]
   },
   {
@@ -4337,6 +5697,10 @@
     "279: (\"P/2\", 0.5) not in applicable",
     "300: keep.sum() < 100",
     "401: not flagged"
+   ],
+   "fixtures": [
+    "chain-v4",
+    "v4"
    ]
   },
   {
@@ -4357,111 +5721,11 @@
     "279: (\"P/2\", 0.5) not in applicable",
     "300: keep.sum() < 100",
     "401: not flagged"
+   ],
+   "fixtures": [
+    "chain-v4",
+    "v4"
    ]
-  },
-  {
-   "file": "src/refute/packs/tess/calib05/c1.py",
-   "line": 603,
-   "end_line": 603,
-   "function": "family_metrics",
-   "expression": "r[\"status\"] != \"OK\"",
-   "operators": [
-    "NotEq"
-   ],
-   "kind": "non-numeric",
-   "contexts": [
-    "branch test"
-   ],
-   "guards": [],
-   "early_exits_before": []
-  },
-  {
-   "file": "src/refute/packs/tess/calib05/c1.py",
-   "line": 605,
-   "end_line": 605,
-   "function": "family_metrics",
-   "expression": "r[\"chain\"][\"v04\"][\"gate_passed\"]",
-   "operators": [
-    "subscript"
-   ],
-   "kind": "non-numeric",
-   "contexts": [
-    "branch test"
-   ],
-   "guards": [
-    "not (r[\"status\"] != \"OK\")"
-   ],
-   "early_exits_before": []
-  },
-  {
-   "file": "src/refute/packs/tess/calib05/c1.py",
-   "line": 607,
-   "end_line": 607,
-   "function": "family_metrics",
-   "expression": "family in PLANET_FAMILIES",
-   "operators": [
-    "In"
-   ],
-   "kind": "non-numeric",
-   "contexts": [
-    "branch test"
-   ],
-   "guards": [
-    "not (r[\"status\"] != \"OK\")",
-    "not (not r[\"chain\"][\"v04\"][\"gate_passed\"])"
-   ],
-   "early_exits_before": []
-  },
-  {
-   "file": "src/refute/packs/tess/calib05/c1.py",
-   "line": 607,
-   "end_line": 607,
-   "function": "family_metrics",
-   "expression": "r.get(\"identity\")",
-   "operators": [
-    "call"
-   ],
-   "kind": "non-numeric",
-   "contexts": [
-    "branch test"
-   ],
-   "guards": [
-    "not (r[\"status\"] != \"OK\")",
-    "not (not r[\"chain\"][\"v04\"][\"gate_passed\"])"
-   ],
-   "early_exits_before": []
-  },
-  {
-   "file": "src/refute/packs/tess/calibration.py",
-   "line": 80,
-   "end_line": 80,
-   "function": "TessCalibrator.evaluate",
-   "expression": "criteria.get(\"flag_requires_signal_recovery\", False)",
-   "operators": [
-    "call"
-   ],
-   "kind": "non-numeric",
-   "contexts": [
-    "assignment to a decision variable"
-   ],
-   "guards": [],
-   "early_exits_before": []
-  },
-  {
-   "file": "src/refute/packs/tess/calibration.py",
-   "line": 86,
-   "end_line": 86,
-   "function": "TessCalibrator.evaluate",
-   "expression": "identity",
-   "operators": [
-    "name"
-   ],
-   "kind": "non-numeric",
-   "contexts": [
-    "branch test"
-   ],
-   "guards": [],
-   "early_exits_before": []
   },
   {
    "file": "src/refute/packs/tess/centroid_v5.py",
@@ -4477,7 +5741,17 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/centroid_v5.py",
@@ -4495,6 +5769,16 @@
    "guards": [],
    "early_exits_before": [
     "313: not pixels"
+   ],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -4514,6 +5798,16 @@
    "early_exits_before": [
     "313: not pixels",
     "315: len(skipped) >= sp.centroid_max_unqualified_fraction * len(pixels)"
+   ],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -4534,6 +5828,16 @@
     "313: not pixels",
     "315: len(skipped) >= sp.centroid_max_unqualified_fraction * len(pixels)",
     "318: len(rows) < sp.centroid_min_sectors"
+   ],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -4555,6 +5859,16 @@
     "315: len(skipped) >= sp.centroid_max_unqualified_fraction * len(pixels)",
     "318: len(rows) < sp.centroid_min_sectors",
     "345: p_het < sp.chi2_alpha"
+   ],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -4576,6 +5890,16 @@
     "315: len(skipped) >= sp.centroid_max_unqualified_fraction * len(pixels)",
     "318: len(rows) < sp.centroid_min_sectors",
     "345: p_het < sp.chi2_alpha"
+   ],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -4592,23 +5916,14 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
-  },
-  {
-   "file": "src/refute/packs/tess/discover/pilot.py",
-   "line": 645,
-   "end_line": 645,
-   "function": "spoc_sector_count.query",
-   "expression": "skipped",
-   "operators": [
-    "name"
-   ],
-   "kind": "non-numeric",
-   "contexts": [
-    "branch test"
-   ],
-   "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/ebcatalog.py",
@@ -4624,7 +5939,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/ebcatalog.py",
@@ -4640,7 +5956,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/ebcatalog.py",
@@ -4656,7 +5973,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/ebcatalog.py",
@@ -4674,7 +5992,8 @@
    "guards": [],
    "early_exits_before": [
     "253: star is None or star.ra_deg is None or star.dec_deg is None"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/ebcatalog.py",
@@ -4692,7 +6011,8 @@
    "guards": [],
    "early_exits_before": [
     "253: star is None or star.ra_deg is None or star.dec_deg is None"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/ebcatalog.py",
@@ -4711,7 +6031,8 @@
    "early_exits_before": [
     "253: star is None or star.ra_deg is None or star.dec_deg is None",
     "255: not scan or not scan.get(\"snapshots\")"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/ebcatalog.py",
@@ -4731,7 +6052,8 @@
     "253: star is None or star.ra_deg is None or star.dec_deg is None",
     "255: not scan or not scan.get(\"snapshots\")",
     "257: target_key not in (scan.get(\"per_target\") or {})"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/ebcatalog.py",
@@ -4752,7 +6074,8 @@
     "255: not scan or not scan.get(\"snapshots\")",
     "257: target_key not in (scan.get(\"per_target\") or {})",
     "262: float(scan.get(\"radius_arcsec\", 0)) < params.match_radius_arcsec"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/ebcatalog.py",
@@ -4774,7 +6097,8 @@
     "257: target_key not in (scan.get(\"per_target\") or {})",
     "262: float(scan.get(\"radius_arcsec\", 0)) < params.match_radius_arcsec",
     "270: any(e.is_reference for e in entries)"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/ebcatalog.py",
@@ -4796,7 +6120,8 @@
     "257: target_key not in (scan.get(\"per_target\") or {})",
     "262: float(scan.get(\"radius_arcsec\", 0)) < params.match_radius_arcsec",
     "270: any(e.is_reference for e in entries)"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/ebcatalog.py",
@@ -4818,7 +6143,8 @@
     "257: target_key not in (scan.get(\"per_target\") or {})",
     "262: float(scan.get(\"radius_arcsec\", 0)) < params.match_radius_arcsec",
     "270: any(e.is_reference for e in entries)"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/ebcatalog.py",
@@ -4840,7 +6166,8 @@
     "257: target_key not in (scan.get(\"per_target\") or {})",
     "262: float(scan.get(\"radius_arcsec\", 0)) < params.match_radius_arcsec",
     "270: any(e.is_reference for e in entries)"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/ebcatalog.py",
@@ -4862,7 +6189,8 @@
     "257: target_key not in (scan.get(\"per_target\") or {})",
     "262: float(scan.get(\"radius_arcsec\", 0)) < params.match_radius_arcsec",
     "270: any(e.is_reference for e in entries)"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/ebcatalog.py",
@@ -4886,7 +6214,8 @@
     "257: target_key not in (scan.get(\"per_target\") or {})",
     "262: float(scan.get(\"radius_arcsec\", 0)) < params.match_radius_arcsec",
     "270: any(e.is_reference for e in entries)"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/ebcatalog.py",
@@ -4908,7 +6237,8 @@
     "257: target_key not in (scan.get(\"per_target\") or {})",
     "262: float(scan.get(\"radius_arcsec\", 0)) < params.match_radius_arcsec",
     "270: any(e.is_reference for e in entries)"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/ebcatalog.py",
@@ -4930,7 +6260,8 @@
     "257: target_key not in (scan.get(\"per_target\") or {})",
     "262: float(scan.get(\"radius_arcsec\", 0)) < params.match_radius_arcsec",
     "270: any(e.is_reference for e in entries)"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/ebcatalog.py",
@@ -4952,7 +6283,8 @@
     "257: target_key not in (scan.get(\"per_target\") or {})",
     "262: float(scan.get(\"radius_arcsec\", 0)) < params.match_radius_arcsec",
     "270: any(e.is_reference for e in entries)"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/ebcatalog.py",
@@ -4975,7 +6307,8 @@
     "262: float(scan.get(\"radius_arcsec\", 0)) < params.match_radius_arcsec",
     "270: any(e.is_reference for e in entries)",
     "309: other"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/ebcatalog.py",
@@ -4999,7 +6332,8 @@
     "270: any(e.is_reference for e in entries)",
     "309: other",
     "322: downgraded"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/gauntlet.py",
@@ -5015,7 +6349,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/gauntlet.py",
@@ -5033,6 +6379,18 @@
    "guards": [],
    "early_exits_before": [
     "39: candidate is None"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -5051,6 +6409,18 @@
    "guards": [],
    "early_exits_before": [
     "39: candidate is None"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -5069,6 +6439,18 @@
    "guards": [],
    "early_exits_before": [
     "39: candidate is None"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -5085,7 +6467,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/gauntlet.py",
@@ -5101,7 +6495,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/gauntlet.py",
@@ -5119,6 +6525,18 @@
    "guards": [],
    "early_exits_before": [
     "72: len(even) < params.min_transits_each or len(odd) < params.min_transits_each"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -5137,6 +6555,18 @@
    "guards": [],
    "early_exits_before": [
     "72: len(even) < params.min_transits_each or len(odd) < params.min_transits_each"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -5153,7 +6583,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/gauntlet.py",
@@ -5169,7 +6611,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/gauntlet.py",
@@ -5187,7 +6641,19 @@
    "guards": [
     "len(secondary) == 0 or len(primary) == 0"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/gauntlet.py",
@@ -5205,6 +6671,18 @@
    "guards": [],
    "early_exits_before": [
     "112: len(secondary) == 0 or len(primary) == 0"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -5221,7 +6699,19 @@
     "returned decision"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/gauntlet.py",
@@ -5237,7 +6727,19 @@
     "returned decision"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/gauntlet.py",
@@ -5253,7 +6755,19 @@
     "returned decision"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/gauntlet.py",
@@ -5269,7 +6783,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/gauntlet.py",
@@ -5285,7 +6811,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/gauntlet.py",
@@ -5301,7 +6839,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/gauntlet.py",
@@ -5319,6 +6869,18 @@
    "guards": [],
    "early_exits_before": [
     "213: star is not None and star.disposition and star.disposition.upper() in unreliable"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -5337,6 +6899,18 @@
    "guards": [],
    "early_exits_before": [
     "213: star is not None and star.disposition and star.disposition.upper() in unreliable"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -5356,6 +6930,18 @@
    "early_exits_before": [
     "213: star is not None and star.disposition and star.disposition.upper() in unreliable",
     "224: star is None or not _valid(star.radius_rsun)"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -5376,6 +6962,18 @@
     "213: star is not None and star.disposition and star.disposition.upper() in unreliable",
     "224: star is None or not _valid(star.radius_rsun)",
     "233: not _valid(star.radius_err_rsun)"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -5397,6 +6995,18 @@
     "224: star is None or not _valid(star.radius_rsun)",
     "233: not _valid(star.radius_err_rsun)",
     "243: rel_err > params.max_stellar_radius_rel_err"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -5419,6 +7029,18 @@
     "233: not _valid(star.radius_err_rsun)",
     "243: rel_err > params.max_stellar_radius_rel_err",
     "262: companion_rjup > params.max_companion_radius_rjup"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -5442,6 +7064,18 @@
     "243: rel_err > params.max_stellar_radius_rel_err",
     "262: companion_rjup > params.max_companion_radius_rjup",
     "279: mass is None"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -5458,7 +7092,14 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5474,7 +7115,14 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5490,7 +7138,14 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5508,6 +7163,13 @@
    "guards": [],
    "early_exits_before": [
     "259: not eligible"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -5526,6 +7188,13 @@
    "guards": [],
    "early_exits_before": [
     "259: not eligible"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -5544,6 +7213,13 @@
    "guards": [],
    "early_exits_before": [
     "259: not eligible"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -5562,6 +7238,13 @@
    "guards": [],
    "early_exits_before": [
     "259: not eligible"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -5578,7 +7261,8 @@
     "returned decision"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5594,7 +7278,8 @@
     "returned decision"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5610,7 +7295,8 @@
     "returned decision"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5626,7 +7312,8 @@
     "assignment to a decision variable"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5642,7 +7329,8 @@
     "assignment to a decision variable"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5658,7 +7346,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5674,7 +7363,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5690,7 +7380,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5706,7 +7397,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5722,7 +7414,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5738,7 +7431,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5754,7 +7448,8 @@
     "assignment to a decision variable"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5770,7 +7465,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5786,7 +7482,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5802,7 +7499,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5818,7 +7516,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5834,7 +7533,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5850,7 +7550,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5866,7 +7567,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5884,7 +7586,8 @@
    "guards": [],
    "early_exits_before": [
     "813: stats.status != \"ok\""
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5904,7 +7607,8 @@
    ],
    "early_exits_before": [
     "813: stats.status != \"ok\""
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5920,7 +7624,14 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -5938,6 +7649,13 @@
    "guards": [],
    "early_exits_before": [
     "923: len(train_raw) == 0"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -5956,6 +7674,13 @@
    "guards": [],
    "early_exits_before": [
     "923: len(train_raw) == 0"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -5975,6 +7700,13 @@
    "early_exits_before": [
     "923: len(train_raw) == 0",
     "951: train is None or not (train.depth > 0)"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -5996,6 +7728,13 @@
    "early_exits_before": [
     "923: len(train_raw) == 0",
     "951: train is None or not (train.depth > 0)"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6017,6 +7756,13 @@
     "951: train is None or not (train.depth > 0)",
     "962: corrections_on",
     "998: gate.status is TestStatus.INCONCLUSIVE"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6038,6 +7784,13 @@
     "951: train is None or not (train.depth > 0)",
     "962: corrections_on",
     "998: gate.status is TestStatus.INCONCLUSIVE"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6061,6 +7814,13 @@
     "951: train is None or not (train.depth > 0)",
     "962: corrections_on",
     "998: gate.status is TestStatus.INCONCLUSIVE"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6083,6 +7843,13 @@
     "962: corrections_on",
     "998: gate.status is TestStatus.INCONCLUSIVE",
     "1012: validity[\"reasons\"] and params.require_valid_train"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6106,6 +7873,13 @@
     "998: gate.status is TestStatus.INCONCLUSIVE",
     "1012: validity[\"reasons\"] and params.require_valid_train",
     "1062: len(times) < params.min_train_transits"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6130,6 +7904,13 @@
     "1012: validity[\"reasons\"] and params.require_valid_train",
     "1062: len(times) < params.min_train_transits",
     "1084: max_sigma_t > params.max_timing_sigma_durations * train.duration"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6154,6 +7935,13 @@
     "1012: validity[\"reasons\"] and params.require_valid_train",
     "1062: len(times) < params.min_train_transits",
     "1084: max_sigma_t > params.max_timing_sigma_durations * train.duration"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6180,6 +7968,13 @@
     "1012: validity[\"reasons\"] and params.require_valid_train",
     "1062: len(times) < params.min_train_transits",
     "1084: max_sigma_t > params.max_timing_sigma_durations * train.duration"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6205,6 +8000,13 @@
     "1062: len(times) < params.min_train_transits",
     "1084: max_sigma_t > params.max_timing_sigma_durations * train.duration",
     "1109: validity[\"reasons\"] and params.require_valid_train"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6221,7 +8023,14 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -6239,6 +8048,13 @@
    "guards": [],
    "early_exits_before": [
     "1156: prepared.decided is not None"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6258,6 +8074,13 @@
    "early_exits_before": [
     "1156: prepared.decided is not None",
     "1158: plan.gauntlet.corrections.active"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6278,6 +8101,13 @@
     "1156: prepared.decided is not None",
     "1158: plan.gauntlet.corrections.active",
     "1212: n_used < params.min_predicted_transits"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6298,6 +8128,13 @@
     "1156: prepared.decided is not None",
     "1158: plan.gauntlet.corrections.active",
     "1212: n_used < params.min_predicted_transits"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6314,7 +8151,8 @@
     "returned decision"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -6330,7 +8168,8 @@
     "returned decision"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -6346,7 +8185,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -6364,7 +8204,8 @@
    "guards": [],
    "early_exits_before": [
     "1520: n_pred == 0"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -6383,7 +8224,8 @@
    "early_exits_before": [
     "1520: n_pred == 0",
     "1545: not replicas_enough(counts, c.r_min)"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -6402,7 +8244,8 @@
    "early_exits_before": [
     "1520: n_pred == 0",
     "1545: not replicas_enough(counts, c.r_min)"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -6418,7 +8261,8 @@
     "assignment to a decision variable"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -6434,7 +8278,8 @@
     "assignment to a decision variable"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -6450,7 +8295,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -6466,7 +8312,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -6486,7 +8333,8 @@
     "1520: n_pred == 0",
     "1545: not replicas_enough(counts, c.r_min)",
     "1557: decision_1 != \"pass\" and enforce"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -6509,7 +8357,8 @@
     "1545: not replicas_enough(counts, c.r_min)",
     "1557: decision_1 != \"pass\" and enforce",
     "1606: result[\"status\"] != \"ok\""
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -6530,7 +8379,8 @@
     "1545: not replicas_enough(counts, c.r_min)",
     "1557: decision_1 != \"pass\" and enforce",
     "1606: result[\"status\"] != \"ok\""
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -6546,7 +8396,14 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/holdout.py",
@@ -6564,6 +8421,13 @@
    "guards": [],
    "early_exits_before": [
     "1892: aggregation not in (AGGREGATION_LEGACY, AGGREGATION_SPEC_B)"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6582,6 +8446,13 @@
    "guards": [],
    "early_exits_before": [
     "1892: aggregation not in (AGGREGATION_LEGACY, AGGREGATION_SPEC_B)"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6600,6 +8471,13 @@
    "guards": [],
    "early_exits_before": [
     "1892: aggregation not in (AGGREGATION_LEGACY, AGGREGATION_SPEC_B)"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6619,6 +8497,13 @@
    "early_exits_before": [
     "1892: aggregation not in (AGGREGATION_LEGACY, AGGREGATION_SPEC_B)",
     "1894: aggregation == AGGREGATION_SPEC_B and not ( isinstance(plan, TessTestPlan) and plan.gauntlet.corrections.active )"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6639,6 +8524,13 @@
     "1892: aggregation not in (AGGREGATION_LEGACY, AGGREGATION_SPEC_B)",
     "1894: aggregation == AGGREGATION_SPEC_B and not ( isinstance(plan, TessTestPlan) and plan.gauntlet.corrections.active )",
     "1899: isinstance(argument, Candidate)"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6660,6 +8552,13 @@
     "1894: aggregation == AGGREGATION_SPEC_B and not ( isinstance(plan, TessTestPlan) and plan.gauntlet.corrections.active )",
     "1899: isinstance(argument, Candidate)",
     "1901: not isinstance(raw, LightCurveData)"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6682,6 +8581,13 @@
     "1899: isinstance(argument, Candidate)",
     "1901: not isinstance(raw, LightCurveData)",
     "1903: not isinstance(plan, TessTestPlan)"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6705,6 +8611,13 @@
     "1901: not isinstance(raw, LightCurveData)",
     "1903: not isinstance(plan, TessTestPlan)",
     "1905: any(isinstance(s, Candidate) for s in sectors)"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6729,6 +8642,13 @@
     "1903: not isinstance(plan, TessTestPlan)",
     "1905: any(isinstance(s, Candidate) for s in sectors)",
     "1911: len(years) < 2"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6754,6 +8674,13 @@
     "1905: any(isinstance(s, Candidate) for s in sectors)",
     "1911: len(years) < 2",
     "1931: aggregation == AGGREGATION_SPEC_B"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6781,6 +8708,13 @@
     "1905: any(isinstance(s, Candidate) for s in sectors)",
     "1911: len(years) < 2",
     "1931: aggregation == AGGREGATION_SPEC_B"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -6797,7 +8731,14 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -6813,7 +8754,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -6831,7 +8784,19 @@
    "guards": [
     "candidate is None"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -6849,7 +8814,19 @@
    "guards": [
     "candidate is None"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -6865,7 +8842,15 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "v2",
+    "v2-eb",
+    "v3"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -6881,7 +8866,15 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "v2",
+    "v2-eb",
+    "v3"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -6897,7 +8890,15 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "v2",
+    "v2-eb",
+    "v3"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -6915,7 +8916,15 @@
    "guards": [
     "not (test.name == \"odd_even\" and plan.is_v051)"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "v2",
+    "v2-eb",
+    "v3"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -6934,7 +8943,15 @@
     "not (test.name == \"odd_even\" and plan.is_v051)",
     "not (test.name == \"odd_even\")"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "v2",
+    "v2-eb",
+    "v3"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -6954,7 +8971,15 @@
     "not (test.name == \"odd_even\")",
     "not (test.name == \"secondary_eclipse\")"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "v2",
+    "v2-eb",
+    "v3"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -6975,7 +9000,15 @@
     "not (test.name == \"secondary_eclipse\")",
     "not (test.name == \"plausibility\")"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "v2",
+    "v2-eb",
+    "v3"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -6997,7 +9030,15 @@
     "not (test.name == \"plausibility\")",
     "not (test.name == \"centroid_shift\")"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "v2",
+    "v2-eb",
+    "v3"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -7019,7 +9060,15 @@
     "not (test.name == \"plausibility\")",
     "not (test.name == \"centroid_shift\")"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "v2",
+    "v2-eb",
+    "v3"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -7042,7 +9091,15 @@
     "not (test.name == \"centroid_shift\")",
     "not (test.name == \"aperture_depth\" and plan.is_v051)"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "v2",
+    "v2-eb",
+    "v3"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -7065,7 +9122,15 @@
     "not (test.name == \"centroid_shift\")",
     "not (test.name == \"aperture_depth\" and plan.is_v051)"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "v2",
+    "v2-eb",
+    "v3"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -7089,7 +9154,15 @@
     "not (test.name == \"aperture_depth\" and plan.is_v051)",
     "not (test.name == \"systematics\" and plan.is_v051)"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "v2",
+    "v2-eb",
+    "v3"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -7114,7 +9187,15 @@
     "not (test.name == \"systematics\" and plan.is_v051)",
     "not (test.name == \"aperture_depth\")"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "v2",
+    "v2-eb",
+    "v3"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -7140,7 +9221,15 @@
     "not (test.name == \"aperture_depth\")",
     "not (test.name == \"systematics\")"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "v2",
+    "v2-eb",
+    "v3"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -7166,7 +9255,15 @@
     "not (test.name == \"aperture_depth\")",
     "not (test.name == \"systematics\")"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "v2",
+    "v2-eb",
+    "v3"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -7182,7 +9279,15 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "v2",
+    "v2-eb",
+    "v3"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -7198,7 +9303,17 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -7214,7 +9329,17 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -7230,7 +9355,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -7248,7 +9385,19 @@
    "guards": [
     "not (not sum(w_in.values()) > 0)"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -7266,7 +9415,19 @@
    "guards": [
     "not (not sum(w_in.values()) > 0)"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -7285,7 +9446,19 @@
     "not (not sum(w_in.values()) > 0)",
     "w_in[s] > 0 or w_out[s] > 0"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -7304,7 +9477,19 @@
     "not (not sum(w_in.values()) > 0)",
     "w_in[s] > 0 or w_out[s] > 0"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -7320,7 +9505,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -7338,6 +9535,18 @@
    "guards": [],
    "early_exits_before": [
     "515: why is not None"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -7356,6 +9565,18 @@
    "guards": [],
    "early_exits_before": [
     "515: why is not None"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -7372,7 +9593,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -7388,7 +9621,14 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -7404,7 +9644,14 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline.py",
@@ -7422,6 +9669,13 @@
    "guards": [],
    "early_exits_before": [
     "634: plan is None or plan.discovery is None"
+   ],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -7438,7 +9692,11 @@
     "assignment to a decision variable"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline_v52.py",
@@ -7454,7 +9712,11 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v4",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline_v52.py",
@@ -7472,7 +9734,11 @@
    "guards": [
     "not (test.name == \"odd_even\")"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v4",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline_v52.py",
@@ -7491,7 +9757,11 @@
     "not (test.name == \"odd_even\")",
     "not (test.name == \"secondary_eclipse\")"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v4",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline_v52.py",
@@ -7511,7 +9781,11 @@
     "not (test.name == \"secondary_eclipse\")",
     "not (test.name == \"plausibility\")"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v4",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline_v52.py",
@@ -7532,7 +9806,11 @@
     "not (test.name == \"plausibility\")",
     "not (test.name == \"centroid_shift\")"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v4",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline_v52.py",
@@ -7554,7 +9832,11 @@
     "not (test.name == \"centroid_shift\")",
     "not (test.name == \"aperture_depth\")"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v4",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/pipeline_v52.py",
@@ -7577,7 +9859,11 @@
     "not (test.name == \"aperture_depth\")",
     "not (test.name == \"systematics\")"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v4",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/power.py",
@@ -7593,7 +9879,17 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/prewhiten.py",
@@ -7609,7 +9905,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/prewhiten.py",
@@ -7627,6 +9935,18 @@
    "guards": [],
    "early_exits_before": [
     "178: not used"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -7646,6 +9966,18 @@
    "early_exits_before": [
     "178: not used",
     "181: c.max_components == 0"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -7666,6 +9998,18 @@
     "178: not used",
     "181: c.max_components == 0",
     "194: not f_lo < F_HI"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -7686,6 +10030,18 @@
     "178: not used",
     "181: c.max_components == 0",
     "194: not f_lo < F_HI"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -7706,6 +10062,18 @@
     "178: not used",
     "181: c.max_components == 0",
     "194: not f_lo < F_HI"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -7726,6 +10094,18 @@
     "178: not used",
     "181: c.max_components == 0",
     "194: not f_lo < F_HI"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -7746,6 +10126,18 @@
     "178: not used",
     "181: c.max_components == 0",
     "194: not f_lo < F_HI"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -7762,7 +10154,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/rednoise.py",
@@ -7778,7 +10182,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/rednoise.py",
@@ -7794,7 +10210,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/rednoise.py",
@@ -7812,7 +10240,19 @@
    "guards": [
     "n_bins < b_min or not np.isfinite(sigma_w) or sigma_w <= 0"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/rednoise_fast.py",
@@ -7828,7 +10268,11 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v4",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/rednoise_fast.py",
@@ -7844,7 +10288,11 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v4",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/rednoise_fast.py",
@@ -7860,7 +10308,11 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v4",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/rednoise_fast.py",
@@ -7878,7 +10330,11 @@
    "guards": [
     "n_bins < b_min or not np.isfinite(sigma_w) or sigma_w <= 0"
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v4",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/report.py",
@@ -7894,7 +10350,14 @@
     "assignment to a decision variable"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/report.py",
@@ -7910,7 +10373,14 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/screen_d5.py",
@@ -7926,7 +10396,8 @@
     "returned decision"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/screen_d5.py",
@@ -7942,7 +10413,8 @@
     "returned decision"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/screen_d5.py",
@@ -7958,7 +10430,8 @@
     "returned decision"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/screen_d5.py",
@@ -7974,7 +10447,8 @@
     "returned decision"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/screen_d5.py",
@@ -7990,7 +10464,8 @@
     "returned decision"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/screen_d5.py",
@@ -8006,7 +10481,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/screen_d5.py",
@@ -8024,7 +10500,8 @@
    "guards": [],
    "early_exits_before": [
     "260: not _candidate_ok(period, t0, duration)"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/screen_d5.py",
@@ -8043,7 +10520,8 @@
    "early_exits_before": [
     "260: not _candidate_ok(period, t0, duration)",
     "264: not _sigma_in_range(time, flux, flux_err)"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/screen_d5.py",
@@ -8063,7 +10541,8 @@
     "260: not _candidate_ok(period, t0, duration)",
     "264: not _sigma_in_range(time, flux, flux_err)",
     "266: t.size < MIN_VALID"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/screen_d5.py",
@@ -8084,7 +10563,8 @@
     "264: not _sigma_in_range(time, flux, flux_err)",
     "266: t.size < MIN_VALID",
     "279: noise is None"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/screen_d5.py",
@@ -8105,7 +10585,8 @@
     "264: not _sigma_in_range(time, flux, flux_err)",
     "266: t.size < MIN_VALID",
     "279: noise is None"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/screen_d5.py",
@@ -8127,7 +10608,8 @@
     "266: t.size < MIN_VALID",
     "279: noise is None",
     "286: good_by[name] == 0 or n < MIN_IN_PER_EPOCH"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/screen_d5.py",
@@ -8149,7 +10631,8 @@
     "266: t.size < MIN_VALID",
     "279: noise is None",
     "286: good_by[name] == 0 or n < MIN_IN_PER_EPOCH"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/screen_d5.py",
@@ -8172,7 +10655,8 @@
     "279: noise is None",
     "286: good_by[name] == 0 or n < MIN_IN_PER_EPOCH",
     "294: m_in is None or not _finite(var)"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/screen_d5.py",
@@ -8195,7 +10679,8 @@
     "279: noise is None",
     "286: good_by[name] == 0 or n < MIN_IN_PER_EPOCH",
     "294: m_in is None or not _finite(var)"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/screen_d5.py",
@@ -8219,7 +10704,8 @@
     "286: good_by[name] == 0 or n < MIN_IN_PER_EPOCH",
     "294: m_in is None or not _finite(var)",
     "301: not math.isfinite(denom) or denom <= 0"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/screen_d5.py",
@@ -8244,7 +10730,8 @@
     "294: m_in is None or not _finite(var)",
     "301: not math.isfinite(denom) or denom <= 0",
     "304: var <= 0.0"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/screen_d5.py",
@@ -8270,7 +10757,8 @@
     "301: not math.isfinite(denom) or denom <= 0",
     "304: var <= 0.0",
     "308: not math.isfinite(oe)"
-   ]
+   ],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/screen_d5.py",
@@ -8286,7 +10774,8 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/screen_d5.py",
@@ -8304,7 +10793,8 @@
    "guards": [
     "name == \"F2\""
    ],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": []
   },
   {
    "file": "src/refute/packs/tess/search.py",
@@ -8320,7 +10810,19 @@
     "branch test"
    ],
    "guards": [],
-   "early_exits_before": []
+   "early_exits_before": [],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
+   ]
   },
   {
    "file": "src/refute/packs/tess/search.py",
@@ -8338,6 +10840,18 @@
    "guards": [],
    "early_exits_before": [
     "278: len(binned) < 10"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -8356,6 +10870,18 @@
    "guards": [],
    "early_exits_before": [
     "278: len(binned) < 10"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -8374,6 +10900,18 @@
    "guards": [],
    "early_exits_before": [
     "278: len(binned) < 10"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -8392,6 +10930,18 @@
    "guards": [],
    "early_exits_before": [
     "278: len(binned) < 10"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -8411,6 +10961,18 @@
    "early_exits_before": [
     "278: len(binned) < 10",
     "314: not peaks"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -8431,6 +10993,18 @@
    "early_exits_before": [
     "278: len(binned) < 10",
     "314: not peaks"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -8450,6 +11024,18 @@
    "early_exits_before": [
     "278: len(binned) < 10",
     "314: not peaks"
+   ],
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   },
   {
@@ -8469,42 +11055,20 @@
    "early_exits_before": [
     "278: len(binned) < 10",
     "314: not peaks"
-   ]
-  },
-  {
-   "file": "src/refute/selection/walk.py",
-   "line": 66,
-   "end_line": 66,
-   "function": "transient_query",
-   "expression": "500 <= exc.code <= 599",
-   "operators": [
-    "LtE",
-    "LtE"
    ],
-   "kind": "numeric",
-   "contexts": [
-    "branch test"
-   ],
-   "guards": [],
-   "early_exits_before": []
-  },
-  {
-   "file": "src/refute/selection/walk.py",
-   "line": 70,
-   "end_line": 70,
-   "function": "transient_query",
-   "expression": "isinstance(exc.reason, OSError)",
-   "operators": [
-    "call"
-   ],
-   "kind": "non-numeric",
-   "contexts": [
-    "branch test"
-   ],
-   "guards": [],
-   "early_exits_before": [
-    "66: 500 <= exc.code <= 599"
+   "fixtures": [
+    "chain-v1",
+    "chain-v2",
+    "chain-v2-eb",
+    "chain-v3",
+    "chain-v4",
+    "v1",
+    "v2",
+    "v2-eb",
+    "v3",
+    "v4"
    ]
   }
- ]
+ ],
+ "pruned_rows": []
 }
