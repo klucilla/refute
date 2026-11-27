@@ -25,7 +25,17 @@
     "published.**",
     "provenance.**",
     "search_diagnostics.refined[*].factor",
-    "tests[*].metrics.near_systematic_periods_days[*]"
+    "tests[*].metrics.near_systematic_periods_days[*]",
+    "tests[*].inputs.**",
+    "tests[*].metrics.target_tmag",
+    "tests[*].metrics.median_crowdsap",
+    "tests[*].metrics.stellar_mass_msun",
+    "tests[*].metrics.neighbors_within_radius[*].tmag",
+    "tests[*].metrics.neighbors_within_radius[*].separation_arcsec",
+    "tests[*].metrics.viable_neighbors[*].tmag",
+    "tests[*].metrics.viable_neighbors[*].separation_arcsec",
+    "**.detrend_window_days",
+    "**.hidden_detrend_window_days"
    ]
   },
   "chain": {
@@ -34,7 +44,7 @@
   }
  },
  "p2": "Decision P2 (#218 comment 7225754254), Codex's item 6: exact_key_regex makes exact every number whose last key names a threshold (required_probability in sensitivity blocks, src/refute/core/sensitivity.py:248; min_train_snr and max_duration_period_ratio in holdout rounds), under any pattern; keys_not_exact_under lets the fit's errors in v05.parameters (pipeline.py:825) be measurements although period_err_days is also a plan field; period_comparison.found_period_days (pipeline.py:898) is a measurement. Measurements printed inside test messages stay exact: section 3.1 maps numeric spans only in rendered reports, and the same message is a JSON string in the verdict, which compares exactly.",
- "s1": "Decision S1 (#218 comment 7227283917), Codex's round of R3, items 1 and 2: the keys of computed_keys_despite_name are computed measurements that the name rule would make exact; the exemption from the global exact_keys is narrowed to the one colliding path (v05.parameters.period_err_days, the fit's error, pipeline.py:829); configuration echoed under broad measurement patterns is exact (search.py:342 factor of the refinement, battery.py:650-657 the plan's systematic periods near the candidate); a sensitivity block's alternative is exact when the plan alone sets it (power.py:119, 178, 206; battery_v51_diff.py:311, 623, 651). The effective detrending windows (battery.py:645 and 816 detrend_window_days, the larger of the plan's window and a multiple of the measured period; holdout.py:1184 hidden_detrend_window_days) stay measurements: which branch of the max is taken is an internal selection, a declared limit of #226.",
+ "s1": "Decision S1 (#218 comment 7227283917), Codex's round of R3, items 1 and 2: the keys of computed_keys_despite_name are computed measurements that the name rule would make exact; the exemption from the global exact_keys is narrowed to the one colliding path (v05.parameters.period_err_days, the fit's error, pipeline.py:829); configuration echoed under broad measurement patterns is exact (search.py:342 factor of the refinement, battery.py:650-657 the plan's systematic periods near the candidate); a sensitivity block's alternative is exact when the plan alone sets it (power.py:119, 178, 206; battery_v51_diff.py:311, 623, 651). After Codex's round 2 (s5/codex/answer-r2.md, item 1), the configuration inputs are exact too: tests[*].inputs (gauntlet.py:162-176, the fixture's stellar parameters), the target's magnitude, the median CROWDSAP and the neighbours' magnitudes and separations (battery.py:494-515), and the stellar mass (gauntlet.py:276-277, the given TIC mass or a function of the given logg and radius); and so are the effective detrending windows (battery.py:645 and 816, detrend_window_days; holdout.py:1184, hidden_detrend_window_days), which the writers apply as configuration (model_copy), compared exactly even when the measured period sets them.",
  "exact_key_regex": "^(required_|min_|max_)|(_threshold|_limit)$",
  "computed_keys_despite_name": {
   "max_duration_hours": "src/refute/packs/tess/gauntlet.py:292, the circular-orbit maximum duration from the measured period and the star",
@@ -48,7 +58,9 @@
  ],
  "message_lines": {
   "decision": "Decision S2 (#218 comment 7227283917): every message is compared byte for byte, with no tolerance; a changed message is a failure. This is not a rule change: section 3.1 compares every JSON string, and every byte outside a mapped span, exactly.",
-  "json": ["tests[*].message", "holdout_rounds[*].message", "verdict_reason", "data_quality_warnings[*]", "error"],
+  "json": ["tests[*].message", "holdout_rounds[*].message", "verdict_reason", "data_quality_warnings[*]", "error", "temporal_diagnostic.message", "temporal_diagnostic.per_year[*].reason", "temporal_diagnostic.inability_reasons[*].reason"],
+  "chain": ["verdict_reason", "stage_verdict_reason"],
+  "sources": "pipeline.py:763-779 (temporal_diagnostic), discover/measure.py:72-84 (chain), pipeline.py:1025 and 1045, holdout.py:188, gauntlet and battery TestResult messages",
   "report": ["gauntlet-row (an exact_line template: every group exact)", "the verdict line (no template: exact)", "the data-quality warnings (no template: exact)", "the error block (no template: exact)"]
  },
  "claim_exceptions": {
@@ -62,8 +74,8 @@
   {"name": "snr-row", "source": "report.py:224", "regex": "\\| SNR \\| (?P<found>[^|]+) \\| \\|", "groups": {"found": "measurement"}},
   {"name": "relative-period-error", "source": "report.py:226-229", "regex": "- Relative period error: (?P<rel>\\S+) \\(tolerance (?P<tol>\\S+), within: (?P<within>\\S+), alias: (?P<alias>.*)\\)", "groups": {"rel": "measurement", "tol": "exact", "within": "exact", "alias": "exact"}},
   {"name": "sde-line", "source": "report.py:137-138", "regex": "- SDE: (?P<note>.*)\\. SDE of the kept peak \\(largest over sectors\\): (?P<sde>\\S+)\\.", "groups": {"note": "exact", "sde": "measurement"}},
-  {"name": "parameters-line", "source": "report.py:146-148", "regex": "- Period (?P<period>\\S+) d \\(error (?P<period_err>\\S+)\\) and epoch (?P<epoch>\\S+) BJD_TDB \\(error (?P<epoch_err>\\S+)\\), from: (?P<source>.*)\\.", "groups": {"period": "measurement", "period_err": "measurement", "epoch": "measurement", "epoch_err": "measurement", "source": "exact"}},
-  {"name": "cadence-row", "source": "report.py:156-159", "regex": "\\| (?P<sector>[0-9]+) \\| (?P<used>[0-9]+) \\| (?P<in_span>[0-9]+) \\| (?P<fraction>[0-9]+\\.[0-9]{3}) \\|", "groups": {"sector": "exact", "used": "exact", "in_span": "exact", "fraction": "measurement"}},
+  {"name": "parameters-line", "source": "report.py:146-148", "regex": "- Period (?P<period>\\S+) d \\(error (?P<period_err>\\S+)\\) and epoch (?P<epoch>\\S+) BJD_TDB \\(error (?P<epoch_err>\\S+)\\), from: (?P<source>.*)\\.", "groups": {"period": "measurement", "period_err": "measurement", "epoch": "measurement", "epoch_err": "measurement", "source": "exact"}, "group_markers": {"period_err": ["None", "nan", "inf", "-inf"], "epoch_err": ["None", "nan", "inf", "-inf"], "period": ["nan", "inf", "-inf"], "epoch": ["n/a", "nan", "inf", "-inf"]}, "note": "report.py:146-148 prints the period and the errors with !r (None when the BLS fallback leaves the errors absent, pipeline.py:833-840) and the epoch with _bjd (n/a or repr)"},
+  {"name": "cadence-row", "source": "report.py:156-159", "regex": "\\| (?P<sector>[0-9]+) \\| (?P<used>[^|]+) \\| (?P<in_span>[^|]+) \\| (?P<fraction>[^|]+) \\|", "note": "Codex's round 2, item 3: the row is recognized by its structure (a numeric first cell and four cells), so a malformed fraction is validated and fails", "groups": {"sector": "exact", "used": "exact", "in_span": "exact", "fraction": "measurement"}},
   {"name": "holdout-row", "source": "report.py:282-285", "regex": "\\| (?P<year>[0-9]+) \\| (?P<status>[A-Z_]+) \\| (?P<windows>[^|]+) \\| (?P<hidden_snr>[^|]+) \\| (?P<control_snr>[^|]+) \\|", "groups": {"year": "exact", "status": "exact", "windows": "exact", "hidden_snr": "measurement", "control_snr": "measurement"}},
   {"name": "holdout-v05-row", "source": "report.py:296-299", "regex": "\\| (?P<year>[0-9]+) \\| (?P<matches>yes|no|n/a) \\| (?P<sigma>[^|]+) \\|", "groups": {"year": "exact", "matches": "exact", "sigma": "measurement"}},
   {"name": "gauntlet-row", "source": "report.py:240-248", "exact_line": true, "regex": "\\| (?P<test>[a-z][a-z_0-9]*) \\| (?P<status>[A-Z_]+(?: \\([a-z_]+\\))?) \\| (?P<severity>[a-z]+) \\| (?P<message>.*) \\|", "groups": {"test": "exact", "status": "exact", "severity": "exact", "message": "exact"}}

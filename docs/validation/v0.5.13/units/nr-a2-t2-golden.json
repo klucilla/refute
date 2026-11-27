@@ -1,0 +1,33 @@
+{
+ "name": "nr-a2-t2-golden",
+ "question": "NR-A2 (amendment 2, revision 8, section 3; #226): the golden identity record of versions 1 to 4 at 2 threads, in a fresh process, set before any numerical import. The named verification, run once, only after the maintainer's decision and NR-A2's manifest with its order proof.",
+ "choices": "identity_v2.py golden nr-a2-t2 (decision S3, option A); the thread variables come from this spec's env; record copied to step1/golden-nr-a2-t2.json. Named unit, not a retry class.",
+ "argv": [
+  "{python}",
+  "-I",
+  "-B",
+  "docs/validation/v0.5.13/tools/identity_v2.py",
+  "golden",
+  "nr-a2-t2"
+ ],
+ "identity": [
+  "docs/validation/v0.5.13/tools/identity_v2.py",
+  "tests/baseline_code_v0511.py"
+ ],
+ "key": "data",
+ "reserve": {
+  "cpu_s": 1500,
+  "disk_bytes": 200000000
+ },
+ "network": false,
+ "emits_case_values": true,
+ "env": {
+  "OMP_NUM_THREADS": "2",
+  "OPENBLAS_NUM_THREADS": "2",
+  "MKL_NUM_THREADS": "2"
+ },
+ "order_proof": "docs/validation/v0.5.13/manifests/nr-a2.json",
+ "outputs": {
+  "golden-nr-a2-t2.json": "docs/validation/v0.5.13/step1/golden-nr-a2-t2.json"
+ }
+}

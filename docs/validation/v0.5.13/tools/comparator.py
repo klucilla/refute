@@ -32,10 +32,22 @@ input (the schema and the four records) comes from the freeze list's paths and i
    two records, and decoded; the exception's text must equal the approved text.
 6. (Decision S3) There is no unbound path. The reference is fixed. A frozen setting's records are
    bound by the freeze list's SHA-256. NR-A2's records are bound by the prospective entry of the
-   freeze list: its manifest (frozen SHA-256, committed, with a passed order-proof receipt), the
-   records committed after the manifest, the frozen SHA-256 of ``identity_v2.py`` in their
-   provenance, its label, and its two-thread setting. Every file is read once: the bytes whose
-   SHA-256 is checked are the bytes compared.
+   freeze list: its manifest (frozen SHA-256, committed, with a committed order-proof receipt
+   that attests the commit holding that manifest alone), the records committed after the
+   manifest, the committed journal's single run of each authorized unit (frozen unit spec,
+   script, setting and order proof, a successful end, and an output SHA-256 equal to the
+   committed record), the frozen ``src`` tree and fixture code at the records' head, the
+   records' label, script and thread variables, and the companion process's two threads
+   (Codex's round 2, item 5). Every file is read once: the bytes whose SHA-256 is checked are
+   the bytes compared.
+
+**Corrections after Codex's round 2** (``s5/codex/answer-r2.md``, under S5): configuration
+inputs and effective detrending windows are exact (item 1); every message field the writers
+produce is declared (item 2); the cadence row is recognized by its structure before its numeric
+cell is validated, ``None`` is accepted only in the error groups that may be absent, and a pair of
+integer-form tokens is a count while a mixed pair on a measurement path is compared by value
+(item 3); a claim entry is compared by the bytes of its key and its value (item 4); the journal
+binding above (item 5).
 
 **Kept from decisions P2 and R2:** no shortcut on equal bytes; a duplicate JSON key is malformed;
 an ambiguous template fails even on equal lines; the coverage report (``coverage``,
@@ -305,7 +317,9 @@ def compare_json(a: str, b: str, kind: str, schema: dict, cov: Coverage | None =
         if ka != "num":
             problems.append(f"{kind}: token {i} at {pa!r} differs ({ka})")
             continue
-        if not (is_float_form(ra) and is_float_form(rb)):
+        if not (is_float_form(ra) or is_float_form(rb)):
+            # two integer-form tokens are an integer count: exact (round 2, item 3); a mixed
+            # pair on a measurement path ("1" and "1e0") is compared by value below
             problems.append(f"{kind}: integer token at {pa!r} differs")
         elif is_exact(pa, strings):
             problems.append(f"{kind}: exact number at {pa!r} differs")
@@ -320,14 +334,22 @@ def _check_group(value: str | None, markers: tuple[str, ...]) -> bool:
     return value is not None and (bool(NUMBER.match(value)) or value in markers)
 
 
+def _markers(template: dict) -> dict[str, tuple[str, ...]]:
+    """The markers of absence or non-finiteness each measurement group may hold: the template's
+    ``group_markers`` for that group (for example ``None`` for an error the writer may leave
+    absent, round 2, item 3), else the template's ``markers``, else ``n/a``, ``inf``, ``-inf``."""
+    default = tuple(template.get("markers", MARKERS))
+    special = template.get("group_markers", {})
+    return {g: tuple(special.get(g, default)) for g in template["groups"]}
+
+
 def compare_report(a: str, b: str, schema: dict, cov: Coverage | None = None) -> list[str]:
     cov = cov if cov is not None else Coverage()
     la, lb = a.split("\n"), b.split("\n")
     if len(la) != len(lb):
         return [f"report: line counts differ ({len(la)} and {len(lb)})"]
     templates = [
-        (t["name"], re.compile(t["regex"]), t["groups"], tuple(t.get("markers", MARKERS)))
-        for t in schema["report"]
+        (t["name"], re.compile(t["regex"]), t["groups"], _markers(t)) for t in schema["report"]
     ]
     problems: list[str] = []
     for n, (x, y) in enumerate(zip(la, lb, strict=True), 1):
@@ -342,7 +364,7 @@ def compare_report(a: str, b: str, schema: dict, cov: Coverage | None = None) ->
             for found in (mx, my)
             for _, match, groups, markers in found
             for group, role in groups.items()
-            if role == "measurement" and not _check_group(match.group(group), markers)
+            if role == "measurement" and not _check_group(match.group(group), markers[group])
         ]
         if malformed:
             # a measurement group that is neither a number nor a marker fails, equal or not (S1)
@@ -361,7 +383,7 @@ def compare_report(a: str, b: str, schema: dict, cov: Coverage | None = None) ->
         if not shared:
             problems.append(f"report line {n}: differs and no single shared template matches")
             continue
-        _, gx, groups, _markers = mx[0]
+        _, gx, groups, _unused = mx[0]
         gy = my[0][1]
         for group, role in groups.items():
             u, v = gx.group(group), gy.group(group)
@@ -470,9 +492,20 @@ HEX64 = re.compile(r"[0-9a-f]{64}\Z")
 
 
 def claim_values(text: str) -> dict[str, str]:
-    """The raw serialized string of each claim value (``payload.claims.<path>``)."""
+    """The serialized entry of each claim (``payload.claims.<path>``): the raw bytes of its key
+    and of its value, so that an escape in either is a difference (round 2, item 4)."""
     prefix = "payload.claims."
-    return {p[len(prefix) :]: r for k, r, p in lex(text) if k == "str" and p.startswith(prefix)}
+    keys: dict[str, str] = {}
+    out: dict[str, str] = {}
+    for k, r, p in lex(text):
+        if not p.startswith(prefix):
+            continue
+        name = p[len(prefix) :]
+        if k == "key":
+            keys[name] = r
+        elif k == "str":
+            out[name] = keys.get(name, "") + ":" + r
+    return out
 
 
 def compare_claims(ref_text: str, alt_text: str, exceptions: dict[str, str]) -> list[str]:
@@ -500,7 +533,7 @@ def compare_claims(ref_text: str, alt_text: str, exceptions: dict[str, str]) -> 
             if k not in exceptions and not (isinstance(v, str) and HEX64.match(v)):
                 problems.append(f"claim {k}: the {label} value is not a SHA-256")
     problems += [
-        f"claim {k}: serialized value differs" for k in sorted(a) if k in b and a[k] != b[k]
+        f"claim {k}: serialized entry differs" for k in sorted(a) if k in b and a[k] != b[k]
     ]
     return problems
 
@@ -527,25 +560,102 @@ def last_commit(rel: str) -> str:
     return git("log", "-1", "--format=%H", "--", rel).decode().strip()
 
 
-def receipt_passed(manifest_sha: str) -> bool:
-    path = ROOT / RECEIPTS / f"{manifest_sha}.v2.json"
+def receipt_ok(rel: str, manifest_sha: str, files: list[str]) -> bool:
+    """The committed order-proof receipt of ``rel`` (round 2, item 5): its schema, path and
+    SHA-256, the commit it attests is the commit that last changed ``rel``, that commit holds
+    exactly ``files``, and it passed."""
+    receipt_rel = f"{RECEIPTS}/{manifest_sha}.v2.json"
+    path = ROOT / receipt_rel
     if not path.is_file():
         return False
-    receipt = strict_loads(path.read_text(encoding="utf-8"))
-    return receipt.get("passed") is True and receipt.get("manifest_sha256") == manifest_sha
+    data = path.read_bytes()
+    if not committed(receipt_rel, data):
+        return False
+    receipt = strict_loads(data.decode("utf-8"))
+    return (
+        receipt.get("schema") == "refute-v0513-order-proof-2"
+        and receipt.get("passed") is True
+        and receipt.get("manifest") == rel
+        and receipt.get("manifest_sha256") == manifest_sha
+        and receipt.get("evidence_commit") == last_commit(rel)
+        and sorted(receipt.get("evidence_files", [])) == sorted(files)
+    )
+
+
+def journal_entries(rel: str) -> list[dict]:
+    """The committed phase journal (``git show @:<rel>``), one JSON object per line."""
+    text = git("show", f"@:{rel}").decode("utf-8")
+    return [strict_loads(line) for line in text.splitlines() if line.strip()]
+
+
+def head_digests(head: str, fixture: str) -> tuple[str, str]:
+    """The ``src`` tree and the fixture code's SHA-256 at a recorded head."""
+    tree = git("rev-parse", f"{head}:src").decode().strip()
+    return tree, sha(git("show", f"{head}:{fixture}"))
+
+
+def journal_bound(entries: list[dict], unit: dict, entry: dict, record_sha: str) -> list[str]:
+    """Round 2, item 5: a record is NR-A2's only if the committed journal holds exactly one run of
+    its authorized unit, with the frozen unit spec, script, setting and order proof, ended
+    successfully, whose recorded output is these bytes."""
+    name = unit["unit"]
+    befores = [e for e in entries if e.get("event") == "before" and e.get("unit") == name]
+    if len(befores) != 1:
+        return [f"{name}: the journal does not hold exactly one run ({len(befores)})"]
+    b = befores[0]
+    problems = []
+    ids = b.get("identity_sha256", {})
+    if ids.get(unit["spec"]) != unit["spec_sha256"]:
+        problems.append(f"{name}: the unit spec is not the frozen one")
+    if ids.get(entry["script"]) != entry["script_sha256"]:
+        problems.append(f"{name}: the script is not the frozen identity_v2.py")
+    if b.get("env") != entry["thread_env"]:
+        problems.append(f"{name}: the run's thread variables are not the frozen setting")
+    proof = b.get("order_proof") or {}
+    if (proof.get("manifest"), proof.get("manifest_sha256")) != (
+        entry["manifest"]["path"],
+        entry["manifest"]["sha256"],
+    ):
+        problems.append(f"{name}: the run's order proof is not NR-A2's manifest")
+    afters = [
+        e for e in entries if e.get("event") == "after" and e.get("attempt_id") == b["attempt_id"]
+    ]
+    if len(afters) != 1:
+        return problems + [f"{name}: the run has no single end in the journal"]
+    a = afters[0]
+    if a.get("status") != "ok" or a.get("exit_code") != 0:
+        problems.append(f"{name}: the run did not end successfully")
+    if (a.get("outputs_sha256") or {}).get(unit["output"]) != record_sha:
+        problems.append(f"{name}: the journal's output SHA-256 is not the committed record")
+    return problems
 
 
 def bind_prospective(entry: dict, label: str, rec: dict, claims: dict, raw: dict) -> list[str]:
-    """Decision S3: NR-A2's records are bound to its manifest and to its setting."""
+    """Decision S3: NR-A2's records are bound to its manifest, its journal runs and its setting."""
     problems: list[str] = []
-    manifest = (ROOT / entry["manifest"]["path"]).read_bytes()
+    m_rel = entry["manifest"]["path"]
+    manifest = (ROOT / m_rel).read_bytes()
     if sha(manifest) != entry["manifest"]["sha256"]:
         problems.append("the NR-A2 manifest's SHA-256 is not the frozen one")
-    if not committed(entry["manifest"]["path"], manifest):
+    if not committed(m_rel, manifest):
         problems.append("the NR-A2 manifest is not committed")
-    if not receipt_passed(entry["manifest"]["sha256"]):
-        problems.append("the NR-A2 manifest has no passed order-proof receipt")
-    m_commit = last_commit(entry["manifest"]["path"])
+    if not receipt_ok(m_rel, entry["manifest"]["sha256"], [m_rel]):
+        problems.append("the NR-A2 manifest has no passed order-proof receipt for it alone")
+    entries = journal_entries(entry["journal"])
+    for key, unit in (
+        ("record", entry["units"]["golden"]),
+        ("claim_record", entry["units"]["claims"]),
+    ):
+        problems += journal_bound(entries, unit, entry, sha(raw[key]))
+    for name, doc in (("golden record", rec), ("claim record", claims)):
+        head = doc.get("provenance", {}).get("head", "")
+        try:
+            digests = head_digests(head, entry["fixture_code"])
+        except subprocess.CalledProcessError:
+            digests = ("", "")
+        if digests != (entry["src_tree"], entry["fixture_code_sha256"]):
+            problems.append(f"the {name}'s head has not the frozen src tree and fixture code")
+    m_commit = last_commit(m_rel)
     for key in ("record", "claim_record"):
         rel = entry[key]
         if not committed(rel, raw[key]):
@@ -620,7 +730,9 @@ def main() -> int:
     label, ref_dir, alt_dir = sys.argv[2], Path(sys.argv[3]), Path(sys.argv[4])
     problems: list[str] = []
     rel = freeze_path.resolve().relative_to(ROOT).as_posix()
-    if not committed(rel, freeze_raw) or not receipt_passed(sha(freeze_raw)):
+    folder = rel.rsplit("/", 1)[0]
+    files = [rel, f"{folder}/comparator-schema.json"]
+    if not committed(rel, freeze_raw) or not receipt_ok(rel, sha(freeze_raw), files):
         problems.append("the freeze list is not committed with a passed order-proof receipt")
     parsed, bound = bind(freeze, label)
     problems += bound

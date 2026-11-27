@@ -64,6 +64,7 @@ REVISION = "docs/plans/v0.5.13-charter-amendment-2-rev8.md"
 LABELS = ["exploratory", "method_status: not_validated"]
 NR_A2_MANIFEST = f"{V}/manifests/nr-a2.json"
 IDENTITY_V2 = f"{V}/tools/identity_v2.py"
+NR_A2_UNIT = V + "/units/nr-a2-t2-{}.json"
 THREAD_VARS = ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS")
 
 
@@ -81,6 +82,13 @@ def git(*args: str) -> bytes:
 
 def file_item(rel: str) -> dict:
     return {"path": rel, "sha256": sha((ROOT / rel).read_bytes())}
+
+
+def unit_item(kind: str, output: str) -> dict:
+    """An NR-A2 unit: its name, its spec with the spec's SHA-256, and its recorded output."""
+    spec = NR_A2_UNIT.format(kind)
+    return {"unit": f"nr-a2-t2-{kind}", "spec": spec,
+            "spec_sha256": sha((ROOT / spec).read_bytes()), "output": output}  # fmt: skip
 
 
 def main() -> int:
@@ -159,6 +167,19 @@ def main() -> int:
                 "script_sha256": sha((ROOT / IDENTITY_V2).read_bytes()),
                 "thread_env": {v: "2" for v in THREAD_VARS},
                 "threads": 2,
+                # Codex's round 2, items 5 and 6: the journal's runs, and the authorized code
+                "journal": f"{V}/log.jsonl",
+                "units": {
+                    "golden": unit_item("golden", f"{V}/step1/golden-nr-a2-t2.json"),
+                    "claims": unit_item("claims", f"{V}/step1/claim-hashes-nr-a2-t2.json"),
+                },
+                "fixture_code": FIXTURE_CODE,
+                "src_tree": git("rev-parse", "@:src").decode().strip(),
+                "fixture_code_sha256": sha(git("show", f"@:{FIXTURE_CODE}")),
+                "src_tree_note": "the src tree at the freeze's parent commit; it differs from "
+                "ID-BEFORE's and NR-A1's only in src/refute/__init__.py (the package version, "
+                "commit 124bdd92a2be870ca16d53e280a1d84ac07986f9), which the goldens do not "
+                "serialize",
             }
         },
     }  # fmt: skip

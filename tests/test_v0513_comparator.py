@@ -113,8 +113,12 @@ def test_whitespace_and_structure_compare_exactly():
     assert jcmp(a, a.replace('"period"', '"periods"'))
 
 
-def test_float_form_and_integer_form_do_not_mix():
-    assert jcmp(verdict("2.0"), verdict("2"))
+def test_mixed_forms_compare_by_value_only_on_measurement_paths():
+    # Codex's round 2, item 3: "2.0" and "2" on a measurement path are the same value; on an
+    # integer count (both integer form) or an exact path a difference still fails
+    assert jcmp(verdict("2.0"), verdict("2")) == []
+    assert jcmp(verdict("1.5", count="3"), verdict("1.5", count="4"))
+    assert jcmp(verdict("1.5", thr="7"), verdict("1.5", thr="7.0"))  # an exact path
 
 
 def test_report_templates():
@@ -274,7 +278,7 @@ def test_claim_exception_is_compared_by_its_bytes():
     a = rec({"c.yaml": H1, "d.yaml": "ERROR ClaimError: x"})
     b = a.replace('"ERROR ClaimError', '"\\u0045RROR ClaimError')
     assert json.loads(a) == json.loads(b)
-    assert comp.compare_claims(a, b, EXC) == ["claim d.yaml: serialized value differs"]
+    assert comp.compare_claims(a, b, EXC) == ["claim d.yaml: serialized entry differs"]
 
 
 def test_no_shortcut_on_equal_bytes():
@@ -462,16 +466,57 @@ def _freeze(root: Path) -> dict:
                 "manifest": {"path": "m/nr-a2.json", "sha256": digest["manifest"]},
                 "record": "s/a2.json",
                 "claim_record": "s/a2-c.json",
+                "script": "t/identity_v2.py",
                 "script_sha256": "f" * 64,
                 "thread_env": {"OMP_NUM_THREADS": "2"},
                 "threads": 2,
+                "journal": "log.jsonl",
+                "units": {
+                    "golden": {"unit": "g", "spec": "u/g.json", "spec_sha256": "1" * 64,
+                               "output": "s/a2.json"},
+                    "claims": {"unit": "c", "spec": "u/c.json", "spec_sha256": "2" * 64,
+                               "output": "s/a2-c.json"},
+                },
+                "fixture_code": "tests/f.py",
+                "src_tree": "tree",
+                "fixture_code_sha256": "3" * 64,
             }
         },
     }  # fmt: skip
 
 
+def _journal(root: Path, freeze: dict, **change) -> list[dict]:
+    """A synthetic journal: one successful run of each NR-A2 unit, as the launcher writes it."""
+    entry = freeze["prospective"]["nr-a2-t2"]
+    out = []
+    for i, key in enumerate(("golden", "claims")):
+        unit = entry["units"][key]
+        before = {
+            "event": "before", "unit": unit["unit"], "attempt_id": f"a{i}",
+            "identity_sha256": {unit["spec"]: unit["spec_sha256"],
+                                entry["script"]: entry["script_sha256"]},
+            "env": dict(entry["thread_env"]),
+            "order_proof": {"manifest": entry["manifest"]["path"],
+                            "manifest_sha256": entry["manifest"]["sha256"]},
+        }  # fmt: skip
+        data = (root / unit["output"]).read_bytes()
+        after = {
+            "event": "after", "attempt_id": f"a{i}", "status": "ok", "exit_code": 0,
+            "outputs_sha256": {unit["output"]: hashlib.sha256(data).hexdigest()},
+        }  # fmt: skip
+        for k, v in change.items():
+            target = before if k in before else after
+            target[k] = v
+        out += [before, after]
+    return out
+
+
 def _nr_a2_records(root: Path, label="nr-a2-t2", script="f" * 64, threads=2, env="2") -> None:
-    prov = {"script_sha256": script, "blas": {"thread_env": {"OMP_NUM_THREADS": env}}}
+    prov = {
+        "head": "h",
+        "script_sha256": script,
+        "blas": {"thread_env": {"OMP_NUM_THREADS": env}},
+    }
     golden = {"label": label, "payload": {}, "provenance": {**prov}}
     golden["provenance"]["blas"] = {
         "thread_env": {"OMP_NUM_THREADS": env},
@@ -481,17 +526,33 @@ def _nr_a2_records(root: Path, label="nr-a2-t2", script="f" * 64, threads=2, env
     _write(root, "s/a2-c.json", json.dumps({"label": label, "payload": {}, "provenance": prov}))
 
 
-def _git_ok(monkeypatch, root: Path, ancestor=True, receipt=True, committed=True):
+def _git_ok(
+    monkeypatch,
+    root: Path,
+    freeze: dict,
+    ancestor=True,
+    receipt=True,
+    committed=True,
+    journal=None,
+    tree="tree",
+):
     monkeypatch.setattr(comp, "ROOT", root)
     monkeypatch.setattr(comp, "committed", lambda rel, data: committed)
-    monkeypatch.setattr(comp, "receipt_passed", lambda s: receipt)
+    monkeypatch.setattr(comp, "receipt_ok", lambda rel, s, files: receipt)
     monkeypatch.setattr(comp, "last_commit", lambda rel: "m" if rel.startswith("m/") else "r")
     monkeypatch.setattr(comp, "is_ancestor", lambda a, b: ancestor)
+    monkeypatch.setattr(comp, "head_digests", lambda head, fixture: (tree, "3" * 64))
+    entries = journal if journal is not None else None
+    monkeypatch.setattr(
+        comp,
+        "journal_entries",
+        lambda rel: entries if entries is not None else _journal(root, freeze),
+    )
 
 
 def test_frozen_settings_are_bound_by_hash(tmp_path, monkeypatch):
     freeze = _freeze(tmp_path)
-    _git_ok(monkeypatch, tmp_path)
+    _git_ok(monkeypatch, tmp_path, freeze)
     parsed, problems = comp.bind(freeze, "nr-a1-t1")
     assert problems == [] and "raw" in parsed
     (tmp_path / "s/t1-c.json").write_text('{"payload": {"x": 1}}', encoding="utf-8")
@@ -502,7 +563,7 @@ def test_frozen_settings_are_bound_by_hash(tmp_path, monkeypatch):
 def test_no_unbound_path(tmp_path, monkeypatch):
     # decision S3: a label that is neither frozen nor the frozen prospective one is refused
     freeze = _freeze(tmp_path)
-    _git_ok(monkeypatch, tmp_path)
+    _git_ok(monkeypatch, tmp_path, freeze)
     _, problems = comp.bind(freeze, "nr-a2-t3")
     assert problems and "neither" in problems[0]
     _, problems = comp.bind(freeze, "id-before")
@@ -512,7 +573,7 @@ def test_no_unbound_path(tmp_path, monkeypatch):
 def test_nr_a2_is_bound_to_its_manifest_and_setting(tmp_path, monkeypatch):
     freeze = _freeze(tmp_path)
     _nr_a2_records(tmp_path)
-    _git_ok(monkeypatch, tmp_path)
+    _git_ok(monkeypatch, tmp_path, freeze)
     _, problems = comp.bind(freeze, "nr-a2-t2")
     assert problems == []
     for kwargs, expected in (
@@ -529,14 +590,66 @@ def test_nr_a2_is_bound_to_its_manifest_and_setting(tmp_path, monkeypatch):
         ({"ancestor": False}, "after the NR-A2 manifest"),
         ({"receipt": False}, "order-proof receipt"),
         ({"committed": False}, "not committed"),
+        ({"tree": "other"}, "frozen src tree"),
     ):
-        _git_ok(monkeypatch, tmp_path, **kwargs)
+        _git_ok(monkeypatch, tmp_path, freeze, **kwargs)
         _, problems = comp.bind(freeze, "nr-a2-t2")
         assert any(expected in p for p in problems), (kwargs, problems)
-    _git_ok(monkeypatch, tmp_path)
+    _git_ok(monkeypatch, tmp_path, freeze)
     (tmp_path / "m/nr-a2.json").write_text('{"manifest": "changed"}', encoding="utf-8")
     _, problems = comp.bind(freeze, "nr-a2-t2")
     assert any("not the frozen one" in p for p in problems)
+
+
+def test_nr_a2_records_need_their_journal_runs(tmp_path, monkeypatch):
+    # Codex's round 2, item 5: copies of other payloads, committed after the manifest with the
+    # right provenance fields, are refused without the journal's runs of the authorized units
+    freeze = _freeze(tmp_path)
+    _nr_a2_records(tmp_path)
+    for change, expected in (
+        ({"env": {"OMP_NUM_THREADS": "4"}}, "thread variables"),
+        ({"status": "failed"}, "did not end successfully"),
+        ({"outputs_sha256": {}}, "output SHA-256"),
+        ({"identity_sha256": {}}, "unit spec"),
+        ({"order_proof": {}}, "order proof"),
+    ):
+        _git_ok(monkeypatch, tmp_path, freeze, journal=_journal(tmp_path, freeze, **change))
+        _, problems = comp.bind(freeze, "nr-a2-t2")
+        assert any(expected in p for p in problems), (change, problems)
+    _git_ok(monkeypatch, tmp_path, freeze, journal=[])
+    _, problems = comp.bind(freeze, "nr-a2-t2")
+    assert any("exactly one run" in p for p in problems)
+    twice = _journal(tmp_path, freeze)
+    _git_ok(monkeypatch, tmp_path, freeze, journal=twice + twice)
+    _, problems = comp.bind(freeze, "nr-a2-t2")
+    assert any("exactly one run" in p for p in problems)
+
+
+def test_round_2_report_and_json_forms():
+    rep = comp.compare_report
+    parts = json.loads(
+        (ROOT / "docs/validation/v0.5.13/l4/comparator-schema-parts.json").read_text("utf-8")
+    )
+    schema = {**SCHEMA, "report": parts["report"]}
+    # a malformed cell in a row recognized by its structure fails, even when equal
+    assert rep("| 1 | 18000 | 19000 | bogus |", "| 1 | 18000 | 19000 | bogus |", schema)
+    assert rep("| 1 | 18000 | 19000 | 0.947 |", "| 1 | 18000 | 19000 | 0.947 |", schema) == []
+    # None only in the error groups the writer may leave absent
+    ok = "- Period 3.1234 d (error None) and epoch 2459001.2 BJD_TDB (error None), from: BLS."
+    assert rep(ok, ok, schema) == []
+    bad = "- Period None d (error None) and epoch 2459001.2 BJD_TDB (error None), from: BLS."
+    assert rep(bad, bad, schema)
+    # two integer-form tokens are a count (exact); a mixed pair is compared by value
+    doc = '{"candidate": {"p": VALUE}}'
+    assert jcmp(doc.replace("VALUE", "1"), doc.replace("VALUE", "1e0")) == []
+    assert jcmp(doc.replace("VALUE", "1"), doc.replace("VALUE", "2"))
+
+
+def test_claim_key_escape_is_a_difference():
+    a = rec({"c.yaml": H1, "d.yaml": "ERROR ClaimError: x"})
+    b = a.replace('"c.yaml"', '"\\u0063.yaml"')
+    assert json.loads(a) == json.loads(b)
+    assert comp.compare_claims(a, b, EXC) == ["claim c.yaml: serialized entry differs"]
 
 
 def test_compared_bytes_are_the_checked_bytes(tmp_path):
