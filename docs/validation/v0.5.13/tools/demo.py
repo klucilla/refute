@@ -75,10 +75,10 @@ def main() -> int:
         result["inbound_bytes"] = len(body)
         (OUT / "transfer.json").write_text(json.dumps({"inbound_bytes": len(body),
             "basis": "the bytes of the gh api response body received by the unit"}),
-            encoding="utf-8")  # fmt: skip
+            encoding="utf-8", newline="\n")  # fmt: skip
     else:
         raise SystemExit(f"unknown mode {mode}")
-    (OUT / "demo.json").write_text(json.dumps(result) + "\n", encoding="utf-8")
+    (OUT / "demo.json").write_text(json.dumps(result) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps(result))
     return 0
 

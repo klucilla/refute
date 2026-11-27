@@ -92,7 +92,8 @@ def main() -> int:
         else "STOP: a byte mismatch, a missing output or an unverified pin stops Part A",
     }
     out = Path(os.environ["REFUTE_RUN_OUT"])
-    (out / f"comparison-{which}.json").write_text(json.dumps(doc, indent=1) + "\n", "utf-8")
+    text = json.dumps(doc, indent=1) + "\n"
+    (out / f"comparison-{which}.json").write_text(text, encoding="utf-8", newline="\n")
     keys = ("label", "identity_equal", "pin_verified")
     print(json.dumps({"passed": passed, "rows": [{k: r.get(k) for k in keys} for r in rows]}))
     return 0

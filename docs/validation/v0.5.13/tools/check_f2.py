@@ -109,7 +109,8 @@ def main() -> int:
     }
     result["all_ok"] = all(v["ok"] for v in result.values() if isinstance(v, dict))
     out = Path(os.environ.get("REFUTE_RUN_OUT", "."))
-    (out / "check-f2.json").write_text(json.dumps(result, indent=1) + "\n", encoding="utf-8")
+    text = json.dumps(result, indent=1) + "\n"
+    (out / "check-f2.json").write_text(text, encoding="utf-8", newline="\n")
     print(json.dumps({k: (v["ok"] if isinstance(v, dict) else v) for k, v in result.items()}))
     return 0 if result["all_ok"] else 1
 

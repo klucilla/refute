@@ -113,7 +113,8 @@ def main() -> int:
         report["steps"]["no_crlf_outside_not_text"] = not outside
     report["all_ok"] = all(report["steps"].values()) and len(report["steps"]) == 3
     out = Path(os.environ.get("REFUTE_RUN_OUT", "."))
-    (out / "g1-prepare.json").write_text(json.dumps(report, indent=1) + "\n", encoding="utf-8")
+    text = json.dumps(report, indent=1) + "\n"
+    (out / "g1-prepare.json").write_text(text, encoding="utf-8", newline="\n")
     print(json.dumps({"main": tip, **report["steps"], "all_ok": report["all_ok"]}))
     return 0 if report["all_ok"] else 1
 

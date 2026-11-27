@@ -80,7 +80,8 @@ def main() -> int:
     report["other_crlf_by_folder"] = {k: sorted(v) for k, v in sorted(others.items())}
     report["all_ok"] = ready and all(a["w_lf"] and a["crlf_count"] == 0 for a in report["after"])
     out = Path(os.environ.get("REFUTE_RUN_OUT", "."))
-    (out / "g2-normalize.json").write_text(json.dumps(report, indent=1) + "\n", encoding="utf-8")
+    text = json.dumps(report, indent=1) + "\n"
+    (out / "g2-normalize.json").write_text(text, encoding="utf-8", newline="\n")
     print(json.dumps({"ready": ready, "after_w_lf": [a["w_lf"] for a in report["after"]],
                       "other_crlf_files": report["other_crlf_files"],
                       "all_ok": report["all_ok"]}))  # fmt: skip

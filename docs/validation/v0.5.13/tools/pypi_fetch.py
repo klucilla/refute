@@ -53,9 +53,11 @@ def main() -> int:
     doc = {"utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "metadata_url": meta_url,
            "version": version, "files": rows}  # fmt: skip
     out = Path(os.environ["REFUTE_RUN_OUT"])
-    (out / "pypi-fetch.json").write_text(json.dumps(doc, indent=1) + "\n", "utf-8")
+    text = json.dumps(doc, indent=1) + "\n"
+    (out / "pypi-fetch.json").write_text(text, encoding="utf-8", newline="\n")
     (out / "transfer.json").write_text(json.dumps({"inbound_bytes": received,
-        "basis": "measured: the JSON body and every file body received"}), "utf-8")  # fmt: skip
+        "basis": "measured: the JSON body and every file body received"}),
+        encoding="utf-8", newline="\n")  # fmt: skip
     print(json.dumps({"files": [(r["filename"], r["bytes"], r["sha256"]) for r in rows]}))
     return 0 if rows and all(r["matches_index"] for r in rows) else 1
 

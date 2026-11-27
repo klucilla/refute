@@ -87,7 +87,8 @@ def main() -> int:
             "max_rel_diff": max((r["max_rel_diff"] for r in files.values()), default=0.0),
         }
     out = Path(os.environ["REFUTE_RUN_OUT"])
-    (out / "diag-golden-diff.json").write_text(json.dumps(doc, indent=1) + "\n", "utf-8")
+    text = json.dumps(doc, indent=1) + "\n"
+    (out / "diag-golden-diff.json").write_text(text, encoding="utf-8", newline="\n")
     summary = {
         k: {
             "files": list(v["files_differing"]),

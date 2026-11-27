@@ -119,7 +119,8 @@ def main() -> int:
     flags = [v for k, v in res.items() if isinstance(v, bool)]
     res["passed"] = bool(flags) and all(flags)
     out = Path(os.environ["REFUTE_RUN_OUT"])
-    (out / f"check-m45-{mode}.json").write_text(json.dumps(res, indent=1) + "\n", "utf-8")
+    text = json.dumps(res, indent=1) + "\n"
+    (out / f"check-m45-{mode}.json").write_text(text, encoding="utf-8", newline="\n")
     print(json.dumps(res))
     return 0 if res["passed"] else 1
 

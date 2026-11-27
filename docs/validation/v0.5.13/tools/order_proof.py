@@ -93,7 +93,7 @@ def main() -> int:
     body = json.dumps(receipt).encode("utf-8")
     (out / "transfer.json").write_text(json.dumps({"inbound_bytes": 2 * len(body) + 65536,
         "basis": "an upper estimate: twice the receipt's size plus 64 KiB for the gh calls"}),
-        encoding="utf-8")  # fmt: skip
+        encoding="utf-8", newline="\n")  # fmt: skip
     print(json.dumps({"passed": receipt["passed"], "checks": checks, "run": receipt["ci_run_id"]}))
     return 0 if receipt["passed"] else 1
 

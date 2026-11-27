@@ -60,7 +60,8 @@ def main() -> int:
     )
     res["passed"] = all(res.values())
     out = Path(os.environ.get("REFUTE_RUN_OUT", ROOT / ".cache" / "v0513"))
-    (out / "demo-check.json").write_text(json.dumps(res, indent=1) + "\n", encoding="utf-8")
+    text = json.dumps(res, indent=1) + "\n"
+    (out / "demo-check.json").write_text(text, encoding="utf-8", newline="\n")
     print(json.dumps(res))
     return 0 if res["passed"] else 1
 
