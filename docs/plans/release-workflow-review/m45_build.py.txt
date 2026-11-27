@@ -1,0 +1,179 @@
+"""M4/M5 (#218, comment 7204660147): three offline builds of an exported tree, nothing in git.
+
+    python m45_build.py <git ref>
+
+1. baseline: pyproject.toml as committed;
+2. + the sdist include list only (M4): the wheel must be byte-identical to the baseline's;
+3. + the metadata (M5b): the wheel may differ only in dist-info METADATA and RECORD.
+
+Each variant is a fresh `git archive` of the ref under .cache/v0513prep/m45/tree-<n>, with
+pyproject.toml edited by exact string replacement, then `uv build --offline`. It writes the
+patched pyproject.toml, the unified diff (variant 3 against the original) with its SHA-256,
+and m45-builds.json (sizes, hashes, members, the wheel comparison, METADATA headers).
+"""
+
+import difflib
+import hashlib
+import io
+import json
+import os
+import shutil
+import subprocess
+import sys
+import tarfile
+import zipfile
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[3]
+HERE = Path(__file__).resolve().parent
+REF = sys.argv[1]
+
+SDIST = '''[tool.hatch.build.targets.wheel]
+packages = ["src/refute"]
+
+[tool.hatch.build.targets.sdist]
+# Only what is needed to build, test and cite the package (the maintainer's decision of
+# 2026-11-26, item M4): the source, the tests, and the licence and metadata files.
+include = [
+  "/src/refute",
+  "/tests",
+  "/LICENSE",
+  "/README.md",
+  "/CITATION.cff",
+  "/pyproject.toml",
+]
+'''
+OLD_WHEEL = '''[tool.hatch.build.targets.wheel]
+packages = ["src/refute"]
+'''
+OLD_CLASSIFIERS = '''classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Astronomy",
+]
+'''
+NEW_CLASSIFIERS = '''classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Science/Research",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Scientific/Engineering :: Astronomy",
+]
+'''
+OLD_SCRIPTS = '''[project.scripts]
+refute = "refute.cli:main"
+'''
+NEW_SCRIPTS = '''[project.urls]
+Homepage = "https://refute.science"
+Repository = "https://github.com/klucilla/refute"
+Issues = "https://github.com/klucilla/refute/issues"
+
+[project.scripts]
+refute = "refute.cli:main"
+'''
+
+
+def sha(b: bytes) -> str:
+    return hashlib.sha256(b).hexdigest()
+
+
+def export(n: int) -> Path:
+    dst = HERE / f"tree-{n}"
+    assert dst.resolve().is_relative_to((ROOT / ".cache").resolve())
+    if dst.exists():
+        shutil.rmtree(dst)
+    dst.mkdir(parents=True)
+    data = subprocess.run(["git", "archive", REF], cwd=ROOT, capture_output=True, check=True).stdout
+    with tarfile.open(fileobj=io.BytesIO(data)) as t:
+        t.extractall(dst, filter="data")
+    return dst
+
+
+def build(tree: Path, out: Path) -> dict:
+    if out.exists():
+        shutil.rmtree(out)
+    env = dict(os.environ, UV_OFFLINE="1")
+    env.pop("VIRTUAL_ENV", None)
+    p = subprocess.run(["uv", "build", "--offline", "--out-dir", str(out)], cwd=tree, env=env,
+                       capture_output=True, text=True)  # fmt: skip
+    res = {"exit_code": p.returncode, "stderr_tail": p.stderr.splitlines()[-4:]}
+    for f in sorted(out.glob("*")):
+        if f.name == ".gitignore":
+            continue
+        b = f.read_bytes()
+        e = {"bytes": len(b), "sha256": sha(b)}
+        if f.suffix == ".whl":
+            with zipfile.ZipFile(f) as z:
+                e["members"] = len(z.infolist())
+                e["entries"] = {i.filename: sha(z.read(i)) for i in z.infolist()}
+                meta = next(i for i in z.namelist() if i.endswith("METADATA"))
+                text = z.read(meta).decode("utf-8")
+                head = text.split("\n\n", 1)[0].splitlines()
+                e["metadata_headers"] = head
+                e["readme_bytes_in_metadata"] = len(text.split("\n\n", 1)[1]) if "\n\n" in text else 0
+        else:
+            with tarfile.open(f) as t:
+                files = [m for m in t.getmembers() if m.isfile()]
+            e["members"] = len(files)
+            e["uncompressed_bytes"] = sum(m.size for m in files)
+            tops = {}
+            for m in files:
+                parts = m.name.split("/")
+                k = "/".join(parts[1:3]) if len(parts) > 2 else parts[-1]
+                tops[k] = tops.get(k, 0) + 1
+            e["by_folder"] = dict(sorted(tops.items()))
+        res[f.name] = e
+    return res
+
+
+def main() -> int:
+    original = subprocess.run(["git", "show", f"{REF}:pyproject.toml"], cwd=ROOT,
+                              capture_output=True, check=True).stdout.decode("utf-8")  # fmt: skip
+    assert OLD_WHEEL in original and OLD_CLASSIFIERS in original and OLD_SCRIPTS in original
+    v2 = original.replace(OLD_WHEEL, SDIST)
+    v3 = v2.replace(OLD_CLASSIFIERS, NEW_CLASSIFIERS).replace(OLD_SCRIPTS, NEW_SCRIPTS)
+    variants = {1: original, 2: v2, 3: v3}
+    head = subprocess.run(["git", "rev-parse", REF], cwd=ROOT, capture_output=True, text=True)
+    doc = {"ref": head.stdout.strip(), "builds": {}}
+    for n, text in variants.items():
+        tree = export(n)
+        (tree / "pyproject.toml").write_text(text, encoding="utf-8", newline="\n")
+        doc["builds"][n] = build(tree, HERE / f"dist-{n}")
+    (HERE / "pyproject.patched.toml").write_text(v3, encoding="utf-8", newline="\n")
+    diff = "".join(difflib.unified_diff(original.splitlines(True), v3.splitlines(True),
+                                        "a/pyproject.toml", "b/pyproject.toml"))  # fmt: skip
+    (HERE / "pyproject.diff").write_text(diff, encoding="utf-8", newline="\n")
+    doc["pyproject_diff_sha256"] = sha(diff.encode("utf-8"))
+    doc["pyproject_patched_sha256"] = sha(v3.encode("utf-8"))
+
+    def wheel(n):
+        return next(v for k, v in doc["builds"][n].items() if k.endswith(".whl"))
+
+    w1, w2, w3 = wheel(1), wheel(2), wheel(3)
+    doc["wheel_2_byte_identical_to_1"] = w1["sha256"] == w2["sha256"]
+    diff_entries = sorted(k for k in set(w1["entries"]) | set(w3["entries"])
+                          if w1["entries"].get(k) != w3["entries"].get(k))  # fmt: skip
+    doc["wheel_3_entries_differing_from_1"] = diff_entries
+    for n in (1, 2, 3):
+        for k, v in doc["builds"][n].items():
+            if isinstance(v, dict) and "entries" in v:
+                v["entries_count"] = len(v.pop("entries"))
+    (HERE / "m45-builds.json").write_text(json.dumps(doc, indent=1) + "\n", encoding="utf-8")
+    print(json.dumps({"ref": doc["ref"], "wheel2_identical": doc["wheel_2_byte_identical_to_1"],
+                      "wheel3_diff": diff_entries,
+                      "sizes": {n: {k: v["bytes"] for k, v in b.items() if isinstance(v, dict)}
+                                for n, b in doc["builds"].items()}}, indent=1))  # fmt: skip
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
