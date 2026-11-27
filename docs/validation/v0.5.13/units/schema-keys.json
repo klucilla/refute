@@ -1,0 +1,11 @@
+{
+ "name": "schema-keys",
+ "question": "L4(b) (#218 comment 7223634913): from source only, the exact keys of the comparator's schema (the plan model's fields in params.py, and the keys of thresholds dicts on the golden path), and whether any field D1a found to differ is among them. It opens no golden file.",
+ "choices": "docs/validation/v0.5.13/tools/schema_keys.py <out.json>. Offline. It reads source at the working tree and the exposed D1a record's field names.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/schema_keys.py"],
+ "identity": ["docs/validation/v0.5.13/tools/schema_keys.py"],
+ "key": "tree",
+ "reserve": {"cpu_s": 60, "disk_bytes": 5000000},
+ "network": false,
+ "retry_class": "checker"
+}
