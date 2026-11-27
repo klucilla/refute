@@ -41,6 +41,23 @@ input (the schema and the four records) comes from the freeze list's paths and i
    (Codex's round 2, item 5). Every file is read once: the bytes whose SHA-256 is checked are
    the bytes compared.
 
+**Corrections under the maintainer's decision T2** (#218 comment 7227882370), after Codex's
+round 3 (``s5/codex/answer-r3.md``), by the maintainer's design, with no further Codex round:
+1. The schema's ``exact_integer_keys`` (an explicit list from source, ``tools/count_keys.py``)
+   are exact: their numbers compare byte for byte, so ``100`` against ``100.00001`` and ``4``
+   against ``4.0`` fail; a change of notation is compared by value only on a measurement path.
+   A report group with the role ``integer`` must be an integer (or its marker) and compares
+   exactly; an empty or non-numeric cell where a number is due fails, equal or not.
+2. Each claim entry's whole line is compared byte for byte, separator and spaces included.
+3. ``order_bound``: the freeze commit is an ancestor of the NR-A2 manifest's commit; the
+   manifest was pushed alone with its passed order proof (checked against the commit git holds:
+   one parent, the trailer, its files); each run's head holds the manifest and its receipt;
+   each run starts after the manifest's push run was created and ends after it starts; each
+   record is committed after its run's end.
+4. ``code_bound``: the executor's code checks before and after the run (HEAD at the run's head,
+   the code paths equal to the authorized commit's, a clean porcelain status, the frozen code
+   digest) are required, and the comparator recomputes the digest and the comparison from git.
+
 **Corrections after Codex's round 2** (``s5/codex/answer-r2.md``, under S5): configuration
 inputs and effective detrending windows are exact (item 1); every message field the writers
 produce is declared (item 2); the cadence row is recognized by its structure before its numeric
@@ -275,6 +292,7 @@ def exactness(schema: dict, kind: str):
     subtrees = set(schema.get("exact_subtree_keys", []))
     key_rx = re.compile(schema["exact_key_regex"]) if schema.get("exact_key_regex") else None
     computed = set(schema.get("computed_keys_despite_name", {}))
+    integer_keys = set(schema.get("exact_integer_keys", {}))
     exempt = set(schema.get("exact_key_exempt_paths", []))
     by_sibling = [
         (_pattern(r["pattern"]), r["sibling"], set(r["values"]))
@@ -290,6 +308,8 @@ def exactness(schema: dict, kind: str):
                 if raw is None or json.loads(raw) in values:
                     return True  # an unknown sibling is exact, the conservative side
         key = last_key(path)
+        if key in integer_keys:
+            return True  # T2(1): a count, ID, version, index or integer flag, byte for byte
         if key_rx is not None and key_rx.search(key) and key not in computed:
             return True
         return key in exact_keys and path not in exempt
@@ -317,14 +337,15 @@ def compare_json(a: str, b: str, kind: str, schema: dict, cov: Coverage | None =
         if ka != "num":
             problems.append(f"{kind}: token {i} at {pa!r} differs ({ka})")
             continue
-        if not (is_float_form(ra) or is_float_form(rb)):
-            # two integer-form tokens are an integer count: exact (round 2, item 3); a mixed
-            # pair on a measurement path ("1" and "1e0") is compared by value below
-            problems.append(f"{kind}: integer token at {pa!r} differs")
-        elif is_exact(pa, strings):
+        # T2(1): an exact path (the explicit integer keys included) compares byte for byte, so
+        # 100 against 100.00001 and 4 against 4.0 fail there; a change of notation is compared
+        # by value only on a measurement path, and two integer-form tokens are a count
+        if is_exact(pa, strings):
             problems.append(f"{kind}: exact number at {pa!r} differs")
         elif not any(p.match(pa) for p in measure):
             problems.append(f"{kind}: number at {pa!r} is not a schema measurement and differs")
+        elif not (is_float_form(ra) or is_float_form(rb)):
+            problems.append(f"{kind}: integer token at {pa!r} differs")
         elif not within_budget(ra, rb):
             problems.append(f"{kind}: measurement at {pa!r} differs beyond the budget")
     return problems
@@ -332,6 +353,15 @@ def compare_json(a: str, b: str, kind: str, schema: dict, cov: Coverage | None =
 
 def _check_group(value: str | None, markers: tuple[str, ...]) -> bool:
     return value is not None and (bool(NUMBER.match(value)) or value in markers)
+
+
+INTEGER = re.compile(r"-?[0-9]+\Z")
+
+
+def _check_integer(value: str | None, markers: tuple[str, ...]) -> bool:
+    """T2(1): a group the writer fills with an integer (a count) is an integer or a marker; an
+    empty or non-numeric cell fails. Its value is then compared exactly, as an ``exact`` group."""
+    return value is not None and (bool(INTEGER.match(value)) or value in markers)
 
 
 def _markers(template: dict) -> dict[str, tuple[str, ...]]:
@@ -364,7 +394,8 @@ def compare_report(a: str, b: str, schema: dict, cov: Coverage | None = None) ->
             for found in (mx, my)
             for _, match, groups, markers in found
             for group, role in groups.items()
-            if role == "measurement" and not _check_group(match.group(group), markers[group])
+            if (role == "measurement" and not _check_group(match.group(group), markers[group]))
+            or (role == "integer" and not _check_integer(match.group(group), markers[group]))
         ]
         if malformed:
             # a measurement group that is neither a number nor a marker fails, equal or not (S1)
@@ -492,19 +523,26 @@ HEX64 = re.compile(r"[0-9a-f]{64}\Z")
 
 
 def claim_values(text: str) -> dict[str, str]:
-    """The serialized entry of each claim (``payload.claims.<path>``): the raw bytes of its key
-    and of its value, so that an escape in either is a difference (round 2, item 4)."""
+    """The serialized line of each claim entry (``payload.claims.<path>``), byte for byte (T2(2)):
+    the whitespace before its key, the key, the whitespace and the separator ``:``, the value, and
+    the comma after it if any. An escape, a space or a separator that differs is a difference. A
+    value that is not a string gives no entry (``compare_claims`` reports it)."""
     prefix = "payload.claims."
-    keys: dict[str, str] = {}
+    tokens = lex(text)
     out: dict[str, str] = {}
-    for k, r, p in lex(text):
-        if not p.startswith(prefix):
+    for i, (kind, _raw, path) in enumerate(tokens):
+        if kind != "key" or not path.startswith(prefix):
             continue
-        name = p[len(prefix) :]
-        if k == "key":
-            keys[name] = r
-        elif k == "str":
-            out[name] = keys.get(name, "") + ":" + r
+        start = i - 1 if i > 0 and tokens[i - 1][0] == "ws" else i
+        j = i + 1
+        while j < len(tokens) and (tokens[j][0] == "ws" or tokens[j][1] == ":"):
+            j += 1
+        if j >= len(tokens) or tokens[j][0] != "str":
+            continue
+        end = j + 1
+        if end < len(tokens) and tokens[end][1] == ",":
+            end += 1
+        out[path[len(prefix) :]] = "".join(t[1] for t in tokens[start:end])
     return out
 
 
@@ -560,26 +598,58 @@ def last_commit(rel: str) -> str:
     return git("log", "-1", "--format=%H", "--", rel).decode().strip()
 
 
-def receipt_ok(rel: str, manifest_sha: str, files: list[str]) -> bool:
-    """The committed order-proof receipt of ``rel`` (round 2, item 5): its schema, path and
-    SHA-256, the commit it attests is the commit that last changed ``rel``, that commit holds
-    exactly ``files``, and it passed."""
+TRAILER = "CI: order-proof"
+CODE_PATHS = ("src", "tests", "pyproject.toml", "uv.lock")
+
+
+def commit_files(commit: str) -> list[str]:
+    out = git("show", "--format=", "--name-only", commit).decode()
+    return sorted(line for line in out.splitlines() if line)
+
+
+def commit_facts(commit: str) -> tuple[int, bool, str]:
+    """The number of parents, whether the message has the order-proof trailer, the commit time."""
+    parents = git("show", "-s", "--format=%P", commit).decode().split()
+    message = git("show", "-s", "--format=%B", commit).decode()
+    when = git("show", "-s", "--format=%cI", commit).decode().strip()
+    return len(parents), TRAILER in message.splitlines(), when
+
+
+def utc(text: str):
+    from datetime import datetime
+
+    return datetime.fromisoformat(text.replace("Z", "+00:00"))
+
+
+def receipt_ok(rel: str, manifest_sha: str, files: list[str]) -> dict | None:
+    """The committed order-proof receipt of ``rel``, or None (round 2, item 5; T2(3)): its schema,
+    path, SHA-256, CI run and creation time; the commit it attests is the commit that last
+    changed ``rel``; that commit, as git holds it, has one parent, the trailer ``CI:
+    order-proof`` and exactly ``files``; and it passed."""
     receipt_rel = f"{RECEIPTS}/{manifest_sha}.v2.json"
     path = ROOT / receipt_rel
     if not path.is_file():
-        return False
+        return None
     data = path.read_bytes()
     if not committed(receipt_rel, data):
-        return False
+        return None
     receipt = strict_loads(data.decode("utf-8"))
-    return (
+    commit = last_commit(rel)
+    parents, trailer, _when = commit_facts(commit)
+    ok = (
         receipt.get("schema") == "refute-v0513-order-proof-2"
         and receipt.get("passed") is True
         and receipt.get("manifest") == rel
         and receipt.get("manifest_sha256") == manifest_sha
-        and receipt.get("evidence_commit") == last_commit(rel)
+        and receipt.get("evidence_commit") == commit
         and sorted(receipt.get("evidence_files", [])) == sorted(files)
+        and commit_files(commit) == sorted(files)
+        and parents == 1
+        and trailer
+        and isinstance(receipt.get("ci_run_id"), int)
+        and isinstance(receipt.get("ci_run_created_at"), str)
     )
+    return {**receipt, "receipt_rel": receipt_rel} if ok else None
 
 
 def journal_entries(rel: str) -> list[dict]:
@@ -588,20 +658,68 @@ def journal_entries(rel: str) -> list[dict]:
     return [strict_loads(line) for line in text.splitlines() if line.strip()]
 
 
-def head_digests(head: str, fixture: str) -> tuple[str, str]:
-    """The ``src`` tree and the fixture code's SHA-256 at a recorded head."""
-    tree = git("rev-parse", f"{head}:src").decode().strip()
-    return tree, sha(git("show", f"{head}:{fixture}"))
+def code_digest(head: str, entry: dict) -> dict:
+    """The code digest of T2(4) at a commit: the ``src`` tree, and the SHA-256 of the fixture
+    code, ``pyproject.toml``, ``uv.lock`` and the identity script."""
+    return {
+        "src_tree": git("rev-parse", f"{head}:src").decode().strip(),
+        "fixture_code_sha256": sha(git("show", f"{head}:{entry['fixture_code']}")),
+        "pyproject_sha256": sha(git("show", f"{head}:pyproject.toml")),
+        "uv_lock_sha256": sha(git("show", f"{head}:uv.lock")),
+        "script_sha256": sha(git("show", f"{head}:{entry['script']}")),
+    }
 
 
-def journal_bound(entries: list[dict], unit: dict, entry: dict, record_sha: str) -> list[str]:
+def same_code(authorized: str, head: str) -> bool:
+    """The code paths are byte for byte those of the authorized commit (``git diff --quiet``)."""
+    done = subprocess.run(["git", "diff", "--quiet", authorized, head, "--", *CODE_PATHS],
+                          cwd=ROOT, capture_output=True)  # fmt: skip
+    return done.returncode == 0
+
+
+def code_bound(doc: dict, name: str, entry: dict, run_head: str) -> list[str]:
+    """T2(4): the executor's records of the code, before and after the run, are present and
+    agree with the authorized commit, a clean tree and the frozen digest; the comparator also
+    recomputes the digest and the comparison from git at the run's head."""
+    problems: list[str] = []
+    check = doc.get("provenance", {}).get("code_check") or {}
+    for when in ("before", "after"):
+        c = check.get(when)
+        if not isinstance(c, dict):
+            problems.append(f"the {name} has no code check {when} the run")
+            continue
+        if c.get("head") != run_head:
+            problems.append(f"the {name}'s code check {when} the run is not at the run's head")
+        if c.get("authorized_commit") != entry["authorized_code_commit"]:
+            problems.append(f"the {name}'s code check {when} names another authorized commit")
+        if c.get("same_code_as_authorized") is not True:
+            problems.append(f"the {name}'s code {when} the run is not the authorized code")
+        if c.get("porcelain") != "":
+            problems.append(f"the {name}'s tree {when} the run is not clean")
+        if c.get("digest") != entry["code_digest"]:
+            problems.append(f"the {name}'s code digest {when} the run is not the frozen one")
+    if doc.get("provenance", {}).get("head") != run_head:
+        problems.append(f"the {name}'s head is not the run's head")
+    try:
+        if code_digest(run_head, entry) != entry["code_digest"]:
+            problems.append(f"the code at the {name}'s run head is not the frozen digest")
+        if not same_code(entry["authorized_code_commit"], run_head):
+            problems.append(f"the code at the {name}'s run head is not the authorized code")
+    except subprocess.CalledProcessError:
+        problems.append(f"the {name}'s run head cannot be read from git")
+    return problems
+
+
+def journal_bound(
+    entries: list[dict], unit: dict, entry: dict, record_sha: str
+) -> tuple[list[str], dict, dict]:
     """Round 2, item 5: a record is NR-A2's only if the committed journal holds exactly one run of
     its authorized unit, with the frozen unit spec, script, setting and order proof, ended
-    successfully, whose recorded output is these bytes."""
+    successfully, whose recorded output is these bytes. Returns the run's two entries."""
     name = unit["unit"]
     befores = [e for e in entries if e.get("event") == "before" and e.get("unit") == name]
     if len(befores) != 1:
-        return [f"{name}: the journal does not hold exactly one run ({len(befores)})"]
+        return [f"{name}: the journal does not hold exactly one run ({len(befores)})"], {}, {}
     b = befores[0]
     problems = []
     ids = b.get("identity_sha256", {})
@@ -621,17 +739,59 @@ def journal_bound(entries: list[dict], unit: dict, entry: dict, record_sha: str)
         e for e in entries if e.get("event") == "after" and e.get("attempt_id") == b["attempt_id"]
     ]
     if len(afters) != 1:
-        return problems + [f"{name}: the run has no single end in the journal"]
+        return problems + [f"{name}: the run has no single end in the journal"], b, {}
     a = afters[0]
+    if a.get("unit") != name:
+        problems.append(f"{name}: the run's end belongs to another unit")
     if a.get("status") != "ok" or a.get("exit_code") != 0:
         problems.append(f"{name}: the run did not end successfully")
     if (a.get("outputs_sha256") or {}).get(unit["output"]) != record_sha:
         problems.append(f"{name}: the journal's output SHA-256 is not the committed record")
+    return problems, b, a
+
+
+def order_bound(
+    entry: dict, freeze_rel: str, receipt: dict, runs: list[tuple[str, dict, dict, str]]
+) -> list[str]:
+    """T2(3), each piece checked from the journal and from git; a missing piece or a wrong order
+    fails:
+    1. the freeze commit is an ancestor of the NR-A2 manifest's commit;
+    2. the manifest was pushed alone with its passed order proof (``receipt_ok``), and the
+       receipt's commit and the manifest's commit are ancestors of each run's head;
+    3. each run starts after the ``created_at`` of the manifest's push run, and ends after it
+       starts;
+    4. each record's commit comes after its run's end."""
+    problems: list[str] = []
+    m_commit = last_commit(entry["manifest"]["path"])
+    f_commit = last_commit(freeze_rel)
+    if not (f_commit and m_commit and f_commit != m_commit and is_ancestor(f_commit, m_commit)):
+        problems.append("the freeze commit is not an ancestor of the NR-A2 manifest's commit")
+    r_commit = last_commit(receipt["receipt_rel"])
+    pushed = utc(receipt["ci_run_created_at"])
+    for name, before, after, record_rel in runs:
+        head = before.get("head", "")
+        if not (head and is_ancestor(m_commit, head) and is_ancestor(r_commit, head)):
+            problems.append(f"{name}: the run's head does not hold the manifest and its receipt")
+        try:
+            start, end = utc(before["utc"]), utc(after["utc"])
+        except (AttributeError, KeyError, TypeError, ValueError):
+            problems.append(f"{name}: the run's start or end time is missing")
+            continue
+        if not start > pushed:
+            problems.append(f"{name}: the run started before the manifest's push run")
+        if not end >= start:
+            problems.append(f"{name}: the run's end is before its start")
+        rec_commit = last_commit(record_rel)
+        if not (rec_commit and utc(commit_facts(rec_commit)[2]) > end):
+            problems.append(f"{name}: the record was committed before the run's end")
     return problems
 
 
-def bind_prospective(entry: dict, label: str, rec: dict, claims: dict, raw: dict) -> list[str]:
-    """Decision S3: NR-A2's records are bound to its manifest, its journal runs and its setting."""
+def bind_prospective(
+    entry: dict, label: str, rec: dict, claims: dict, raw: dict, freeze_rel: str
+) -> list[str]:
+    """Decision S3, with T2(3) and T2(4): NR-A2's records are bound to its manifest, its journal
+    runs in order, its authorized code and its setting."""
     problems: list[str] = []
     m_rel = entry["manifest"]["path"]
     manifest = (ROOT / m_rel).read_bytes()
@@ -639,22 +799,24 @@ def bind_prospective(entry: dict, label: str, rec: dict, claims: dict, raw: dict
         problems.append("the NR-A2 manifest's SHA-256 is not the frozen one")
     if not committed(m_rel, manifest):
         problems.append("the NR-A2 manifest is not committed")
-    if not receipt_ok(m_rel, entry["manifest"]["sha256"], [m_rel]):
+    receipt = receipt_ok(m_rel, entry["manifest"]["sha256"], [m_rel])
+    if receipt is None:
         problems.append("the NR-A2 manifest has no passed order-proof receipt for it alone")
     entries = journal_entries(entry["journal"])
-    for key, unit in (
-        ("record", entry["units"]["golden"]),
-        ("claim_record", entry["units"]["claims"]),
+    runs = []
+    for key, unit, name, doc in (
+        ("record", entry["units"]["golden"], "golden record", rec),
+        ("claim_record", entry["units"]["claims"], "claim record", claims),
     ):
-        problems += journal_bound(entries, unit, entry, sha(raw[key]))
-    for name, doc in (("golden record", rec), ("claim record", claims)):
-        head = doc.get("provenance", {}).get("head", "")
-        try:
-            digests = head_digests(head, entry["fixture_code"])
-        except subprocess.CalledProcessError:
-            digests = ("", "")
-        if digests != (entry["src_tree"], entry["fixture_code_sha256"]):
-            problems.append(f"the {name}'s head has not the frozen src tree and fixture code")
+        found, before, after = journal_bound(entries, unit, entry, sha(raw[key]))
+        problems += found
+        if before and after:
+            runs.append((unit["unit"], before, after, entry[key]))
+            problems += code_bound(doc, name, entry, before.get("head", ""))
+        else:
+            problems.append(f"the {name} has no complete run to check its code and order against")
+    if receipt is not None:
+        problems += order_bound(entry, freeze_rel, receipt, runs)
     m_commit = last_commit(m_rel)
     for key in ("record", "claim_record"):
         rel = entry[key]
@@ -679,7 +841,7 @@ def bind_prospective(entry: dict, label: str, rec: dict, claims: dict, raw: dict
     return problems
 
 
-def bind(freeze: dict, label: str) -> tuple[dict, list[str]]:
+def bind(freeze: dict, label: str, freeze_rel: str = "") -> tuple[dict, list[str]]:
     """Read once, and bind, the schema and the four records of a comparison."""
     problems: list[str] = []
     raw: dict[str, bytes] = {}
@@ -716,7 +878,9 @@ def bind(freeze: dict, label: str) -> tuple[dict, list[str]]:
     except (MalformedError, UnicodeDecodeError) as exc:
         return {}, problems + [f"a bound file is malformed: {exc}"]
     if entry is not None:
-        problems += bind_prospective(entry, label, parsed["record"], parsed["claim_record"], raw)
+        problems += bind_prospective(
+            entry, label, parsed["record"], parsed["claim_record"], raw, freeze_rel
+        )
     parsed["raw"] = raw
     return parsed, problems
 
@@ -732,9 +896,9 @@ def main() -> int:
     rel = freeze_path.resolve().relative_to(ROOT).as_posix()
     folder = rel.rsplit("/", 1)[0]
     files = [rel, f"{folder}/comparator-schema.json"]
-    if not committed(rel, freeze_raw) or not receipt_ok(rel, sha(freeze_raw), files):
+    if not committed(rel, freeze_raw) or receipt_ok(rel, sha(freeze_raw), files) is None:
         problems.append("the freeze list is not committed with a passed order-proof receipt")
-    parsed, bound = bind(freeze, label)
+    parsed, bound = bind(freeze, label, rel)
     problems += bound
     if problems:
         print(json.dumps({"result": "FAIL", "problems": problems}, indent=1))

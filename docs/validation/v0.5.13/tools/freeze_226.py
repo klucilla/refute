@@ -94,6 +94,12 @@ def unit_item(kind: str, output: str) -> dict:
 def main() -> int:
     out_rel = Path(sys.argv[1]).as_posix()
     out = ROOT / out_rel
+    authorized = git("rev-parse", "@").decode().strip()
+    draft = json.loads((ROOT / sys.argv[2]).read_text(encoding="utf-8"))
+    if draft.get("authorized_code_commit") != authorized:
+        print(json.dumps({"result": "FAIL", "problem": "the NR-A2 manifest draft does not name "
+                          "the checked-out commit as its authorized code commit"}))  # fmt: skip
+        return 1
     keys = load(f"{L4}/schema-keys.json")
     parts = load(f"{L4}/comparator-schema-parts.json")
     schema = {
@@ -104,6 +110,8 @@ def main() -> int:
         "exact_subtree_keys": keys["exact_subtree_keys"],
         "exact_key_regex": parts.get("exact_key_regex"),
         "computed_keys_despite_name": parts.get("computed_keys_despite_name", {}),
+        # decision T2(1): the explicit list of exact integer keys, from source (count_keys.py)
+        "exact_integer_keys": load(f"{L4}/count-keys.json")["exact_integer_keys"],
         "exact_key_exempt_paths": parts.get("exact_key_exempt_paths", []),
         "exact_by_sibling": parts.get("exact_by_sibling", []),
         "message_lines": parts.get("message_lines", {}),
@@ -153,7 +161,8 @@ def main() -> int:
                    "exact-key exempt paths, exact by sibling, message lines, and report "
                    "templates",
                    "built_from": [file_item(f"{L4}/comparator-schema-parts.json"),
-                                  file_item(f"{L4}/schema-keys.json")]},
+                                  file_item(f"{L4}/schema-keys.json"),
+                                  file_item(f"{L4}/count-keys.json")]},
         "margin_manifest": None,
         # decision S3: NR-A2 runs after this freeze; its records are bound to this entry
         "prospective": {
@@ -174,9 +183,17 @@ def main() -> int:
                     "claims": unit_item("claims", f"{V}/step1/claim-hashes-nr-a2-t2.json"),
                 },
                 "fixture_code": FIXTURE_CODE,
-                "src_tree": git("rev-parse", "@:src").decode().strip(),
-                "fixture_code_sha256": sha(git("show", f"@:{FIXTURE_CODE}")),
-                "src_tree_note": "the src tree at the freeze's parent commit; it differs from "
+                # decision T2(4): the authorized code commit (the freeze's parent, named by the
+                # manifest) and the code digest there
+                "authorized_code_commit": authorized,
+                "code_digest": {
+                    "src_tree": git("rev-parse", f"{authorized}:src").decode().strip(),
+                    "fixture_code_sha256": sha(git("show", f"{authorized}:{FIXTURE_CODE}")),
+                    "pyproject_sha256": sha(git("show", f"{authorized}:pyproject.toml")),
+                    "uv_lock_sha256": sha(git("show", f"{authorized}:uv.lock")),
+                    "script_sha256": sha(git("show", f"{authorized}:{IDENTITY_V2}")),
+                },
+                "src_tree_note": "the src tree at the authorized commit; it differs from "
                 "ID-BEFORE's and NR-A1's only in src/refute/__init__.py (the package version, "
                 "commit 124bdd92a2be870ca16d53e280a1d84ac07986f9), which the goldens do not "
                 "serialize",

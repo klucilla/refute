@@ -5,6 +5,15 @@ for ID-BEFORE, NR-A1 and ID-AFTER.
     unit nr-a2-t2-golden:  {python} -I -B <this file> golden nr-a2-t2
     unit nr-a2-t2-claims:  {python} -I -B <this file> claims nr-a2-t2
 
+**The code check (decision T2(4), #218 comment 7227882370).** Before and after the run, the
+script records HEAD, whether the code paths (``src``, ``tests``, ``pyproject.toml``,
+``uv.lock``) at HEAD are byte for byte those of the authorized commit that NR-A2's committed
+manifest names, ``git status --porcelain`` of those paths and of this script, and the code digest
+at HEAD (the ``src`` tree, and the SHA-256 of the fixture code, ``pyproject.toml``, ``uv.lock`` and
+this script). It refuses to run, or to write its record, unless the code is the authorized code,
+the porcelain status is empty, the digest is the one the freeze list holds, and HEAD did not move.
+The two checks go into the record (``provenance.code_check``), and the comparator requires them.
+
 The procedures are those of ``identity.py``, unchanged, with three differences:
 - the only label allowed is ``nr-a2-t2``, and a label's folder must be empty (it runs once);
 - each record names its label (``label``), so that the comparator can bind it to NR-A2;
@@ -36,6 +45,61 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[4]
 LABELS = ("nr-a2-t2",)
+MANIFEST = "docs/validation/v0.5.13/manifests/nr-a2.json"
+SCRIPT = "docs/validation/v0.5.13/tools/identity_v2.py"
+FIXTURE_CODE = "tests/baseline_code_v0511.py"
+CODE_PATHS = ("src", "tests", "pyproject.toml", "uv.lock")
+
+
+def git(*args: str) -> str:
+    return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, check=True,
+                          text=True).stdout  # fmt: skip
+
+
+def git_bytes(*args: str) -> bytes:
+    return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, check=True).stdout
+
+
+def authorization() -> tuple[str, dict]:
+    """The authorized code commit named by NR-A2's committed manifest, and the frozen code digest
+    of the freeze list it names (decision T2(4))."""
+    data = (ROOT / MANIFEST).read_bytes()
+    if git_bytes("show", f"@:{MANIFEST}") != data:
+        raise SystemExit(f"refused: {MANIFEST} is not committed with these bytes")
+    manifest = json.loads(data)
+    freeze = json.loads((ROOT / manifest["freeze"]).read_text(encoding="utf-8"))
+    entry = freeze["prospective"]["nr-a2-t2"]
+    if entry["authorized_code_commit"] != manifest["authorized_code_commit"]:
+        raise SystemExit("refused: the manifest and the freeze name different authorized commits")
+    return manifest["authorized_code_commit"], entry["code_digest"]
+
+
+def code_check(authorized: str) -> dict:
+    """T2(4): HEAD, whether the code paths at HEAD are those of the authorized commit, the
+    porcelain status of the code paths and this script, and the code digest at HEAD."""
+    head = git("rev-parse", "HEAD").strip()
+    same = subprocess.run(["git", "diff", "--quiet", authorized, head, "--", *CODE_PATHS],
+                          cwd=ROOT, capture_output=True).returncode == 0  # fmt: skip
+    porcelain = git("status", "--porcelain", "--", *CODE_PATHS, SCRIPT)
+    digest = {
+        "src_tree": git("rev-parse", f"{head}:src").strip(),
+        "fixture_code_sha256": hashlib.sha256(
+            git_bytes("show", f"{head}:{FIXTURE_CODE}")
+        ).hexdigest(),
+        "pyproject_sha256": hashlib.sha256(git_bytes("show", f"{head}:pyproject.toml")).hexdigest(),
+        "uv_lock_sha256": hashlib.sha256(git_bytes("show", f"{head}:uv.lock")).hexdigest(),
+        "script_sha256": hashlib.sha256(git_bytes("show", f"{head}:{SCRIPT}")).hexdigest(),
+    }
+    return {"head": head, "authorized_commit": authorized, "same_code_as_authorized": same,
+            "porcelain": porcelain, "digest": digest}  # fmt: skip
+
+
+def require(check: dict, frozen: dict, when: str) -> None:
+    if not (check["same_code_as_authorized"] and check["porcelain"] == ""
+            and check["digest"] == frozen):  # fmt: skip
+        raise SystemExit(f"refused: the code {when} the run is not the authorized code: {check}")
+
+
 THREAD_VARS = ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS")
 CHILD = (
     "import json, numpy, scipy.linalg, threadpoolctl; "
@@ -128,9 +192,17 @@ def main() -> int:
     kind, label = sys.argv[1], sys.argv[2]
     if label not in LABELS:
         raise SystemExit(f"label must be one of {LABELS}")
-    doc = golden(label) if kind == "golden" else claims(label) if kind == "claims" else None
-    if doc is None:
+    if kind not in ("golden", "claims"):
         raise SystemExit("kind must be golden or claims")
+    authorized, frozen = authorization()
+    before = code_check(authorized)
+    require(before, frozen, "before")  # nothing runs on other code
+    doc = golden(label) if kind == "golden" else claims(label)
+    after = code_check(authorized)
+    require(after, frozen, "after")  # no record is written if the code changed during the run
+    if after["head"] != before["head"]:
+        raise SystemExit("refused: HEAD moved during the run")
+    doc["provenance"]["code_check"] = {"before": before, "after": after}
     name = f"golden-{label}.json" if kind == "golden" else f"claim-hashes-{label}.json"
     out = Path(os.environ["REFUTE_RUN_OUT"])
     (out / name).write_text(json.dumps(doc, indent=1) + "\n", encoding="utf-8", newline="\n")

@@ -478,11 +478,24 @@ def _freeze(root: Path) -> dict:
                                "output": "s/a2-c.json"},
                 },
                 "fixture_code": "tests/f.py",
-                "src_tree": "tree",
-                "fixture_code_sha256": "3" * 64,
+                "authorized_code_commit": "auth",
+                "code_digest": dict(DIGEST),
             }
         },
     }  # fmt: skip
+
+
+DIGEST = {"src_tree": "tree", "fixture_code_sha256": "3" * 64, "pyproject_sha256": "4" * 64,
+          "uv_lock_sha256": "5" * 64, "script_sha256": "f" * 64}  # fmt: skip
+FREEZE_REL = "f/freeze.json"
+# the synthetic order: the manifest's push run at 20:50, the runs 21:00-21:10, records at 21:20
+PUSHED, START, END, RECORDED = (
+    "2026-11-27T20:50:00Z",
+    "2026-11-27T21:00:00Z",
+    "2026-11-27T21:10:00Z",
+    "2026-11-27T21:20:00+00:00",
+)
+COMMITS = {"f/": "F", "m/": "M", "r/": "R", "s/": "C"}
 
 
 def _journal(root: Path, freeze: dict, **change) -> list[dict]:
@@ -492,7 +505,8 @@ def _journal(root: Path, freeze: dict, **change) -> list[dict]:
     for i, key in enumerate(("golden", "claims")):
         unit = entry["units"][key]
         before = {
-            "event": "before", "unit": unit["unit"], "attempt_id": f"a{i}",
+            "event": "before", "unit": unit["unit"], "attempt_id": f"a{i}", "head": "h",
+            "utc": START,
             "identity_sha256": {unit["spec"]: unit["spec_sha256"],
                                 entry["script"]: entry["script_sha256"]},
             "env": dict(entry["thread_env"]),
@@ -501,21 +515,33 @@ def _journal(root: Path, freeze: dict, **change) -> list[dict]:
         }  # fmt: skip
         data = (root / unit["output"]).read_bytes()
         after = {
-            "event": "after", "attempt_id": f"a{i}", "status": "ok", "exit_code": 0,
+            "event": "after", "unit": unit["unit"], "attempt_id": f"a{i}", "status": "ok",
+            "exit_code": 0, "utc": END,
             "outputs_sha256": {unit["output"]: hashlib.sha256(data).hexdigest()},
         }  # fmt: skip
         for k, v in change.items():
-            target = before if k in before else after
-            target[k] = v
+            target = after if k.startswith("after_") else before
+            target[k.removeprefix("after_")] = v
         out += [before, after]
     return out
 
 
-def _nr_a2_records(root: Path, label="nr-a2-t2", script="f" * 64, threads=2, env="2") -> None:
+def _check(**change) -> dict:
+    check = {"head": "h", "authorized_commit": "auth", "same_code_as_authorized": True,
+             "porcelain": "", "digest": dict(DIGEST)}  # fmt: skip
+    check.update(change)
+    return check
+
+
+def _nr_a2_records(
+    root: Path, label="nr-a2-t2", script="f" * 64, threads=2, env="2", code_check=None
+) -> None:
+    code = code_check if code_check is not None else {"before": _check(), "after": _check()}
     prov = {
         "head": "h",
         "script_sha256": script,
         "blas": {"thread_env": {"OMP_NUM_THREADS": env}},
+        "code_check": code,
     }
     golden = {"label": label, "payload": {}, "provenance": {**prov}}
     golden["provenance"]["blas"] = {
@@ -530,52 +556,57 @@ def _git_ok(
     monkeypatch,
     root: Path,
     freeze: dict,
-    ancestor=True,
+    not_ancestor=(),
     receipt=True,
     committed=True,
     journal=None,
-    tree="tree",
+    digest=None,
+    same=True,
+    recorded=RECORDED,
 ):
+    receipt_doc = {"ci_run_created_at": PUSHED, "receipt_rel": "r/receipt.json"}
     monkeypatch.setattr(comp, "ROOT", root)
     monkeypatch.setattr(comp, "committed", lambda rel, data: committed)
-    monkeypatch.setattr(comp, "receipt_ok", lambda rel, s, files: receipt)
-    monkeypatch.setattr(comp, "last_commit", lambda rel: "m" if rel.startswith("m/") else "r")
-    monkeypatch.setattr(comp, "is_ancestor", lambda a, b: ancestor)
-    monkeypatch.setattr(comp, "head_digests", lambda head, fixture: (tree, "3" * 64))
-    entries = journal if journal is not None else None
+    monkeypatch.setattr(comp, "receipt_ok", lambda rel, s, files: receipt_doc if receipt else None)
+    monkeypatch.setattr(comp, "last_commit", lambda rel: COMMITS[rel[:2]])
+    monkeypatch.setattr(comp, "is_ancestor", lambda a, b: (a, b) not in not_ancestor)
+    monkeypatch.setattr(comp, "commit_facts", lambda c: (1, True, recorded))
+    monkeypatch.setattr(comp, "code_digest", lambda head, entry: digest or dict(DIGEST))
+    monkeypatch.setattr(comp, "same_code", lambda a, b: same)
     monkeypatch.setattr(
         comp,
         "journal_entries",
-        lambda rel: entries if entries is not None else _journal(root, freeze),
+        lambda rel: journal if journal is not None else _journal(root, freeze),
     )
+
+
+def _bind(freeze: dict, label: str = "nr-a2-t2") -> list[str]:
+    return comp.bind(freeze, label, FREEZE_REL)[1]
 
 
 def test_frozen_settings_are_bound_by_hash(tmp_path, monkeypatch):
     freeze = _freeze(tmp_path)
     _git_ok(monkeypatch, tmp_path, freeze)
-    parsed, problems = comp.bind(freeze, "nr-a1-t1")
+    parsed, problems = comp.bind(freeze, "nr-a1-t1", FREEZE_REL)
     assert problems == [] and "raw" in parsed
     (tmp_path / "s/t1-c.json").write_text('{"payload": {"x": 1}}', encoding="utf-8")
-    _, problems = comp.bind(freeze, "nr-a1-t1")
-    assert problems == ["alt_claims: SHA-256 is not the frozen one"]
+    assert _bind(freeze, "nr-a1-t1") == ["alt_claims: SHA-256 is not the frozen one"]
 
 
 def test_no_unbound_path(tmp_path, monkeypatch):
     # decision S3: a label that is neither frozen nor the frozen prospective one is refused
     freeze = _freeze(tmp_path)
     _git_ok(monkeypatch, tmp_path, freeze)
-    _, problems = comp.bind(freeze, "nr-a2-t3")
+    problems = _bind(freeze, "nr-a2-t3")
     assert problems and "neither" in problems[0]
-    _, problems = comp.bind(freeze, "id-before")
-    assert problems  # the reference is never an alternate
+    assert _bind(freeze, "id-before")  # the reference is never an alternate
 
 
 def test_nr_a2_is_bound_to_its_manifest_and_setting(tmp_path, monkeypatch):
     freeze = _freeze(tmp_path)
     _nr_a2_records(tmp_path)
     _git_ok(monkeypatch, tmp_path, freeze)
-    _, problems = comp.bind(freeze, "nr-a2-t2")
-    assert problems == []
+    assert _bind(freeze) == []
     for kwargs, expected in (
         ({"label": "nr-a1-t1"}, "labelled"),
         ({"script": "e" * 64}, "identity script"),
@@ -583,22 +614,20 @@ def test_nr_a2_is_bound_to_its_manifest_and_setting(tmp_path, monkeypatch):
         ({"env": "4"}, "thread variables"),
     ):
         _nr_a2_records(tmp_path, **kwargs)
-        _, problems = comp.bind(freeze, "nr-a2-t2")
+        problems = _bind(freeze)
         assert any(expected in p for p in problems), (kwargs, problems)
     _nr_a2_records(tmp_path)
     for kwargs, expected in (
-        ({"ancestor": False}, "after the NR-A2 manifest"),
+        ({"not_ancestor": {("M", "C")}}, "after the NR-A2 manifest"),
         ({"receipt": False}, "order-proof receipt"),
         ({"committed": False}, "not committed"),
-        ({"tree": "other"}, "frozen src tree"),
     ):
         _git_ok(monkeypatch, tmp_path, freeze, **kwargs)
-        _, problems = comp.bind(freeze, "nr-a2-t2")
+        problems = _bind(freeze)
         assert any(expected in p for p in problems), (kwargs, problems)
     _git_ok(monkeypatch, tmp_path, freeze)
     (tmp_path / "m/nr-a2.json").write_text('{"manifest": "changed"}', encoding="utf-8")
-    _, problems = comp.bind(freeze, "nr-a2-t2")
-    assert any("not the frozen one" in p for p in problems)
+    assert any("not the frozen one" in p for p in _bind(freeze))
 
 
 def test_nr_a2_records_need_their_journal_runs(tmp_path, monkeypatch):
@@ -608,21 +637,133 @@ def test_nr_a2_records_need_their_journal_runs(tmp_path, monkeypatch):
     _nr_a2_records(tmp_path)
     for change, expected in (
         ({"env": {"OMP_NUM_THREADS": "4"}}, "thread variables"),
-        ({"status": "failed"}, "did not end successfully"),
-        ({"outputs_sha256": {}}, "output SHA-256"),
+        ({"after_status": "failed"}, "did not end successfully"),
+        ({"after_outputs_sha256": {}}, "output SHA-256"),
         ({"identity_sha256": {}}, "unit spec"),
         ({"order_proof": {}}, "order proof"),
     ):
         _git_ok(monkeypatch, tmp_path, freeze, journal=_journal(tmp_path, freeze, **change))
-        _, problems = comp.bind(freeze, "nr-a2-t2")
+        problems = _bind(freeze)
         assert any(expected in p for p in problems), (change, problems)
     _git_ok(monkeypatch, tmp_path, freeze, journal=[])
-    _, problems = comp.bind(freeze, "nr-a2-t2")
-    assert any("exactly one run" in p for p in problems)
+    assert any("exactly one run" in p for p in _bind(freeze))
     twice = _journal(tmp_path, freeze)
     _git_ok(monkeypatch, tmp_path, freeze, journal=twice + twice)
-    _, problems = comp.bind(freeze, "nr-a2-t2")
-    assert any("exactly one run" in p for p in problems)
+    assert any("exactly one run" in p for p in _bind(freeze))
+
+
+# --- decision T2: one test per attack of Codex's round 3 (s5/codex/answer-r3.md) -------------
+
+
+def test_t2_1_counts_ids_and_versions_are_exact():
+    # attack 1: candidate.n_transits 100 -> 100.00001 and v05.discovery_version 4 -> 4.0
+    schema = {
+        **SCHEMA,
+        "exact_integer_keys": {"n_transits": ["types.py:256"], "discovery_version": ["p:863"]},
+        "json": {"verdict": {"measurement": ["candidate.**", "v05.**"], "exact": []}},
+    }
+
+    def cmp(a: str, b: str) -> list[str]:
+        return comp.compare_json(a, b, "verdict", schema)
+
+    count = '{"candidate": {"n_transits": VALUE, "period": 1.5}}'
+    assert cmp(count.replace("VALUE", "100"), count.replace("VALUE", "100.00001"))
+    version = '{"v05": {"discovery_version": VALUE}}'
+    assert cmp(version.replace("VALUE", "4"), version.replace("VALUE", "4.0"))
+    # a change of notation is compared by value only on a measurement path
+    period = '{"candidate": {"n_transits": 3, "period": VALUE}}'
+    assert cmp(period.replace("VALUE", "1"), period.replace("VALUE", "1e0")) == []
+
+
+def test_t2_1_empty_or_non_numeric_cells_fail():
+    # attack 1: equal cadence rows with an empty or n/a fraction, or a bogus count, passed
+    parts = json.loads(
+        (ROOT / "docs/validation/v0.5.13/l4/comparator-schema-parts.json").read_text("utf-8")
+    )
+    schema = {**SCHEMA, "report": parts["report"]}
+    for line in (
+        "| 1 | 18000 | 19000 |  |",
+        "| 1 | 18000 | 19000 | n/a |",
+        "| 1 | bogus | 19000 | 0.947 |",
+        "| 1 |  | 19000 | 0.947 |",
+        "| SNR |  | |",
+        "| Period (d) |  | n/a |",
+        "| 2019 | PASS | bogus | 12.1 | 0.3 |",
+    ):
+        assert comp.compare_report(line, line, schema), line
+    good = "| 1 | 18000 | 19000 | 0.947 |"
+    assert comp.compare_report(good, good, schema) == []
+    assert comp.compare_report(good, good.replace("18000", "18001"), schema)  # a count, exact
+    holdout = "| 2019 | PASS | n/a | 12.1 | 0.3 |"
+    assert comp.compare_report(holdout, holdout, schema) == []
+
+
+def test_t2_2_claim_line_is_compared_whole():
+    # attack 2: spaces around the separator changed, and passed
+    a = rec({"c.yaml": H1, "d.yaml": "ERROR ClaimError: x"})
+    for b in (a.replace('"c.yaml": ', '"c.yaml":  '), a.replace('"c.yaml": ', '"c.yaml" : ')):
+        assert json.loads(a) == json.loads(b)
+        assert comp.compare_claims(a, b, EXC) == ["claim c.yaml: serialized entry differs"]
+    assert comp.compare_claims(a, a, EXC) == []
+
+
+def test_t2_3_order_pieces_missing_or_out_of_order_fail(tmp_path, monkeypatch):
+    # attack 3: a run not proven to follow the freeze, the manifest and the receipt's commit
+    freeze = _freeze(tmp_path)
+    _nr_a2_records(tmp_path)
+    cases = (
+        ({"not_ancestor": {("F", "M")}}, "freeze commit is not an ancestor"),
+        ({"receipt": False}, "order-proof receipt"),
+        ({"not_ancestor": {("R", "h")}}, "does not hold the manifest and its receipt"),
+        ({"not_ancestor": {("M", "h")}}, "does not hold the manifest and its receipt"),
+        ({"journal": _journal(tmp_path, freeze, utc="2026-11-27T20:40:00Z")}, "push run"),
+        ({"journal": _journal(tmp_path, freeze, after_utc="2026-11-27T20:59:00Z")}, "end is"),
+        ({"journal": _journal(tmp_path, freeze, after_unit="other")}, "another unit"),
+        ({"journal": _journal(tmp_path, freeze, utc=None)}, "time is missing"),
+        ({"recorded": "2026-11-27T21:05:00+00:00"}, "before the run's end"),
+    )
+    for kwargs, expected in cases:
+        _git_ok(monkeypatch, tmp_path, freeze, **kwargs)
+        problems = _bind(freeze)
+        assert any(expected in p for p in problems), (kwargs, problems)
+
+
+def test_t2_4_code_records_missing_or_divergent_fail(tmp_path, monkeypatch):
+    # attack 4: a run with local changes, or at another head, or without the code records
+    freeze = _freeze(tmp_path)
+    cases = (
+        ({"code_check": {}}, {}, "no code check before"),
+        ({"code_check": {"before": _check(), "after": _check(head="x")}}, {}, "run's head"),
+        ({"code_check": {"before": _check(porcelain=" M src/a.py\n"), "after": _check()}}, {},
+         "not clean"),
+        ({"code_check": {"before": _check(digest={}), "after": _check()}}, {}, "digest before"),
+        ({"code_check": {"before": _check(authorized_commit="x"), "after": _check()}}, {},
+         "another authorized commit"),
+        ({"code_check": {"before": _check(same_code_as_authorized=False), "after": _check()}},
+         {}, "not the authorized code"),
+        ({}, {"same": False}, "run head is not the authorized code"),
+        ({}, {"digest": {"src_tree": "other"}}, "run head is not the frozen digest"),
+    )  # fmt: skip
+    for record_kw, git_kw, expected in cases:
+        _nr_a2_records(tmp_path, **record_kw)
+        _git_ok(monkeypatch, tmp_path, freeze, **git_kw)
+        problems = _bind(freeze)
+        assert any(expected in p for p in problems), (record_kw, git_kw, problems)
+
+
+def test_t2_4_the_executor_refuses_other_code():
+    spec = importlib.util.spec_from_file_location(
+        "v0513_identity_v2", ROOT / "docs/validation/v0.5.13/tools/identity_v2.py"
+    )
+    ident = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(ident)
+    ok = {"same_code_as_authorized": True, "porcelain": "", "digest": dict(DIGEST)}
+    ident.require(ok, dict(DIGEST), "before")
+    import pytest
+
+    for bad in ({"same_code_as_authorized": False}, {"porcelain": "?? x"}, {"digest": {}}):
+        with pytest.raises(SystemExit):
+            ident.require({**ok, **bad}, dict(DIGEST), "before")
 
 
 def test_round_2_report_and_json_forms():
