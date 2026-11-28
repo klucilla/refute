@@ -86,3 +86,62 @@ DOI `10.5281/zenodo.23301001` and concept DOI `10.5281/zenodo.23301000` (issue #
 the next release**, the `.zenodo.json` of #53 must be on `main`: when present it replaces the
 metadata Zenodo takes from `CITATION.cff`, so that each release's record carries the data terms
 of each component.
+
+### Papers in their authors' reply period (adopted 2026-11-27, #207, the maintainer's decision X1)
+
+Rule 3's reply-period restriction ("nothing about a paper whose authors' reply period is open")
+also applies to every artifact a release makes public, for papers still under embargo.
+- **Exception:** item 2 below.
+- **Courtesy periods:** governed by item 1.
+
+The artifacts include:
+- the Zenodo archive of the release;
+- the GitHub release's source ZIP and tarball;
+- the wheel and sdist published to PyPI or TestPyPI. The release workflow builds these from
+  `main`, which may be another commit than the release tag's.
+
+**Before each release, and again before each package publication:**
+
+1. **The list.**
+   - **Where the agent looks.** The agent inventories the papers that the exact commit of each
+     artifact holds, and the planned public text (release notes, the release's issue).
+   - **What the `reply/` annexes must show** for each paper
+     ([right-of-reply.md](right-of-reply.md), items 5 to 7):
+     - the notice recorded;
+     - any delivery failure;
+     - where a reply period applies, its effective deadline, extensions included.
+   - **What goes on the list:**
+     - every open reply period;
+     - every paper whose eligibility for publication is unresolved: a gate not yet passed, or
+       missing or ambiguous evidence of the notice or the deadline.
+
+     An unresolved paper is treated as under embargo.
+   - **How a mandatory wait is counted:**
+     - a deadline given as a date stays open through that date, in the time zone recorded for the
+       deadline;
+     - an ambiguous cutoff is treated as unresolved;
+     - a reply received does not end the wait.
+   - **Courtesy periods** ([right-of-reply.md](right-of-reply.md), "Papers with no negative claim")
+     do not block, once the notice is recorded and the gate has passed.
+   - **Before any public tag or publication,** the list is computed again against the exact
+     commit, the actual artifacts and the planned public text, with the current reply and gate
+     states.
+     - The release's issue records the commit's SHA, the date, and the list or "none".
+     - For each package publication it also records the build's SHA and the SHA-256 of the wheel
+       and the sdist, before the deployment is approved.
+2. **When a release may be published.**
+   - **When the check passes:** when no listed paper is still under embargo. The check also passes when the maintainer records in the release's issue
+     that every public artifact and text holds only hashes or neutral metadata about each listed
+     paper still under embargo ([right-of-reply.md](right-of-reply.md), item 3).
+   - **Who publishes:** the maintainer approves the public text, and authorizes each public tag or
+     publication only after the check passes. The maintainer starts the publication, including by
+     approving the deployment of a package upload.
+   - **A paper's results** are published only under the conditions of
+     [right-of-reply.md](right-of-reply.md), "Order: notification, gate, publication". **An
+     author's reply** is published only with their permission (item 7 there).
+3. **If the check blocks a publication.** The release is held, unless item 2 allows it. Git history
+   is kept as it is. If a release breached this rule, a separate dated correction is prepared for
+   the maintainer's approval, and the next release notes refer to it.
+4. **The public record.** The release's issue records the check and the decision. The approved
+   release notes summarize the list, or say "none". While an embargo applies, the issue, the notes
+   and any public correction use only hashes or neutral metadata about that paper.
