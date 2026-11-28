@@ -1,0 +1,19 @@
+{
+ "schema": "refute-v0513-vm-admin-archive-1",
+ "labels": [
+  "exploratory",
+  "method_status: not_validated"
+ ],
+ "decision": "#218, block X, item X5; checklist #135, step A5",
+ "destination": "Drive: Projetos/refute/vm-decommission-2026-11-27/admin-copy",
+ "files": 2,
+ "files_per_source": {
+  "Transcripts": 0,
+  "RefuteVm-backup": 1,
+  "pssc": 1
+ },
+ "recorded_deviation": "Transcripts is empty at its source (the maintainer, 2026-11-27); 0 files there is not a problem",
+ "manifest_sha256": "9dc2a9b9226a323696460ffc9101dd8c3144add8b6d83eb8e419ffb220935fcc",
+ "a4_csv_sha256": "9b87e51bba480e3ac36656bbf2cb51d22324360697239648237408f377e11680",
+ "problems": []
+}

@@ -155,3 +155,19 @@ The decision block W is recorded on #218, comment 7229841832. It acts on this re
 - **One `gh4` call failed before acting,** on an unknown flag (`--comment-file-placeholder`, a slip in the command). It closed nothing; #209 was then commented and closed in order.
 - **The VM archive's summary reports one problem by design:** no file could be read from `C:\ProgramData\RefuteVm-backup` without administrator rights. Part A of the #135 checklist copies it.
 - **Codex:** one round each for W2 and for the #135 checklist (W1(g)), and three rounds in one conversation for the #207 rule (W1(e), a rule change). Every answer was WEAKENED, and its findings are applied; the stored rounds are in `codex/`.
+
+## Maintainer's decisions X1 to X5 (2026-11-27)
+
+The decision block X is recorded on #218, comment 7230555918. It answers the stop report of block W (comment 7230234478). Every read and every GitHub operation went through the meter (units `gh5`, `git-read` and `vm-archive-admin`).
+
+**Counts, read on GitHub after the block's actions:**
+- **43 open.**
+- **24 closed by the triage:** 4 under V, 19 under W, and 1 under X (#207).
+
+| # | Decision | What was done | Evidence |
+| --- | --- | --- | --- |
+| 207 | X1: the rule is adopted, with item 2's exception; **closed** (resolved) | The reviewed patch was applied to `docs/data-publication.md` with X1's three changes (the heading; "Open questions" removed; item 2 without the adoption condition). | Commit `0b5697aac2b7d8cd500043759ab5f928c4b8222a`. Codex's check, one round (`codex/x1-r1-*`): the text is the same and lines 1 to 88 are unchanged. Its single difference, item 2's line breaks, was aligned to the literal substitution before the commit. Closing comment: https://github.com/klucilla/refute/issues/207#issuecomment-7230615807 |
+| v0.4.0 archive | X2: yes to a dated note | A correction file and a short text for the Zenodo description are drafted in `.cache/v0513/x2/`, not committed, for the maintainer's approval. The edit on Zenodo is the maintainer's. | Checked first: arXiv:2309.15704's notice was sent 2026-10-20T00:56:06Z (`reply/notice.md`), with a deadline of 18 November 2026. The period ended on 2026-11-18 with no reply received and no extension recorded (#158, comment 7037731352). |
+| 195 | X3: kept open as Part B's item | Renamed "Part B (version 5): end-to-end verify_promotion binding (from #195, item 4)", and commented: what revision 8 covers (items 1 to 3, sections 2, 3 and 5) and what is left (item 4). No new issue was created. | https://github.com/klucilla/refute/issues/195#issuecomment-7230617834 |
+| 212 | X4: kept open; the rerun is not approved now | Commented: the proposed procedure, left to Part B or v0.6. No CI job was created. | https://github.com/klucilla/refute/issues/212#issuecomment-7230618516 |
+| 135 | X5: part A (the maintainer) and A5 (the agent) | Part A ran 2026-11-27, 20:56 to 20:58 Brasília time. A1's EXIT=0 is a recorded deviation: `Transcripts` is empty at its source. A5 gave **problems 0**: 2 files (RefuteVm-backup 1, pssc 1, Transcripts 0), equal by relative path and SHA-256 in A4's CSV, the staging folder and the Drive copy, read back. Parts B, C and D are not started. | `vm-archive/manifest-admin-copy.tsv` (SHA-256 `9dc2a9b9226a323696460ffc9101dd8c3144add8b6d83eb8e419ffb220935fcc`), `summary-admin-copy.json`, and A4's CSV beside them. The `.reg` backup's hash equals the one recorded at its creation (`docs/validation/v0.3/wp6-results/jea-registration.md`, section 2). Comment: https://github.com/klucilla/refute/issues/135#issuecomment-7230619153 |
