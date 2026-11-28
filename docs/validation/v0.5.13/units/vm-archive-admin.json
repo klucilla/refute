@@ -1,0 +1,11 @@
+{
+ "name": "vm-archive-admin",
+ "question": "Step A5 of the VM decommissioning checklist (#135; block X, item X5, #218): check by relative path and SHA-256 that A4's CSV, the staging folder .cache/v0513/vm-admin-copy and a copy on the Drive (admin-copy/, read back) agree, and write manifest-admin-copy.tsv beside A4's CSV. Without administrator rights.",
+ "choices": "docs/validation/v0.5.13/tools/vm_archive_admin.py --dest-name vm-decommission-2026-11-27 --record docs/validation/v0.5.13/vm-archive. The recorded deviation (decision X5): the Transcripts source is empty, so 0 files there is not a problem. It copies and checks; it never deletes or moves. Writes outside the phase's disk roots (the Drive folder; a declared limit). Offline; no case value.",
+ "argv": ["{python}", "-I", "-B", "docs/validation/v0.5.13/tools/vm_archive_admin.py"],
+ "identity": ["docs/validation/v0.5.13/tools/vm_archive_admin.py"],
+ "key": "data",
+ "reserve": {"cpu_s": 120, "disk_bytes": 50000000},
+ "timeout_s": 900,
+ "network": false
+}

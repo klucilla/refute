@@ -1,0 +1,12 @@
+{
+ "name": "gh5",
+ "question": "One GitHub operation through gh, for the maintainer's decision block X of 2026-11-27 (#218, recorded at comment 7230555918): issue view and list (read); issue comment on #218, #207, #195, #212 and #135; issue close of #207 only (X1, after the rule's commit); issue edit --title of #195 only (X3); run list/view (read); api GET.",
+ "choices": "The arguments make the unit. Inbound bytes at the declared conservative estimate. Never: closing any other issue (#135 and #171 close on the maintainer's report); creating an issue; editing anything but #195's title; changing repository settings, environments, secrets, publishers or the Actions policy; approving a deployment; any token.",
+ "argv": ["gh"],
+ "identity": [],
+ "key": "data",
+ "reserve": {"cpu_s": 120, "disk_bytes": 20000000},
+ "timeout_s": 600,
+ "network": {"kind": "github", "endpoints": ["api.github.com:443", "github.com:443"], "operations": ["gh issue view/list/comment (klucilla/refute)", "gh issue close 207", "gh issue edit 195 --title", "gh run list/view", "gh api GET"], "inbound_estimate_bytes": 5000000},
+ "retry_class": "infra"
+}
